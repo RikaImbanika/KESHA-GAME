@@ -6,28 +6,19 @@ using System.Threading;
 
 public class Door : MonoBehaviour
 {
-	public AllFather _allFather;
 	public Collider col;
 	public string nextSceneName;
 	public Vector3 position;
 	public float _rotation;
-	private AudioManager audioManager;
 	public string audioName;
 	public bool _locked;
 	public GameObject _stamp;
 	public float _stampAnimationTimeLeft;
-	private GameObject _sparkle;
 	public int _sparklesCount;
-	AudioManager _audioManager;
 
 	public void Start()
 	{
-		_allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-		_sparkle = _allFather._sparkle;
-		_sparklesCount = 50;
-
-		GameObject go = GameObject.FindGameObjectWithTag("AudioManager");
-		_audioManager = go.GetComponent<AudioManager>();
+		_sparklesCount = 100;
 	}
 
 	private void OnTriggerEnter(Collider collider)
@@ -41,20 +32,20 @@ public class Door : MonoBehaviour
 		{
 			if (!_locked)
 			{
-				audioManager.Play(audioName, 0);
+				S.AudioManager.Play(audioName, 0);
 
-				string sceneName = _allFather.Load("sceneName")._scene;
-				List<string> loadScenesNames = Loader.l._map[nextSceneName];
-				List<string> unloadScenesNames = Loader.l._map[sceneName];
+				string sceneName = S.AllFather.Load("sceneName")._scene;
+				List<string> loadScenesNames = S.Loader._map[nextSceneName];
+				loadScenesNames.Add(nextSceneName);
+				List<string> unloadScenesNames = S.Loader._map[sceneName];
+				unloadScenesNames.Add(sceneName);
 
 				foreach (string name in loadScenesNames)
 					if (!unloadScenesNames.Contains(name))
 					{
 						SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
-						Loader.l._scenesToLoad.Add(name);
+						S.Loader._scenesToLoad.Add(name);
 					}
-
-				Loader.l.AddictiveLoadAsync();
 
 				foreach (string name in unloadScenesNames)
 					if (!loadScenesNames.Contains(name))
@@ -66,19 +57,22 @@ public class Door : MonoBehaviour
 			{
 				GameObject ph = playerObject.transform.parent.gameObject;
 				Rigidbody rb = ph.GetComponent<Rigidbody>();
-				Vector3 direction = ph.transform.position - transform.position;
-				direction = new Vector3(direction.x, 0, direction.y).normalized;
-				direction *= 2f;
-				direction += new Vector3(0, 1, 0);
-				rb.AddForce(direction * 30f, ForceMode.Impulse);
+				PlayerMovement pm = ph.GetComponent<PlayerMovement>();
+				Vector3 direction = S.Camera.transform.position - transform.position;
+				direction = new Vector3(direction.x, 0, direction.z).normalized;
+				direction *= 1800f;
+				direction += new Vector3(0, 25, 0);
+				pm.Push(direction);
 				PlayerStorage ps = ph.GetComponent<PlayerStorage>();
 				ps.Damage(10);
+				S.Inventory._negated = 0.3f;
 
 				for (int i = 0; i < _sparklesCount; i++)
 				{
-					GameObject sparkle = Instantiate(_sparkle);
+					GameObject sparkle = Instantiate(S.AllFather._sparkle);
 					sparkle.transform.position = transform.position;
 					sparkle.transform.rotation = Quaternion.LookRotation(direction);
+					sparkle.transform.localScale *= 4f;
 					sparkle.GetComponent<IsSparkle>()._active = true;
 				}
 			}
@@ -112,7 +106,7 @@ public class Door : MonoBehaviour
 
 	IEnumerator WaitLoad(GameObject playerObject)
 	{
-		while (!SceneCurrentlyLoaded(nextSceneName))
+		while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
 			yield return new WaitForSeconds(0.2f);
 
 		GameObject playerHub = playerObject.transform.parent.gameObject;
@@ -131,20 +125,8 @@ public class Door : MonoBehaviour
 
 		Save s = new Save();
 		s._scene = nextSceneName;
-		_allFather.Save("sceneName", s);
+		S.AllFather.Save("sceneName", s);
 
 		yield return null;
-	}
-
-	bool SceneCurrentlyLoaded(string name)
-	{
-		for (int i = 0; i < SceneManager.sceneCount; ++i)
-		{
-			Scene scene = SceneManager.GetSceneAt(i);
-			if (scene.name == name)
-				return scene.isLoaded;
-		}
-
-		return false;
 	}
 }

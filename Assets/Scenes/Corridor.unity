@@ -602,33 +602,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: dfbee1000e5d372408125771e227172b, type: 3}
   m_PrefabInstance: {fileID: 295651848}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &295651851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 295651849}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Apple
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 06cb3113b89307f4ebe44bf469d17d6d, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  _locked: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
 --- !u!135 &295651852
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -642,6 +615,24 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.011633543
   m_Center: {x: -0.000050502364, y: -0.00008447468, z: 0.00094757695}
+--- !u!114 &295651853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295651849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Apple
+  _count: 1
+  _unnatural: 0
+  _locked: 0
+  _obj: {fileID: 0}
 --- !u!1 &403434280
 GameObject:
   m_ObjectHideFlags: 0
@@ -923,33 +914,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: dfbee1000e5d372408125771e227172b, type: 3}
   m_PrefabInstance: {fileID: 623083391}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &623083394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623083392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Apple
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 06cb3113b89307f4ebe44bf469d17d6d, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  _locked: 1
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
 --- !u!135 &623083395
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -963,6 +927,24 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.011633543
   m_Center: {x: -0.000050502364, y: -0.00008447468, z: 0.00094757695}
+--- !u!114 &623083396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623083392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Apple
+  _count: 1
+  _unnatural: 0
+  _locked: 1
+  _obj: {fileID: 0}
 --- !u!1 &739956756
 GameObject:
   m_ObjectHideFlags: 0
@@ -1388,12 +1370,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 973993226}
-  loadScenesNames:
-  - MR 2
-  - BR 1
-  - TL 0
-  unloadScenesNames:
-  - Income
   nextSceneName: Hall
   position: {x: 0.06, y: -2.5, z: -6.28}
   _rotation: 0
@@ -1401,6 +1377,7 @@ MonoBehaviour:
   _locked: 0
   _stamp: {fileID: 0}
   _stampAnimationTimeLeft: 0
+  _sparklesCount: 0
 --- !u!65 &973993226
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1720,33 +1697,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: dfbee1000e5d372408125771e227172b, type: 3}
   m_PrefabInstance: {fileID: 1128649475}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1128649478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1128649476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Apple
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 06cb3113b89307f4ebe44bf469d17d6d, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  _locked: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
 --- !u!135 &1128649479
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1760,6 +1710,24 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.011633543
   m_Center: {x: -0.000050502364, y: -0.00008447468, z: 0.00094757695}
+--- !u!114 &1128649480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1128649476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Apple
+  _count: 1
+  _unnatural: 0
+  _locked: 0
+  _obj: {fileID: 0}
 --- !u!1 &1151142933
 GameObject:
   m_ObjectHideFlags: 0
@@ -1807,9 +1775,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 1151142937}
-  loadScenesNames: []
-  unloadScenesNames:
-  - Hall
   nextSceneName: Income
   position: {x: -5.03, y: -3, z: -425.5}
   _rotation: 0
@@ -1817,6 +1782,7 @@ MonoBehaviour:
   _locked: 0
   _stamp: {fileID: 0}
   _stampAnimationTimeLeft: 0
+  _sparklesCount: 0
 --- !u!65 &1151142937
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1925,33 +1891,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6ba3edc2c76315346941ab4bf4eaeb25, type: 3}
   m_PrefabInstance: {fileID: 1177741693}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1177741696
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1177741694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Cucumber
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: ad8c2fe13f910a74a9e0b9c46049e86a, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  _locked: 1
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
 --- !u!64 &1177741697
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1966,6 +1905,24 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4711208715938537054, guid: 6ba3edc2c76315346941ab4bf4eaeb25, type: 3}
+--- !u!114 &1177741698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1177741694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Cucumber
+  _count: 1
+  _unnatural: 0
+  _locked: 1
+  _obj: {fileID: 0}
 --- !u!1 &1179125819
 GameObject:
   m_ObjectHideFlags: 0
@@ -2445,33 +2402,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: dfbee1000e5d372408125771e227172b, type: 3}
   m_PrefabInstance: {fileID: 1356443660}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1356443663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1356443661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Apple
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 06cb3113b89307f4ebe44bf469d17d6d, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  _locked: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
 --- !u!135 &1356443664
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2485,6 +2415,24 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.011633543
   m_Center: {x: -0.000050502364, y: -0.00008447468, z: 0.00094757695}
+--- !u!114 &1356443665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356443661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Apple
+  _count: 1
+  _unnatural: 0
+  _locked: 0
+  _obj: {fileID: 0}
 --- !u!1 &1519550712
 GameObject:
   m_ObjectHideFlags: 0
@@ -2670,33 +2618,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: dfbee1000e5d372408125771e227172b, type: 3}
   m_PrefabInstance: {fileID: 1540019540}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1540019543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1540019541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Apple
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 06cb3113b89307f4ebe44bf469d17d6d, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  _locked: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
 --- !u!135 &1540019544
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2710,6 +2631,24 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.011633543
   m_Center: {x: -0.000050502364, y: -0.00008447468, z: 0.00094757695}
+--- !u!114 &1540019545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1540019541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Apple
+  _count: 1
+  _unnatural: 0
+  _locked: 0
+  _obj: {fileID: 0}
 --- !u!1001 &1590910532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2797,33 +2736,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: dfbee1000e5d372408125771e227172b, type: 3}
   m_PrefabInstance: {fileID: 1590910532}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1590910535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1590910533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Apple
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 06cb3113b89307f4ebe44bf469d17d6d, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  _locked: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
 --- !u!135 &1590910536
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2837,6 +2749,24 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.011633543
   m_Center: {x: -0.000050502364, y: -0.00008447468, z: 0.00094757695}
+--- !u!114 &1590910537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590910533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Apple
+  _count: 1
+  _unnatural: 0
+  _locked: 0
+  _obj: {fileID: 0}
 --- !u!1001 &1697419733
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2924,33 +2854,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: dfbee1000e5d372408125771e227172b, type: 3}
   m_PrefabInstance: {fileID: 1697419733}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1697419736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1697419735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Apple
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 06cb3113b89307f4ebe44bf469d17d6d, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  _locked: 1
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
 --- !u!135 &1697419737
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2964,6 +2867,24 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.011633543
   m_Center: {x: -0.000050502364, y: -0.00008447468, z: 0.00094757695}
+--- !u!114 &1697419738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697419735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Apple
+  _count: 1
+  _unnatural: 0
+  _locked: 0
+  _obj: {fileID: 0}
 --- !u!64 &1739798880
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4322,7 +4243,7 @@ MonoBehaviour:
   _audioName: toiletDoor
   _locked: 0
   _direction: 1
-  _item: {fileID: 623083394}
+  _item: {fileID: 0}
 --- !u!65 &5486375401076590881
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5454,7 +5375,7 @@ MonoBehaviour:
   _audioName: toiletDoor
   _locked: 0
   _direction: 0
-  _item: {fileID: 1177741696}
+  _item: {fileID: 0}
 --- !u!65 &8508216875019306889
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5809,7 +5730,7 @@ MonoBehaviour:
   _locked: 0
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5
-  _item: {fileID: 1697419736}
+  _item: {fileID: 0}
 --- !u!23 &9118394647037239571
 MeshRenderer:
   m_ObjectHideFlags: 0

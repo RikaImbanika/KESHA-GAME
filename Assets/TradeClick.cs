@@ -25,7 +25,7 @@ public class TradeClick : MonoBehaviour, IPointerClickHandler
         if (_inventory.CountOfItem(_trade._selledItemName) >= _trade._selledCount)
         {
             _inventory.Remove(_trade._selledItemName, _trade._selledCount);
-            _inventory.Take(_trade._item);
+            _inventory.Take(_trade._buyedItemName, _trade._buyedCount);
             _trader.RemoveTrade(_tradeNumber);
 
             _audioManager.Play("money", 1);

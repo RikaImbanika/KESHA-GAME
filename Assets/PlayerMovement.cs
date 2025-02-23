@@ -16,8 +16,12 @@ public class PlayerMovement : MonoBehaviour
 
 	public float groundDrag;
 	public float airDrag;
+	public float pushingDrag;
 
 	public float jumpingSpeedBoost;
+	public float pushingSpeedBoost;
+
+	public bool _pushed;
 
 	[Header("Jumping")]
 	public float jumpForce;
@@ -26,7 +30,12 @@ public class PlayerMovement : MonoBehaviour
 	public float airWallFriction;
 	public float airWallFrictionRb;
 	public float beforeJumpSpeedSave;
-	bool readyToJump;
+	public bool readyToJump;
+
+	[Header("Pushing")]
+	public float pushingCooldown;
+	public float pushingMultiplier;
+	public bool readyToPush;
 
 	[Header("Crouching")]
 	public float crouchScale;
@@ -77,6 +86,7 @@ public class PlayerMovement : MonoBehaviour
 		rb = GetComponent<Rigidbody>();
 		rb.freezeRotation = true;
 		readyToJump = true;
+		readyToPush = true;
 	}
 
 	private void Update()
@@ -85,7 +95,13 @@ public class PlayerMovement : MonoBehaviour
 		GetSpeed();
 		CutSpeed();
 
-		if (grounded && readyToJump)
+		if (_pushed)
+		{
+			pm.staticFriction = 0;
+			pm.dynamicFriction = 0;
+			rb.velocity = new Vector3(rb.velocity.x * pushingDrag, rb.velocity.y * pushingDrag, rb.velocity.z * pushingDrag);
+		}
+		else if (grounded && readyToJump)
 		{
 			pm.staticFriction = 10;
 			pm.dynamicFriction = 10;
@@ -100,6 +116,9 @@ public class PlayerMovement : MonoBehaviour
 
 		if (transform.position.y < -500)
 			transform.position = new Vector3(transform.position.x, 500, transform.position.z);
+
+		if (grounded && readyToPush)
+			_pushed = false;
 	}
 
 	private void FixedUpdate()
@@ -136,9 +155,7 @@ public class PlayerMovement : MonoBehaviour
 
 					if (Input.GetKey(jumpKey) && readyToJump && grounded)
 					{
-						Jump();
-
-						Invoke(nameof(ResetJump), jumpCooldown);
+						Jump();						
 					}
 
 					if (Input.GetKeyDown(crouchKey))
@@ -184,7 +201,9 @@ public class PlayerMovement : MonoBehaviour
 				moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 				moveDirection = new Vector3(moveDirection.x, 0f, moveDirection.z);
 
-				if (grounded)
+				if (_pushed)
+					rb.AddForce(moveDirection.normalized * walkSpeed * 60f * pushingMultiplier * multiplier, ForceMode.Force);
+				else if (grounded)
 					rb.AddForce(moveDirection.normalized * moveSpeed * 60f * multiplier, ForceMode.Force);
 				else
 					rb.AddForce(moveDirection.normalized * walkSpeed * 60f * airMultiplier * multiplier, ForceMode.Force);
@@ -201,11 +220,24 @@ public class PlayerMovement : MonoBehaviour
 		float limit = moveSpeed;
 		if (!grounded)
 			limit *= jumpingSpeedBoost;
+		if (_pushed)
+			limit *= pushingSpeedBoost;
 
 		if (flatVelocity.magnitude > limit)
 		{
-			Vector3 limitedVelocity = flatVelocity.normalized * moveSpeed;
+			Vector3 limitedVelocity = flatVelocity.normalized * limit;
 			rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
+		}
+	}
+
+	public void Push(Vector3 force)
+	{
+		if (readyToPush)
+		{
+			readyToPush = false;
+			rb.velocity += force;
+			_pushed = true;
+			Invoke(nameof(ResetPush), pushingCooldown);
 		}
 	}
 
@@ -217,10 +249,17 @@ public class PlayerMovement : MonoBehaviour
 			rb.velocity = new Vector3(rb.velocity.x * beforeJumpSpeedSave, jumpForce, rb.velocity.z * beforeJumpSpeedSave);
 		else
 			rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+
+		Invoke(nameof(ResetJump), jumpCooldown);
 	}
 
 	private void ResetJump()
 	{
 		readyToJump = true;
+	}
+
+	private void ResetPush()
+	{
+		readyToPush = true;
 	}
 }

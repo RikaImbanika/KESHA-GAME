@@ -65,7 +65,9 @@ public class IsTrader : MonoBehaviour
 
 				GameObject sellObject = new GameObject("Sell");
 				Image sellImage = sellObject.AddComponent<Image>();
-				sellImage.sprite = Sprite.Create(_trades[i]._selledTexture, new Rect(0, 0, _trades[i]._selledTexture.width, _trades[i]._selledTexture.height), new Vector2(0.5f, 0.5f));
+				var ssn = S.II.Get(_trades[i]._selledItemName)._spriteName;
+				sellImage.sprite = Resources.Load<Sprite>($"Sprites/Items/{ssn}");
+				//Sprite.Create(ssn, new Rect(0, 0, _trades[i]._selledTexture.width, _trades[i]._selledTexture.height), new Vector2(0.5f, 0.5f));
 				sellObject.transform.SetParent(panelObject.transform);
 
 				RectTransform rectTransformSell = sellObject.GetComponent<RectTransform>();
@@ -75,7 +77,9 @@ public class IsTrader : MonoBehaviour
 
 				GameObject buyObject = new GameObject("Buy");
 				Image buyImage = buyObject.AddComponent<Image>();
-				buyImage.sprite = Sprite.Create(_trades[i]._buyedTexture, new Rect(0, 0, _trades[i]._buyedTexture.width, _trades[i]._buyedTexture.height), new Vector2(0.5f, 0.5f));
+				var bsn = S.II.Get(_trades[i]._buyedItemName)._spriteName;
+				buyImage.sprite = Resources.Load<Sprite>($"Sprites/Items/{bsn}");
+				//Sprite.Create(_trades[i]._buyedTexture, new Rect(0, 0, _trades[i]._buyedTexture.width, _trades[i]._buyedTexture.height), new Vector2(0.5f, 0.5f));
 				buyObject.transform.SetParent(panelObject.transform);
 
 				RectTransform rectTransformBuy = buyObject.GetComponent<RectTransform>();

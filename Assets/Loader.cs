@@ -2,37 +2,60 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Threading;
 
-public static class Loader : object
+public class Loader : MonoBehaviour
 {
-    public static Loader0 l;
-    static AllFather _allFather;
-
-    public static void Init()
-    {
-        l = new Loader0();
-    }
-}
-
-public class Loader0 : MonoBehaviour
-{
-    public AllFather _allFather;
     public Dictionary<string, List<string>> _map;
     public List<string> _scenesToLoad;
 
     public void Start()
     {
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
+        WaitLoad();
+        AddictiveLoadAsync();
+    }
 
-        SceneManager.LoadSceneAsync("Income", LoadSceneMode.Additive);
-        SceneManager.LoadSceneAsync("Corridor", LoadSceneMode.Additive);
+    void WaitLoad()
+    {
+        StartCoroutine(MT());
+        
+        IEnumerator MT()
+        {
+            yield return new WaitForSeconds(1);
 
-        Save s = new Save();
-        s._scene = "Income";
-        _allFather.Save("sceneName", s);
+            _scenesToLoad = new List<string>();
 
+            InitMap();
+
+            SceneManager.LoadSceneAsync("Income", LoadSceneMode.Additive);
+            SceneManager.LoadSceneAsync("Corridor", LoadSceneMode.Additive);
+
+            GameObject pObj = GameObject.FindGameObjectWithTag("Player");
+            GameObject playerHub = pObj.transform.parent.gameObject;
+            PlayerMovement pm = playerHub.GetComponent<PlayerMovement>();
+
+            while (!S.AllFather.SceneCurrentlyLoaded("Income"))
+                yield return new WaitForSeconds(0.2f);
+
+            Vector3 v = new Vector3(0, 0, 0);
+            if (pm.isCrouching)
+                v = new Vector3(0, -2.2f, 0);
+
+            playerHub.transform.position = new Vector3(6.08f, -13.18f, -852.67f) + v;
+
+            S.PS._currentSceneName = "Income";
+
+            Save s = new Save();
+            s._scene = "Income";
+            S.AllFather.Save("sceneName", s);
+
+            yield return null;
+        }
+    }
+
+    public void InitMap()
+    {
         _map = new Dictionary<string, List<string>>();
-        _scenesToLoad = new List<string>();
 
         AddValue("Income", "Corridor");
 
@@ -122,12 +145,12 @@ public class Loader0 : MonoBehaviour
     public void AddValue(string key, string value)
     {
         if (!_map.ContainsKey(key))
-            _map[key] = new List<string>();
+            _map.Add(key, new List<string>());
 
         _map[key].Add(value);
     }
 
-    public void AddictiveLoadAsync()
+    private void AddictiveLoadAsync()
     {
         StartCoroutine(ALA());
 
@@ -137,42 +160,31 @@ public class Loader0 : MonoBehaviour
             {
                 string scene = _scenesToLoad[0];
 
-                while (!SceneCurrentlyLoaded(scene))
+                while (!S.AllFather.SceneCurrentlyLoaded(scene))
                     yield return new WaitForSeconds(0.05f);
 
                 Scene targetScene = SceneManager.GetSceneByName(scene);
                 SceneManager.SetActiveScene(targetScene);
 
-                List<string> ids = _allFather.Load(scene)._strings;
-                for (int i = 0; i < ids.Count; i++)
-                {
-                    Save s = _allFather.Load(ids[i]);
-                    if (s._unnatural)
+                List<string> ids = S.AllFather.Load(scene)._strings;
+                if (ids != null)
+                    for (int i = 0; i < ids.Count; i++)
                     {
-                        GameObject prefab = Prefabs.Get(s._name);
-                        GameObject obj = Instantiate(prefab, s._position, s._rotation);
-                        ItemP itemP = obj.GetComponent<ItemP>();
-                        itemP._unnatural = s._unnatural;
+                        Save s = S.AllFather.Load(ids[i]);
+                        if (s._unnatural)
+                        {
+                            GameObject prefab = Prefabs.Get(s._name);
+                            GameObject obj = Instantiate(prefab, s._position, s._rotation);
+                            ItemP itemP = obj.GetComponent<ItemP>();
+                            itemP._unnatural = s._unnatural;
+                        }
                     }
-                }
 
                 _scenesToLoad.RemoveAt(0);
             }
 
-            Scene tScene = SceneManager.GetSceneByName(_allFather.Load("sceneName")._scene);
+            Scene tScene = SceneManager.GetSceneByName(S.AllFather.Load("sceneName")._scene);
             SceneManager.SetActiveScene(tScene);
         }
-    }
-
-    public bool SceneCurrentlyLoaded(string name)
-    {
-        for (int i = 0; i < SceneManager.sceneCount; ++i)
-        {
-            Scene scene = SceneManager.GetSceneAt(i);
-            if (scene.name == name)
-                return scene.isLoaded;
-        }
-
-        return false;
     }
 }

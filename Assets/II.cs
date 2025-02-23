@@ -2,26 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class II : object
+public class II : MonoBehaviour
 {
-    static Dictionary<string, ItemInfo> _base = new Dictionary<string, ItemInfo>();
+    Dictionary<string, ItemInfo> _base;
 
-    public static void Init()
+    public void Start()
     {
+        _base = new Dictionary<string, ItemInfo>();
+
         _base.Add("PurpleBall", new ItemInfo(
             spriteName: "PurpleBall",
-            prefabName: "PurpleBall"
+            prefabName: "PurpleBall",
+            throwable: true
             ));
 
         _base.Add("BlueBall", new ItemInfo(
             spriteName: "BlueBall",
-            prefabName: "BlueBall"
+            prefabName: "BlueBall",
+            throwable: true
             ));
     }
 
-	public static ItemInfo Get(string name)
+	public ItemInfo Get(string name)
 	{
-		Debug.Log($"name {name}");
-		return _base[name];
+        if (!_base.ContainsKey(name))
+            _base.Add(name, new ItemInfo(
+            spriteName: name,
+            prefabName: name,
+            throwable: false
+            ));
+
+        return _base[name];
 	}
 }

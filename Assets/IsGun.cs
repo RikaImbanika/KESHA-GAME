@@ -5,46 +5,24 @@ using UnityEngine;
 
 public class IsGun : MonoBehaviour
 {
-    public AllFather _allFather;
     private GameObject _cameraHolder;
-    private GameObject _mainCamera;
     public GameObject _ray;
-    private GameObject _spot;
-    private GameObject _sparkle;
     public int _sparklesCount;
     private Transform _root;
     public float _rayRight;
     public float _rayDown;
-    private AudioManager _audioManager;
-    private Canvas _canvas;
-    private Inventory _inventory;
 
     void Start()
     {
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-
-        _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");       
-
-        _root = _allFather.transform;
-        _sparkle = _allFather._sparkle;
-        _spot = _allFather._spot;
+        _root = S.AllFather.transform;
         _ray.transform.SetParent(_root);
-
-        _canvas = GameObject.FindObjectOfType<Canvas>();
-        _inventory = _canvas.GetComponent<Inventory>();
     }
 
     public void Fire()
     {
-        if (_audioManager == null)
+        if (S.Inventory.CountOfItem("Ammo") > 0)
         {
-            GameObject go = GameObject.FindGameObjectWithTag("AudioManager");
-            _audioManager = go.GetComponent<AudioManager>();
-        }
-
-        if (_inventory.CountOfItem("Ammo") > 0)
-        {
-            _inventory.Remove("Ammo", 1);
+            S.Inventory.Remove("Ammo", 1);
 
             Vector3 screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
             Ray ray = Camera.main.ScreenPointToRay(screenCenter);
@@ -52,12 +30,12 @@ public class IsGun : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                _audioManager.Play("plasma", 1);
+                S.AudioManager.Play("plasma", 1);
 
                 NoSpots noSpots = hit.collider.gameObject.GetComponent<NoSpots>();
                 if (noSpots == null)
                 {
-                    GameObject spot = Instantiate(_spot);
+                    GameObject spot = Instantiate(S.AllFather._spot);
                     spot.transform.position = hit.point;
                     spot.transform.rotation = Quaternion.LookRotation(hit.normal);
                     spot.transform.Rotate(0f, 0f, UnityEngine.Random.Range(-180, 180));
@@ -69,11 +47,11 @@ public class IsGun : MonoBehaviour
                     spot.transform.localScale = new Vector3(x * f, y * f, z * f);
                     spot.transform.SetParent(hit.collider.gameObject.transform);
 
-                    _allFather._spots.Add(spot);
-                    if (_allFather._spots.Count > 300)
+                    S.AllFather._spots.Add(spot);
+                    if (S.AllFather._spots.Count > 300)
                     {
-                        Destroy(_allFather._spots[0]);
-                        _allFather._spots.RemoveAt(0);
+                        Destroy(S.AllFather._spots[0]);
+                        S.AllFather._spots.RemoveAt(0);
                     }
                 }
 
@@ -101,7 +79,7 @@ public class IsGun : MonoBehaviour
                             if (door._locked)
                             {
                                 door.Unlock();
-                                _audioManager.Play("arfa", 1);
+                                S.AudioManager.Play("arfa", 1);
                             }
                         }
                         else
@@ -110,13 +88,13 @@ public class IsGun : MonoBehaviour
                             if (stamp != null)
                             {
                                 stamp.Unlock();
-                                _audioManager.Play("arfa", 1);
+                                S.AudioManager.Play("arfa", 1);
                             }
                         }
                     }
                 }
 
-                Vector3 from = _mainCamera.transform.position + _mainCamera.transform.right * _rayRight - _mainCamera.transform.up * _rayDown;
+                Vector3 from = S.Camera.transform.position + S.Camera.transform.right * _rayRight - S.Camera.transform.up * _rayDown;
 
                 GameObject ray2 = Instantiate(_ray);
                 ray2.GetComponent<IsRay>()._active = true;
@@ -136,7 +114,7 @@ public class IsGun : MonoBehaviour
 
                 for (int i = 0; i < _sparklesCount; i++)
                 {
-                    GameObject sparkle = Instantiate(_sparkle);
+                    GameObject sparkle = Instantiate(S.AllFather._sparkle);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
                     sparkle.GetComponent<IsSparkle>()._active = true;
@@ -144,15 +122,12 @@ public class IsGun : MonoBehaviour
             }
         }
         else
-            _audioManager.Play("noAmmo", 1);
+            S.AudioManager.Play("noAmmo", 1);
     }
 
     public void TakeRedCrystal()
     {
-        Item _item = new Item();
-        _item._name = "redCrystal"; //////////////////////////
-        _item._count = 1;
-        _allFather._inventory.Take(_item);
+        S.Inventory.Take("RedCrystal", 1);
     }
 
     public float Length(Vector3 v)

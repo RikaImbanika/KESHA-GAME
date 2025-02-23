@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 public class AllFather : MonoBehaviour
 {
@@ -17,7 +18,6 @@ public class AllFather : MonoBehaviour
 	public AudioSource _caboom;
 	public AudioSource _shot;
 	public Camera _camera;
-	public Canvas _canvas;
 	public Inventory _inventory;
 	public AudioManager _audioManager;
 	public GameObject _playerObject;
@@ -30,20 +30,20 @@ public class AllFather : MonoBehaviour
 
 	void Start()
 	{
-		II.Init();
+		S.Init();
 		StartCoroutine(Logger(10f));
 
 		_theSave = new Dictionary<string, Save>();
 		_spots = new List<GameObject>();
+		_spot = GameObject.Find("TheSpot");
 		_spot.transform.SetParent(gameObject.transform);
+		_sparkle = GameObject.Find("Sparkle");
 		_sparkle.transform.SetParent(gameObject.transform);
 
 		_playerHub = _playerObject.transform.parent.gameObject;
 		_playerStorage = _playerHub.GetComponent<PlayerStorage>();
 		_playerMovement = _playerHub.GetComponent<PlayerMovement>();
 		_playerCamScript = Camera.main.GetComponent<PlayerCamScript>();
-
-		Loader.Init();
 
 		StartCoroutine(FirstSave(7f));
 
@@ -61,7 +61,7 @@ public class AllFather : MonoBehaviour
 			yield return new WaitForSeconds(delay);
 			string save = "=========================";
 			foreach (var kvp in _theSave)
-			save += "\r\n" + kvp.Key + " : " + kvp.Value;
+				save += "\r\n" + kvp.Key + " : " + kvp.Value;
 			save += "\r\n=======================";
 			Debug.Log(save);
 		}
@@ -76,10 +76,8 @@ public class AllFather : MonoBehaviour
 			string key = entry.Key;
 			Save originalValue = entry.Value;
 
-			// Сериализуем объект в JSON строку
 			string json = JsonUtility.ToJson(originalValue);
 
-			// Десериализуем JSON строку обратно в новый объект
 			Save copyValue = JsonUtility.FromJson<Save>(json);
 
 			copy.Add(key, copyValue);
@@ -117,28 +115,37 @@ public class AllFather : MonoBehaviour
 				SceneManager.UnloadSceneAsync(scene0);
 		}
 
-		StartCoroutine(LoadSavedScenes());
+		LoadSavedScenes();
 	}
 
-	private IEnumerator LoadSavedScenes()
+	private void LoadSavedScenes()
 	{
-		_inventory.LoadTheSave();
+		Thread mt = new Thread(MT);
+		mt.Start();
 
-		foreach (string sceneName in Load("_sceneNames")._strings)
+		void MT()
 		{
-			yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-			Loader.l._scenesToLoad.Add(sceneName);
+			_inventory.LoadTheSave();
+
+			string currentScene = Load("sceneName")._scene;
+			var map = S.Loader._map[currentScene];
+			map.Add(currentScene);
+
+			foreach (string sceneName in map)
+			{
+				SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+				S.Loader._scenesToLoad.Add(sceneName);
+			}
+
+			while (!SceneManager.GetSceneByName(currentScene).isLoaded)
+				Thread.Sleep(200);
+			while (!S.Loader._scenesToLoad.Contains(currentScene))
+				Thread.Sleep(200);
+			_playerHub.transform.position = Load("playerPosition")._position;
+			_playerCamScript.StaticRotate(Load("playerXRot")._value, Load("playerYRot")._value);
+
+			Debug.Log("SAVE LOADED!!!");
 		}
-
-		Loader.l.AddictiveLoadAsync();
-		string currentScene = Load("sceneName")._scene;
-
-		yield return new WaitUntil(() => SceneManager.GetSceneByName(currentScene).isLoaded);
-		yield return new WaitUntil(() => !Loader.l._scenesToLoad.Contains(currentScene));
-		_playerHub.transform.position = Load("playerPosition")._position;
-		_playerCamScript.StaticRotate(Load("playerXRot")._value, Load("playerYRot")._value);
-
-		Debug.Log("SAVE LOADED!!!");
 	}
 
 	public void Save(string key, Save save)
@@ -201,5 +208,17 @@ public class AllFather : MonoBehaviour
 		}
 
 		return ep;
+	}
+
+	public bool SceneCurrentlyLoaded(string name)
+	{
+		for (int i = 0; i < SceneManager.sceneCount; ++i)
+		{
+			Scene scene = SceneManager.GetSceneAt(i);
+			if (scene.name == name)
+				return scene.isLoaded;
+		}
+
+		return false;
 	}
 }

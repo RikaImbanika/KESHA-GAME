@@ -2,15 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Threading;
 
 public class CHEATS : MonoBehaviour
 {
-    public AllFather _allFather;
     bool _cheats;
-    PlayerStorage _playerStorage;
-    GameObject _canvas;
-    Inventory _inventory;
     List<string> _cheated;
     GameObject _e;
     GameObject _d;
@@ -28,12 +23,8 @@ public class CHEATS : MonoBehaviour
 
     void Start()
     {
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-        _playerStorage = gameObject.GetComponent<PlayerStorage>();
-        _canvas = GameObject.Find("Canvas");
-        _inventory = _canvas.GetComponent<Inventory>();
-
-        Transform canvasTransform = _canvas.transform; // Получите Transform Canvas
+        _cheated = new List<string>();
+        Transform canvasTransform = S.Canvas.transform; // Получите Transform Canvas
         Transform e = canvasTransform.Find("Cheats enabled");
         _e = e.gameObject;
         Transform d = canvasTransform.Find("Cheats disabled");
@@ -55,14 +46,14 @@ public class CHEATS : MonoBehaviour
 
 		if (_cheats)
         {
-            if (_playerStorage._health < 100)
-                _playerStorage._health = 100;
+            if (S.PS._health < 100)
+                S.PS._health = 100;
 
-            if (_playerStorage._currentSceneName == "Income" && !IsCheated("Income"))
+            if (S.PS._currentSceneName == "Income" && !IsCheated("Income"))
                 StartCoroutine(IncomeCheat());
-            if (_playerStorage._currentSceneName == "Corridor" && !IsCheated("Corridor"))
+            if (S.PS._currentSceneName == "Corridor" && !IsCheated("Corridor"))
                 StartCoroutine(CorridorCheat());
-            if (_playerStorage._currentSceneName == "Hall" && !IsCheated("Hall"))
+            if (S.PS._currentSceneName == "Hall" && !IsCheated("Hall"))
                 StartCoroutine(HallCheat());
         }
 
@@ -83,7 +74,7 @@ public class CHEATS : MonoBehaviour
         {
             Save s = new Save();
             s._cheated = true;
-            _allFather.Save(_cheated[i], s);
+            S.AllFather.Save(_cheated[i], s);
         }
     }
 
@@ -93,6 +84,8 @@ public class CHEATS : MonoBehaviour
 
     IEnumerator CorridorCheat()
     {
+        Remember("Corridor");
+
         yield return TakeItemWithDelay("apple 0 cor");
         yield return TakeItemWithDelay("apple 1 cor");
         yield return TakeItemWithDelay("apple 2 cor");
@@ -101,12 +94,17 @@ public class CHEATS : MonoBehaviour
         yield return TakeItemWithDelay("apple 5 cor");
         yield return TakeItemWithDelay("apple 6 cor");
         yield return TakeItemWithDelay("cuc cor");
-        Remember("Corridor");
     }
 
     IEnumerator IncomeCheat()
     {
-        GameObject.Find("LimeLocker").GetComponent<Locker>().Cheat();
+        Remember("Income");
+
+        var obj = GameObject.Find("LimeLocker");
+        Debug.Log(obj);
+        var locker = obj.GetComponent<Locker>();
+        Debug.Log(locker);
+        locker.Cheat();
         yield return new WaitForSeconds(0.15f);
         GameObject.Find("BlueLocker").GetComponent<Locker>().Cheat();
         yield return new WaitForSeconds(0.15f);
@@ -130,13 +128,13 @@ public class CHEATS : MonoBehaviour
         yield return TakeItemWithDelay("Cucumber Income");
         yield return TakeItemWithDelay("Apple 1 Income");
         yield return TakeItemWithDelay("Apple 2 Income");
-
-        Remember("Income");
     }
 
     IEnumerator HallCheat()
     {
-        yield return TakeItemWithDelay("LimeKey");
+        Remember("Hall");
+
+        yield return TakeItemWithDelay("GreenKey");
         yield return TakeItemWithDelay("Cuc Hall 0");
         yield return TakeItemWithDelay("Cuc Hall 1");
         yield return TakeItemWithDelay("Cuc Hall 2");
@@ -145,13 +143,11 @@ public class CHEATS : MonoBehaviour
         yield return TakeItemWithDelay("Cuc Hall 5");
         yield return TakeItemWithDelay("Apple Hall");
         yield return TakeItemWithDelay("Frerard3");
-
-        Remember("Hall");
     }
 
     private IEnumerator TakeItemWithDelay(string itemName)
     {
-        _inventory.Hack(GameObject.Find(itemName));
+        S.Inventory.Hack(GameObject.Find(itemName));
         yield return new WaitForSeconds(0.15f);
     }
 }

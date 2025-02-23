@@ -16,8 +16,6 @@ public class IsShuffle : MonoBehaviour
 	float direction;
 	Vector3 zp;
 	float cp;
-	private AudioManager _audioManager;
-	AllFather _allFather;
 
 	private string _id;
 
@@ -27,16 +25,14 @@ public class IsShuffle : MonoBehaviour
 			_speed = 1;
 		_speed *= 0.05f;
 
-		_allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-
 		direction = 0f;
 		zp = transform.position;
 
 		_id = "" + transform.position.x + transform.position.y + transform.position.z;
 
-		if (_allFather.Contains(_id))
+		if (S.AllFather.Contains(_id))
 		{
-			Save s = _allFather.Load(_id);
+			Save s = S.AllFather.Load(_id);
 
 			if (s._opened)
 			{
@@ -52,28 +48,23 @@ public class IsShuffle : MonoBehaviour
 	{
 		Save s = new Save();
 
-		if (_allFather.Contains(_id))
-			s = _allFather.Load(_id);
+		if (S.AllFather.Contains(_id))
+			s = S.AllFather.Load(_id);
 
 		_locked = locked;
 		s._locked = locked;
 
-		_allFather.Save(_id, s);
+		S.AllFather.Save(_id, s);
 	}
 
 	public void Move()
 	{
-		if (_audioManager == null)
-		{
-			GameObject go = GameObject.FindGameObjectWithTag("AudioManager");
-			_audioManager = go.GetComponent<AudioManager>();
-		}
 		if (!_locked)
 		{
 			if (_item != null)
 				_item.ToggleLock(false);
 
-			_audioManager.Play(_audioName, 1);			
+			S.AudioManager.Play(_audioName, 1);			
 
 			bool opened = false;
 
@@ -89,15 +80,15 @@ public class IsShuffle : MonoBehaviour
 			}
 
 			Save s = new Save();
-			if (_allFather.Contains(_id))
-				s = _allFather.Load(_id);
+			if (S.AllFather.Contains(_id))
+				s = S.AllFather.Load(_id);
 
 			s._opened = opened;
 
-			_allFather.Save(_id, s);
+			S.AllFather.Save(_id, s);
 		}
 		else
-			_audioManager.Play("notEnoughCash", 1);
+			S.AudioManager.Play("notEnoughCash", 1);
 	}
 
 	public void Close()
@@ -105,12 +96,12 @@ public class IsShuffle : MonoBehaviour
 		direction = -_speed;
 
 		Save s = new Save();
-		if (_allFather.Contains(_id))
-			s = _allFather.Load(_id);
+		if (S.AllFather.Contains(_id))
+			s = S.AllFather.Load(_id);
 
 		s._opened = false;
 
-		_allFather.Save(_id, s);
+		S.AllFather.Save(_id, s);
 	}
 
 	public bool Closed
