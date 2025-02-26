@@ -25,24 +25,21 @@ public class Button1 : MonoBehaviour
 
 	public void Start()
 	{
-		_finalDeltaY = -10.63f;
+		_finalDeltaY = -10.63f; //Hardcode but correct
 		_startY = _obj.transform.position.y;
 
 		_allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
 		_sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
 		_key = _sceneName + transform.position.x + transform.position.y + transform.position.z;
 
-		if (_allFather.Contains(_key))
-		{
-			Save es = _allFather.Load(_key);
+		bool pressed = S.SaveManager.CurrentSave.LoadBool("Button1Pressed") ?? false;
 
-			if (es._pressed)
-			{
-				_pressed = true;
-				_finished = true;
-				_toiletZombie._active = false;
-				_obj.transform.position = new Vector3(_obj.transform.position.x, _startY + _finalDeltaY, _obj.transform.position.z);
-			}
+		if (pressed)
+		{
+			_pressed = true;
+			_finished = true;
+			_toiletZombie._active = false;
+			_obj.transform.position = new Vector3(_obj.transform.position.x, _startY + _finalDeltaY, _obj.transform.position.z);
 		}
 	}
 
@@ -76,11 +73,11 @@ public class Button1 : MonoBehaviour
 
 			Thread.Sleep(300);
 
-			Save save = new Save();
+			OldSave save = new OldSave();
 			save._pressed = true;
-			_allFather.Save(_key, save);
+			S.SaveManager.CurrentSave.SaveBool("Button1Pressed", true);
 
-			yield return null;
+            yield return null;
 		}
 	}
 
@@ -88,7 +85,6 @@ public class Button1 : MonoBehaviour
 	{
 		if (_pressed && !_finished)
 		{
-			//Debug.Log($"{_obj.transform.position.y} > {_startY} + {_finalDeltaY}");
 			if (_obj.transform.position.y > _startY + _finalDeltaY)
 			{
 				if (_isDoor.Closed)

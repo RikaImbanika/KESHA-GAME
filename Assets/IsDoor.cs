@@ -18,26 +18,30 @@ public class IsDoor : MonoBehaviour
 	float zrz;
 	float cr;
 	private AudioManager _audioManager;
-	AllFather _allFather;
 
 	private string _id;
 
 	private void Start()
 	{
-		_allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
+		StartCoroutine(Start0());
 
-		direction = 0f;
-		zrx = transform.rotation.eulerAngles.x;
-		zry = transform.rotation.eulerAngles.y;
-		zrz = transform.rotation.eulerAngles.z;
-
-		_id = "" + transform.position.x + transform.position.y + transform.position.z;
-
-		if (_allFather.Contains(_id))
+		IEnumerator Start0()
 		{
-			Save s = _allFather.Load(_id);
+			direction = 0f;
+			zrx = transform.rotation.eulerAngles.x;
+			zry = transform.rotation.eulerAngles.y;
+			zrz = transform.rotation.eulerAngles.z;
 
-			if (s._opened)
+			_id = "" + transform.position.x + transform.position.y + transform.position.z;
+
+			while (S.SM == null)
+			{
+				yield return new WaitForSeconds(0.1f);
+                Debug.Log("IsDoor waiting for S.SaveManager");
+            }
+
+			bool opened = S.SM.LoadBool(S.ID(_id, "opened")) ?? false;
+			if (opened)
 			{
 				if (!_direction)
 					cr = -_maxAngle;
@@ -47,21 +51,14 @@ public class IsDoor : MonoBehaviour
 				transform.rotation = Quaternion.Euler(zrx, zry, zrz + cr);
 			}
 
-			_locked = s._locked;
+			_locked = S.SM.LoadBool(S.ID(_id, "locked")) ?? _locked;
 		}
 	}
 
 	public void ToggleLock(bool locked)
 	{
-		Save s = new Save();
-
-		if (_allFather.Contains(_id))
-			s = _allFather.Load(_id);
-
 		_locked = locked;
-		s._locked = locked;
-
-		_allFather.Save(_id, s);
+		S.SM.Save(S.ID(_id, "locked"), _locked);
 	}
 
 	public void Move()
@@ -109,16 +106,10 @@ public class IsDoor : MonoBehaviour
 				}
 			}
 
-			Save s = new Save();
-			if (_allFather.Contains(_id))
-				s = _allFather.Load(_id);
-
-			s._opened = opened;
-
-			_allFather.Save(_id, s);
+			S.SM.Save(S.ID(_id, "opened"), opened);
 		}
 		else
-			_audioManager.Play("notEnoughCash", 1);
+			_audioManager.Play("notEnoughCash", 1); //
 	}
 
 	public void Close()
@@ -128,14 +119,8 @@ public class IsDoor : MonoBehaviour
 		else
 			direction = -1.5f;
 
-		Save s = new Save();
-		if (_allFather.Contains(_id))
-			s = _allFather.Load(_id);
-
-		s._opened = false;
-
-		_allFather.Save(_id, s);
-	}
+        S.SM.Save(S.ID(_id, "opened"), false);
+    }
 
 	public bool Closed
 	{

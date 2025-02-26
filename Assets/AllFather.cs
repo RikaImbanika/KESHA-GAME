@@ -6,172 +6,82 @@ using UnityEngine.SceneManagement;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System;
+using Unity.VisualScripting;
 
 public class AllFather : MonoBehaviour
 {
-	public Dictionary<string, Save> _theSave;
-	public Dictionary<string, Save> _theSaveOfTheSave;
-	public GameObject _spot;
-	public GameObject _sparkle;
-	public GameObject _redSparkle;
 	public List<GameObject> _spots;
-	public AudioSource _caboom;
-	public AudioSource _shot;
-	public Camera _camera;
-	public Inventory _inventory;
-	public AudioManager _audioManager;
-	public GameObject _playerObject;
-	private PlayerStorage _playerStorage;
-	private PlayerMovement _playerMovement;
-	private GameObject _playerHub;
-	private PlayerCamScript _playerCamScript;
-
+	public AudioSource _caboom; //
+	public AudioSource _shot; //
 	public int _enemyBulletSparklesCount;
 
 	void Start()
 	{
-		S.Init();
-		StartCoroutine(Logger(10f));
+		S.AllFatherObj = gameObject;
+		S.AllFather = this;
 
-		_theSave = new Dictionary<string, Save>();
-		_spots = new List<GameObject>();
-		_spot = GameObject.Find("TheSpot");
-		_spot.transform.SetParent(gameObject.transform);
-		_sparkle = GameObject.Find("Sparkle");
-		_sparkle.transform.SetParent(gameObject.transform);
+		StartCoroutine(LoggerOfTheSave());
 
-		_playerHub = _playerObject.transform.parent.gameObject;
-		_playerStorage = _playerHub.GetComponent<PlayerStorage>();
-		_playerMovement = _playerHub.GetComponent<PlayerMovement>();
-		_playerCamScript = Camera.main.GetComponent<PlayerCamScript>();
+        IEnumerator Start0()
+		{
+			while (S.SaveManager == null)
+			{
+				yield return new WaitForSeconds(0.1f);
+				Debug.Log("AllFather waiting for S.SaveManager");
+			}
+
+            S.SaveManager.ReinitCurrentSave();
+
+            _spots = new List<GameObject>();
+        }
 
 		StartCoroutine(FirstSave(7f));
 
 		IEnumerator FirstSave(float delay)
 		{
 			yield return new WaitForSeconds(delay);
-			SaveTheSave();
+			while (S.SaveManager == null)
+				yield return new WaitForSeconds(0.1f);
+
+			S.SaveManager.SaveCurrentToLast();
 		}
 	}
 
-	IEnumerator Logger(float delay)
+	IEnumerator LoggerOfTheSave()
 	{
-		while (true)
+		float delay = 10f;
+		while (S.SaveManager == null)
+			yield return new WaitForSeconds(0.1f);
+
+
+        while (true)
 		{
 			yield return new WaitForSeconds(delay);
 			string save = "=========================";
-			foreach (var kvp in _theSave)
-				save += "\r\n" + kvp.Key + " : " + kvp.Value;
+			save += "\r\n" + S.SaveManager.CurrentSave.ToString();
 			save += "\r\n=======================";
 			Debug.Log(save);
 		}
 	}
 
-	public Dictionary<string, Save> DeepCopyDictionary(Dictionary<string, Save> original)
+	public Dictionary<string, OldSave> DeepCopyDictionary(Dictionary<string, OldSave> original)
 	{
-		Dictionary<string, Save> copy = new Dictionary<string, Save>();
+		Dictionary<string, OldSave> copy = new Dictionary<string, OldSave>();
 
 		foreach (var entry in original)
 		{
 			string key = entry.Key;
-			Save originalValue = entry.Value;
+			OldSave originalValue = entry.Value;
 
 			string json = JsonUtility.ToJson(originalValue);
 
-			Save copyValue = JsonUtility.FromJson<Save>(json);
+			OldSave copyValue = JsonUtility.FromJson<OldSave>(json);
 
 			copy.Add(key, copyValue);
 		}
 
 		return copy;
-	}
-
-	public void SaveTheSave()
-	{
-		Save("playerXRot", new Save(_playerCamScript.xRotation));
-		Save("playerXRot", new Save(_playerCamScript.yRotation));
-		Save("playerPosition", new Save(_playerHub.transform.position));
-		Save s = new Save();
-		s._scene = _playerStorage._currentSceneName;
-		Save("sceneName", s);
-
-		_inventory.SaveTheSave();
-		_theSaveOfTheSave = DeepCopyDictionary(_theSave);
-	}
-
-	public void LoadTheSave()
-	{
-		_theSave = DeepCopyDictionary(_theSaveOfTheSave);
-
-		_playerHub.transform.position = Load("playerPosition")._position;
-		_playerStorage._health = Load("health")._value;
-		_playerStorage._currentSceneName = Load("sceneName")._name;
-
-		for (int i = 0; i < SceneManager.sceneCount; i++)
-		{
-			Scene scene0 = SceneManager.GetSceneAt(i);
-
-			if (scene0.name != "Start")
-				SceneManager.UnloadSceneAsync(scene0);
-		}
-
-		LoadSavedScenes();
-	}
-
-	private void LoadSavedScenes()
-	{
-		Thread mt = new Thread(MT);
-		mt.Start();
-
-		void MT()
-		{
-			_inventory.LoadTheSave();
-
-			string currentScene = Load("sceneName")._scene;
-			var map = S.Loader._map[currentScene];
-			map.Add(currentScene);
-
-			foreach (string sceneName in map)
-			{
-				SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-				S.Loader._scenesToLoad.Add(sceneName);
-			}
-
-			while (!SceneManager.GetSceneByName(currentScene).isLoaded)
-				Thread.Sleep(200);
-			while (!S.Loader._scenesToLoad.Contains(currentScene))
-				Thread.Sleep(200);
-			_playerHub.transform.position = Load("playerPosition")._position;
-			_playerCamScript.StaticRotate(Load("playerXRot")._value, Load("playerYRot")._value);
-
-			Debug.Log("SAVE LOADED!!!");
-		}
-	}
-
-	public void Save(string key, Save save)
-	{
-		if (_theSave.ContainsKey(key))
-			_theSave[key] = save;
-		else
-			_theSave.Add(key, save);
-	}
-
-	public Save Load(string key)
-	{
-		if (_theSave.ContainsKey(key))
-			return _theSave[key];
-		else
-			return new Save();
-	}
-
-	public void Destroy(string id)
-	{
-		_theSave.Remove(id);
-	}
-
-	public bool Contains(string key)
-	{
-		return _theSave.ContainsKey(key);
 	}
 
 	public EnemyParams GetEnemyParams(string name)

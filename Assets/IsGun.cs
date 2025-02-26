@@ -14,8 +14,21 @@ public class IsGun : MonoBehaviour
 
     void Start()
     {
-        _root = S.AllFather.transform;
-        _ray.transform.SetParent(_root);
+        StartCoroutine(Start0());
+
+        IEnumerator Start0()
+        {
+            S.IsGun = this;
+
+            while (S.AllFather == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("IsGun waiting for S.AllFater");
+            }
+
+            _root = S.AllFather.transform;
+            _ray.transform.SetParent(_root);
+        }
     }
 
     public void Fire()
@@ -35,7 +48,7 @@ public class IsGun : MonoBehaviour
                 NoSpots noSpots = hit.collider.gameObject.GetComponent<NoSpots>();
                 if (noSpots == null)
                 {
-                    GameObject spot = Instantiate(S.AllFather._spot);
+                    GameObject spot = Instantiate(S.Spot);
                     spot.transform.position = hit.point;
                     spot.transform.rotation = Quaternion.LookRotation(hit.normal);
                     spot.transform.Rotate(0f, 0f, UnityEngine.Random.Range(-180, 180));
@@ -114,7 +127,7 @@ public class IsGun : MonoBehaviour
 
                 for (int i = 0; i < _sparklesCount; i++)
                 {
-                    GameObject sparkle = Instantiate(S.AllFather._sparkle);
+                    GameObject sparkle = Instantiate(S.Sparkle);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
                     sparkle.GetComponent<IsSparkle>()._active = true;

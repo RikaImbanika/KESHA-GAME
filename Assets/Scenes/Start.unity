@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -907,6 +906,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -965,10 +965,9 @@ MonoBehaviour:
   smallInventoryPanel: {fileID: 1388985354}
   opened: 0
   selectedId: 0
-  "\u043C\u0430\u043B\u0435\u043D\u044C\u043A\u0438\u0439\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0439\u0410\u0439\u0414\u0438": 0
+  selId: 0
   ultraSelectedId: 0
   items: []
-  itemsSave: []
   panels:
   - {fileID: 76323782}
   - {fileID: 1813044206}
@@ -1038,7 +1037,6 @@ MonoBehaviour:
   lastKeyTime: 0
   state: 
   fps: 0
-  fpsLabel: {fileID: 1280931069}
   allFather: {fileID: 0}
   throwPanel: {fileID: 365478077}
   throwPanelBlack: {fileID: 927941775}
@@ -1049,12 +1047,9 @@ MonoBehaviour:
   showingOverlay: {fileID: 1922553750}
   showingText: {fileID: 773444493}
   showingStartTime: 0
-  _audioManager: {fileID: 1987671375}
   _negated: 0
   _playerObject: {fileID: 302432930}
   _marketOpened: 0
-  _cucumberShowed: 0
-  _gunShowed: 0
   _somethingClicked: 0
   _trader: {fileID: 0}
   _playerStorage: {fileID: 1980044000}
@@ -5264,7 +5259,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 544288600}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.6, y: -165.2, z: -18.4}
+  m_LocalPosition: {x: -20.4, y: -166.91, z: -33.5}
   m_LocalScale: {x: 5.3398, y: 5.3398, z: 5.3398}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8537,6 +8532,8 @@ GameObject:
   - component: {fileID: 895244274}
   - component: {fileID: 895244280}
   - component: {fileID: 895244281}
+  - component: {fileID: 895244282}
+  - component: {fileID: 895244283}
   m_Layer: 0
   m_Name: AllFather
   m_TagString: AllFather
@@ -8578,7 +8575,6 @@ MonoBehaviour:
   _camera: {fileID: 963194227}
   _inventory: {fileID: 93810935}
   _audioManager: {fileID: 1987671375}
-  _playerObject: {fileID: 302432930}
   _enemyBulletSparklesCount: 20
 --- !u!135 &895244276
 SphereCollider:
@@ -8651,8 +8647,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 895244273}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.67, y: -162.87, z: -17.54}
-  m_LocalScale: {x: 2.0695, y: 2.0695, z: 2.0695}
+  m_LocalPosition: {x: 8.32, y: -163.9, z: -36.21}
+  m_LocalScale: {x: 5.343863, y: 5.343863, z: 5.343863}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -8686,6 +8682,32 @@ MonoBehaviour:
   _sparklesCount: 50
   _rayRight: 0
   _rayDown: 0
+--- !u!114 &895244282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895244273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d946faaa6d130b64ea11aa2d630d2bf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &895244283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895244273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5233f19e0b9ae944e98e808132559a04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _savesDirectory: 
+  _lastSave: {fileID: 0}
 --- !u!1 &916329583
 GameObject:
   m_ObjectHideFlags: 0
@@ -11321,7 +11343,7 @@ GameObject:
   - component: {fileID: 1270740490}
   m_Layer: 0
   m_Name: Sparkle
-  m_TagString: Untagged
+  m_TagString: Sparkle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11411,7 +11433,7 @@ GameObject:
   - component: {fileID: 1280931071}
   m_Layer: 5
   m_Name: FPS
-  m_TagString: Untagged
+  m_TagString: FPS
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13088,6 +13110,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: eb45a1ca90a589f49bf69b2550f120e9, type: 3}
       propertyPath: m_Name
       value: TheSpot
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: eb45a1ca90a589f49bf69b2550f120e9, type: 3}
+      propertyPath: m_TagString
+      value: Spot
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb45a1ca90a589f49bf69b2550f120e9, type: 3}
@@ -15492,7 +15518,7 @@ GameObject:
   - component: {fileID: 1912214098}
   m_Layer: 0
   m_Name: TheRedSparkle
-  m_TagString: Untagged
+  m_TagString: RedSparkle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

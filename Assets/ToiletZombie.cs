@@ -49,7 +49,7 @@ public class ToiletZombie : MonoBehaviour
                     AudioSource shot = Instantiate(_allFather._shot);
                     shot.transform.position = transform.position;
                     shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-                    float distance = (transform.position - _allFather._camera.transform.position).magnitude;
+                    float distance = (transform.position - S.Camera.transform.position).magnitude;
                     shot.volume = MathF.Min(0.5f, 60 / (distance * distance));
                     shot.Play();
                     Destroy(shot, 5);

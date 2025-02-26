@@ -10,10 +10,10 @@ public class FirstZombie : MonoBehaviour
     {
         _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
 
-        if (!_allFather.Load("greenKeyTaken")._bool)
+        if (!(S.SM.LoadBool("greenKeyTaken") ?? false))
             Destroy(this.gameObject);
 
-        if (_allFather.Load("gunWasBuyed")._bool && _allFather.Load("ammoWasBuyed")._bool)
+        if ((S.SM.LoadBool("gunWasBuyed") ?? false) && (S.SM.LoadBool("ammoWasBuyed") ?? false))
             Destroy(this.gameObject);
     }
 }

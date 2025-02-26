@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading;
+using System;
 
 public class Loader : MonoBehaviour
 {
     public Dictionary<string, List<string>> _map;
-    public List<string> _scenesToLoad;
+    private List<string> _scenesToLoad;
+    private bool _workingOnIt;
 
     public void Start()
     {
+        _scenesToLoad = new List<string>();
         WaitLoad();
-        AddictiveLoadAsync();
     }
 
     void WaitLoad()
@@ -21,9 +23,13 @@ public class Loader : MonoBehaviour
         
         IEnumerator MT()
         {
-            yield return new WaitForSeconds(1);
+            S.Loader = this;
 
-            _scenesToLoad = new List<string>();
+            while (S.AllFather == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Loader waiting for S.AllFater");
+            }
 
             InitMap();
 
@@ -43,11 +49,27 @@ public class Loader : MonoBehaviour
 
             playerHub.transform.position = new Vector3(6.08f, -13.18f, -852.67f) + v;
 
+            while (S.PS == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Loader waiting for S.PlayerStorage");
+            }
+
+            while (S.PS == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Loader waiting for S.PlayerStorage");
+            }
+
             S.PS._currentSceneName = "Income";
 
-            Save s = new Save();
-            s._scene = "Income";
-            S.AllFather.Save("sceneName", s);
+            while (S.SM == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Loader waiting for S.SaverManager");
+            }
+
+            S.SM.Save("sceneName", "Income");
 
             yield return null;
         }
@@ -142,6 +164,22 @@ public class Loader : MonoBehaviour
         AddValue("BR 4R", "BR 7"); //14
     }
 
+    public void Update()
+    {
+        if (_scenesToLoad.Count > 0)
+            AddictiveLoadAsync();
+    }
+
+    public void PleaseLoadScene(string sceneName)
+    {
+        if (!_scenesToLoad.Contains(sceneName))
+            _scenesToLoad.Add(sceneName);
+        else
+        {
+            Debug.LogError($"Scene {sceneName} already in queue");
+        }
+    }
+
     public void AddValue(string key, string value)
     {
         if (!_map.ContainsKey(key))
@@ -152,39 +190,83 @@ public class Loader : MonoBehaviour
 
     private void AddictiveLoadAsync()
     {
-        StartCoroutine(ALA());
+        if (!_workingOnIt)
+        {
+            _workingOnIt = true;
+            StartCoroutine(ALA());
+        }
 
         IEnumerator ALA()
         {
-            while (_scenesToLoad.Count > 0)
+            string scene = _scenesToLoad[0];
+
+            while (S.AllFather == null)
             {
-                string scene = _scenesToLoad[0];
-
-                while (!S.AllFather.SceneCurrentlyLoaded(scene))
-                    yield return new WaitForSeconds(0.05f);
-
-                Scene targetScene = SceneManager.GetSceneByName(scene);
-                SceneManager.SetActiveScene(targetScene);
-
-                List<string> ids = S.AllFather.Load(scene)._strings;
-                if (ids != null)
-                    for (int i = 0; i < ids.Count; i++)
-                    {
-                        Save s = S.AllFather.Load(ids[i]);
-                        if (s._unnatural)
-                        {
-                            GameObject prefab = Prefabs.Get(s._name);
-                            GameObject obj = Instantiate(prefab, s._position, s._rotation);
-                            ItemP itemP = obj.GetComponent<ItemP>();
-                            itemP._unnatural = s._unnatural;
-                        }
-                    }
-
-                _scenesToLoad.RemoveAt(0);
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Loader waiting for S.AllFater");
             }
 
-            Scene tScene = SceneManager.GetSceneByName(S.AllFather.Load("sceneName")._scene);
-            SceneManager.SetActiveScene(tScene);
+            while (!S.AllFather.SceneCurrentlyLoaded(scene))
+                yield return new WaitForSeconds(0.05f);
+
+            try
+            {
+                Scene targetScene = SceneManager.GetSceneByName(scene);
+                SceneManager.SetActiveScene(targetScene);
+                S.SM.Save("sceneName", scene);
+            }
+            catch
+            {
+                Debug.LogError($"Can't select scene {scene}");
+            }
+
+            List<string> ids = S.SM.LoadListString(S.ID(scene, "ids"));
+            if (ids != null)
+                for (int i = 0; i < ids.Count; i++)
+                {
+                    if (S.SM.LoadBool(S.ID(ids[i], "unnatural")) ?? false)
+                    {
+                        string name = S.SM.LoadString(S.ID(ids[i], "name"));
+                        try
+                        {
+
+                            GameObject prefab = Prefabs.Get(name);
+                            GameObject obj = Instantiate(prefab, S.SM.LoadVector3(S.ID(ids[i], "position")) ?? Vector3.zero, S.SM.LoadQuaternion(S.ID(ids[i], "rotation")) ?? Quaternion.identity);
+                            ItemP itemP = obj.GetComponent<ItemP>();
+                            itemP._unnatural = true;
+                        }
+                        catch (NullReferenceException ex)
+                        {
+                            Debug.LogError($"NULL IS HERE! ({name})");
+                        }
+                    }
+                }
+
+            _scenesToLoad.RemoveAt(0);
+
+            while (S.SM == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Loader waiting for S.SaverManager");
+            }
+
+            string scene0 = S.SM.LoadString("sceneName");
+            try
+            {
+                Scene tScene = SceneManager.GetSceneByName(scene0);
+                SceneManager.SetActiveScene(tScene);
+            }
+            catch
+            {
+                Debug.Log($"Wrong scene name: \"{scene0}\"");
+            }
+
+            _workingOnIt = false;
         }
+    }
+
+    public bool LoadedScene(string sceneName)
+    {
+        return !_scenesToLoad.Contains(sceneName);
     }
 }

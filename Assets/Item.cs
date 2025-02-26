@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine;
-using Newtonsoft.Json;
 using Unity.VisualScripting;
 
 public class Item : MonoBehaviour
@@ -14,21 +13,14 @@ public class Item : MonoBehaviour
 
     public void Load(string id)
     {
-        if (S.AllFather.Contains(id))
-        {
-            Save s = new Save();
-            s = S.AllFather.Load(id);
-            _name = s._name;
-            _count = s._count;
-        }
+        _name = S.SM.LoadString(S.ID(id, "name"));
+        _count = S.SM.LoadInt(S.ID(id, "count")) ?? 0;
     }
 
     public void Save(string id)
     {
-        Save s = new Save();
-        s._name = _name;
-        s._count = _count;
-        S.AllFather.Save(id, s);
+        S.SM.Save(S.ID(id, "name"), _name);
+        S.SM.Save(S.ID(id, "count"), _count);
     }
 
     public void Throw(Vector3 position, Vector3 direction, float power, Vector3 playerVelocity, Quaternion rotation)

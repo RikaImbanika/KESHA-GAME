@@ -37,6 +37,11 @@ public class AudioManager : MonoBehaviour
 
 	public bool muted;
 
+	public void Start()
+	{
+		S.AudioManager = this;
+	}
+
 	public void Play(string name)
 	{
 		Play(name, 1);

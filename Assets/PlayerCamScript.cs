@@ -19,6 +19,7 @@ public class PlayerCamScript : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        S.PlayerCamScript = this;
     }
 
     void Update()

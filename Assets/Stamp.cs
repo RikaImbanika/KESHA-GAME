@@ -5,48 +5,31 @@ using UnityEngine;
 public class Stamp : MonoBehaviour
 {
 	public Door _door;
-	AllFather _allFather;
 	string _id;
 
-	public void Start()
-	{
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
+    public void Start()
+    {
         _id = "" + transform.position.x + transform.position.y + transform.position.z;
 
-        Save s = new Save();
+        OldSave s = new OldSave();
 
-        if (_allFather.Contains(_id))
+        bool destroyed = S.SM.LoadBool(S.ID(_id, "destroyed")) ?? false;
+        _door._locked = !destroyed;
+
+        if (destroyed)
         {
-            s = _allFather.Load(_id);
+            Destroy(gameObject);
 
-            _door._locked = s._locked;
-
-            if (s._destroyed)
-            {
-                Destroy(gameObject);
-
-                Debug.Log($"Opened. id = {_id}");
-            }
-            else
-                Debug.Log($"Not Opened. id = {_id}");
+            Debug.Log($"Stamp Opened. id = {_id}");
         }
         else
-            Debug.Log($"Not Opened. id = {_id}");
+            Debug.Log($"Stamp Not Opened. id = {_id}");
     }
 
 	public void Unlock()
 	{
-        Save s = new Save();
-        if (_allFather.Contains(_id))
-            s = _allFather.Load(_id);
-
-        s._locked = false;
-        s._destroyed = true;
-
-        Debug.Log($"Saved. id = {_id}");
-
-        _allFather.Save(_id, s);
-
+        S.SM.Save(S.ID(_id, "destroyed"), true);
+        Debug.Log($"Unlocked and saved. id = {_id}");
         _door.Unlock();
     }
 }

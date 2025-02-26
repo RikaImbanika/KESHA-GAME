@@ -31,9 +31,9 @@ public class TradeClick : MonoBehaviour, IPointerClickHandler
             _audioManager.Play("money", 1);
 
             if (_trade._buyedItemName == "Gun")
-                _allFather.Save("gunWasBuyed", new Save(true));
+                S.SM.Save("gunWasBuyed", true);
             if (_trade._buyedItemName == "Ammo")
-                _allFather.Save("ammoWasBuyed", new Save(true));
+                S.SM.Save("ammoWasBuyed", true);
         }
         else
             _audioManager.Play("notEnoughCash", 1);

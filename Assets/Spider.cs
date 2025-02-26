@@ -68,7 +68,7 @@ public class Spider : MonoBehaviour
         _ray = GameObject.Find("TheRedRay");
 
         
-        _sparkle = _allFather._redSparkle;
+        _sparkle = S.RedSparkle;
 
         _laserCooldown = 0.3f;
         _fireCooldown = 0.7f;
@@ -93,12 +93,13 @@ public class Spider : MonoBehaviour
             _directions[i] = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-0.2f, 0.2f), UnityEngine.Random.Range(-1f, 1f));
         }
 
-        if (_allFather.Contains(_key))
+        var loadPos = S.SM.LoadVector3(S.ID(_key, "position"));
+
+        if (loadPos.HasValue)
         {
-            Save s = _allFather.Load(_key) as Save;
-            transform.position = s._position;
-            transform.rotation = s._rotation;
-            _health = s._health;
+            transform.position = loadPos ?? transform.position;
+            transform.rotation = S.SM.LoadQuaternion(S.ID(_key, "rotation")) ?? transform.rotation;
+            _health = S.SM.LoadFloat(S.ID(_key, "health")) ?? _health;
 
             if (_health <= 0)
             {
@@ -112,11 +113,9 @@ public class Spider : MonoBehaviour
 
     void SavingMethod()
     {
-        Save es = new Save();
-        es._position = transform.position;
-        es._rotation = transform.rotation;
-        es._health = _health;
-        _allFather.Save(_key, es);
+        S.SM.Save(S.ID(_key, "position"), transform.position);
+        S.SM.Save(S.ID(_key, "rotation"), transform.rotation);
+        S.SM.Save(S.ID(_key, "health"), _health);
     }
 
     public void Damage(float amount)
@@ -286,7 +285,7 @@ public class Spider : MonoBehaviour
             AudioSource shot = Instantiate(_allFather._shot);
             shot.transform.position = transform.position;
             shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-            float distance = (transform.position - _allFather._camera.transform.position).magnitude;
+            float distance = (transform.position - S.Camera.transform.position).magnitude;
             shot.volume = MathF.Min(0.5f, 60 / (distance * distance));
             shot.Play();
             Destroy(shot, 5);

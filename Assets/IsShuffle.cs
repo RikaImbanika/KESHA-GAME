@@ -5,6 +5,7 @@ using System;
 
 public class IsShuffle : MonoBehaviour
 {
+	public bool _opened;
 	public float _maxMove;
 	public string _audioName;
 	public bool _locked;
@@ -21,41 +22,41 @@ public class IsShuffle : MonoBehaviour
 
 	private void Start()
 	{
-		if (_speed == 0)
-			_speed = 1;
-		_speed *= 0.05f;
+        StartCoroutine(Start0());
 
-		direction = 0f;
-		zp = transform.position;
-
-		_id = "" + transform.position.x + transform.position.y + transform.position.z;
-
-		if (S.AllFather.Contains(_id))
+        IEnumerator Start0()
 		{
-			Save s = S.AllFather.Load(_id);
+			if (_speed == 0)
+				_speed = 1;
+			_speed *= 0.05f;
 
-			if (s._opened)
+			direction = 0f;
+			zp = transform.position;
+
+			_id = "" + transform.position.x + transform.position.y + transform.position.z;
+
+			while (S.SM == null)
+			{
+				yield return new WaitForSeconds(0.1f);
+                Debug.Log("IsShuffle waiting for S.SaveManager");
+            }
+
+			bool opened = S.SM.LoadBool(S.ID(_id, "opened")) ?? _opened;
+			_locked = S.SM.LoadBool(S.ID(_id, "locked")) ?? _locked;
+
+			if (opened)
 			{
 				cp = _maxMove;
 				transform.position = zp + _3dDirection * _maxMove;
 			}
-
-			_locked = s._locked;
 		}
 	}
 
 	public void ToggleLock(bool locked)
 	{
-		Save s = new Save();
-
-		if (S.AllFather.Contains(_id))
-			s = S.AllFather.Load(_id);
-
 		_locked = locked;
-		s._locked = locked;
-
-		S.AllFather.Save(_id, s);
-	}
+        S.SM.Save(S.ID(_id, "locked"), locked);
+    }
 
 	public void Move()
 	{
@@ -79,14 +80,8 @@ public class IsShuffle : MonoBehaviour
 				opened = false;
 			}
 
-			Save s = new Save();
-			if (S.AllFather.Contains(_id))
-				s = S.AllFather.Load(_id);
-
-			s._opened = opened;
-
-			S.AllFather.Save(_id, s);
-		}
+            S.SM.Save(S.ID(_id, "opened"), opened);
+        }
 		else
 			S.AudioManager.Play("notEnoughCash", 1);
 	}
@@ -95,14 +90,8 @@ public class IsShuffle : MonoBehaviour
 	{
 		direction = -_speed;
 
-		Save s = new Save();
-		if (S.AllFather.Contains(_id))
-			s = S.AllFather.Load(_id);
-
-		s._opened = false;
-
-		S.AllFather.Save(_id, s);
-	}
+        S.SM.Save(S.ID(_id, "opened"), false);
+    }
 
 	public bool Closed
 	{

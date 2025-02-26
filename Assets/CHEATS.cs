@@ -6,33 +6,45 @@ using UnityEngine.SceneManagement;
 public class CHEATS : MonoBehaviour
 {
     bool _cheats;
-    List<string> _cheated;
     GameObject _e;
     GameObject _d;
     public float _message;
 
     public void Remember(string sceneName)
     {
-        _cheated.Add(sceneName);
+        S.SaveManager.CurrentSave.SaveBool($"CHEATED {sceneName}", true);
     }
 
     public bool IsCheated(string sceneName)
     {
-        return _cheated.Contains(sceneName);
+        return S.SaveManager.CurrentSave.LoadBool($"CHEATED {sceneName}") ?? false;
     }
 
     void Start()
     {
-        _cheated = new List<string>();
-        Transform canvasTransform = S.Canvas.transform; // Получите Transform Canvas
-        Transform e = canvasTransform.Find("Cheats enabled");
-        _e = e.gameObject;
-        Transform d = canvasTransform.Find("Cheats disabled");
-        _d = d.gameObject;
+        StartCoroutine(Start0());
+
+        IEnumerator Start0()
+        {
+            while (S.Canvas == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("CHEATS waiting for S.Canvas");
+            }
+
+            Transform canvasTransform = S.Canvas.transform;
+            Transform e = canvasTransform.Find("Cheats enabled");
+            _e = e.gameObject;
+            Transform d = canvasTransform.Find("Cheats disabled");
+            _d = d.gameObject;
+        }
     }
 
     void Update()
     {
+        if (S.SaveManager == null)
+            return;
+
         if (Input.GetKey(KeyCode.Y))
             transform.position += new Vector3(0, 8, 0);
 
@@ -43,6 +55,8 @@ public class CHEATS : MonoBehaviour
 			_e.SetActive(_cheats);
 			_message = 1f;
 		}
+
+        S.SaveManager.CurrentSave.SaveBool("CHEATS", _cheats);
 
 		if (_cheats)
         {
@@ -66,20 +80,6 @@ public class CHEATS : MonoBehaviour
                 _d.SetActive(false);
             }
         }
-    }
-
-    void Save()
-    {
-        for (int i = 0; i < _cheated.Count; i++)
-        {
-            Save s = new Save();
-            s._cheated = true;
-            S.AllFather.Save(_cheated[i], s);
-        }
-    }
-
-    void Load()
-    {
     }
 
     IEnumerator CorridorCheat()

@@ -38,12 +38,12 @@ public class EnemyBullet : MonoBehaviour
                     AudioSource caboom = Instantiate(_allFather._caboom);
                     caboom.transform.position = gameObject.transform.position;
                     caboom.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-                    float distance = (transform.position - _allFather._camera.transform.position).magnitude;
+                    float distance = (transform.position - S.Camera.transform.position).magnitude;
                     caboom.volume = MathF.Min(0.5f, 60 / (distance * distance));
                     caboom.Play();
                     Destroy(caboom, 5);
 
-                    GameObject spot = Instantiate(_allFather._spot);
+                    GameObject spot = Instantiate(S.Spot);
                     spot.transform.position = hit.point;
                     spot.transform.rotation = Quaternion.LookRotation(hit.normal);
                     spot.transform.Rotate(0f, 0f, UnityEngine.Random.Range(-180, 180));
@@ -60,7 +60,7 @@ public class EnemyBullet : MonoBehaviour
 
                 for (int i = 0; i < _allFather._enemyBulletSparklesCount; i++)
                 {
-                    GameObject sparkle = Instantiate(_allFather._redSparkle);
+                    GameObject sparkle = Instantiate(S.RedSparkle);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
                     sparkle.GetComponent<IsSparkle>()._active = true;

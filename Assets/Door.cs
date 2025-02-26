@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading;
+using System;
 
 public class Door : MonoBehaviour
 {
@@ -34,24 +35,34 @@ public class Door : MonoBehaviour
 			{
 				S.AudioManager.Play(audioName, 0);
 
-				string sceneName = S.AllFather.Load("sceneName")._scene;
-				List<string> loadScenesNames = S.Loader._map[nextSceneName];
+				string sceneName = S.SM.LoadString("sceneName");
+				List<string> loadScenesNames = new List<string>();
+				loadScenesNames.AddRange(S.Loader._map[nextSceneName]);
 				loadScenesNames.Add(nextSceneName);
-				List<string> unloadScenesNames = S.Loader._map[sceneName];
+
+				List<string> unloadScenesNames = new List<string>();
+				unloadScenesNames.AddRange(S.Loader._map[sceneName]);
 				unloadScenesNames.Add(sceneName);
 
 				foreach (string name in loadScenesNames)
 					if (!unloadScenesNames.Contains(name))
 					{
 						SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
-						S.Loader._scenesToLoad.Add(name);
+						S.Loader.PleaseLoadScene(name);
 					}
 
 				foreach (string name in unloadScenesNames)
 					if (!loadScenesNames.Contains(name))
-						SceneManager.UnloadSceneAsync(name);
+						try
+						{
+							SceneManager.UnloadSceneAsync(name);
+						}
+						catch (System.Exception ex)
+						{
+							Debug.LogError($"Error unloading scene {name}: {ex.Message}");
+						}
 
-				StartCoroutine(WaitLoad(playerObject));
+                StartCoroutine(WaitLoad(playerObject));
 			}
 			else
 			{
@@ -69,7 +80,7 @@ public class Door : MonoBehaviour
 
 				for (int i = 0; i < _sparklesCount; i++)
 				{
-					GameObject sparkle = Instantiate(S.AllFather._sparkle);
+					GameObject sparkle = Instantiate(S.Sparkle);
 					sparkle.transform.position = transform.position;
 					sparkle.transform.rotation = Quaternion.LookRotation(direction);
 					sparkle.transform.localScale *= 4f;
@@ -91,9 +102,9 @@ public class Door : MonoBehaviour
 		{
 			_stampAnimationTimeLeft -= Time.deltaTime;
 
-			float randomX = Random.Range(0f, 360f);
-			float randomY = Random.Range(0f, 360f);
-			float randomZ = Random.Range(0f, 360f);
+			float randomX = UnityEngine.Random.Range(0f, 360f);
+			float randomY = UnityEngine.Random.Range(0f, 360f);
+			float randomZ = UnityEngine.Random.Range(0f, 360f);
 
 			_stamp.transform.rotation = Quaternion.Euler(randomX, randomY, randomZ);
 
@@ -109,24 +120,16 @@ public class Door : MonoBehaviour
 		while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
 			yield return new WaitForSeconds(0.2f);
 
-		GameObject playerHub = playerObject.transform.parent.gameObject;
-		PlayerMovement pm = playerHub.GetComponent<PlayerMovement>();
+		PlayerMovement pm = S.Ph.GetComponent<PlayerMovement>();
 
 		Vector3 v = new Vector3(0, 0, 0);
 		if (pm.isCrouching)
 			v = new Vector3(0, -2.2f, 0);
 
-		playerHub.transform.position = position + v;
-		PlayerCamScript pcs = Camera.main.GetComponent<PlayerCamScript>();
-		pcs.Rotate(_rotation);
+		S.Ph.transform.position = position + v;
+		S.PlayerCamScript.Rotate(_rotation);
 
-		PlayerStorage ps = playerHub.GetComponent<PlayerStorage>();
-		ps._currentSceneName = nextSceneName;
-
-		Save s = new Save();
-		s._scene = nextSceneName;
-		S.AllFather.Save("sceneName", s);
-
-		yield return null;
+		S.PS._currentSceneName = nextSceneName;
+		S.SaveManager.CurrentSave.SaveString("sceneName", S.PS._currentSceneName);
 	}
 }

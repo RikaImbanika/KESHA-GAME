@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Text;
 
 [System.Serializable]
-public class Save
+public class OldSave
 {
     public string _name;
     public Vector3 _position;
@@ -85,21 +85,21 @@ public class Save
         return sb.ToString();
     }
 
-    public Save()
+    public OldSave()
     {
     }
 
-    public Save(bool value)
+    public OldSave(bool value)
     {
         _bool = value;
     }
 
-    public Save(float value)
+    public OldSave(float value)
     {
         _value = value;
     }
 
-    public Save(Vector3 value)
+    public OldSave(Vector3 value)
     {
         _position = value;
     }

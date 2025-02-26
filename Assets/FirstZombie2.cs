@@ -1,30 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.TextCore.Text;
 using UnityEngine;
 
 public class FirstZombie2 : MonoBehaviour
 {
-    AllFather _allFather;
     public Zombie _zombie;
     bool _summoned;
-    AudioManager _audioManager;
-    PlayerStorage _playerStorage;
     bool _inBattle;
 
     void Start()
     {
-        _playerStorage = GameObject.Find("Player").GetComponent<PlayerStorage>();
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-        GameObject go = GameObject.FindGameObjectWithTag("AudioManager");
-        _audioManager = go.GetComponent<AudioManager>();
-
         StartCoroutine(DelayCoroutine());
 
         IEnumerator DelayCoroutine()
         {
             yield return new WaitForSeconds(0.5f);
 
-            if (!_allFather.Load("gunWasBuyed")._bool || !_allFather.Load("ammoWasBuyed")._bool)
+            if (!(S.SM.LoadBool("gunWasBuyed") ?? false) || !(S.SM.LoadBool("ammoWasBuyed") ?? false))
             {
                 _zombie.gameObject.SetActive(false);
                 _zombie._active = false;
@@ -34,9 +27,9 @@ public class FirstZombie2 : MonoBehaviour
 
     void Update()
     {
-        if (_allFather.Load("gunWasBuyed")._bool && _allFather.Load("ammoWasBuyed")._bool)
+        if ((S.SM.LoadBool("gunWasBuyed") ?? false) && (S.SM.LoadBool("ammoWasBuyed") ?? false))
         {
-            if (_playerStorage._currentSceneName == "Hall" && !_zombie._dead)
+            if (S.PS._currentSceneName == "Hall" && !_zombie._dead)
                 StartBattle();
             else
                 StopBattle();
@@ -47,27 +40,27 @@ public class FirstZombie2 : MonoBehaviour
                 {
                     _inBattle = true;
 
-                    if (!_allFather.Load("firstZombieInHall")._bool)
+                    if (!(S.SM.LoadBool("firstZombieInHall") ?? false))
                         StartCoroutine(DelayCoroutine());
                     else
                     {
-                        _audioManager.PlayFirstZombieTheme();
+                        S.AudioManager.PlayFirstZombieTheme();
                         Spawn();
                     }
 
                     IEnumerator DelayCoroutine()
                     {
-                        _allFather.Save("firstZombieInHall", new Save(true));
+                        S.SM.Save("firstZombieInHall", true);
 
                         yield return new WaitForSeconds(2f);
 
-                        _audioManager.Play("Door");
+                        S.AudioManager.Play("Door");
                         if (!_zombie.gameObject.activeInHierarchy)
                             _zombie.gameObject.SetActive(true);
 
                         yield return new WaitForSeconds(0.3f);
 
-                        _audioManager.PlayFirstZombieTheme();
+                        S.AudioManager.PlayFirstZombieTheme();
                         Spawn();
                     }
 
@@ -102,7 +95,7 @@ public class FirstZombie2 : MonoBehaviour
                 if (_inBattle)
                 {
                     _inBattle = false;
-                    _audioManager.StopFirstZombieTheme();
+                    S.AudioManager.StopFirstZombieTheme();
                 }
             }
         }

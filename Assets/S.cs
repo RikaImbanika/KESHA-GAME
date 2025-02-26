@@ -1,14 +1,11 @@
+п»їusing System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public static class S : object
 {
-	//Тут все типа статические общедоступные штуки
-	//Объявить и заполнить один раз
-	//Обращаться через свойства
-	//Всё в одном месте
-
 	private static GameObject _allFatherObj;
 	private static AllFather _allFather;
 	private static Loader _loader;
@@ -22,30 +19,60 @@ public static class S : object
 	private static AudioManager _audioManager;
 	private static GameObject _negative;
 	private static IsGun _isGun;
+	private static SaveManager _saveManager;
+	private static PlayerCamScript _playerCamScript;
+	private static Camera _camera;
+    private static GameObject fpsObj;
+    private static TextMeshProUGUI fpsTMP;
+    private static GameObject _spot;
+    private static GameObject _sparkle;
+    private static GameObject _redSparkle;
 
-	public static void Init()
+	public static GameObject Sparkle
 	{
-		_allFatherObj = GameObject.FindGameObjectWithTag("AllFather");
-		_allFather = _allFatherObj.GetComponent<AllFather>();
-		_loader = _allFatherObj.GetComponent<Loader>();
-		_II = _allFatherObj.GetComponent<II>();
-		_pObj = GameObject.FindGameObjectWithTag("Player");
-		_canvasObj = GameObject.FindGameObjectWithTag("Canvas");
-		_canvas = _canvasObj.GetComponent<Canvas>();
-		_inventory = _canvasObj.GetComponent<Inventory>();
-		_ph = _pObj.transform.parent.gameObject;
-		_ps = _ph.GetComponent<PlayerStorage>();
-		GameObject go2 = GameObject.FindGameObjectWithTag("AudioManager");
-		_audioManager = go2.GetComponent<AudioManager>();
-		_negative = _inventory._negative;
-		_isGun = _allFatherObj.GetComponent<IsGun>(); //Вот так вот!
+		get
+		{
+			return _sparkle;
+		}
+		set
+		{
+			_sparkle = value;
+		}
 	}
 
-	public static AudioManager AudioManager
+	public static GameObject RedSparkle
+	{
+		get
+		{
+			return _redSparkle;
+		}
+		set
+		{
+			_redSparkle = value;
+		}
+	}
+
+	public static GameObject Spot
+	{
+		get
+		{
+			return _spot;
+		}
+		set
+		{
+			_spot = value;
+		}
+	}
+
+    public static AudioManager AudioManager
 	{
 		get
 		{
 			return _audioManager;
+		}
+		set
+		{
+			_audioManager = value;
 		}
 	}
 
@@ -55,6 +82,10 @@ public static class S : object
 		{
 			return _isGun;
 		}
+		set
+		{
+			_isGun = value;
+		}
 	}
 
 	public static GameObject Negative
@@ -63,69 +94,33 @@ public static class S : object
 		{
 			return _negative;
 		}
-	}
-
-	public static Canvas Canvas
-	{
-		get
+		set
 		{
-			return _canvas;
+			_negative = value;
 		}
 	}
 
-	public static Camera Camera
+	public static GameObject AllFatherObj
 	{
 		get
 		{
-			return Camera.main;
+			return _allFatherObj;
+		}
+		set
+		{
+			_allFatherObj = value;
 		}
 	}
 
-	public static Loader Loader
+	public static GameObject CanvasObj
 	{
 		get
 		{
-			return _loader;
+			return _canvasObj;
 		}
-	}
-
-	public static AllFather AllFather
-	{
-		get
+		set
 		{
-			return _allFather;
-		}
-	}
-
-	public static II II
-	{
-		get
-		{
-			return _II;
-		}
-	}
-
-	public static Inventory Inventory
-	{
-		get
-		{
-			return _inventory;
-		}
-	}
-
-	public static PlayerStorage PS
-	{
-		get
-		{
-			return _ps;
-		}
-	}
-
-	public static GameObject Ph
-	{
-		get
-		{
-			return _ph;
+			_canvasObj = value;
 		}
 	}
 
@@ -135,5 +130,182 @@ public static class S : object
 		{
 			return _pObj;
 		}
+		set
+		{
+			_pObj = value;
+		}
+	}
+
+	public static GameObject Ph
+	{
+		get
+		{
+			return _ph;
+		}
+		set
+		{
+			_ph = value;
+		}
+	}
+
+	public static PlayerStorage Ps
+	{
+		get
+		{
+			return _ps;
+		}
+		set
+		{
+			_ps = value;
+		}
+	}
+
+    public static PlayerStorage PS
+    {
+        get
+        {
+            return _ps;
+        }
+        set
+        {
+            _ps = value;
+        }
+    }
+
+    public static Canvas Canvas
+	{
+		get
+		{
+			return _canvas;
+		}
+		set
+		{
+			_canvas = value;
+		}
+	}
+
+	public static Loader Loader
+	{
+		get
+		{
+			return _loader;
+		}
+		set
+		{
+			_loader = value;
+		}
+	}
+
+	public static AllFather AllFather
+	{
+		get
+		{
+			return _allFather;
+		}
+		set
+		{
+			_allFather = value;
+		}
+	}
+
+	public static II II
+	{
+		get
+		{
+			return _II;
+		}
+		set
+		{
+			_II = value;
+		}
+	}
+
+	public static Inventory Inventory
+	{
+		get
+		{
+			return _inventory;
+		}
+		set
+		{
+			_inventory = value;
+		}
+	}
+
+	public static PlayerCamScript PlayerCamScript
+	{
+		get
+		{
+			return _playerCamScript;
+		}
+		set
+		{
+			_playerCamScript = value;
+		}
+	}
+
+	public static Camera Camera
+	{
+		get
+		{
+			return _camera;
+		}
+		set
+		{
+			_camera = value;
+		}
+	}
+
+	public static SaveManager SaveManager
+	{
+		get
+		{
+			return _saveManager;
+		}
+		set
+		{
+			_saveManager = value;
+		}
+	}
+
+    public static SaveManager SM
+    {
+        get
+        {
+            return _saveManager;
+        }
+        set
+        {
+            _saveManager = value;
+        }
+    }
+
+	public static TextMeshProUGUI FpsTMP
+	{
+		get
+		{
+			return fpsTMP;
+		}
+		set
+		{
+			fpsTMP = value;
+		}
+	}
+
+    public static GameObject FpsObj
+    {
+        get
+        {
+            return fpsObj;
+        }
+        set
+        {
+            fpsObj = value;
+        }
+    }
+
+    public static string ID(object id1, object id2)
+	{
+		return $"{id1.ToString()} {id2.ToString()}";
 	}
 }

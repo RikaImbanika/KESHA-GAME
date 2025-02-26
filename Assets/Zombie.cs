@@ -20,13 +20,9 @@ public class Zombie : MonoBehaviour
     Vector3 _startPosition;
     string _id;
 
-    AllFather _allFather;
-    GameObject _playerObject;
-    GameObject _playerHub;
-    PlayerStorage _ps;
     string _sceneName;
-    NavMeshAgent _agent;    
-    
+    NavMeshAgent _agent;
+
     public float _nextFireTime;
     GameObject _theBullet;
     public bool _followPlayer;
@@ -41,85 +37,85 @@ public class Zombie : MonoBehaviour
     float _liveTime;
 
     void Start()
-    {      
-        if (_health == 0)
-            _health = 100;
-        if (_fireCooldown == 0)
-            _fireCooldown = 1.3f;
-        if (_speed == 0)
-            _speed = 13f;
-        if (_heigh == 0)
-            _heigh = 4f;
-        if (_stopSpeed == 0)
-            _stopSpeed = 0.06f;
-        if (_animationSpeed == 0)
-            _animationSpeed = 13f;
+    {
+        StartCoroutine(Start0());
 
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-
-        _ep = _allFather.GetEnemyParams(_type);
-        //Debug.Log(_ep);
-
-        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-        _id = _sceneName + transform.position.x + transform.position.y + transform.position.z;
-        
-        _agent = GetComponent<NavMeshAgent>();
-        _agent.speed = _speed;
-
-        _ani = GetComponent<Animator>();
-
-        _collider = gameObject.GetComponent<Collider>();
-
-        _followPlayer = false;   
-
-        _playerObject = GameObject.FindGameObjectWithTag("Player");
-        _playerHub = _playerObject.transform.parent.gameObject;
-        PlayerMovement pm = _playerHub.GetComponent<PlayerMovement>();
-        _ps = _playerHub.GetComponent<PlayerStorage>();      
-
-        _theBullet = GameObject.Find("EnemyBullet");
-
-        _startPosition = transform.position;
-
-        if (_allFather.Contains(_id))
+        IEnumerator Start0()
         {
-            Save s = _allFather.Load(_id);
+            while (S.AllFather == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Zombie waiting for S.AllFather");
+            }
+
+            if (_health == 0)
+                _health = 100;
+            if (_fireCooldown == 0)
+                _fireCooldown = 1.3f;
+            if (_speed == 0)
+                _speed = 13f;
+            if (_heigh == 0)
+                _heigh = 4f;
+            if (_stopSpeed == 0)
+                _stopSpeed = 0.06f;
+            if (_animationSpeed == 0)
+                _animationSpeed = 13f;
+
+            _ep = S.AllFather.GetEnemyParams(_type);
+
+            _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+            _id = _sceneName + transform.position.x + transform.position.y + transform.position.z;
+
+            _agent = GetComponent<NavMeshAgent>();
+            _agent.speed = _speed;
+
+            _ani = GetComponent<Animator>();
+
+            _collider = gameObject.GetComponent<Collider>();
+
+            _followPlayer = false;
+
+            _theBullet = GameObject.Find("EnemyBullet"); ///////////////////
+
+            _startPosition = transform.position;
 
             gameObject.SetActive(false);
-            transform.position = s._position;
-            transform.rotation = s._rotation;
-            _health = s._health;
+
+            while (S.SM == null)
+                yield return new WaitForSeconds(0.1f);
+
+            transform.position = S.SM.LoadVector3(S.ID(_id, "position")) ?? transform.position;
+            transform.rotation = S.SM.LoadQuaternion(S.ID(_id, "rotation")) ?? transform.rotation;
+            _health = S.SM.LoadFloat(S.ID(_id, "health")) ?? _health;
             gameObject.SetActive(true);
 
             if (_health <= 0)
             {
                 _ani.SetFloat("deathSpeed", 100f);
                 Damage(1);
-            }            
-        }       
-
-        InvokeRepeating("SavingMethod", 0f, 5f);
-
-/*        StartCoroutine(DelayCoroutine());
-
-        IEnumerator DelayCoroutine()
-        {
-            yield return new WaitForSeconds(0.25f);
-
-            if (!_allFather._gunWasBuyed || !_allFather._ammoWasBuyed)
-            {
-                _active = true;
             }
-        }*/
+
+            InvokeRepeating("SavingMethod", 0f, 5f);
+
+            /*        StartCoroutine(DelayCoroutine());
+
+                    IEnumerator DelayCoroutine()
+                    {
+                        yield return new WaitForSeconds(0.25f);
+
+                        if (!_allFather._gunWasBuyed || !_allFather._ammoWasBuyed)
+                        {
+                            _active = true;
+                        }
+                    }*/
+        }
     }
 
     void SavingMethod()
     {
-        Save es = new Save();
-        es._position = transform.position;
-        es._rotation = transform.rotation;
-        es._health = _health;
-        _allFather.Save(_id, es);
+        S.SM.Save(S.ID(_id, "position"), transform.position);
+        S.SM.Save(S.ID(_id, "rotation"), transform.rotation);
+        S.SM.Save(S.ID(_id, "health"), _health);
     }
 
     public void Damage(float amount)
@@ -136,7 +132,7 @@ public class Zombie : MonoBehaviour
                 _ani.SetTrigger("TrDie");
                 _agent.speed = 0f;
                 _followPlayer = false;
-                _dead = true;                
+                _dead = true;
                 Destroy(_collider);
             }
         }
@@ -148,7 +144,7 @@ public class Zombie : MonoBehaviour
         {
             if (!_screamerStarted)
             {
-                if (_ps._currentSceneName == _sceneName)
+                if (S.PS._currentSceneName == _sceneName)
                 {
                     Vector3 from = transform.position + new Vector3(0, _heigh, 0);
                     Vector3 toPlayer = Camera.main.transform.position - from;
@@ -173,7 +169,7 @@ public class Zombie : MonoBehaviour
 
                     if (_followPlayer)
                     {
-                        _agent.destination = _playerHub.transform.position;
+                        _agent.destination = S.Ph.transform.position;
                         Screamer();
                     }
                 }
@@ -209,7 +205,7 @@ public class Zombie : MonoBehaviour
                     }
 
                     _ani.SetFloat("speed", _realSpeed * _animationSpeed);
-                }                
+                }
             }
             else
             {
@@ -251,15 +247,15 @@ public class Zombie : MonoBehaviour
 
             transform.position = Camera.main.transform.position;
             transform.rotation = Camera.main.transform.rotation;
-            
+
             transform.position += transform.right * _ep._screamerX;
             transform.position += transform.up * _ep._screamerY;
             transform.position += transform.forward * _ep._screamerZ;
-            transform.Rotate(0, 180, 0);            
+            transform.Rotate(0, 180, 0);
 
             int number = UnityEngine.Random.Range(0, _ep._screamerSounds.Length);
             string audio = _ep._screamerSounds[number];
-            _allFather._audioManager.Play(audio, 1);
+            S.AudioManager.Play(audio, 1);
 
             yield return new WaitForSeconds(0.7f);
 
@@ -287,10 +283,10 @@ public class Zombie : MonoBehaviour
         eb._speed = 30;
         Destroy(bullet, 15);
 
-        AudioSource shot = Instantiate(_allFather._shot);
-        shot.transform.position =transform.position;
+        AudioSource shot = Instantiate(S.AllFather._shot);
+        shot.transform.position = transform.position;
         shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-        float distance = (transform.position - _allFather._camera.transform.position).magnitude;
+        float distance = (transform.position - S.Camera.transform.position).magnitude;
         shot.volume = MathF.Min(0.5f, 60 / (distance * distance));
         shot.Play();
         Destroy(shot, 5);

@@ -7,29 +7,24 @@ public class Locker : MonoBehaviour
 	public IsDoor _door;
 	public string _correctKey;
 
-	private AudioManager _audioManager;
-	AllFather _allFather;
 	string _id;
-	Inventory _inventory;
 
 	public void Start()
 	{
-		_inventory = GameObject.Find("Canvas").GetComponent<Inventory>();
+        StartCoroutine(Start0());
 
-		if (_audioManager == null)
+        IEnumerator Start0()
 		{
-			GameObject go = GameObject.FindGameObjectWithTag("AudioManager");
-			_audioManager = go.GetComponent<AudioManager>();
-		}
+		
+			_id = "" + transform.position.x + transform.position.y + transform.position.z;
 
-		_allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-		_id = "" + transform.position.x + transform.position.y + transform.position.z;
+			while (S.SM == null)
+			{
+				yield return new WaitForSeconds(0.1f);
+                Debug.Log("Locker waiting for S.SaveManager");
+            }
 
-		if (_allFather.Contains(_id))
-		{
-			Save s = _allFather.Load(_id);
-
-			if (s._destroyed)
+			if (S.SM.LoadBool(S.ID(_id, "destroyed")) ?? false)
 				Destroy(gameObject);
 		}
 	}
@@ -43,24 +38,18 @@ public class Locker : MonoBehaviour
 	{
 		if (key == _correctKey)
 		{		
-			_inventory.Remove(key, 1);
+			S.Inventory.Remove(key, 1);
 
 			if (_door != null)
 				_door.ToggleLock(false);
 
-			Save s = new Save();
-			if (_allFather.Contains(_id))
-				s = _allFather.Load(_id);
+			S.SM.Save(S.ID(_id, "destroyed"), true);
 
-			s._destroyed = true;
-
-			_allFather.Save(_id, s);
-
-			_audioManager.Play("kill", 1);
+			S.AudioManager.Play("kill", 1);
 
 			Destroy(gameObject);
 		}
 		else
-			_audioManager.Play("notEnoughCash", 1);
+			S.AudioManager.Play("notEnoughCash", 1);
 	}
 }

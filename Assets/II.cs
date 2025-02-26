@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class II : MonoBehaviour
 {
+    //* Item Info
+
     Dictionary<string, ItemInfo> _base;
 
     public void Start()
     {
+        S.II = this;
+
         _base = new Dictionary<string, ItemInfo>();
 
         _base.Add("PurpleBall", new ItemInfo(

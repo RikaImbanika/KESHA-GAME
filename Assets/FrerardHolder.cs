@@ -43,7 +43,7 @@ public class FrerardHolder : MonoBehaviour
                 _placedItem = obj.GetComponent<ItemP>();
                 //_placedItem.transform.SetParent(_frerard.transform);
 
-                _allFather._audioManager.Play("kill", 0.7f);
+                S.AudioManager.Play("kill", 0.7f);
             }
             else if (_placedItem != null)
             {
@@ -55,7 +55,7 @@ public class FrerardHolder : MonoBehaviour
                 else
                     Rotate(_placedItem._obj);
 
-                _allFather._audioManager.Play("kill", 0.7f);
+                S.AudioManager.Play("kill", 0.7f);
             }
 
             if (_placedItem != null)

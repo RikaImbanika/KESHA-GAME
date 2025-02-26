@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class Inventory : MonoBehaviour
 {
@@ -14,11 +15,10 @@ public class Inventory : MonoBehaviour
 	public bool opened;
 
 	public int selectedId;
-	public int маленький¬ыбранныйјйƒи;
+	public int selId;
 	public int ultraSelectedId;
 
 	public Item[] items;
-	public Item[] itemsSave;
 
 	public GameObject[] panels;
 	public GameObject[] smallPanels;
@@ -53,8 +53,6 @@ public class Inventory : MonoBehaviour
 	public string state;
 
 	public float fps;
-	public GameObject fpsLabel;
-	private TextMeshProUGUI fpsT;
 
 	public GameObject allFather;
 
@@ -68,7 +66,6 @@ public class Inventory : MonoBehaviour
 	public GameObject showingOverlay;
 	public TextMeshProUGUI showingText;
 	public float showingStartTime;
-	public AudioManager _audioManager;
 	public float _negated;
 
 	public GameObject _playerObject;
@@ -76,9 +73,6 @@ public class Inventory : MonoBehaviour
 	Sprite _empty;
 
 	public bool _marketOpened;
-
-	public bool _cucumberShowed;
-	public bool _gunShowed;
 
 	public bool _somethingClicked;
 
@@ -89,39 +83,6 @@ public class Inventory : MonoBehaviour
 	public GameObject _circleCursor;
 
 	public GameObject _negative;
-
-	public void SaveTheSave()
-	{
-		if (itemsSave != null)
-			for (int i = 0; i < itemsSave.Length; i++)
-			{
-				if (itemsSave[i] == null)
-				{
-					Debug.Log($"Hey, sorry, here is one fucking null on {i} in item save.");
-					continue;
-				}
-				if (string.IsNullOrEmpty(itemsSave[i]._name))
-					itemsSave[i]._name = "";
-			}
-
-		itemsSave = new Item[36];
-		for (int i = 0; i < 36; i++)
-			if (!string.IsNullOrEmpty(items[i]._name))
-				itemsSave[i].CloneFrom(items[i]);
-	}
-
-	public void LoadTheSave()
-	{
-		for (int i = 0; i < 36; i++)
-		{
-			if (items[i]._name != "")
-				items[i]._name = "";
-			if (itemsSave[i] != null)
-				if (itemsSave[i]._name != "")
-					items[i].CloneFrom(itemsSave[i]);
-		}
-		Visualize();
-	}
 
 	public int CountOfItem(string name)
 	{
@@ -144,7 +105,8 @@ public class Inventory : MonoBehaviour
 					if (items[i]._count > count)
 					{
 						items[i]._count -= count;
-						ќтобразить(i);
+						Visualise(i);
+						SaveOneItem(i);
 						return;
 					}
 					else if (items[i]._count == count)
@@ -152,8 +114,9 @@ public class Inventory : MonoBehaviour
 						items[i]._name = "";
 						ultraSelectedId = -1;
 						selectorPanelPlus.SetActive(false);
-						ќтобразить(i);
-						return;
+						Visualise(i);
+                        SaveOneItem(i);
+                        return;
 					}
 					else if (items[i]._count < count)
 					{
@@ -161,36 +124,51 @@ public class Inventory : MonoBehaviour
 						items[i]._name = "";
 						ultraSelectedId = -1;
 						selectorPanelPlus.SetActive(false);
-						ќтобразить(i);
-						continue;
+						Visualise(i);
+                        SaveOneItem(i);
+                        continue;
 					}
 				}
 	}
 
 	public void Start()
 	{
+		S.Inventory = this;
+		S.Negative = _negative;
+
 		_empty = Resources.Load<Sprite>("Sprites/Items/Empty");
 
-		_audioManager.muted = true;
-
-		items = new Item[36]; /////
-		numberLabels = new TextMeshProUGUI[36];
-		smallNumberLabels = new TextMeshProUGUI[9];
-		fpsT = fpsLabel.GetComponent<TextMeshProUGUI>();
-		opened = true;
-		state = "not started";
-
-		_showingItem = null;
-		showingCamera.enabled = false;
-		showingCamera.gameObject.SetActive(false);
-		showingPanel.gameObject.SetActive(false);
-		showingOverlay.SetActive(false);
-
-		StartCoroutine(LateStart(0.5f));
+		StartCoroutine(LateStart(0.3f));
 
 		IEnumerator LateStart(float waitTime)
 		{
-			yield return new WaitForSeconds(waitTime);
+            while (S.AudioManager == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Inventory waiting for S.AudioManager");
+            }
+
+            S.AudioManager.muted = true;
+
+            items = new Item[36]; //Kinda hardcode
+            numberLabels = new TextMeshProUGUI[36];
+            smallNumberLabels = new TextMeshProUGUI[9];
+            opened = true;
+            state = "not started";
+
+            _showingItem = null;
+            showingCamera.enabled = false;
+            showingCamera.gameObject.SetActive(false);
+            showingPanel.gameObject.SetActive(false);
+            showingOverlay.SetActive(false);
+
+            yield return new WaitForSeconds(waitTime);
+
+			while (S.AllFather == null)
+			{
+				yield return new WaitForSeconds(0.1f);
+                Debug.Log("Inventory waiting for S.AllFather");
+            }
 
 			Vector2 canvasScale = new Vector2(canvas.transform.lossyScale.x, canvas.transform.lossyScale.y);
 
@@ -204,6 +182,8 @@ public class Inventory : MonoBehaviour
 
 				numberLabels[i] = obj.GetComponent<TextMeshProUGUI>();
 				items[i] = S.AllFather.gameObject.AddComponent<Item>();
+				items[i]._name = "";
+				items[i]._count = 0;
 				//Debug.Log($"i {i} item {items[i]}");
 			}
 
@@ -230,12 +210,15 @@ public class Inventory : MonoBehaviour
 
 			Visualize();
 
-			_audioManager.muted = false;
+			S.AudioManager.muted = false;
 		}
 	}
 
 	public void Update()
 	{
+		if (S.Negative == null)
+			return;
+
 		if (_negated > 0)
 		{
 			S.Negative.SetActive(System.MathF.Sin(_negated * 220) > -0.2f);
@@ -245,8 +228,15 @@ public class Inventory : MonoBehaviour
 			S.Negative.SetActive(false);
 
 		MyInput();
+
+		if (S.FpsTMP == null)
+		{
+			Debug.Log("Inventory wainitg for S.FpsTMP");
+			return;
+		}
+
 		fps = MathF.Round(fps * 0.5f + 0.5f / Time.deltaTime);
-		fpsT.text = fps.ToString();
+		S.FpsTMP.text = fps.ToString();
 
 		if (_showingItem != null)
 			_showingItem.transform.Rotate(_showingRotation.x, _showingRotation.y, _showingRotation.z, Space.World);
@@ -301,7 +291,7 @@ public class Inventory : MonoBehaviour
 					goto render;
 				}
 
-				Saver saver = hit.collider.gameObject.GetComponent<Saver>();
+				SaverTypewriter saver = hit.collider.gameObject.GetComponent<SaverTypewriter>();
 				if (saver != null)
 				{
 					clickable = true;
@@ -341,12 +331,12 @@ public class Inventory : MonoBehaviour
 	public void Visualize()
 	{
 		for (int i = 0; i < panels.Length; i++)
-			ќтобразить(i);
+			Visualise(i);
 	}
 
-	public void ќтобразить(int id)
+	public void Visualise(int id)
 	{
-		if (!IsNull(items[id]))
+		if (!IsEmpty(items[id]))
 		{
 			Debug.Log($"Setting sprite on {id}");
 
@@ -473,9 +463,9 @@ public class Inventory : MonoBehaviour
 			else
 			{
 				if (Input.GetAxis("Mouse ScrollWheel") > 0f)
-					SelectItem(маленький¬ыбранныйјйƒи - 1, false);
+					SelectItem(selId - 1, false);
 				if (Input.GetAxis("Mouse ScrollWheel") < 0f)
-					SelectItem(маленький¬ыбранныйјйƒи + 1, false);
+					SelectItem(selId + 1, false);
 
 				if (Input.GetMouseButtonDown(0))
 					Click();
@@ -487,113 +477,118 @@ public class Inventory : MonoBehaviour
 			}
 
 			bool throwable = false;
-			//Debug.Log($"id {selectedId} item {items[selectedId]}");
-			if (!string.IsNullOrEmpty(items[selectedId]._name))
-			{
-				//Debug.Log(items[selectedId]._name);
-				throwable = S.II.Get(items[selectedId]._name)._throwable;
-			}
 
-			if (!string.IsNullOrEmpty(items[selectedId]._name))
+			if (items.Length <= selectedId || IsNull(items[selectedId]))
 			{
-				if (!opened) //So, why the fuck it is throwing??
+				Debug.Log($"Inventory waiting for items");
+				return;
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(items[selectedId]._name))
+					throwable = S.II.Get(items[selectedId]._name)._throwable;
+
+				if (!string.IsNullOrEmpty(items[selectedId]._name))
 				{
-					if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q) ||
-					(Input.GetMouseButtonDown(0) && !_somethingClicked))
+					if (!opened) //So, why the hell it is throwing??
 					{
-						throwTime = 0;
-						throwing = true;
+						if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q) ||
+						(Input.GetMouseButtonDown(0) && !_somethingClicked))
+						{
+							throwTime = 0;
+							throwing = true;
+							if (throwable)
+								throwPanelBlack.transform.localScale = new Vector3(1, 1, 0);
+							else
+								throwPanelRed.transform.localScale = new Vector3(1, 1, 0);
+						}
+					}
+					else if (throwable) //Okay, so...
+						if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q))
+							Throw(selectedId, 300);
+				}
+
+				if (throwing)
+				{
+					if (!string.IsNullOrEmpty(items[selectedId]._name))
+					{
 						if (throwable)
-							throwPanelBlack.transform.localScale = new Vector3(1, 1, 0);
-						else
-							throwPanelRed.transform.localScale = new Vector3(1, 1, 0);
-					}
-				}
-				else if (throwable) //Okay, so...
-					if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q))
-						Throw(selectedId, 300);
-			}
+						{
+							throwTime += Time.deltaTime * Math.Max(Math.Min(MathF.Pow(throwCombo, 0.35f), 10), 1);
 
-			if (throwing)
-			{
-				if (!string.IsNullOrEmpty(items[selectedId]._name))
-				{
-					if (throwable)
-					{
-						throwTime += Time.deltaTime * Math.Max(Math.Min(MathF.Pow(throwCombo, 0.35f), 10), 1);
+							throwSize = Math.Max(throwTime * 1.2f, 0);
 
-						throwSize = Math.Max(throwTime * 1.2f, 0);
-
-						throwPanel.transform.localScale = new Vector3(throwSize, 1, 0);
-					}
-				}
-				else
-					StopCombo();
-			}
-
-			if (throwing && (Input.GetKeyUp(KeyCode.R) || Input.GetKeyUp(KeyCode.Q) || Input.GetMouseButtonUp(0)))
-			{
-				if (throwable && (throwCombo == 0 || throwSize > 0.25f))
-					Throw(selectedId, throwSize * 1500);
-
-				throwing = false;
-				throwPanel.transform.localScale = new Vector3(0, 0, 0);
-				throwPanelBlack.transform.localScale = new Vector3(0, 0, 0);
-				throwPanelRed.transform.localScale = new Vector3(0, 0, 0);
-				throwTime = 0;
-				throwCombo = 0;
-
-				throwSize = 0;
-			}
-
-			if (throwing && throwSize > 1)
-			{
-				if (!string.IsNullOrEmpty(items[selectedId]._name))
-				{
-					if (throwable)
-					{
-						Throw(selectedId, throwSize * 1500);
-						throwCombo++;
+							throwPanel.transform.localScale = new Vector3(throwSize, 1, 0);
+						}
 					}
 					else
 						StopCombo();
 				}
-				else
-					StopCombo();
 
-				throwTime = 0;
-				throwSize = 0;
+				if (throwing && (Input.GetKeyUp(KeyCode.R) || Input.GetKeyUp(KeyCode.Q) || Input.GetMouseButtonUp(0)))
+				{
+					if (throwable && (throwCombo == 0 || throwSize > 0.25f))
+						Throw(selectedId, throwSize * 1500);
+
+					throwing = false;
+					throwPanel.transform.localScale = new Vector3(0, 0, 0);
+					throwPanelBlack.transform.localScale = new Vector3(0, 0, 0);
+					throwPanelRed.transform.localScale = new Vector3(0, 0, 0);
+					throwTime = 0;
+					throwCombo = 0;
+
+					throwSize = 0;
+				}
+
+				if (throwing && throwSize > 1)
+				{
+					if (!string.IsNullOrEmpty(items[selectedId]._name))
+					{
+						if (throwable)
+						{
+							Throw(selectedId, throwSize * 1500);
+							throwCombo++;
+						}
+						else
+							StopCombo();
+					}
+					else
+						StopCombo();
+
+					throwTime = 0;
+					throwSize = 0;
+				}
+
+				void StopCombo()
+				{
+					throwing = false;
+					throwPanel.transform.localScale = new Vector3(0, 0, 0);
+					throwPanelBlack.transform.localScale = new Vector3(0, 0, 0);
+
+					throwCombo = 0;
+					throwTime = 0;
+					throwSize = 0;
+				}
+
+				if (Input.GetKeyDown(KeyCode.Keypad1) || Input.GetKeyDown(KeyCode.Alpha1))
+					SelectItem(0, false);
+				else if (Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.Alpha2))
+					SelectItem(1, false);
+				else if (Input.GetKeyDown(KeyCode.Keypad3) || Input.GetKeyDown(KeyCode.Alpha3))
+					SelectItem(2, false);
+				else if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Alpha4))
+					SelectItem(3, false);
+				else if (Input.GetKeyDown(KeyCode.Keypad5) || Input.GetKeyDown(KeyCode.Alpha5))
+					SelectItem(4, false);
+				else if (Input.GetKeyDown(KeyCode.Keypad6) || Input.GetKeyDown(KeyCode.Alpha6))
+					SelectItem(5, false);
+				else if (Input.GetKeyDown(KeyCode.Keypad7) || Input.GetKeyDown(KeyCode.Alpha7))
+					SelectItem(6, false);
+				else if (Input.GetKeyDown(KeyCode.Keypad8) || Input.GetKeyDown(KeyCode.Alpha8))
+					SelectItem(7, false);
+				else if (Input.GetKeyDown(KeyCode.Keypad9) || Input.GetKeyDown(KeyCode.Alpha9))
+					SelectItem(8, false);
 			}
-
-			void StopCombo()
-			{
-				throwing = false;
-				throwPanel.transform.localScale = new Vector3(0, 0, 0);
-				throwPanelBlack.transform.localScale = new Vector3(0, 0, 0);
-
-				throwCombo = 0;
-				throwTime = 0;
-				throwSize = 0;
-			}
-
-			if (Input.GetKeyDown(KeyCode.Keypad1) || Input.GetKeyDown(KeyCode.Alpha1))
-				SelectItem(0, false);
-			else if (Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.Alpha2))
-				SelectItem(1, false);
-			else if (Input.GetKeyDown(KeyCode.Keypad3) || Input.GetKeyDown(KeyCode.Alpha3))
-				SelectItem(2, false);
-			else if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Alpha4))
-				SelectItem(3, false);
-			else if (Input.GetKeyDown(KeyCode.Keypad5) || Input.GetKeyDown(KeyCode.Alpha5))
-				SelectItem(4, false);
-			else if (Input.GetKeyDown(KeyCode.Keypad6) || Input.GetKeyDown(KeyCode.Alpha6))
-				SelectItem(5, false);
-			else if (Input.GetKeyDown(KeyCode.Keypad7) || Input.GetKeyDown(KeyCode.Alpha7))
-				SelectItem(6, false);
-			else if (Input.GetKeyDown(KeyCode.Keypad8) || Input.GetKeyDown(KeyCode.Alpha8))
-				SelectItem(7, false);
-			else if (Input.GetKeyDown(KeyCode.Keypad9) || Input.GetKeyDown(KeyCode.Alpha9))
-				SelectItem(8, false);
 		}
 	}
 
@@ -613,7 +608,7 @@ public class Inventory : MonoBehaviour
 					if (!string.IsNullOrEmpty(items[selectedId]._name))
 						locker.Unlock(items[selectedId]._name);
 					else
-						_audioManager.Play("notEnoughCash", 1);
+						S.AudioManager.Play("notEnoughCash", 1);
 				}
 
 				FrerardHolder fh = hit.collider.gameObject.GetComponent<FrerardHolder>();
@@ -625,7 +620,7 @@ public class Inventory : MonoBehaviour
 						{
 							fh.Take(items[selectedId]);
 							items[selectedId] = null;
-							ќтобразить(selectedId);
+							Visualise(selectedId);
 							return;
 						}
 						else
@@ -659,7 +654,7 @@ public class Inventory : MonoBehaviour
 					GreenKey greenKey = hit.collider.gameObject.GetComponent<GreenKey>();
 
 					if (greenKey != null)
-						S.AllFather.Save("greenKeyTaken", new Save(true));
+						S.SM.Save("greenKeyTaken", true);
 
 					return;
 				}
@@ -671,7 +666,7 @@ public class Inventory : MonoBehaviour
 					return;
 				}
 
-				Saver saver = hit.collider.gameObject.GetComponent<Saver>();
+				SaverTypewriter saver = hit.collider.gameObject.GetComponent<SaverTypewriter>();
 				if (saver != null)
 				{
 					saver.Save();
@@ -688,7 +683,7 @@ public class Inventory : MonoBehaviour
 					{
 						_playerStorage.Heal(100);
 						Remove("FirstAidKit", 1);
-						_audioManager.Play("heal", 1);
+						S.AudioManager.Play("heal", 1);
 						return;
 					}
 				}
@@ -746,24 +741,26 @@ public class Inventory : MonoBehaviour
 	public void Take(string name, int count)
 	{
 		string an = S.II.Get(name)._pickUpA;
-		if (string.IsNullOrEmpty(items[маленький¬ыбранныйјйƒи]._name))
+		if (string.IsNullOrEmpty(items[selId]._name))
 		{
-			items[маленький¬ыбранныйјйƒи]._name = name; //јЅЋя, ¬ќ“, ЌјЎЋј
-			items[маленький¬ыбранныйјйƒи]._count = count;
-			ќтобразить(маленький¬ыбранныйјйƒи);
-			_audioManager.Play(an, 1);
-			CheckShowing(маленький¬ыбранныйјйƒи);
-			Debug.Log($"¬«я“ {name} в слот {маленький¬ыбранныйјйƒи} *1");
+			items[selId]._name = name;
+			items[selId]._count = count;
+			Visualise(selId);
+			S.AudioManager.Play(an, 1);
+			CheckShowing(selId);
+            SaveOneItem(selId);
+            Debug.Log($"Taked {name} to {selId} *1");
 			return;
 		}
 
-		if (items[маленький¬ыбранныйјйƒи]._name == name)
+		if (items[selId]._name == name)
 		{
-			items[маленький¬ыбранныйјйƒи]._count += count;
-			ќтобразить(маленький¬ыбранныйјйƒи);
-			_audioManager.Play(an, 1);
-			CheckShowing(маленький¬ыбранныйјйƒи);
-			Debug.Log($"¬«я“ {name} в слот {маленький¬ыбранныйјйƒи} *2");
+			items[selId]._count += count;
+			Visualise(selId);
+			S.AudioManager.Play(an, 1);
+			CheckShowing(selId);
+            SaveOneItem(selId);
+            Debug.Log($"Taked {name} to {selId} *2");
 			return;
 		}
 
@@ -773,10 +770,11 @@ public class Inventory : MonoBehaviour
 				if (items[id]._name == name)
 				{
 					items[id]._count += count;
-					ќтобразить(id);
-					_audioManager.Play(an, 1);
+					Visualise(id);
+					S.AudioManager.Play(an, 1);
 					CheckShowing(id);
-					Debug.Log($"¬«я“ {name} в слот {id} *3");
+                    SaveOneItem(id);
+                    Debug.Log($"Taked {name} to {id} *3");
 					return;
 				}
 
@@ -786,28 +784,28 @@ public class Inventory : MonoBehaviour
 				{
 					items[id]._name = name;
 					items[id]._count = count;
-					ќтобразить(id);
-					_audioManager.Play(an, 1);
+					Visualise(id);
+					S.AudioManager.Play(an, 1);
 					CheckShowing(id);
-					Debug.Log($"¬«я“ {name} в слот {id} *4");
-					//Ќ” ¬ќ“ ѕ–ќ¬≈–яЋј ∆≈ ”∆≈ Ё“ќ“  ќƒ, и вот оп€ть...
+                    SaveOneItem(id);
+                    Debug.Log($"Taked {name} to {id} *4");
 					return;
 				}
 	}
 
 	public void CheckShowing(int id)
 	{
-		if (!_cucumberShowed)
+		if (!(S.SM.LoadBool("Cucumber showed") ?? false))
 			if (items[id]._name == "Cucumber")
 			{
-				_cucumberShowed = true;
+				S.SM.Save("Cucumber showed", true);
 				ShowItem(id, "You obtain a cucumber!!!", "gong", 0.5f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 7));
 			}
-		if (!_gunShowed)
+		if (!(S.SM.LoadBool("Gun showed") ?? false))
 			if (items[id]._name == "Gun")
 			{
-				_gunShowed = true; /////////////////////
-				ShowItem(id, "You obtain a gun!!!", "gong", 0.5f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 7));
+                S.SM.Save("Gun showed", true);
+                ShowItem(id, "You obtain a gun!!!", "gong", 0.5f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 7));
 			}
 	}
 
@@ -845,7 +843,7 @@ public class Inventory : MonoBehaviour
 
 				_showingItem.transform.eulerAngles = startRotation;
 
-				_audioManager.Play(audioName, 1);
+				S.AudioManager.Play(audioName, 1);
 
 				showingCamera.enabled = true;
 				showingCamera.gameObject.SetActive(true);
@@ -868,7 +866,7 @@ public class Inventory : MonoBehaviour
 			showingPanel.gameObject.SetActive(false);
 			showingOverlay.SetActive(false);
 			smallInventoryPanel.SetActive(true);
-			_audioManager.Play("pickUp", 1.3f);
+			S.AudioManager.Play("pickUp", 1.3f);
 		}
 	}
 
@@ -893,8 +891,10 @@ public class Inventory : MonoBehaviour
 				selectorPanelPlus.SetActive(false);
 			}
 
-			ќтобразить(id);
-			_audioManager.Play("throw", MathF.Min(MathF.Max(MathF.Pow(throwCombo, 0.1f), 1), 5));
+			Visualise(id);
+			S.AudioManager.Play("throw", MathF.Min(MathF.Max(MathF.Pow(throwCombo, 0.1f), 1), 5));
+
+			SaveOneItem(id);
 		}
 	}
 
@@ -912,7 +912,7 @@ public class Inventory : MonoBehaviour
 			else
 			{
 				Cursor.lockState = CursorLockMode.Locked;
-				SelectItem(маленький¬ыбранныйјйƒи, false);
+				SelectItem(selId, false);
 				ultraSelectedId = -1;
 				selectorPanelPlus.SetActive(false); //
 			}
@@ -935,7 +935,7 @@ public class Inventory : MonoBehaviour
 
 		//Vector2 canvasScale = new Vector2(canvas.transform.lossyScale.x, canvas.transform.lossyScale.y);
 
-		_audioManager.Play("inventory", 1.3f);
+		S.AudioManager.Play("inventory", 1.3f);
 
 		if (opened)
 		{
@@ -963,7 +963,7 @@ public class Inventory : MonoBehaviour
 			selectorPanel.transform.position = smallPanels[id].transform.position;// + new Vector3(0, 1, 0);
 			selectorPanel.transform.localScale = new Vector3(s, s, 0);
 
-			маленький¬ыбранныйјйƒи = id;
+			selId = id;
 		}
 
 		void SelectBig()
@@ -985,43 +985,55 @@ public class Inventory : MonoBehaviour
 				{
 					if (ultraSelectedId != id)
 					{
-						Debug.Log($"»м€ айтема куда переместить айтем: {items[id]._name}");
-						Debug.Log($"явл€етс€ ли оно нуллом: {string.IsNullOrEmpty(items[id]._name)}");
-						if (!string.IsNullOrEmpty(items[id]._name)) //¬ќ“ ќЌќ Ќ≈“ Ќ≈ ќЌќ
-						{ //“ј » Ё“ј —“–ќ ј √Ћё„»“ «ј–ј«ј
+						Debug.Log($"Item name: {items[id]._name}");
+						Debug.Log($"Is name null: {string.IsNullOrEmpty(items[id]._name)}");
+						if (!string.IsNullOrEmpty(items[id]._name))
+						{
 							if (!items[id]._name.Equals(items[ultraSelectedId]._name))
 							{
-								Item buffer = items[ultraSelectedId];
+								Item buffer = new Item();
+								buffer.CloneFrom(items[ultraSelectedId]);
 								items[ultraSelectedId] = items[id];
 								items[id] = buffer;
-								Debug.Log("ј…“≈ћџ ѕќћ≈ЌяЋ»—№ ћ≈—“јћ»");
+
+                                SaveTwoItems();
+
+                                Debug.Log("ITEMS SWAPPED.");
 							}
 							else
 							{
 								items[id]._count += items[ultraSelectedId]._count;
 								items[ultraSelectedId]._name = "";
-								//Ќ” » „“ќ “”“ Ќ≈ –јЅќ“ј≈“???????????????????
-								//ƒ¬≈ —“–ќ » » ќЅ≈ ¬≈–Ќџ’
-								Debug.Log("ј…“≈ћ ƒќЅј¬Ћ≈Ќ   ј…“≈ћ”");
-							}
-							//ћЅ —Ѕ–ќ—»“№ ULTRA SELECTED ID?
+
+                                SaveTwoItems();
+
+                                Debug.Log("ITEMS MERGED.");
+                            }
 						}
 						else
 						{
-							items[id].CloneFrom(items[ultraSelectedId]); //ј Ќ” ¬ќ“ ∆≈ ќЌќ
-							items[ultraSelectedId]._name = "";
+							items[id]._name = items[ultraSelectedId]._name;
+                            items[id]._count = items[ultraSelectedId]._count;
+                            items[ultraSelectedId]._name = "";
+                            items[ultraSelectedId]._count = 0;
 
-							Debug.Log("ј…“≈ћ ѕ≈–≈ћ≈ў®Ќ");
+							SaveTwoItems();
+
+							Debug.Log("ITEMS MOVED.");
 						}
 
-						ќтобразить(id);
-						ќтобразить(ultraSelectedId);
+						Visualise(id);
+						Visualise(ultraSelectedId);
 					}
 
-					ultraSelectedId = -1; //“ј  ќЌ —Ѕ–ј—џ¬ј≈“—я ¬ќ“ ∆≈ ќЌќ
-					selectorPanelPlus.SetActive(false); //
-				}
-				else if (!string.IsNullOrEmpty(items[id]._name)) //?
+					ultraSelectedId = -1;
+					selectorPanelPlus.SetActive(false);
+
+					SaveOneItem(id);
+
+                    Debug.Log("DESELECTED.");
+                }
+				else if (!string.IsNullOrEmpty(items[id]._name))
 				{
 					float f = 1.8f;
 
@@ -1030,10 +1042,12 @@ public class Inventory : MonoBehaviour
 					selectorPanelPlus.SetActive(true);
 					selectorPanelPlus.transform.SetParent(inventoryPanelParentBig.transform);
 					selectorPanel.transform.SetSiblingIndex(0);
-					selectorPanelPlus.transform.SetSiblingIndex(0);///////////////
+					selectorPanelPlus.transform.SetSiblingIndex(0);
 					selectorPanelPlus.transform.position = panels[id].transform.position;
 					selectorPanelPlus.transform.localScale = new Vector3(f, f, 0);
-				}
+
+                    Debug.Log("SELECTED.");
+                }
 			}
 		}
 
@@ -1043,7 +1057,7 @@ public class Inventory : MonoBehaviour
 		}
 	}
 
-	public bool IsNull(Item item)
+	public bool IsEmpty(Item item)
 	{
 		try
 		{
@@ -1055,4 +1069,31 @@ public class Inventory : MonoBehaviour
 			return true;
 		}
 	}
+
+	public bool IsNull(Item item)
+	{
+		bool so = false;
+
+        try
+        {
+            string aboba = item._name;
+            return false;
+        }
+        catch
+        {
+            return true;
+        }
+    }
+
+    public void SaveTwoItems()
+    {
+        SaveOneItem(selectedId);
+        SaveOneItem(ultraSelectedId);
+    }
+
+    public void SaveOneItem(int id0)
+    {
+        S.SM.Save(S.ID("INV name ", id0), items[id0]._name);
+        S.SM.Save(S.ID("INV count ", id0), items[id0]._count);
+    }
 }

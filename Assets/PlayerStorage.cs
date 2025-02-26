@@ -10,18 +10,10 @@ public class PlayerStorage : MonoBehaviour
     public float _health;
     public Image _healthImage;
     public GameObject _onDiePanel;    
-    AudioManager _audioManager;
-    AllFather _allFather;
 
     void Start()
     {
-        _health = 100f;
-
-        GameObject go = GameObject.FindGameObjectWithTag("AudioManager");
-        _audioManager = go.GetComponent<AudioManager>();
-
-        go = GameObject.FindGameObjectWithTag("AllFather");
-        _allFather = go.GetComponent<AllFather>();
+        _health = 100f; /////////
     }
 
     public void Damage(float amount)
@@ -29,31 +21,25 @@ public class PlayerStorage : MonoBehaviour
         if (_health > 0)
         {
             _health -= amount;
-            _healthImage.fillAmount = _health / 100f;
-            _audioManager.Play("damage", 1);
+            S.AudioManager.Play("damage", 1);
+            S.SM.Save("health", _health);
 
             if (_health <= 0f)
             {
-                StartCoroutine(WaitForThreeSeconds());
-
-                IEnumerator WaitForThreeSeconds()
-                {
-                    _onDiePanel.SetActive(true);
-                    _allFather.LoadTheSave();
-                    yield return new WaitForSeconds(1f);
-
-                    /*               // Unload all scenes
-                                   for (int i = 0; i < SceneManager.sceneCount; i++)
-                                   {
-                                       Scene scene = SceneManager.GetSceneAt(i);
-                                       SceneManager.UnloadSceneAsync(scene);
-                                   }
-
-                                   // Load the "start" scene
-                                   SceneManager.LoadScene("start");*/                    
-                }
+                _onDiePanel.SetActive(true);
+                S.SM.LoadLastSave();
             }
         }
+        else
+        {
+            Debug.LogError("Player is already dead!");
+        }
+        VisualiseHealth();
+    }
+
+    public void VisualiseHealth()
+    {
+        _healthImage.fillAmount = _health / 100f;
     }
 
     bool SceneCurrentlyLoaded(string sceneName_no_extention)
