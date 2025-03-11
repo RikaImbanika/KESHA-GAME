@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -239,7 +238,6 @@ MonoBehaviour:
   _name: Apple
   _count: 1
   _unnatural: 0
-  _destroyed: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1001 &36712588
@@ -390,7 +388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _type: zombie
   _fireCooldown: 1.1
-  _health: 0
+  _health: 100
   _speed: 22
   _heigh: 0
   _stopSpeed: 0
@@ -401,21 +399,9 @@ MonoBehaviour:
   _ani: {fileID: 0}
   _realSpeed: 0
   _dead: 0
---- !u!114 &36712595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 36712589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a759101e09032b846859a84ee4e09c10, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &36712596
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -432,7 +418,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &36712597
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -816,7 +803,6 @@ MonoBehaviour:
   _name: PurpleKey
   _count: 1
   _unnatural: 0
-  _destroyed: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1001 &300517569
@@ -1465,9 +1451,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd400c0e4c920104095bc0919f7b08f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _allFather: {fileID: 0}
   col: {fileID: 1151142937}
-  nextSceneName: Corridor
+  _nextSceneName: Corridor
   position: {x: 684.87, y: -3, z: -678.11}
   _rotation: 0
   audioName: Door
@@ -1720,7 +1705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!95 &1242347990
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1737,7 +1722,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1253904786
 GameObject:
   m_ObjectHideFlags: 0
@@ -2172,7 +2158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5945520866900585025, guid: 149b70b914496834582a189d0a332541, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.26
+      value: -6.34
       objectReference: {fileID: 0}
     - target: {fileID: 7406983519108408631, guid: 149b70b914496834582a189d0a332541, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2408,7 +2394,6 @@ MonoBehaviour:
   _name: BlueKey
   _count: 1
   _unnatural: 0
-  _destroyed: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1001 &1520998689
@@ -2523,7 +2508,6 @@ MonoBehaviour:
   _name: Cucumber
   _count: 1
   _unnatural: 0
-  _destroyed: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1 &1579964072 stripped
@@ -3138,7 +3122,6 @@ MonoBehaviour:
   _name: RedKey
   _count: 1
   _unnatural: 0
-  _destroyed: 0
   _locked: 1
   _obj: {fileID: 0}
 --- !u!1001 &1851498251
@@ -3330,7 +3313,6 @@ MonoBehaviour:
   _name: Apple
   _count: 1
   _unnatural: 0
-  _destroyed: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1 &1880838046
@@ -3648,7 +3630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _door: {fileID: 112054341}
-  _correctKey: LimeKey
+  _correctKey: GreenKey
 --- !u!65 &2070555111
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3770,30 +3752,14 @@ GameObject:
   m_Component:
   - component: {fileID: 2105863443}
   - component: {fileID: 2105863442}
-  - component: {fileID: 2105863441}
+  - component: {fileID: 2105863444}
   m_Layer: 0
   m_Name: ForNavMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
---- !u!114 &2105863441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2105863440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Size: {x: 125.6, y: 47.7, z: 597.8}
-  m_Center: {x: 18, y: -14.23, z: -106.5}
-  m_Area: 0
-  m_AffectedAgents: ffffffff
 --- !u!114 &2105863442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3819,8 +3785,8 @@ MonoBehaviour:
   m_IgnoreNavMeshObstacle: 1
   m_OverrideTileSize: 0
   m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.7266667
+  m_OverrideVoxelSize: 1
+  m_VoxelSize: 0.4
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 74fc6a3306535b8449991db41637273c, type: 2}
   m_BuildHeightMesh: 0
@@ -3832,10 +3798,26 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2105863440}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.84575, y: 8.361497, z: -485.3187}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -19.84575, y: 8.361497, z: -612}
+  m_LocalScale: {x: 45.2024, y: 24.899456, z: 134.0095}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2105863444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105863440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Size: {x: 4, y: 3, z: 4}
+  m_Center: {x: 0, y: 1, z: 0}
+  m_Area: 0
+  m_AffectedAgents: ffffffff

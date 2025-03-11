@@ -642,7 +642,8 @@ public class Inventory : MonoBehaviour
 				Door door = hit.collider.gameObject.GetComponent<Door>();
 				if (door != null)
 				{
-					door.Go(_playerObject);
+					if (_playerObject.tag == "Player")
+						door.Go();
 					return;
 				}
 
@@ -650,12 +651,6 @@ public class Inventory : MonoBehaviour
 				if (itemP != null)
 				{
 					Take(itemP);
-
-					GreenKey greenKey = hit.collider.gameObject.GetComponent<GreenKey>();
-
-					if (greenKey != null)
-						S.SM.Save("greenKeyTaken", true);
-
 					return;
 				}
 
@@ -749,6 +744,7 @@ public class Inventory : MonoBehaviour
 			S.AudioManager.Play(an, 1);
 			CheckShowing(selId);
             SaveOneItem(selId);
+			CheckQuests(name);
             Debug.Log($"Taked {name} to {selId} *1");
 			return;
 		}
@@ -760,6 +756,7 @@ public class Inventory : MonoBehaviour
 			S.AudioManager.Play(an, 1);
 			CheckShowing(selId);
             SaveOneItem(selId);
+            CheckQuests(name);
             Debug.Log($"Taked {name} to {selId} *2");
 			return;
 		}
@@ -774,6 +771,7 @@ public class Inventory : MonoBehaviour
 					S.AudioManager.Play(an, 1);
 					CheckShowing(id);
                     SaveOneItem(id);
+                    CheckQuests(name);
                     Debug.Log($"Taked {name} to {id} *3");
 					return;
 				}
@@ -788,10 +786,17 @@ public class Inventory : MonoBehaviour
 					S.AudioManager.Play(an, 1);
 					CheckShowing(id);
                     SaveOneItem(id);
+                    CheckQuests(name);
                     Debug.Log($"Taked {name} to {id} *4");
 					return;
 				}
 	}
+
+	public void CheckQuests(string name)
+	{
+		if (name == "GreenKey")
+			S.SM.Save("greenKeyTaken", true);
+    }
 
 	public void CheckShowing(int id)
 	{
@@ -985,8 +990,13 @@ public class Inventory : MonoBehaviour
 				{
 					if (ultraSelectedId != id)
 					{
+						if (items[id].IsUnityNull())
+						{
+							items[id] = new Item();
+							Debug.Log($"!!! Here was null item on id {id}. I fixed.");
+						}
 						Debug.Log($"Item name: {items[id]._name}");
-						Debug.Log($"Is name null: {string.IsNullOrEmpty(items[id]._name)}");
+						Debug.Log($"Is name empty: {string.IsNullOrEmpty(items[id]._name)}");
 						if (!string.IsNullOrEmpty(items[id]._name))
 						{
 							if (!items[id]._name.Equals(items[ultraSelectedId]._name))

@@ -15,7 +15,7 @@ public class Zombie : MonoBehaviour
     public float _heigh;
     public float _stopSpeed;
     public float _animationSpeed;
-    public bool _active;
+    public bool _active; //What is it?
 
     Vector3 _startPosition;
     string _id;
@@ -91,8 +91,8 @@ public class Zombie : MonoBehaviour
 
             if (_health <= 0)
             {
-                _ani.SetFloat("deathSpeed", 100f);
-                Damage(1);
+                _dead = true;
+                Die();
             }
 
             InvokeRepeating("SavingMethod", 0f, 5f);
@@ -120,22 +120,31 @@ public class Zombie : MonoBehaviour
 
     public void Damage(float amount)
     {
-        _followPlayer = true;
-
-        _health -= amount;
-
-        if (_health <= 0)
+        if (!_dead)
         {
-            if (!_dead)
+            _followPlayer = true;
+            _health -= amount;
+
+            if (_health <= 0)
             {
                 _dead = true;
-                _ani.SetTrigger("TrDie");
-                _agent.speed = 0f;
-                _followPlayer = false;
-                _dead = true;
-                Destroy(_collider);
+                S.Inventory.Take("RedCrystal", 1);
+                Die();
+                S.AudioManager.Play("Kill", 1.1f);
+            }
+            else
+            {
+                S.AudioManager.Play("Kill", 0.9f);
             }
         }
+    }
+
+    public void Die()
+    {
+        _ani.SetTrigger("TrDie");
+        _agent.speed = 0f;
+        _followPlayer = false;
+        Destroy(_collider);
     }
 
     void Update()

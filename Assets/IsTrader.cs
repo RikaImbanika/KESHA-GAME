@@ -23,7 +23,11 @@ public class IsTrader : MonoBehaviour
 
 	public void OpenMarket()
 	{
-		if (_inventory._marketOpened == false && _trades.Count > 0)
+		for (int i = _trades.Count - 1; i >= 0; i--)
+			if (_trades[i]._tradeCount <= 0)
+                _trades.RemoveAt(i);
+
+        if (_inventory._marketOpened == false && _trades.Count > 0)
 		{
 			for (int i = _trades.Count - 1; i >= 0; i--)
 				if (_trades[i]._tradeCount <= 0)

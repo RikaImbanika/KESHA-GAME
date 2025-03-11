@@ -27,6 +27,82 @@ public static class S : object
     private static GameObject _spot;
     private static GameObject _sparkle;
     private static GameObject _redSparkle;
+	private static FirstZombie2 _firstZombie2;
+	private static SceneDuplicateCleaner _sceneDuplicateCleaner;
+	private static MusicManager _musicManager;
+
+	public static AudioManager AM
+	{
+		get
+		{
+			return _audioManager;
+		}
+		set
+		{
+			_audioManager = value;
+		}
+	}
+
+    public static MusicManager MM
+    {
+        get
+        {
+            return _musicManager;
+        }
+        set
+        {
+            _musicManager = value;
+        }
+    }
+
+    public static MusicManager MusicManager
+	{
+		get
+		{
+			return _musicManager;
+		}
+		set
+		{
+			_musicManager = value;
+		}
+	}
+
+    public static SceneDuplicateCleaner SDC
+    {
+        get
+        {
+            return _sceneDuplicateCleaner;
+        }
+        set
+        {
+            _sceneDuplicateCleaner = value;
+        }
+    }
+    
+	public static SceneDuplicateCleaner SceneDuplicateCleaner
+	{
+		get
+		{
+			return _sceneDuplicateCleaner;
+		}
+		set
+		{
+			_sceneDuplicateCleaner = value;
+		}
+	}
+
+
+	public static FirstZombie2 FirstZombie2
+	{
+		get
+		{
+			return _firstZombie2;
+		}
+		set
+		{
+			_firstZombie2 = value;
+		}
+	}
 
 	public static GameObject Sparkle
 	{

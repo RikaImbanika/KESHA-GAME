@@ -9,8 +9,9 @@ public class IsGun : MonoBehaviour
     public GameObject _ray;
     public int _sparklesCount;
     private Transform _root;
-    public float _rayRight;
-    public float _rayDown;
+    public float _rayRight = 2f;
+    public float _rayDown = 0.5f;
+    public float _rayWidth = 6f;
 
     void Start()
     {
@@ -70,20 +71,12 @@ public class IsGun : MonoBehaviour
 
                 Zombie zombie = hit.collider.gameObject.GetComponent<Zombie>();
                 if (zombie != null)
-                {
-                    if (zombie._health <= 15)
-                        TakeRedCrystal();
                     zombie.Damage(15);
-                }
                 else
                 {
                     Spider spider = hit.collider.gameObject.GetComponent<Spider>();
                     if (spider != null)
-                    {
-                        if (spider._health <= 15)
-                            TakeRedCrystal();
                         spider.Damage(15);
-                    }
                     else
                     {
                         Door door = hit.collider.gameObject.GetComponent<Door>();
@@ -109,21 +102,26 @@ public class IsGun : MonoBehaviour
 
                 Vector3 from = S.Camera.transform.position + S.Camera.transform.right * _rayRight - S.Camera.transform.up * _rayDown;
 
+                float desiredLength = (hit.point - from).magnitude;
+
                 GameObject ray2 = Instantiate(_ray);
-                ray2.GetComponent<IsRay>()._active = true;
+
+                ray2.transform.SetParent(null, true);
+
+                var scale = ray2.transform.localScale;
+                float factor = 100; //
+                scale.z = desiredLength * factor;
+                scale.y *= _rayWidth;
+                scale.x *= _rayWidth;
+                ray2.transform.localScale = scale;
+
                 float rx = (hit.point.x + from.x) / 2;
                 float ry = (hit.point.y + from.y) / 2;
                 float rz = (hit.point.z + from.z) / 2;
                 ray2.transform.position = new Vector3(rx, ry, rz);
                 ray2.transform.rotation = Quaternion.LookRotation(hit.point - from);
 
-                float desiredLength = (hit.point - from).magnitude;
-                ray2.transform.SetParent(null, true);
-
-                var scale = ray2.transform.localScale;
-                float factor = 100;
-                scale.z = desiredLength * factor;
-                ray2.transform.localScale = scale;
+                ray2.GetComponent<IsRay>()._active = true;
 
                 for (int i = 0; i < _sparklesCount; i++)
                 {
@@ -136,11 +134,6 @@ public class IsGun : MonoBehaviour
         }
         else
             S.AudioManager.Play("noAmmo", 1);
-    }
-
-    public void TakeRedCrystal()
-    {
-        S.Inventory.Take("RedCrystal", 1);
     }
 
     public float Length(Vector3 v)

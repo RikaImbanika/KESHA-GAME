@@ -12,8 +12,12 @@ public class FirstZombie : MonoBehaviour
 
         if (!(S.SM.LoadBool("greenKeyTaken") ?? false))
             Destroy(this.gameObject);
-
-        if ((S.SM.LoadBool("gunWasBuyed") ?? false) && (S.SM.LoadBool("ammoWasBuyed") ?? false))
+        else if ((S.SM.LoadBool("gunWasBuyed") ?? false) && (S.SM.LoadBool("ammoWasBuyed") ?? false))
             Destroy(this.gameObject);
+        else
+        {
+            var zombie = GetComponent<Zombie>();
+            zombie._active = true;
+        }
     }
 }

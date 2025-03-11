@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -212,14 +211,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 108811224}
-  loadScenesNames:
-  - Hall
-  unloadScenesNames:
-  - TL 2
-  nextSceneName: TL 0
+  _nextSceneName: TL 0
   position: {x: -118.5, y: -3, z: 48.4}
   _rotation: 0
   audioName: Door
+  _locked: 0
+  _stamp: {fileID: 0}
+  _stampAnimationTimeLeft: 0
+  _sparklesCount: 0
 --- !u!64 &108811223
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -307,6 +306,8 @@ Transform:
   - {fileID: 916920623}
   - {fileID: 1401873466}
   - {fileID: 1572440751}
+  - {fileID: 2121321442}
+  - {fileID: 663770900}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -648,13 +649,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 663770896}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -175.01, y: -2.59, z: 97.08}
   m_LocalScale: {x: 6.561373, y: 4.6723, z: 4.8304296}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_Father: {fileID: 144014576}
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &675740929
 MonoBehaviour:
@@ -766,13 +767,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 766895965}
-  loadScenesNames: []
-  unloadScenesNames:
-  - TL 0
-  nextSceneName: TL 2
+  _nextSceneName: TL 2
   position: {x: -174.9, y: -3, z: 108}
   _rotation: 0
   audioName: Door
+  _locked: 0
+  _stamp: {fileID: 0}
+  _stampAnimationTimeLeft: 0
+  _sparklesCount: 0
 --- !u!64 &766895964
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -887,14 +889,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 838589808}
-  loadScenesNames:
-  - Hall
-  unloadScenesNames:
-  - TL 2
-  nextSceneName: TL 0
+  _nextSceneName: TL 0
   position: {x: -118.5, y: -3, z: 29.24}
   _rotation: 0
   audioName: Door
+  _locked: 0
+  _stamp: {fileID: 0}
+  _stampAnimationTimeLeft: 0
+  _sparklesCount: 0
 --- !u!64 &838589807
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2707,8 +2709,8 @@ Transform:
   m_LocalScale: {x: 0.47851, y: 0.47851, z: 0.47851}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 144014576}
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: -5.885, z: 0}
 --- !u!33 &56408525151361735
 MeshFilter:

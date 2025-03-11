@@ -8,7 +8,7 @@ using System;
 public class Door : MonoBehaviour
 {
 	public Collider col;
-	public string nextSceneName;
+	public string _nextSceneName;
 	public Vector3 position;
 	public float _rotation;
 	public string audioName;
@@ -24,68 +24,67 @@ public class Door : MonoBehaviour
 
 	private void OnTriggerEnter(Collider collider)
 	{
-		Go(collider.gameObject);
+		if (collider.gameObject.tag == "Player")
+			Go();
 	}
 
-	public void Go(GameObject playerObject)
+	public void Go()
 	{
-		if (playerObject.tag == "Player")
+		if (!_locked)
 		{
-			if (!_locked)
-			{
-				S.AudioManager.Play(audioName, 0);
+			S.AudioManager.Play(audioName, 0);
 
-				string sceneName = S.SM.LoadString("sceneName");
-				List<string> loadScenesNames = new List<string>();
-				loadScenesNames.AddRange(S.Loader._map[nextSceneName]);
-				loadScenesNames.Add(nextSceneName);
+			string sceneName = S.SM.LoadString("sceneName");
+            S.PS._currentSceneName = _nextSceneName;
+            S.SaveManager.CurrentSave.SaveString("sceneName", _nextSceneName);
 
-				List<string> unloadScenesNames = new List<string>();
-				unloadScenesNames.AddRange(S.Loader._map[sceneName]);
-				unloadScenesNames.Add(sceneName);
+            List<string> loadScenesNames = new List<string>();
+			loadScenesNames.AddRange(S.Loader._map[_nextSceneName]);
+			loadScenesNames.Add(_nextSceneName); //
 
-				foreach (string name in loadScenesNames)
-					if (!unloadScenesNames.Contains(name))
+			List<string> unloadScenesNames = new List<string>();
+			unloadScenesNames.AddRange(S.Loader._map[sceneName]);
+			unloadScenesNames.Add(sceneName); //?
+
+			foreach (string name in loadScenesNames)
+				if (!unloadScenesNames.Contains(name))
+				{
+					SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
+					S.Loader.PleaseLoadScene(name);
+				}
+
+			foreach (string name in unloadScenesNames)
+				if (!loadScenesNames.Contains(name))
+					try
 					{
-						SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
-						S.Loader.PleaseLoadScene(name);
+						SceneManager.UnloadSceneAsync(name);
+					}
+					catch (System.Exception ex)
+					{
+						Debug.LogError($"Error unloading scene {name}: {ex.Message}");
 					}
 
-				foreach (string name in unloadScenesNames)
-					if (!loadScenesNames.Contains(name))
-						try
-						{
-							SceneManager.UnloadSceneAsync(name);
-						}
-						catch (System.Exception ex)
-						{
-							Debug.LogError($"Error unloading scene {name}: {ex.Message}");
-						}
+			StartCoroutine(WaitLoad());
+		}
+		else
+		{
+			Rigidbody rb = S.Ph.GetComponent<Rigidbody>();
+			PlayerMovement pm = S.Ph.GetComponent<PlayerMovement>();
+			Vector3 direction = S.Camera.transform.position - transform.position;
+			direction = new Vector3(direction.x, 0, direction.z).normalized;
+			direction *= 1400f;
+			direction += new Vector3(0, 25, 0);
+			pm.Push(direction);
+			S.Ps.Damage(10);
+			S.Inventory._negated = 0.3f;
 
-                StartCoroutine(WaitLoad(playerObject));
-			}
-			else
+			for (int i = 0; i < _sparklesCount; i++)
 			{
-				GameObject ph = playerObject.transform.parent.gameObject;
-				Rigidbody rb = ph.GetComponent<Rigidbody>();
-				PlayerMovement pm = ph.GetComponent<PlayerMovement>();
-				Vector3 direction = S.Camera.transform.position - transform.position;
-				direction = new Vector3(direction.x, 0, direction.z).normalized;
-				direction *= 1800f;
-				direction += new Vector3(0, 25, 0);
-				pm.Push(direction);
-				PlayerStorage ps = ph.GetComponent<PlayerStorage>();
-				ps.Damage(10);
-				S.Inventory._negated = 0.3f;
-
-				for (int i = 0; i < _sparklesCount; i++)
-				{
-					GameObject sparkle = Instantiate(S.Sparkle);
-					sparkle.transform.position = transform.position;
-					sparkle.transform.rotation = Quaternion.LookRotation(direction);
-					sparkle.transform.localScale *= 4f;
-					sparkle.GetComponent<IsSparkle>()._active = true;
-				}
+				GameObject sparkle = Instantiate(S.Sparkle);
+				sparkle.transform.position = transform.position;
+				sparkle.transform.rotation = Quaternion.LookRotation(direction);
+				sparkle.transform.localScale *= 4f;
+				sparkle.GetComponent<IsSparkle>()._active = true;
 			}
 		}
 	}
@@ -115,9 +114,9 @@ public class Door : MonoBehaviour
 		}
 	}
 
-	IEnumerator WaitLoad(GameObject playerObject)
+	IEnumerator WaitLoad()
 	{
-		while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
+		while (!S.AllFather.SceneCurrentlyLoaded(_nextSceneName))
 			yield return new WaitForSeconds(0.2f);
 
 		PlayerMovement pm = S.Ph.GetComponent<PlayerMovement>();
@@ -128,8 +127,9 @@ public class Door : MonoBehaviour
 
 		S.Ph.transform.position = position + v;
 		S.PlayerCamScript.Rotate(_rotation);
+		
+		Debug.Log($"GONE TO SCENE {_nextSceneName}");
 
-		S.PS._currentSceneName = nextSceneName;
-		S.SaveManager.CurrentSave.SaveString("sceneName", S.PS._currentSceneName);
+		S.SDC.RequestCleanup();
 	}
 }

@@ -27,13 +27,17 @@ public class AudioManager : MonoBehaviour
 	public AudioSource _screamer5;
 	public AudioSource _screamer6;
 	public AudioSource _screamer7;
+    public AudioSource _ohNo;
+    public AudioSource _wrong;
+    public AudioSource _wrong2;
 
-	public AudioSource _toiletMusic1;
+    public AudioSource _toiletMusic1;
 	public AudioSource _toiletMusic2;
-	public int _toiletPhase = 0;
-	static Vector3 _toiletCenter = new Vector3(-131f, -2.5f, 223.5f);
-	static Vector3 _toiletStart = new Vector3(-174f, -2.5f, 109f);
-	float _maxToiletDistance = Vector3.Distance(_toiletCenter, _toiletStart);
+
+    public AudioSource _fzt1;
+    public AudioSource _fzt2;
+
+
 
 	public bool muted;
 
@@ -49,6 +53,7 @@ public class AudioManager : MonoBehaviour
 
 	public void Play(string name, float pitch)
 	{
+		name = name.ToLower();
 		if (muted)
 			return;
 
@@ -64,12 +69,12 @@ public class AudioManager : MonoBehaviour
 				_arfa.pitch = pitch;
 				_arfa.Play();
 				break;
-			case "Door":
+			case "door":
 				pitch = 0.9f + (float)rnd.NextDouble() * 0.2f;
 				_door.pitch = pitch;
 				_door.Play();
 				break;
-			case "pickUp":
+			case "pickup":
 				pitch += -0.1f + (float)rnd.NextDouble() * 0.2f;
 				_pickUp.pitch = pitch;
 				_pickUp.Play();
@@ -93,17 +98,17 @@ public class AudioManager : MonoBehaviour
 				_money.pitch = pitch;
 				_money.Play();
 				break;
-			case "notEnoughCash":
+			case "notenoughcash":
 				pitch = 0.9f;
 				_notEnoughCash.pitch = pitch;
 				_notEnoughCash.Play();
 				break;
-			case "noAmmo":
+			case "noammo":
 				pitch = 0.9f;
 				_noAmmo.pitch = pitch;
 				_noAmmo.Play();
 				break;
-			case "toiletDoor":
+			case "toiletdoor":
 				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
 				_toiletDoor.pitch = pitch;
 				_toiletDoor.Play();
@@ -166,93 +171,39 @@ public class AudioManager : MonoBehaviour
 				_screamer7.pitch = pitch;
 				_screamer7.Play();
 				break;
-			default:
-				Debug.Log($"No such audioSource {name}!");
+            case "ohno":
+                pitch = 1;
+                _ohNo.pitch = pitch;
+                _ohNo.Play();
+                break;
+            case "wrong":
+                pitch = 1f;
+                _wrong.pitch = pitch;
+                _wrong.Play();
+                break;
+            case "wrong2":
+                pitch = 1;
+                _wrong2.pitch = pitch;
+                _wrong2.Play();
+                break;
+            case "fzt1":
+                pitch = 1;
+                _fzt1.pitch = pitch;
+                _fzt1.Play();
+                break;
+            case "fzt2":
+                pitch = 1;
+                _fzt2.pitch = pitch;
+                _fzt2.Play();
+                break;
+            default:
+				Debug.Log($"No such audioSource {name} in code! Maybie you want to add it here?");
 				break;
 		}
 	}
 
 	public void Update()
 	{
-		if (_toiletPhase != 0)
-		{
-			if (_toiletMusic1.time > 80)
-			{
-				_toiletMusic1.Stop(); ////////////
-				_toiletMusic2.time = 0;
-				_toiletMusic2.Play();
-			}
-			if (_toiletMusic2.time > 80)
-			{
-				_toiletMusic2.Stop(); //////////////
-				_toiletMusic1.time = 0;
-				_toiletMusic1.Play();
-			}
-		}
-
-		if (_toiletPhase == 3)
-		{
-			if (_toiletMusic1.volume >= 0.003f)
-				_toiletMusic1.volume -= 0.003f;
-			if (_toiletMusic2.volume >= 0.003f)
-				_toiletMusic2.volume -= 0.003f;
-
-			if (_toiletMusic1.volume < 0.003f && _toiletMusic2.volume < 0.003f)
-			{
-				_toiletMusic1.Stop();
-				_toiletMusic2.Stop();
-				_toiletPhase = 0;
-			}
-		}
-		else if (_toiletPhase == 1)
-		{
-			float distance = Vector3.Distance(_toiletCenter, transform.position);
-			float volume = (_maxToiletDistance - distance) / _maxToiletDistance;
-			if (volume < 0)
-				volume = 0;
-
-			_toiletMusic1.volume = volume;
-			_toiletMusic2.volume = volume;
-		}
-	}
-
-	public void PlayFirstZombieTheme()
-	{
-		_toiletMusic1.volume = 1;
-		_toiletMusic2.volume = 1;
-		_toiletPhase = 2;
-		_toiletMusic1.Play();
-	}
-
-	public void StopFirstZombieTheme()
-	{
-		_toiletPhase = 3;
-	}
-
-	public void EnterToilet()
-	{
-		if (_toiletPhase == 0)
-		{
-			_toiletPhase = 1;
-			_toiletMusic1.time = 0;
-			_toiletMusic1.Play();
-		}
-		else if (_toiletPhase == 3)
-		{
-			_toiletPhase = 1;
-		}
-	}
-
-	public void DeepEnterToilet()
-	{
-		_toiletPhase = 2;
-		_toiletMusic1.volume = 1;
-		_toiletMusic2.volume = 1;
-	}
-
-	public void LeaveToilet()
-	{
-		if (_toiletPhase != 0)
-			_toiletPhase = 3;
+		
 	}
 }

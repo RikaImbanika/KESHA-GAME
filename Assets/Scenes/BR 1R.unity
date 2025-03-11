@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -225,7 +224,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &77910787
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -242,7 +241,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &77910788
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,8 +296,11 @@ MonoBehaviour:
   _heigh: 0
   _stopSpeed: 0
   _animationSpeed: 0
+  _active: 0
   _nextFireTime: 0
   _followPlayer: 0
+  _ani: {fileID: 0}
+  _realSpeed: 0
   _dead: 0
 --- !u!114 &77910791
 MonoBehaviour:
@@ -313,7 +316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!95 &77910792
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -330,7 +333,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &77910793
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -636,20 +640,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Crystal
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 679d558cf2307fd4eae7aa0c63a25a6a, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 200787363}
+  _name: Crystal
+  _count: 1
 --- !u!64 &200787365
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -772,11 +764,11 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2088412107}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 4fbc9355531434f46b39fd652f1e3127, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4fbc9355531434f46b39fd652f1e3127, type: 3}
       propertyPath: m_LocalScale.x
@@ -903,12 +895,15 @@ MonoBehaviour:
   _heigh: 0
   _stopSpeed: 0
   _animationSpeed: 0
+  _active: 0
   _nextFireTime: 0
   _followPlayer: 0
+  _ani: {fileID: 0}
+  _realSpeed: 0
   _dead: 0
 --- !u!95 &413211319
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -925,7 +920,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &413211320
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1042,7 +1038,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &495473576
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1059,7 +1055,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &495473577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1113,8 +1110,11 @@ MonoBehaviour:
   _heigh: 0
   _stopSpeed: 0
   _animationSpeed: 0
+  _active: 0
   _nextFireTime: 0
   _followPlayer: 0
+  _ani: {fileID: 0}
+  _realSpeed: 0
   _dead: 0
 --- !u!114 &495473580
 MonoBehaviour:
@@ -1130,7 +1130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!95 &495473581
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1147,7 +1147,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &495473582
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1167,11 +1168,11 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2088412107}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9251fc08374494c4bb4a24c41eef3759, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9251fc08374494c4bb4a24c41eef3759, type: 3}
       propertyPath: m_LocalScale.x
@@ -1286,8 +1287,11 @@ MonoBehaviour:
   _heigh: 5
   _stopSpeed: 0.06
   _animationSpeed: 16
+  _active: 0
   _nextFireTime: 0
   _followPlayer: 0
+  _ani: {fileID: 0}
+  _realSpeed: 0
   _dead: 0
 --- !u!114 &497420091
 MonoBehaviour:
@@ -1303,7 +1307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!95 &497420092
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1320,7 +1324,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &497420093
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1383,16 +1388,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 597319918}
-  loadScenesNames:
-  - BR 7R
-  - BR 4
-  unloadScenesNames:
-  - BR 3R
-  - BR 5
-  nextSceneName: BR 8
+  _nextSceneName: BR 8
   position: {x: 244.5, y: -3, z: 482.99}
   _rotation: 90
   audioName: Door
+  _locked: 0
+  _stamp: {fileID: 0}
+  _stampAnimationTimeLeft: 0
+  _sparklesCount: 0
 --- !u!64 &597319917
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1527,20 +1530,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Crystal
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 679d558cf2307fd4eae7aa0c63a25a6a, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 653615143}
+  _name: Crystal
+  _count: 1
 --- !u!64 &653615145
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1560,15 +1551,15 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2088412107}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.3004999
+      value: 1.3004997
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalScale.y
@@ -1576,7 +1567,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.3004999
+      value: 1.3004997
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1592,7 +1583,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.07408386
+      value: 0.074083865
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1600,7 +1591,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.997252
+      value: 0.99725205
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalRotation.z
@@ -1679,8 +1670,11 @@ MonoBehaviour:
   _heigh: 4
   _stopSpeed: 0.06
   _animationSpeed: 12
+  _active: 0
   _nextFireTime: 0
   _followPlayer: 0
+  _ani: {fileID: 0}
+  _realSpeed: 0
   _dead: 0
 --- !u!114 &703623800
 MonoBehaviour:
@@ -1696,7 +1690,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!95 &703623801
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1713,7 +1707,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &703623802
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1790,16 +1785,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 725032679}
-  loadScenesNames:
-  - BR 6R
-  - BR 2
-  unloadScenesNames:
-  - BR 5
-  - BR 8
-  nextSceneName: BR 3R
+  _nextSceneName: BR 3R
   position: {x: -541.71, y: -3, z: -396.8}
   _rotation: 0
   audioName: Door
+  _locked: 0
+  _stamp: {fileID: 0}
+  _stampAnimationTimeLeft: 0
+  _sparklesCount: 0
 --- !u!64 &725032678
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1840,15 +1833,15 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2088412107}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.3004999
+      value: 1.3004998
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalScale.y
@@ -1856,7 +1849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.3004999
+      value: 1.3004998
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0d4bb2ecc8fe0b44ab8cae19e83835ad, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1959,8 +1952,11 @@ MonoBehaviour:
   _heigh: 4
   _stopSpeed: 0.06
   _animationSpeed: 12
+  _active: 0
   _nextFireTime: 0
   _followPlayer: 0
+  _ani: {fileID: 0}
+  _realSpeed: 0
   _dead: 0
 --- !u!114 &742498400
 MonoBehaviour:
@@ -1976,7 +1972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!95 &742498401
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1993,7 +1989,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &742498402
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2412,7 +2409,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.8833334
+  m_VoxelSize: 0.7266667
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 8f8a64ed5fe2e4a4fbe1516ffab41943, type: 2}
   m_BuildHeightMesh: 0
@@ -2660,20 +2657,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: FirstAidKit
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 8d0e64a6ebb445f47a6d03b5f02f2680, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
+  _name: 
+  _count: 0
 --- !u!23 &1209056825
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3017,20 +3002,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Crystal
-  count: 1
-  throwable: 0
-  image: {fileID: 21300000, guid: 679d558cf2307fd4eae7aa0c63a25a6a, type: 3}
-  pickUpAudioName: pickUp
-  _protected: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 1512936208}
+  _name: Crystal
+  _count: 1
 --- !u!64 &1512936210
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3050,11 +3023,11 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2088412107}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 4fbc9355531434f46b39fd652f1e3127, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4fbc9355531434f46b39fd652f1e3127, type: 3}
       propertyPath: m_LocalScale.x
@@ -3181,12 +3154,15 @@ MonoBehaviour:
   _heigh: 0
   _stopSpeed: 0
   _animationSpeed: 0
+  _active: 0
   _nextFireTime: 0
   _followPlayer: 0
+  _ani: {fileID: 0}
+  _realSpeed: 0
   _dead: 0
 --- !u!95 &1519662646
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3203,7 +3179,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &1519662647
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3320,7 +3297,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &1555768835
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3337,7 +3314,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1555768836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3391,8 +3369,11 @@ MonoBehaviour:
   _heigh: 0
   _stopSpeed: 0
   _animationSpeed: 0
+  _active: 0
   _nextFireTime: 0
   _followPlayer: 0
+  _ani: {fileID: 0}
+  _realSpeed: 0
   _dead: 0
 --- !u!114 &1555768839
 MonoBehaviour:
@@ -3408,7 +3389,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!95 &1555768840
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3425,7 +3406,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!136 &1555768841
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3600,17 +3582,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   col: {fileID: 1873841210}
-  loadScenesNames:
-  - BR 4
-  - BR 6
-  - BR 7
-  unloadScenesNames:
-  - BR 3R
-  - BR 8
-  nextSceneName: BR 5
+  _nextSceneName: BR 5
   position: {x: -690.14, y: -3, z: -365.24}
   _rotation: -90
   audioName: Door
+  _locked: 0
+  _stamp: {fileID: 0}
+  _stampAnimationTimeLeft: 0
+  _sparklesCount: 0
 --- !u!64 &1873841209
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3740,20 +3719,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Ammo
-  count: 80
-  throwable: 0
-  image: {fileID: 21300000, guid: cc47525175fcad148bc1b5af868cd7cc, type: 3}
-  pickUpAudioName: reload
-  _protected: 0
-  rotationX: 0
-  rotationY: 0
-  rotationZ: 0
-  rb: {fileID: 0}
-  collider: {fileID: 0}
-  _renderer: {fileID: 0}
-  _transform: {fileID: 0}
-  obj: {fileID: 0}
+  _name: Ammo
+  _count: 100
 --- !u!114 &1915088869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3937,6 +3904,11 @@ Transform:
   - {fileID: 77910784}
   - {fileID: 1555768832}
   - {fileID: 495473573}
+  - {fileID: 497420088}
+  - {fileID: 703623797}
+  - {fileID: 742498397}
+  - {fileID: 1519662642}
+  - {fileID: 413211315}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -142,9 +142,11 @@ public class Spider : MonoBehaviour
                 Collider collider = gameObject.GetComponent<Collider>();
                 Destroy(collider);
 
-                //Destroy(gameObject, 300);
+                S.AudioManager.Play("Kill", 1.1f);
             }
         }
+        else
+            S.AudioManager.Play("Kill", 0.9f);
     }
 
     void Update()

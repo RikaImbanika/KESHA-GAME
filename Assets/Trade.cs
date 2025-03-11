@@ -13,6 +13,7 @@ public class Trade : MonoBehaviour
 
     public void Start()
     {
+        _id = "Trade_" + transform.position.x + transform.position.z + _selledItemName + _buyedItemName;
         _tradeCount = S.SM.LoadInt(S.ID(_id, "TradeCount")) ?? _tradeCount;
     }
 

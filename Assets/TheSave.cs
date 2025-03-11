@@ -65,6 +65,11 @@ public class TheSave : MonoBehaviour
 
     private void SaveGeneric<T>(string key, T value, List<string> keys, List<T> values)
     {
+        if (key == "sceneName")
+        {
+            Debug.Log("SO!");
+        }
+
         int index = keys.IndexOf(key);
         if (index == -1)
         {

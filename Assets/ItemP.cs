@@ -6,7 +6,7 @@ public class ItemP : MonoBehaviour
 {
     public string _id;
     public string _name;
-    public int _count;
+    public int _count = 1;
     public bool _unnatural;
     public bool _locked;
 

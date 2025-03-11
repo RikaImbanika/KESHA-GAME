@@ -100,11 +100,14 @@ public class CHEATS : MonoBehaviour
     {
         Remember("Income");
 
+        S.Inventory.Take("Gun", 1);
+        S.Inventory.Take("Ammo", 100);
+
         var obj = GameObject.Find("LimeLocker");
         Debug.Log(obj);
         var locker = obj.GetComponent<Locker>();
         Debug.Log(locker);
-        locker.Cheat();
+        locker.Cheat(); //??
         yield return new WaitForSeconds(0.15f);
         GameObject.Find("BlueLocker").GetComponent<Locker>().Cheat();
         yield return new WaitForSeconds(0.15f);

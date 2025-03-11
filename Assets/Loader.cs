@@ -213,7 +213,7 @@ public class Loader : MonoBehaviour
             {
                 Scene targetScene = SceneManager.GetSceneByName(scene);
                 SceneManager.SetActiveScene(targetScene);
-                S.SM.Save("sceneName", scene);
+                //S.SM.Save("sceneName", scene);
             }
             catch
             {
