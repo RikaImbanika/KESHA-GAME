@@ -21,8 +21,6 @@ public class PlayerMovement : MonoBehaviour
 	public float jumpingSpeedBoost;
 	public float pushingSpeedBoost;
 
-	public bool _pushed;
-
 	[Header("Jumping")]
 	public float jumpForce;
 	public float jumpCooldown;
@@ -36,8 +34,9 @@ public class PlayerMovement : MonoBehaviour
 	public float pushingCooldown;
 	public float pushingMultiplier;
 	public bool readyToPush;
+    public bool _pushed;
 
-	[Header("Crouching")]
+    [Header("Crouching")]
 	public float crouchScale;
 	public bool isCrouching;
 	public float crouchDeltaDown;

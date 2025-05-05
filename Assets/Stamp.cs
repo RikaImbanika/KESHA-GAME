@@ -6,9 +6,11 @@ public class Stamp : MonoBehaviour
 {
 	public Door _door;
 	string _id;
+    public GameObject _go;
 
     public void Start()
     {
+        _go = gameObject;
         _id = "" + transform.position.x + transform.position.y + transform.position.z;
 
         OldSave s = new OldSave();
@@ -28,8 +30,9 @@ public class Stamp : MonoBehaviour
 
 	public void Unlock()
 	{
+        S.AudioManager.Play("arfa", 1);
         S.SM.Save(S.ID(_id, "destroyed"), true);
-        Debug.Log($"Unlocked and saved. id = {_id}");
+        Debug.Log($"STAMP UNLOCKED AND SAVED!!! id = {_id}");
         _door.Unlock();
     }
 }

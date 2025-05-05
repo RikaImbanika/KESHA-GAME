@@ -27,12 +27,12 @@ public class Inventory : MonoBehaviour
 	public TextMeshProUGUI[] smallNumberLabels;
 
 	public GameObject selectorPanel;
-	public GameObject selectorPanelPlus; //ÏÎÍßËÀ
+	public GameObject selectorPanelPlus; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	public GameObject cursorPanel;
 	public GameObject inventoryPanelParentBig;
-	public GameObject inventoryPanelParentSmall; //ÍÅ ÏÎÍßËÀ, ÝÒÎ ×ÒÎ??
-	//ÀÀÀ ÝÒÎ ÑÀÌÀ ÊÀÐÒÈÍÊÀ
-	//×Î?
+	public GameObject inventoryPanelParentSmall; //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½??
+	//ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½?
 
 	public Camera _camera;
 	public Camera showingCamera;
@@ -478,35 +478,35 @@ public class Inventory : MonoBehaviour
 
 			bool throwable = false;
 
-			if (items.Length <= selectedId || IsNull(items[selectedId]))
+			if (items.Length <= selectedId)
 			{
-				Debug.Log($"Inventory waiting for items");
+				Debug.Log($"!!! INVENTORY WAITING FOR ITEMS. Length = {items.Length} SelId = {selectedId}");
 				return;
 			}
 			else
 			{
-				if (!string.IsNullOrEmpty(items[selectedId]._name))
-					throwable = S.II.Get(items[selectedId]._name)._throwable;
-
-				if (!string.IsNullOrEmpty(items[selectedId]._name))
-				{
-					if (!opened) //So, why the hell it is throwing??
+				if (items[selectedId] != null)
+					if (!string.IsNullOrEmpty(items[selectedId]._name))
 					{
-						if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q) ||
-						(Input.GetMouseButtonDown(0) && !_somethingClicked))
+						throwable = S.II.Get(items[selectedId]._name)._throwable;
+
+						if (!opened) //So, why the hell it is throwing??
 						{
-							throwTime = 0;
-							throwing = true;
-							if (throwable)
-								throwPanelBlack.transform.localScale = new Vector3(1, 1, 0);
-							else
-								throwPanelRed.transform.localScale = new Vector3(1, 1, 0);
+							if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q) ||
+							(Input.GetMouseButtonDown(0) && !_somethingClicked))
+							{
+								throwTime = 0;
+								throwing = true;
+								if (throwable)
+									throwPanelBlack.transform.localScale = new Vector3(1, 1, 0);
+								else
+									throwPanelRed.transform.localScale = new Vector3(1, 1, 0);
+							}
 						}
+						else if (throwable) //Okay, so...
+							if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q))
+								Throw(selectedId, 300);
 					}
-					else if (throwable) //Okay, so...
-						if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q))
-							Throw(selectedId, 300);
-				}
 
 				if (throwing)
 				{
@@ -614,21 +614,23 @@ public class Inventory : MonoBehaviour
 				FrerardHolder fh = hit.collider.gameObject.GetComponent<FrerardHolder>();
 				if (fh != null)
 				{
-					if (!string.IsNullOrEmpty(items[selectedId]._name))
+					Debug.Log($"itemsCount = {items.Length}");
+					if (!IsNullOrEmpty(items[selectedId]))
 					{
+						Debug.Log($"itemsCount = {items[selectedId]._name}");
 						if (items[selectedId]._name.Contains("Frerard"))
 						{
-							fh.Take(items[selectedId]);
+							fh.Do(items[selectedId]);
 							items[selectedId] = null;
 							Visualise(selectedId);
 							return;
 						}
 						else
-							fh.Take(null);
+							fh.Do(null);
 					}
 					else
 					{
-						fh.Take(null);
+						fh.Do(null);
 					}
 				}
 
@@ -729,15 +731,19 @@ public class Inventory : MonoBehaviour
 
 	public void Take(ItemP itemP)
 	{
-		Take(itemP._name, itemP._count);
-		itemP.Destroy();
+		if (!itemP._locked)
+		{
+			Take(itemP._name, itemP._count);
+			itemP.Destroy();
+		}
 	}
 
 	public void Take(string name, int count)
 	{
 		string an = S.II.Get(name)._pickUpA;
-		if (string.IsNullOrEmpty(items[selId]._name))
+		if (IsNullOrEmpty(items[selId]))
 		{
+			items[selId] = new Item();
 			items[selId]._name = name;
 			items[selId]._count = count;
 			Visualise(selId);
@@ -763,7 +769,7 @@ public class Inventory : MonoBehaviour
 
 		int id = 0;
 		for (; id < 36; id++)
-			if (!string.IsNullOrEmpty(items[id]._name))
+			if (!IsNullOrEmpty(items[id]))
 				if (items[id]._name == name)
 				{
 					items[id]._count += count;
@@ -778,7 +784,7 @@ public class Inventory : MonoBehaviour
 
 		if (id >= 36)
 			for (id = 0; id < 36; id++)
-				if (string.IsNullOrEmpty(items[id]._name))
+				if (IsNullOrEmpty(items[id]))
 				{
 					items[id]._name = name;
 					items[id]._count = count;
@@ -1080,14 +1086,12 @@ public class Inventory : MonoBehaviour
 		}
 	}
 
-	public bool IsNull(Item item)
+	public bool IsNullOrEmpty(Item item)
 	{
-		bool so = false;
-
         try
         {
             string aboba = item._name;
-            return false;
+            return aboba.Length <= 0;
         }
         catch
         {

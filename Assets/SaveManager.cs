@@ -76,6 +76,21 @@ public class SaveManager : MonoBehaviour
         return _currentSave.LoadListString(key);
     }
 
+    public List<bool> LoadListBool(string key)
+    {
+        return _currentSave.LoadListBool(key);
+    }
+
+    public List<int> LoadListInt(string key)
+    {
+        return _currentSave.LoadListInt(key);
+    }
+
+    public List<float> LoadListFloat(string key)
+    {
+        return _currentSave.LoadListFloat(key);
+    }
+
     public Vector3? LoadVector3(string key)
     {
         return _currentSave.LoadVector3(key);
@@ -128,7 +143,7 @@ public class SaveManager : MonoBehaviour
 
     public void AddToList(string key, object value)
     {
-        _currentSave.RemoveFromList(key, value);
+        _currentSave.AddToList(key, value);
     }
 
     public void Save(string key, object value)
@@ -157,6 +172,18 @@ public class SaveManager : MonoBehaviour
         else if (type == typeof(List<string>))
         {
             _currentSave.SaveListString(key, (List<string>)value);
+        }
+        else if (type == typeof(List<bool>))
+        {
+            _currentSave.SaveListBool(key, (List<bool>)value);
+        }
+        else if (type == typeof(List<int>))
+        {
+            _currentSave.SaveListInt(key, (List<int>)value);
+        }
+        else if (type == typeof(List<float>))
+        {
+            _currentSave.SaveListFloat(key, (List<float>)value);
         }
         else if (type == typeof(Quaternion))
         {

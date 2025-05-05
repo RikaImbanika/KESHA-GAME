@@ -109,7 +109,7 @@ public class MusicManager : MonoBehaviour
         {
             if (_fztVolume > 0.03f)
             {
-                _fztVolume -= 0.03f * d;
+                _fztVolume -= 0.01f * d;
                 S.AM._fzt1.volume = _fztVolume;
                 S.AM._fzt2.volume = _fztVolume;
             }

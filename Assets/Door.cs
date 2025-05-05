@@ -13,7 +13,7 @@ public class Door : MonoBehaviour
 	public float _rotation;
 	public string audioName;
 	public bool _locked;
-	public GameObject _stamp;
+	public Stamp _stamp;
 	public float _stampAnimationTimeLeft;
 	public int _sparklesCount;
 
@@ -105,10 +105,10 @@ public class Door : MonoBehaviour
 			float randomY = UnityEngine.Random.Range(0f, 360f);
 			float randomZ = UnityEngine.Random.Range(0f, 360f);
 
-			_stamp.transform.rotation = Quaternion.Euler(randomX, randomY, randomZ);
+			_stamp._go.transform.rotation = Quaternion.Euler(randomX, randomY, randomZ);
 
 			if (_stampAnimationTimeLeft <= 0)
-				Destroy(_stamp);
+				Destroy(_stamp._go);
 
 			_locked = false;
 		}

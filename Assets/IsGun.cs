@@ -83,19 +83,13 @@ public class IsGun : MonoBehaviour
                         if (door != null)
                         {
                             if (door._locked)
-                            {
-                                door.Unlock();
-                                S.AudioManager.Play("arfa", 1);
-                            }
+                                door._stamp.Unlock();
                         }
                         else
                         {
                             Stamp stamp = hit.collider.gameObject.GetComponent<Stamp>();
                             if (stamp != null)
-                            {
                                 stamp.Unlock();
-                                S.AudioManager.Play("arfa", 1);
-                            }
                         }
                     }
                 }

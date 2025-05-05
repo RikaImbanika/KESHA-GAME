@@ -1,63 +1,53 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class FrerardHolder : MonoBehaviour
 {
+    string _id;
     public int _number;
     public string _waitItem; 
     public Frerard _frerard;
-    AllFather _allFather;
-    Canvas _canvas;
-    Inventory _inventory;
     ItemP _placedItem;
     int _currentRotation;
     int _rotations;
 
     void Start()
     {
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-        _canvas = GameObject.FindObjectOfType<Canvas>();
-        _inventory = _canvas.GetComponent<Inventory>();
+        _id = $"FrerHolder {_number}";
+
+        bool exists = !(S.SM.LoadBool(S.ID(_id, "destroyed")) ?? true);
+        if (exists)
+        {
+            string name = S.SM.LoadString(S.ID(_id, "name"));
+            GameObject prefab = Prefabs.Get(name);
+            GameObject obj = Instantiate(prefab, transform.position, transform.rotation);
+
+            _rotations = S.SM.LoadInt(S.ID(_id, "rot")) ?? 0;
+            _currentRotation = S.SM.LoadInt(S.ID(_id, "curRot")) ?? 0;
+
+            for (int i = 0; i < _currentRotation; i++)
+                Rotate(_placedItem.gameObject);
+
+            S.SM.Save(S.ID(_id, "destroyed"), false);
+        }
     }
 
-    public void Take(Item item)
+    public void Do(Item item)
     {
         if (!_frerard._activated)
         {
-            if (item != null)
+            if (!S.Inventory.IsNullOrEmpty(item))
             {
-                GameObject prefab = Prefabs.Get(item._name);
-                GameObject obj = Instantiate(prefab, transform.position, transform.rotation);
-                obj.transform.localScale = transform.localScale;
-
-                int rotations = UnityEngine.Random.Range(0, 4);
-                _currentRotation = 0;
-
-                for (int i = 0; i < rotations; i++)
-                    Rotate(obj);
-                _rotations = 0;
-
                 if (_placedItem != null)
-                    _inventory.Take(_placedItem);
-                _placedItem = obj.GetComponent<ItemP>();
-                //_placedItem.transform.SetParent(_frerard.transform);
-
-                S.AudioManager.Play("kill", 0.7f);
+                    Swap(item);
+                else
+                    Put(item);
             }
             else if (_placedItem != null)
-            {
-                if (_rotations >= 3)
-                {
-                    _inventory.Take(_placedItem);
-                    _placedItem = null;
-                }
-                else
-                    Rotate(_placedItem._obj);
-
-                S.AudioManager.Play("kill", 0.7f);
-            }
-
+                Interact();
+           
             if (_placedItem != null)
             {
                 bool ok = _placedItem.name == _waitItem && _currentRotation == 0;
@@ -65,6 +55,62 @@ public class FrerardHolder : MonoBehaviour
             }
         }
 	}
+
+    void Swap(Item item)
+    {
+        Debug.Log("Frerard swap");
+        string name = _placedItem._name;
+        _placedItem.Destroy();
+        Put(item);
+        S.Inventory.Take(name, 1);
+    }
+
+    void Put(Item item)
+    {
+        Debug.Log("Frerard put");
+
+        S.SM.Save(S.ID(_id, "destroyed"), false);
+        S.SM.Save(S.ID(_id, "name"), item._name);
+
+        GameObject prefab = Prefabs.Get(item._name);
+        GameObject obj = Instantiate(prefab, transform.position, transform.rotation);
+        obj.transform.localScale = transform.localScale;
+
+        _placedItem = obj.GetComponent<ItemP>();
+
+        Debug.Log($"I put {_placedItem._name} to frerard!");
+
+        int newRotations = UnityEngine.Random.Range(0, 4);
+        _currentRotation = 0; //ok
+
+        for (int i = 0; i < newRotations; i++)
+            Rotate(obj);
+
+        _rotations = 0; //ok
+
+        S.Inventory.Remove(item._name, 1);
+
+        S.AudioManager.Play("kill", 0.7f);
+    }
+
+    void Interact()
+    {
+        Debug.Log("Frerard interact");
+        if (_rotations >= 3)
+            Pick();
+        else
+        {
+            Rotate(_placedItem._obj);
+            S.AudioManager.Play("kill", 0.7f);
+        }
+    }
+
+    void Pick()
+    {
+        S.Inventory.Take(_placedItem);
+        S.SM.Save(S.ID(_id, "destroyed"), true);
+        _placedItem = null;
+    }
 
     void Rotate(GameObject obj)
     {
@@ -74,5 +120,8 @@ public class FrerardHolder : MonoBehaviour
 
         if (_currentRotation == 4)
             _currentRotation = 0;
+
+        S.SM.Save(S.ID(_id, "rot"), _rotations);
+        S.SM.Save(S.ID(_id, "curRot"), _currentRotation);
     }
 }

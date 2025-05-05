@@ -31,6 +31,9 @@ public class TheSave : MonoBehaviour
     [SerializeField] private List<string> listIntKeys = new List<string>();
     [SerializeField] private List<List<int>?> listIntValues = new List<List<int>?>();
 
+    [SerializeField] private List<string> listBoolKeys = new List<string>();
+    [SerializeField] private List<List<bool>?> listBoolValues = new List<List<bool>?>();
+
     [SerializeField] private List<string> quaternionKeys = new List<string>();
     [SerializeField] private List<Quaternion?> quaternionValues = new List<Quaternion?>();
 
@@ -43,7 +46,8 @@ public class TheSave : MonoBehaviour
     public void RemoveListFloat(string key) => RemoveGeneric(key, listFloatKeys, listFloatValues);
     public void RemoveListInt(string key) => RemoveGeneric(key, listIntKeys, listIntValues);
     public void RemoveQuaternion(string key) => RemoveGeneric(key, quaternionKeys, quaternionValues);
-
+    public void RemoveListBool(string key) => RemoveGeneric(key, listBoolKeys, listBoolValues);
+  
     private void RemoveGeneric<T>(string key, List<string> keys, List<T> values)
     {
         int index = keys.IndexOf(key);
@@ -62,14 +66,9 @@ public class TheSave : MonoBehaviour
     public void SaveListFloat(string key, List<float>? value) => SaveGeneric(key, value, listFloatKeys, listFloatValues);
     public void SaveListInt(string key, List<int>? value) => SaveGeneric(key, value, listIntKeys, listIntValues);
     public void SaveQuaternion(string key, Quaternion? value) => SaveGeneric(key, value, quaternionKeys, quaternionValues);
-
+    public void SaveListBool(string key, List<bool>? value) => SaveGeneric(key, value, listBoolKeys, listBoolValues);  public List<bool>? LoadListBool(string key) => LoadGeneric(key, listBoolKeys, listBoolValues);
     private void SaveGeneric<T>(string key, T value, List<string> keys, List<T> values)
     {
-        if (key == "sceneName")
-        {
-            Debug.Log("SO!");
-        }
-
         int index = keys.IndexOf(key);
         if (index == -1)
         {
@@ -82,8 +81,6 @@ public class TheSave : MonoBehaviour
         }
     }
 
-
-
 #nullable enable
     public bool? LoadBool(string key) => LoadGeneric(key, boolKeys, boolValues);
     public string? LoadString(string key) => LoadGeneric(key, stringKeys, stringValues);
@@ -94,6 +91,7 @@ public class TheSave : MonoBehaviour
     public List<float>? LoadListFloat(string key) => LoadGeneric(key, listFloatKeys, listFloatValues);
     public List<int>? LoadListInt(string key) => LoadGeneric(key, listIntKeys, listIntValues);
     public Quaternion? LoadQuaternion(string key) => LoadGeneric(key, quaternionKeys, quaternionValues);
+    //public List<bool>? LoadListBool(string key) => LoadGeneric(key, listBoolKeys, listBoolValues);
 
     private string? LoadGeneric(string key, List<string> keys, List<string?> values)
     {
@@ -133,6 +131,10 @@ public class TheSave : MonoBehaviour
                 UpdateList(listKey, floatVal, LoadListFloat, SaveListFloat);
                 break;
 
+            case bool boolVal:
+                UpdateList(listKey, boolVal, LoadListBool, SaveListBool);
+                break;
+
             default:
                 throw new NotSupportedException($"Type {typeof(T)} not supported");
         }
@@ -154,31 +156,35 @@ public class TheSave : MonoBehaviour
                 UpdateList(listKey, floatVal, LoadListFloat, SaveListFloat, true);
                 break;
 
+            case bool boolVal:
+                UpdateList(listKey, boolVal, LoadListBool, SaveListBool, true);
+                break;
+
             default:
                 throw new NotSupportedException($"Type {typeof(T)} not supported");
         }
     }
 
     private void UpdateList<T>(
-        string key,
+        string listKey,
         T value,
         Func<string, List<T>> loadFunc,
         Action<string, List<T>> saveFunc,
         bool remove = false)
     {
-        var list = loadFunc(key) ?? new List<T>();
+        var list = loadFunc(listKey) ?? new List<T>();
 
         if (remove)
         {
             if (list.Remove(value))
-                saveFunc(key, list);
+                saveFunc(listKey, list);
         }
         else
         {
             if (!list.Contains(value))
             {
                 list.Add(value);
-                saveFunc(key, list);
+                saveFunc(listKey, list);
             }
         }
     }
@@ -215,7 +221,12 @@ public class TheSave : MonoBehaviour
             listIntKeys = new List<string>(listIntKeys),
             listIntValues = listIntValues
                 .Select(list => list != null ? new List<int>(list) : null)
-                .ToList()
+                .ToList(),
+
+            listBoolKeys = new List<string>(listBoolKeys),
+                    listBoolValues = listBoolValues
+                    .Select(list => list != null ? new List<bool>(list) : null)
+                    .ToList()
         };
     }
 
@@ -233,7 +244,7 @@ public class TheSave : MonoBehaviour
 
         if (boolKeys.Count > 0)
             for (int i = 0; i < boolKeys.Count; i++)
-                sb.AppendLine($"  {boolKeys[i]}: true");
+                sb.AppendLine($"  {boolKeys[i]}: {boolValues[i].ToString() ?? "null"}");
 
         sb.AppendLine("> Floats:");
 
@@ -261,6 +272,9 @@ public class TheSave : MonoBehaviour
 
         sb.AppendLine("> ListInts:");
         AppendListSection(sb, listIntKeys, listIntValues);
+
+        sb.AppendLine("> ListBools:");
+        AppendListSection(sb, listBoolKeys, listBoolValues);
 
         sb.AppendLine("> Quaternions:");
 
