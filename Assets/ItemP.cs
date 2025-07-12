@@ -50,7 +50,7 @@ public class ItemP : MonoBehaviour
             {
                 transform.position = position;
                 transform.rotation = rotation;
-                _count = S.SM.LoadInt(S.ID(_id, "count")) ?? 0;
+                _count = S.SM.LoadInt(S.ID(_id, "count")) ?? _count;
             }
             else
             {

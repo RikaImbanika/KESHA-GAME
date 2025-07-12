@@ -29,7 +29,7 @@ public class SnakeHead : MonoBehaviour
     private List<GameObject> _clones = new List<GameObject>();
     private List<SnakeBody> _clonesSBs = new List<SnakeBody>();
     private List<NavMeshObstacle> _clonesNMOs = new List<NavMeshObstacle>();
-    float L = 3.7f;
+    float L = 3.7f; //Wha?
     float _timeCapacity = 20;
     bool _tailEnabled;
     Vector3 _dir;
@@ -40,7 +40,7 @@ public class SnakeHead : MonoBehaviour
 
     void Start()
     {
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
+        _allFather = S.AllFather;
         _theBullet = GameObject.Find("EnemyBullet");
         _player = GameObject.FindWithTag("Player");
 
@@ -64,7 +64,7 @@ public class SnakeHead : MonoBehaviour
 
             NavMeshObstacle obstacle = clone.GetComponent<NavMeshObstacle>();
             if (i >= 3)
-                obstacle.enabled = true;
+                obstacle.enabled = true; //?
             _clonesNMOs.Add(obstacle);
 
             SnakeBody sb = clone.GetComponent<SnakeBody>();
@@ -105,6 +105,7 @@ public class SnakeHead : MonoBehaviour
                 type = "rotated2lasers";
 
             percents = 100;
+
             string type2 = "";
 
             if (GetPercent(10))
@@ -118,7 +119,7 @@ public class SnakeHead : MonoBehaviour
 
             sb._drone.Init(type, type2);
 
-            int randomNumber = UnityEngine.Random.Range(0, 2);
+            int randomNumber = UnityEngine.Random.Range(0, 2); //Why 2?
             if (randomNumber == 0)
                 randomIndex = UnityEngine.Random.Range(0, _ballMaterials.Count);
             sb._ball_ball.GetComponent<Renderer>().material = _ballMaterials[randomIndex];
@@ -173,7 +174,7 @@ public class SnakeHead : MonoBehaviour
             else if (_aimId == _aims.Count - 1)
                 return _aims[_aimId];
 
-            float distance0 = (_aims[_aimId - 1] - transform.position).magnitude;
+            //float distance0 = (_aims[_aimId - 1] - transform.position).magnitude;
             float distance1 = (_aims[_aimId] - transform.position).magnitude;
             float distance2 = (_aims[_aimId + 1] - transform.position).magnitude;
 

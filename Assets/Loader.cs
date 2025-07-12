@@ -7,6 +7,7 @@ using System;
 
 public class Loader : MonoBehaviour
 {
+    public Dictionary<string, RoomModel> _rooms;
     public Dictionary<string, List<string>> _map;
     private List<string> _scenesToLoad;
     private bool _workingOnIt;
@@ -78,90 +79,93 @@ public class Loader : MonoBehaviour
     public void InitMap()
     {
         _map = new Dictionary<string, List<string>>();
+        _rooms = new Dictionary<string, RoomModel>();
 
-        AddValue("Income", "Corridor");
+        AddValue("Income", "Corridor", 1, 1);
 
-        AddValue("Corridor", "Income");
-        AddValue("Corridor", "Hall");
+        AddValue("Corridor", "Income", 1, 1);
+        AddValue("Corridor", "Hall", 2, 1);
 
-        AddValue("Hall", "Corridor");
-        AddValue("Hall", "BR 1");
-        AddValue("Hall", "TL 0");
-        AddValue("Hall", "MR 2");
+        AddValue("Hall", "Corridor", 1, 2);
+        AddValue("Hall", "BR 1", 2, 1);
+        AddValue("Hall", "TL 0", 3, 1);
+        AddValue("Hall", "MR 2", 4, 1);
 
-        AddValue("MR 2", "Hall");
-        AddValue("MR 2", "MR 1");
+        AddValue("MR 2", "Hall", 1, 4);
+        AddValue("MR 2", "MR 1", 2, 1);
 
-        AddValue("MR 1", "MR 2");
-        AddValue("BR 1", "MR 3");
+        AddValue("MR 1", "MR 2", 1, 2);
+        AddValue("MR 1", "MR 3", 2, 1);
 
-        AddValue("MR 3", "MR 1");
-        AddValue("MR 3", "MR 4");
+        AddValue("MR 3", "MR 1", 1, 2);
+        AddValue("MR 3", "MR 4", 2, 1);
 
-        AddValue("MR 4", "MR 3");
+        AddValue("MR 4", "MR 3", 1, 2);
 
-        AddValue("TL 0", "Hall");
-        AddValue("TL 0", "TL 1");
+        AddValue("TL 0", "Hall", 1, 3);
+        AddValue("TL 0", "TL 1", 2, 1);
+        AddValue("TL 0", "TL 1", 3, 2);
 
-        AddValue("TL 1", "TL 0");
-        AddValue("TL 1", "TL 2");
+        AddValue("TL 1", "TL 0", 1, 2);
+        AddValue("TL 1", "TL 0", 2, 3);
+        AddValue("TL 1", "TL 2", 3, 1);
 
-        AddValue("TL 2", "TL 1");
+        AddValue("TL 2", "TL 1", 1, 3);
 
-        AddValue("BR 1", "Hall");
-        AddValue("BR 1", "BR 2");
-        AddValue("BR 1", "BR 4R"); //1
+        AddValue("BR 1", "Hall", 1, 2);
+        AddValue("BR 1", "BR 2", 3, 1);
+        AddValue("BR 1", "BR 4R", 2, 3); //1
 
-        AddValue("BR 2", "BR 1");
-        AddValue("BR 2", "BR 3");
-        AddValue("BR 2", "BR 3R"); //2
+        AddValue("BR 2", "BR 1", 1, 3);
+        AddValue("BR 2", "BR 3", 3, 1);
+        AddValue("BR 2", "BR 3R", 2, 1); //2
 
-        AddValue("BR 3", "BR 2");
-        AddValue("BR 3", "BR 4");
-        AddValue("BR 3", "BR 2R"); //3
+        AddValue("BR 3", "BR 2", 1, 3);
+        AddValue("BR 3", "BR 4", 3, 1);
+        AddValue("BR 3", "BR 2R", 2, 3); //3
 
-        AddValue("BR 4", "BR 3");
-        AddValue("BR 4", "BR 5");
-        AddValue("BR 4", "BR 8"); //4
+        AddValue("BR 4", "BR 3", 1, 3);
+        AddValue("BR 4", "BR 5", 3, 1);
+        AddValue("BR 4", "BR 8", 2, 2); //4
 
-        AddValue("BR 5", "BR 4");
-        AddValue("BR 5", "BR 6");
-        AddValue("BR 5", "BR 1R");
-        AddValue("BR 5", "BR 7"); //5
+        AddValue("BR 5", "BR 4", 1, 3);
+        AddValue("BR 5", "BR 6", 3, 1);
+        AddValue("BR 5", "BR 1R", 4, 1);
+        AddValue("BR 5", "BR 7", 2, 3); //5
 
-        AddValue("BR 6", "BR 5");
-        AddValue("BR 6", "BR 7R"); //6
+        AddValue("BR 6", "BR 5", 1, 3);
+        AddValue("BR 6", "BR 7R", 2, 1); //6
 
-        AddValue("BR 7R", "BR 6");
-        AddValue("BR 7R", "BR 8");
-        AddValue("BR 7R", "BR 2R"); //7
+        AddValue("BR 7R", "BR 6", 1, 2);
+        AddValue("BR 7R", "BR 8", 3, 1);
+        AddValue("BR 7R", "BR 2R", 2, 1); //7
 
-        AddValue("BR 8", "BR 7R");
-        AddValue("BR 8", "BR 4");
-        AddValue("BR 8", "BR 1R"); //8
+        AddValue("BR 8", "BR 7R", 1, 3);
+        AddValue("BR 8", "BR 4", 2, 2);
+        AddValue("BR 8", "BR 1R", 3, 2); //8
 
-        AddValue("BR 7", "BR 2R");
-        AddValue("BR 7", "BR 4R");
-        AddValue("BR 7", "BR 5"); //9
+        AddValue("BR 7", "BR 2R", 1, 2);
+        AddValue("BR 7", "BR 4R", 2, 1);
+        AddValue("BR 7", "BR 5", 3, 2); //9
 
-        AddValue("BR 2R", "BR 7");
-        AddValue("BR 2R", "BR 7R");
-        AddValue("BR 2R", "BR 3"); //10
+        AddValue("BR 2R", "BR 7", 2, 1);
+        AddValue("BR 2R", "BR 7R", 1, 2);
+        AddValue("BR 2R", "BR 3", 3, 2); //10
 
-        AddValue("BR 6R", "BR 4R");
-        AddValue("BR 6R", "BR 3R"); //11
+        AddValue("BR 6R", "BR 4R", 1, 2);
+        AddValue("BR 6R", "BR 3R", 2, 3); //11
 
-        AddValue("BR 3R", "BR 6R");
-        AddValue("BR 3R", "BR 1R");
-        AddValue("BR 3R", "BR 2"); //12
+        AddValue("BR 3R", "BR 6R", 3, 2);
+        AddValue("BR 3R", "BR 1R", 2, 3);
+        AddValue("BR 3R", "BR 2", 1, 2); //12
 
-        AddValue("BR 1R", "BR 3R");
-        AddValue("BR 1R", "BR 8");
-        AddValue("BR 1R", "BR 5"); //13
+        AddValue("BR 1R", "BR 3R", 3, 2);
+        AddValue("BR 1R", "BR 8", 2, 3);
+        AddValue("BR 1R", "BR 5", 1, 4); //13
 
-        AddValue("BR 4R", "BR 6R");
-        AddValue("BR 4R", "BR 1");
-        AddValue("BR 4R", "BR 7"); //14
+        AddValue("BR 4R", "BR 6R", 2, 1);
+        AddValue("BR 4R", "BR 1", 3, 2);
+        AddValue("BR 4R", "BR 7", 1, 2); //14
     }
 
     public void Update()
@@ -175,17 +179,25 @@ public class Loader : MonoBehaviour
         if (!_scenesToLoad.Contains(sceneName))
             _scenesToLoad.Add(sceneName);
         else
-        {
-            Debug.LogError($"Scene {sceneName} already in queue");
-        }
+            Debug.LogError($"Sorre, scene {sceneName} already in queue.");
     }
 
-    public void AddValue(string key, string value)
+    public void AddValue(string key, string nextSceneName, int doorId1, int doorId2)
     {
         if (!_map.ContainsKey(key))
             _map.Add(key, new List<string>());
 
-        _map[key].Add(value);
+        if (!_map[key].Contains(nextSceneName))
+            _map[key].Add(nextSceneName);
+
+        if (!_rooms.ContainsKey(key))
+            _rooms.Add(key, new RoomModel(key));
+
+        if (!_rooms[key]._doors.ContainsKey(doorId1))
+            _rooms[key]._doors.Add(doorId1, new DoorModel());
+
+        _rooms[key]._doors[doorId1]._nextDoorNumber = doorId2;
+        _rooms[key]._doors[doorId1]._nextSceneName = nextSceneName;
     }
 
     private void AddictiveLoadAsync()
@@ -237,7 +249,7 @@ public class Loader : MonoBehaviour
                         }
                         catch (NullReferenceException ex)
                         {
-                            Debug.LogError($"NULL IS HERE! ({name})");
+                            Debug.LogError($"NULL IS HERE! ({name}) ({ex.Message})");
                         }
                     }
                 }

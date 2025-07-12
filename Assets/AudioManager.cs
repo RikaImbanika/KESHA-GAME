@@ -37,7 +37,19 @@ public class AudioManager : MonoBehaviour
     public AudioSource _fzt1;
     public AudioSource _fzt2;
 
+	public AudioSource _incomeOST1;
 
+	public AudioSource _incomeOST2;
+
+	public AudioSource _adelaidaOST1;
+
+	public AudioSource _labyrinth;
+
+	public AudioSource _fenomen;
+
+	public AudioSource _greatMix;
+
+	public AudioSource _riddik;
 
 	public bool muted;
 
@@ -196,7 +208,17 @@ public class AudioManager : MonoBehaviour
                 _fzt2.pitch = pitch;
                 _fzt2.Play();
                 break;
-            default:
+			case "incomeOST1":
+				pitch = 1;
+				_incomeOST1.pitch = pitch;
+				_incomeOST1.Play();
+				break;
+			case "incomeOST2":
+				pitch = 1;
+				_incomeOST2.pitch = pitch;
+				_incomeOST2.Play();
+				break;
+			default:
 				Debug.Log($"No such audioSource {name} in code! Maybie you want to add it here?");
 				break;
 		}

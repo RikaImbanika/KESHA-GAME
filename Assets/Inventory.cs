@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class Inventory : MonoBehaviour
 {
@@ -19,6 +21,7 @@ public class Inventory : MonoBehaviour
 	public int ultraSelectedId;
 
 	public Item[] items;
+	public Item _buffer;
 
 	public GameObject[] panels;
 	public GameObject[] smallPanels;
@@ -27,12 +30,10 @@ public class Inventory : MonoBehaviour
 	public TextMeshProUGUI[] smallNumberLabels;
 
 	public GameObject selectorPanel;
-	public GameObject selectorPanelPlus; //������
+	public GameObject selectorPanelPlus;
 	public GameObject cursorPanel;
 	public GameObject inventoryPanelParentBig;
-	public GameObject inventoryPanelParentSmall; //�� ������, ��� ���??
-	//��� ��� ���� ��������
-	//��?
+	public GameObject inventoryPanelParentSmall;
 
 	public Camera _camera;
 	public Camera showingCamera;
@@ -187,6 +188,10 @@ public class Inventory : MonoBehaviour
 				//Debug.Log($"i {i} item {items[i]}");
 			}
 
+			_buffer = S.AllFather.gameObject.AddComponent<Item>();
+			_buffer._name = "";
+			_buffer._count = 0;
+
 			for (int i = 0; i < smallNumberLabels.Length; i++)
 			{
 				Transform t = smallPanels[i].transform;
@@ -307,6 +312,13 @@ public class Inventory : MonoBehaviour
 
 				IsShuffle isShuffle = hit.collider.gameObject.GetComponent<IsShuffle>();
 				if (isShuffle != null)
+				{
+					clickable = true;
+					goto render;
+				}
+
+				IsSceneName isSceneName = hit.collider.gameObject.GetComponent<IsSceneName>();
+				if (isSceneName != null)
 				{
 					clickable = true;
 					goto render;
@@ -500,7 +512,7 @@ public class Inventory : MonoBehaviour
 								if (throwable)
 									throwPanelBlack.transform.localScale = new Vector3(1, 1, 0);
 								else
-									throwPanelRed.transform.localScale = new Vector3(1, 1, 0);
+									throwPanelRed.SetActive(true); ////////////////////////
 							}
 						}
 						else if (throwable) //Okay, so...
@@ -533,7 +545,7 @@ public class Inventory : MonoBehaviour
 					throwing = false;
 					throwPanel.transform.localScale = new Vector3(0, 0, 0);
 					throwPanelBlack.transform.localScale = new Vector3(0, 0, 0);
-					throwPanelRed.transform.localScale = new Vector3(0, 0, 0);
+					throwPanelRed.SetActive(false);
 					throwTime = 0;
 					throwCombo = 0;
 
@@ -592,7 +604,8 @@ public class Inventory : MonoBehaviour
 		}
 	}
 
-	public void Click()
+    [Obsolete]
+    public void Click()
 	{
 		_somethingClicked = true;
 
@@ -602,6 +615,10 @@ public class Inventory : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 7f, notTransperent))
 			{
+				IsSceneName isSceneName = hit.collider.gameObject.GetComponent<IsSceneName>();
+				if (isSceneName != null)
+					S.Teleporter.SoLetsFuckingTeleportSomewhereRightNow(isSceneName._sceneName);
+
 				Locker locker = hit.collider.gameObject.GetComponent<Locker>();
 				if (locker != null)
 				{
@@ -615,13 +632,18 @@ public class Inventory : MonoBehaviour
 				if (fh != null)
 				{
 					Debug.Log($"itemsCount = {items.Length}");
-					if (!IsNullOrEmpty(items[selectedId]))
+
+					if (IsNull(items[selectedId]))
 					{
-						Debug.Log($"itemsCount = {items[selectedId]._name}");
+						items[selectedId] = S.AllFather.gameObject.AddComponent<Item>();
+					}
+
+					if (!IsEmpty(items[selectedId]))
+					{
+						Debug.Log($"itemName = {items[selectedId]._name}");
 						if (items[selectedId]._name.Contains("Frerard"))
 						{
-							fh.Do(items[selectedId]);
-							items[selectedId] = null;
+							fh.Do(items[selectedId]);							
 							Visualise(selectedId);
 							return;
 						}
@@ -671,7 +693,13 @@ public class Inventory : MonoBehaviour
 				}
 			}
 
+			if (IsNull(items[selectedId]))
+			{
+				items[selectedId] = S.AllFather.gameObject.AddComponent<Item>();
+			}
+
 			Item item = items[selectedId];
+
 			if (item != null)
 			{
 				if (item._name == "FirstAidKit")
@@ -729,21 +757,22 @@ public class Inventory : MonoBehaviour
 		Take(go.GetComponent<ItemP>());
 	}
 
-	public void Take(ItemP itemP)
+	public void Take(ItemP itemP, bool destroy = true)
 	{
 		if (!itemP._locked)
 		{
 			Take(itemP._name, itemP._count);
-			itemP.Destroy();
+
+			if (destroy)
+				itemP.Destroy();
 		}
 	}
 
 	public void Take(string name, int count)
 	{
 		string an = S.II.Get(name)._pickUpA;
-		if (IsNullOrEmpty(items[selId]))
+		if (IsEmptySlot(selId))
 		{
-			items[selId] = new Item();
 			items[selId]._name = name;
 			items[selId]._count = count;
 			Visualise(selId);
@@ -786,6 +815,7 @@ public class Inventory : MonoBehaviour
 			for (id = 0; id < 36; id++)
 				if (IsNullOrEmpty(items[id]))
 				{
+					items[id] = S.AllFather.gameObject.AddComponent<Item>();
 					items[id]._name = name;
 					items[id]._count = count;
 					Visualise(id);
@@ -935,6 +965,13 @@ public class Inventory : MonoBehaviour
 			cursorPanel.gameObject.SetActive(!opened);
 			_circleCursor.SetActive(!opened);
 		}
+		else
+			_trader.CloseMarket();
+	}
+
+	public bool IsEmptySlot(int id)
+	{
+		return (items[selId]._count <= 0 || items[selId]._name.Length <= 0);
 	}
 
 	public void SelectItem(int id, bool permanently)
@@ -942,7 +979,7 @@ public class Inventory : MonoBehaviour
 		throwing = false;
 		throwPanel.transform.localScale = new Vector3(0, 0, 0);
 		throwPanelBlack.transform.localScale = new Vector3(0, 0, 0);
-		throwPanelRed.transform.localScale = new Vector3(0, 0, 0);
+		throwPanelRed.SetActive(false);
 
 		//Vector2 canvasScale = new Vector2(canvas.transform.lossyScale.x, canvas.transform.lossyScale.y);
 
@@ -998,44 +1035,46 @@ public class Inventory : MonoBehaviour
 					{
 						if (items[id].IsUnityNull())
 						{
-							items[id] = new Item();
-							Debug.Log($"!!! Here was null item on id {id}. I fixed.");
+							_buffer.CloneFrom(items[id]);
+							items[id] = S.AllFather.gameObject.AddComponent<Item>();
+							items[id].CloneFrom(_buffer);
+							Debug.Log($"!!! Here was \"unitynull\" item on id {id}. Why??? I fixed!");
 						}
-						Debug.Log($"Item name: {items[id]._name}");
+
+						Debug.Log($"Item {id} name: {items[id]._name}");
 						Debug.Log($"Is name empty: {string.IsNullOrEmpty(items[id]._name)}");
 						if (!string.IsNullOrEmpty(items[id]._name))
 						{
 							if (!items[id]._name.Equals(items[ultraSelectedId]._name))
 							{
-								Item buffer = new Item();
-								buffer.CloneFrom(items[ultraSelectedId]);
-								items[ultraSelectedId] = items[id];
-								items[id] = buffer;
+								_buffer.CloneFrom(items[ultraSelectedId]);
+								items[ultraSelectedId].CloneFrom(items[id]);
+								items[id].CloneFrom(_buffer);
 
-                                SaveTwoItems();
+								SaveTwoItems();
 
-                                Debug.Log("ITEMS SWAPPED.");
+								Debug.Log("ITEMS SWAPPED!");
 							}
 							else
 							{
 								items[id]._count += items[ultraSelectedId]._count;
 								items[ultraSelectedId]._name = "";
 
-                                SaveTwoItems();
+								SaveTwoItems();
 
-                                Debug.Log("ITEMS MERGED.");
-                            }
+								Debug.Log("ITEMS MERGED!");
+							}
 						}
 						else
 						{
 							items[id]._name = items[ultraSelectedId]._name;
-                            items[id]._count = items[ultraSelectedId]._count;
-                            items[ultraSelectedId]._name = "";
-                            items[ultraSelectedId]._count = 0;
+							items[id]._count = items[ultraSelectedId]._count;
+							items[ultraSelectedId]._name = "";
+							items[ultraSelectedId]._count = 0;
 
 							SaveTwoItems();
 
-							Debug.Log("ITEMS MOVED.");
+							Debug.Log("ITEMS MOVED!");
 						}
 
 						Visualise(id);
@@ -1047,8 +1086,8 @@ public class Inventory : MonoBehaviour
 
 					SaveOneItem(id);
 
-                    Debug.Log("DESELECTED.");
-                }
+					Debug.Log($"SO, ULTRA-DESELECTED ON {id}!");
+				}
 				else if (!string.IsNullOrEmpty(items[id]._name))
 				{
 					float f = 1.8f;
@@ -1062,8 +1101,8 @@ public class Inventory : MonoBehaviour
 					selectorPanelPlus.transform.position = panels[id].transform.position;
 					selectorPanelPlus.transform.localScale = new Vector3(f, f, 0);
 
-                    Debug.Log("SELECTED.");
-                }
+					Debug.Log($"SO, ULTRA-SELECTED ON {id}!");
+				}
 			}
 		}
 
@@ -1078,7 +1117,20 @@ public class Inventory : MonoBehaviour
 		try
 		{
 			string aboba = item._name;
-			return string.IsNullOrEmpty(aboba);
+			return aboba.Length <= 0;
+		}
+		catch
+		{
+			return true;
+		}
+	}
+
+	public bool IsNull(Item item)
+	{
+		try
+		{
+			int wtf = item._count;
+			return false;
 		}
 		catch
 		{
@@ -1095,6 +1147,7 @@ public class Inventory : MonoBehaviour
         }
         catch
         {
+			
             return true;
         }
     }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class FrerardHolder : MonoBehaviour
@@ -17,20 +16,21 @@ public class FrerardHolder : MonoBehaviour
     {
         _id = $"FrerHolder {_number}";
 
-        bool exists = !(S.SM.LoadBool(S.ID(_id, "destroyed")) ?? true);
-        if (exists)
+        string name = S.SM.LoadString(S.ID(_id, "name"));
+
+        if (!string.IsNullOrEmpty(name))
         {
-            string name = S.SM.LoadString(S.ID(_id, "name"));
             GameObject prefab = Prefabs.Get(name);
             GameObject obj = Instantiate(prefab, transform.position, transform.rotation);
+            obj.transform.localScale = transform.localScale;
+
+            _placedItem = obj.GetComponent<ItemP>();
 
             _rotations = S.SM.LoadInt(S.ID(_id, "rot")) ?? 0;
             _currentRotation = S.SM.LoadInt(S.ID(_id, "curRot")) ?? 0;
 
             for (int i = 0; i < _currentRotation; i++)
                 Rotate(_placedItem.gameObject);
-
-            S.SM.Save(S.ID(_id, "destroyed"), false);
         }
     }
 
@@ -69,7 +69,6 @@ public class FrerardHolder : MonoBehaviour
     {
         Debug.Log("Frerard put");
 
-        S.SM.Save(S.ID(_id, "destroyed"), false);
         S.SM.Save(S.ID(_id, "name"), item._name);
 
         GameObject prefab = Prefabs.Get(item._name);
@@ -101,6 +100,7 @@ public class FrerardHolder : MonoBehaviour
         else
         {
             Rotate(_placedItem._obj);
+            Debug.Log($"I rotated frerard!");
             S.AudioManager.Play("kill", 0.7f);
         }
     }
@@ -108,7 +108,7 @@ public class FrerardHolder : MonoBehaviour
     void Pick()
     {
         S.Inventory.Take(_placedItem);
-        S.SM.Save(S.ID(_id, "destroyed"), true);
+        S.SM.Save(S.ID(_id, "name"), "");
         _placedItem = null;
     }
 

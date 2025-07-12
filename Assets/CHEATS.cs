@@ -1,7 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class CHEATS : MonoBehaviour
 {
@@ -22,14 +20,16 @@ public class CHEATS : MonoBehaviour
 
     void Start()
     {
+        S.Cheats = this;
+        
         StartCoroutine(Start0());
 
         IEnumerator Start0()
         {
             while (S.Canvas == null)
             {
-                yield return new WaitForSeconds(0.1f);
                 Debug.Log("CHEATS waiting for S.Canvas");
+                yield return new WaitForSeconds(0.1f);
             }
 
             Transform canvasTransform = S.Canvas.transform;
@@ -48,17 +48,23 @@ public class CHEATS : MonoBehaviour
         if (Input.GetKey(KeyCode.Y))
             transform.position += new Vector3(0, 8, 0);
 
-		if ((Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.O)) || (Input.GetKey(KeyCode.P) && Input.GetKeyDown(KeyCode.O)))
-		{
-			_cheats = !_cheats;
-			_d.SetActive(!_cheats);
-			_e.SetActive(_cheats);
-			_message = 1f;
-		}
+        if (Input.GetKey(KeyCode.U) && Input.GetKey(KeyCode.O) || Input.GetKey(KeyCode.O) && Input.GetKey(KeyCode.U))
+        {
+            transform.position = new Vector3(3.22f, -165.3f, -2.87f);
+            S.SceneSelector.OkayBroIAmStartingDoingThisFuckingShitBro();
+        }
+
+        if ((Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.U)) || (Input.GetKey(KeyCode.P) && Input.GetKeyDown(KeyCode.U)))
+        {
+            _cheats = !_cheats;
+            _d.SetActive(!_cheats);
+            _e.SetActive(_cheats);
+            _message = 1f;
+        }
 
         S.SaveManager.CurrentSave.SaveBool("CHEATS", _cheats);
 
-		if (_cheats)
+        if (_cheats)
         {
             if (S.PS._health < 100)
                 S.PS._health = 100;
@@ -131,6 +137,8 @@ public class CHEATS : MonoBehaviour
         yield return TakeItemWithDelay("Cucumber Income");
         yield return TakeItemWithDelay("Apple 1 Income");
         yield return TakeItemWithDelay("Apple 2 Income");
+
+        yield return TakeItemWithDelay2("PurpleBall", 3);
     }
 
     IEnumerator HallCheat()
@@ -151,6 +159,12 @@ public class CHEATS : MonoBehaviour
     private IEnumerator TakeItemWithDelay(string itemName)
     {
         S.Inventory.Hack(GameObject.Find(itemName));
+        yield return new WaitForSeconds(0.15f);
+    }
+
+    private IEnumerator TakeItemWithDelay2(string itemName, int count)
+    {
+        S.Inventory.Take(itemName, count);
         yield return new WaitForSeconds(0.15f);
     }
 }

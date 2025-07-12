@@ -6,6 +6,7 @@ public class MusicManager : MonoBehaviour
 {
     public bool _playerInToilet;
     public string _toiletPhase = "silence";
+
     static Vector3 _toiletCenter = new Vector3(-131f, -2.5f, 223.5f);
     static Vector3 _toiletStart = new Vector3(-174f, -2.5f, 109f);
     float _maxToiletDistance = Vector3.Distance(_toiletCenter, _toiletStart);
@@ -15,11 +16,87 @@ public class MusicManager : MonoBehaviour
     public bool _fztFadeIn;
     public bool _fztFadeOut;
     public bool _fztKilled;
+    public bool _playerOnIncome;
+    public string _incomePhase;
+    public string _incomePhase2;
+    public string _backroomsPhase = "silence";
+    public float _incomeTime;
+    public AudioSource _backroomsOldTrack;
+    public AudioSource _backroomsNewTrack;
+    public AudioSource[] _backroomsSources;
+    public float[] _backroomsLengthes;
+    public float[] _backroomsVolumes;
+    public float _backroomVolume;
+    public int _backroomsTrackId;
+    public int _backroomsPrevTrackId;
 
     void Start()
     {
         S.MM = this;
+
         _fztVolume = 0;
+        _playerOnIncome = true;
+        _incomePhase = "1";
+        _backroomsTrackId = 0;
+        _backroomsPrevTrackId = 4;
+
+        StartCoroutine(LateStart(0.3f));
+
+        IEnumerator LateStart(float waitTime)
+        {
+            while (S.AudioManager == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("MusicManager waiting for S.AudioManager");
+            }
+
+            _backroomsVolumes = new float[5];
+            _backroomsVolumes[0] = 1;
+            _backroomsSources = new AudioSource[5];
+            _backroomsSources[0] = S.AM._adelaidaOST1;
+            _backroomsSources[1] = S.AM._fenomen;
+            _backroomsSources[2] = S.AM._labyrinth;
+            _backroomsSources[3] = S.AM._riddik;
+            _backroomsSources[4] = S.AM._greatMix;
+
+            _backroomsLengthes = new float[5];
+            _backroomsLengthes[0] = 173;
+            _backroomsLengthes[1] = 674;
+            _backroomsLengthes[2] = 597;
+            _backroomsLengthes[3] = 1116;
+            _backroomsLengthes[4] = 2378;
+
+            int[] randomised = new int[5];
+            bool[] remember = new bool[5];
+            
+            var rnd = new System.Random();
+
+            for (int i = 0; i < 5;)
+            {
+                int x = rnd.Next(5);
+                if (!remember[x])
+                {
+                    remember[x] = true;
+                    randomised[i] = x;
+                    i++;
+                }
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                int x = randomised[i];
+
+                AudioSource buf = _backroomsSources[i];
+                _backroomsSources[i] = _backroomsSources[x];
+                _backroomsSources[x] = buf;
+
+                float buf2 = _backroomsLengthes[i];
+                _backroomsLengthes[i] = _backroomsLengthes[x];
+                _backroomsLengthes[x] = buf2;
+            }
+
+            S.AM._incomeOST1.Play();
+        }
     }
 
     void Update()
@@ -32,6 +109,185 @@ public class MusicManager : MonoBehaviour
             IfPlayerInToilet(d);
         else if (_firstZombieBattle)
             FirstZombieBattle(d);
+
+        Income(d);
+        Backrooms(d);
+    }
+
+    public void Backrooms(float d)
+    {
+        if (_backroomsPhase == "silence")
+            return;
+            
+        if (_backroomsPhase == "leaving")
+        {
+            if (_backroomVolume > 0)
+                _backroomVolume -= 0.005f * d;
+            else
+            {
+                _backroomsPhase = "silence";
+                _backroomVolume = 0;
+                _backroomsSources[_backroomsTrackId].Pause();
+                _backroomsSources[_backroomsPrevTrackId].Pause();
+            }
+        }
+        else if (_backroomsPhase == "entering")
+        {
+            _backroomVolume += 0.005f * d;
+
+            if (_backroomVolume > 1)
+            {
+                _backroomVolume = 1;
+                _backroomsPhase = "entered";
+            }
+        }
+
+        if (_backroomsSources[_backroomsTrackId].time > _backroomsLengthes[_backroomsTrackId])
+        {
+            _backroomsPrevTrackId = _backroomsTrackId;
+
+            _backroomsTrackId += 1;
+            if (_backroomsTrackId >= 5)
+                _backroomsTrackId = 0;
+
+            _backroomsSources[_backroomsTrackId].time = 0;
+            _backroomsVolumes[_backroomsTrackId] = 1;
+            _backroomsSources[_backroomsTrackId].volume = 1 * _backroomVolume;
+            _backroomsSources[_backroomsTrackId].Play();
+        }
+
+        if (_backroomsVolumes[_backroomsPrevTrackId] > 0)
+            _backroomsVolumes[_backroomsPrevTrackId] -= 0.005f * d;
+        else
+        {
+            _backroomsVolumes[_backroomsPrevTrackId] = 0;
+            _backroomsSources[_backroomsPrevTrackId].volume = 0;
+            _backroomsSources[_backroomsPrevTrackId].Stop();
+        }
+
+        _backroomsSources[_backroomsTrackId].volume = _backroomsVolumes[_backroomsTrackId] * _backroomVolume;
+        _backroomsSources[_backroomsPrevTrackId].volume = _backroomsVolumes[_backroomsPrevTrackId] * _backroomVolume;
+    }
+
+    public void EnterBackrooms()
+    {
+        if (_backroomsPhase == "silence")
+            _backroomsSources[_backroomsTrackId].Play();
+
+        _backroomsPhase = "entering";
+    }
+
+    public void LeaveBackrooms()
+    {
+        _backroomsPhase = "leaving";
+    }
+
+    public void EnterIncome()
+    {
+        _incomePhase2 = "entering";
+
+        if (_incomePhase == "1" || _incomePhase == "2to1")
+        {
+            if (!S.AM._incomeOST1.isPlaying)
+            {
+                S.AM._incomeOST1.Play();
+                S.AM._incomeOST1.time = _incomeTime;
+            }
+        }
+        else if (_incomePhase == "2" || _incomePhase == "1to2")
+        {
+            if (!S.AM._incomeOST2.isPlaying)
+            {
+                S.AM._incomeOST2.Play();
+                S.AM._incomeOST2.time = _incomeTime;
+            }
+        }
+    }
+
+    public void LeaveIncome()
+    {
+        _incomePhase2 = "leaving";
+    }
+
+    public void Income(float d)
+    {
+        if (_incomePhase2 == "leaving")
+        {
+            if (S.AM._incomeOST1.volume > 0)
+                S.AM._incomeOST1.volume -= 0.005f * d;
+            if (S.AM._incomeOST2.volume > 0)
+                S.AM._incomeOST2.volume -= 0.005f * d;
+
+            if (S.AM._incomeOST2.volume <= 0 && S.AM._incomeOST1.volume <= 0)
+            {
+                _incomePhase2 = "leaved";
+
+                if (_incomePhase == "1" || _incomePhase == "2to1")
+                    _incomeTime = S.AM._incomeOST1.time;
+                else
+                    _incomeTime = S.AM._incomeOST2.time;
+
+                S.AM._incomeOST1.Pause();
+                S.AM._incomeOST2.Pause();
+            }
+        }
+        else if (_incomePhase2 == "entering")
+        {
+            if (_incomePhase == "1" || _incomePhase == "2to1")
+            {
+                S.AM._incomeOST1.volume += 0.005f * d;
+
+                if (S.AM._incomeOST1.volume >= 1)
+                    _incomePhase2 = "entered";
+            }
+            else if (_incomePhase == "2" || _incomePhase == "1to2")
+            {
+                S.AM._incomeOST2.volume += 0.005f * d;
+
+                if (S.AM._incomeOST2.volume >= 1)
+                    _incomePhase2 = "entered";
+            }
+        }
+        else
+        {
+            if (_incomePhase == "1")
+                if (S.AM._incomeOST1.time > 197)
+                {
+                    _incomePhase = "1to2";
+                    S.AM._incomeOST2.time = 0;
+                    S.AM._incomeOST2.volume = 1;
+                    S.AM._incomeOST2.Play();
+                }
+
+            if (_incomePhase == "2")
+                if (S.AM._incomeOST2.time > 197)
+                {
+                    _incomePhase = "2to1";
+                    S.AM._incomeOST1.time = 0;
+                    S.AM._incomeOST1.volume = 1;
+                    S.AM._incomeOST1.Play();
+                }
+
+            if (_incomePhase == "1to2")
+            {
+                S.AM._incomeOST1.volume -= 0.003f * d;
+                if (S.AM._incomeOST1.volume <= 0)
+                {
+                    S.AM._incomeOST1.Stop();
+                    _incomePhase = "2";
+                }
+            }
+
+            if (_incomePhase == "2to1")
+            {
+                S.AM._incomeOST2.volume -= 0.003f * d;
+                if (S.AM._incomeOST2.volume <= 0)
+                {
+                    S.AM._incomeOST2.Stop();
+                    _incomePhase = "1";
+                }
+            }
+        }
     }
 
     public void IfPlayerInToilet(float d)
@@ -66,7 +322,7 @@ public class MusicManager : MonoBehaviour
         }
         else if (_toiletPhase == "entering")
         {
-            float distance = Vector3.Distance(_toiletCenter, transform.position);
+            float distance = Vector3.Distance(_toiletCenter, S.Camera.transform.position);
             float volume = (_maxToiletDistance - distance) / _maxToiletDistance;
             if (volume < 0)
                 volume = 0;
@@ -172,13 +428,14 @@ public class MusicManager : MonoBehaviour
 
     public void EnterToilet()
     {
-        if (_toiletPhase == "" || _toiletPhase == "silence")
+        if (string.IsNullOrWhiteSpace(_toiletPhase) || _toiletPhase == "silence")
         {
             _toiletPhase = "entering";
             _playerInToilet = true;
             S.AM._toiletMusic1.volume = 0;
             S.AM._toiletMusic2.volume = 0;
             S.AM._toiletMusic1.time = 0;
+            S.AM._toiletMusic2.time = 0;
             S.AM._toiletMusic1.Play();
         }
         else if (_toiletPhase == "leaving")

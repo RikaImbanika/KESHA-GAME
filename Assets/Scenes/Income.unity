@@ -1850,15 +1850,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd400c0e4c920104095bc0919f7b08f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _number: 1
+  _sceneName: Income
+  _nextDoorId: 2
   col: {fileID: 1151142937}
-  _nextSceneName: Corridor
-  position: {x: 684.87, y: -3, z: -678.11}
-  _rotation: 0
   audioName: Door
   _locked: 0
   _stamp: {fileID: 0}
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
+  _doorModel: {fileID: 0}
+  __nextDoorModel: {fileID: 0}
 --- !u!64 &1151142936
 MeshCollider:
   m_ObjectHideFlags: 0

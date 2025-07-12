@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -30,7 +30,73 @@ public static class S : object
 	private static FirstZombie2 _firstZombie2;
 	private static SceneDuplicateCleaner _sceneDuplicateCleaner;
 	private static MusicManager _musicManager;
+	private static GameObject _loot;
+	private static SceneSelector _sceneSelector;
+	private static Teleporter _teleporter;
+	private static CHEATS _cheats;
+	private static GaymeBroker _gaymeBroker;
 
+	public static GaymeBroker GaymeBroker
+	{
+		get
+		{
+			return _gaymeBroker;
+		}
+		set
+		{
+			_gaymeBroker = value;
+		}
+	}
+
+	public static CHEATS Cheats
+	{
+		get
+		{
+			return _cheats;
+		}
+		set
+		{
+			_cheats = value;
+		}
+	}
+
+	public static Teleporter Teleporter
+	{
+		get
+		{
+			return _teleporter;
+		}
+		set
+		{
+			_teleporter = value;
+		}
+	}
+
+
+	public static SceneSelector SceneSelector
+	{
+		get
+		{
+			return _sceneSelector;
+		}
+		set
+		{
+			_sceneSelector = value;
+		}
+	}
+
+	public static GameObject Loot
+	{
+		get
+		{
+			return _loot;
+		}
+		set
+		{
+			_loot = value;
+		}
+	}
+	
 	public static AudioManager AM
 	{
 		get

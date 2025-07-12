@@ -3,13 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEngine;
 using Unity.VisualScripting;
 
 public class Item : MonoBehaviour
 {
     public string _name;
     public int _count;
+
+    public Item()
+    {
+        _name = "";
+        _count = 0;
+        //Should help?
+    }
 
     public void Load(string id)
     {

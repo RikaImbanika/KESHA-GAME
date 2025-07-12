@@ -128,9 +128,17 @@ public class Zombie : MonoBehaviour
             if (_health <= 0)
             {
                 _dead = true;
-                S.Inventory.Take("RedCrystal", 1);
                 Die();
                 S.AudioManager.Play("Kill", 1.1f);
+
+                StartCoroutine(Loott());
+
+                IEnumerator Loott()
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    GameObject loot = Instantiate(S.Loot);
+                    loot.transform.position = transform.position;
+                }
             }
             else
             {

@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 2086893073485816992}
   - component: {fileID: 2086893073485816999}
   - component: {fileID: 2086893073485816998}
-  - component: {fileID: 2086893073485816997}
   - component: {fileID: 2086893073485816996}
   - component: {fileID: 2086893073485817019}
+  - component: {fileID: -1922247498244402589}
   m_Layer: 9
   m_Name: Frerard2
   m_TagString: Untagged
@@ -86,20 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2086893073485816997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2086893073485817018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ef047e47afc3d459ed8532e56a0c43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _name: 
-  _count: 0
 --- !u!65 &2086893073485816996
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -125,3 +111,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a187b5ea76a6c6f42b9fc912c6628b45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-1922247498244402589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2086893073485817018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  _name: Frerard2
+  _count: 1
+  _unnatural: 1
+  _locked: 0
+  _obj: {fileID: 0}

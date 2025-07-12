@@ -114,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 
 		if (transform.position.y < -500)
-			transform.position = new Vector3(transform.position.x, 500, transform.position.z);
+			S.GaymeBroker.OhNoTeso();
 
 		if (grounded && readyToPush)
 			_pushed = false;

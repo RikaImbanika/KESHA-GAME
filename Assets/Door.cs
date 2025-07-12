@@ -4,22 +4,64 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading;
 using System;
+using Unity.VisualScripting;
 
 public class Door : MonoBehaviour
 {
+	public int _number;
+	public string _sceneName;
+	public int _nextDoorId;
+	private string _nextSceneName;
 	public Collider col;
-	public string _nextSceneName;
-	public Vector3 position;
-	public float _rotation;
 	public string audioName;
 	public bool _locked;
 	public Stamp _stamp;
 	public float _stampAnimationTimeLeft;
 	public int _sparklesCount;
+	public DoorModel _doorModel;
+	public DoorModel __nextDoorModel;
 
 	public void Start()
 	{
 		_sparklesCount = 100;
+		StartCoroutine(Wait());
+
+		IEnumerator Wait()
+		{
+			bool ok = false;
+
+			while (true)
+			{
+				try
+				{
+					if (S.Loader._rooms == null)
+						Debug.Log("Wtf#1");
+
+					if (S.Loader._rooms[_sceneName] == null)
+						Debug.Log($"Wtf#2 sceneName {_sceneName} obj {S.Loader._rooms[_sceneName]}");
+
+					RoomModel roomModel = S.Loader._rooms[_sceneName];
+					if (!roomModel._doors.ContainsKey(_number))
+						roomModel._doors.Add(_number, new DoorModel(transform.position.x, transform.position.y, transform.position.z, transform.right));
+					else
+					{
+						DoorModel doorModel = roomModel._doors[_number];
+						doorModel._coordinates = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+						doorModel._right = transform.right;
+					}
+					ok = true;
+				}
+				catch
+				{
+					ok = false;
+				}
+
+				if (ok)
+					break;
+				else
+					yield return new WaitForSeconds(0.5f);
+			}
+		}
 	}
 
 	private void OnTriggerEnter(Collider collider)
@@ -34,17 +76,19 @@ public class Door : MonoBehaviour
 		{
 			S.AudioManager.Play(audioName, 0);
 
-			string sceneName = S.SM.LoadString("sceneName");
-            S.PS._currentSceneName = _nextSceneName;
-            S.SaveManager.CurrentSave.SaveString("sceneName", _nextSceneName);
+			_doorModel = S.Loader._rooms[_sceneName]._doors[_number];
+			_nextSceneName = _doorModel._nextSceneName;
+			_nextDoorId = _doorModel._nextDoorNumber;
 
-            List<string> loadScenesNames = new List<string>();
+			S.Teleporter.ImportantStaticShitToDo(_nextSceneName);
+
+			List<string> loadScenesNames = new List<string>();
 			loadScenesNames.AddRange(S.Loader._map[_nextSceneName]);
 			loadScenesNames.Add(_nextSceneName); //
 
 			List<string> unloadScenesNames = new List<string>();
-			unloadScenesNames.AddRange(S.Loader._map[sceneName]);
-			unloadScenesNames.Add(sceneName); //?
+			unloadScenesNames.AddRange(S.Loader._map[_sceneName]);
+			unloadScenesNames.Add(_sceneName); //?
 
 			foreach (string name in loadScenesNames)
 				if (!unloadScenesNames.Contains(name))
@@ -64,7 +108,7 @@ public class Door : MonoBehaviour
 						Debug.LogError($"Error unloading scene {name}: {ex.Message}");
 					}
 
-			StartCoroutine(WaitLoad());
+			StartCoroutine(S.Teleporter.WaitLoad(_nextSceneName, _nextDoorId, transform.right));
 		}
 		else
 		{
@@ -112,24 +156,5 @@ public class Door : MonoBehaviour
 
 			_locked = false;
 		}
-	}
-
-	IEnumerator WaitLoad()
-	{
-		while (!S.AllFather.SceneCurrentlyLoaded(_nextSceneName))
-			yield return new WaitForSeconds(0.2f);
-
-		PlayerMovement pm = S.Ph.GetComponent<PlayerMovement>();
-
-		Vector3 v = new Vector3(0, 0, 0);
-		if (pm.isCrouching)
-			v = new Vector3(0, -2.2f, 0);
-
-		S.Ph.transform.position = position + v;
-		S.PlayerCamScript.Rotate(_rotation);
-		
-		Debug.Log($"GONE TO SCENE {_nextSceneName}");
-
-		S.SDC.RequestCleanup();
 	}
 }
