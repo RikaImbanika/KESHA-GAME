@@ -32,6 +32,7 @@ public class Initialiser : MonoBehaviour
         yield return WaitForObjectWithTag("Sparkle", obj => S.Sparkle = obj);
         yield return WaitForObjectWithTag("RedSparkle", obj => S.RedSparkle = obj);
         yield return WaitForObjectWithTag("Spot", obj => S.Spot = obj);
+        yield return WaitForObjectWithTag("RedLaser", obj => S.RedLaser = obj);
         S.Loot = Prefabs.Get("Loot");
     }
 

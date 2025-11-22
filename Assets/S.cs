@@ -35,6 +35,19 @@ public static class S : object
 	private static Teleporter _teleporter;
 	private static CHEATS _cheats;
 	private static GaymeBroker _gaymeBroker;
+	private static GameObject _redLaser;
+
+	public static GameObject RedLaser
+	{
+		get
+		{
+			return _redLaser;
+		}
+		set
+		{
+			_redLaser = value;
+		}
+	}
 
 	public static GaymeBroker GaymeBroker
 	{

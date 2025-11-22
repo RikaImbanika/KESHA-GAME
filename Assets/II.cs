@@ -27,7 +27,7 @@ public class II : MonoBehaviour
             ));
     }
 
-	public ItemInfo Get(string name)
+    public ItemInfo Get(string name)
 	{
         if (!_base.ContainsKey(name))
             _base.Add(name, new ItemInfo(

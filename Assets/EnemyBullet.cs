@@ -5,14 +5,8 @@ using UnityEngine;
 
 public class EnemyBullet : MonoBehaviour
 {
-    public AllFather _allFather;
     public float _speed;
     public bool _active;
-
-    void Start()
-    {
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-    }
 
     void Update()
     {
@@ -35,7 +29,7 @@ public class EnemyBullet : MonoBehaviour
                 NoSpots ns = go.GetComponent<NoSpots>();
                 if (ns == null)
                 {
-                    AudioSource caboom = Instantiate(_allFather._caboom);
+                    AudioSource caboom = Instantiate(S.AllFather._caboom);
                     caboom.transform.position = gameObject.transform.position;
                     caboom.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
                     float distance = (transform.position - S.Camera.transform.position).magnitude;
@@ -50,15 +44,15 @@ public class EnemyBullet : MonoBehaviour
                     spot.transform.SetParent(hit.collider.gameObject.transform);
                     spot.transform.localScale = spot.transform.localScale * 5;
 
-                    _allFather._spots.Add(spot);
-                    if (_allFather._spots.Count > 300)
+                    S.AllFather._spots.Add(spot);
+                    if (S.AllFather._spots.Count > 300)
                     {
-                        Destroy(_allFather._spots[0]);
-                        _allFather._spots.RemoveAt(0);
+                        Destroy(S.AllFather._spots[0]);
+                        S.AllFather._spots.RemoveAt(0);
                     }
                 }
 
-                for (int i = 0; i < _allFather._enemyBulletSparklesCount; i++)
+                for (int i = 0; i < S.AllFather._enemyBulletSparklesCount; i++)
                 {
                     GameObject sparkle = Instantiate(S.RedSparkle);
                     sparkle.transform.position = hit.point;
@@ -69,10 +63,5 @@ public class EnemyBullet : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-    }
-
-    private void OnTriggerEnter(Collider collider)
-    {
-       
     }
 }

@@ -65,8 +65,7 @@ public class Spider : MonoBehaviour
 
         _rays = new GameObject[4];
 
-        _ray = GameObject.Find("TheRedRay");
-
+        _ray = S.RedLaser;
         
         _sparkle = S.RedSparkle;
 
@@ -128,6 +127,15 @@ public class Spider : MonoBehaviour
         {
             if (!_dead)
             {
+                StartCoroutine(Loott());
+
+                IEnumerator Loott()
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    GameObject loot = Instantiate(S.Loot);
+                    loot.transform.position = transform.position;
+                }
+                
                 for (int i = 0; i < 4; i++)
                     Destroy(_rays[i]);
 
@@ -246,24 +254,20 @@ public class Spider : MonoBehaviour
                 float desiredLength = (hit.point - from).magnitude;
 
                 var scale = _rays[i].transform.localScale;
-                float factor = 100;
+                float factor = 0.9f;
                 scale.z = desiredLength * factor;
                 _rays[i].transform.localScale = scale;
 
-/*                if (UnityEngine.Random.Range(0, 4) < 1)
-                {
-                    GameObject sparkle = Instantiate(_sparkle);
-                    sparkle.transform.position = hit.point;
-                    sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-                    sparkle.GetComponent<IsSparkle>()._active = true;
-                }*/
+                /*                if (UnityEngine.Random.Range(0, 4) < 1)
+                                {
+                                    GameObject sparkle = Instantiate(_sparkle);
+                                    sparkle.transform.position = hit.point;
+                                    sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
+                                    sparkle.GetComponent<IsSparkle>()._active = true;
+                                }*/
 
-                GameObject go = hit.collider.gameObject;
-                if (go.CompareTag("Player"))
-                {
-                    PlayerStorage ps = go.transform.parent.gameObject.GetComponent<PlayerStorage>();
-                    ps.Damage(0.75f);
-                }
+                if (hit.collider.gameObject.CompareTag("Player"))
+                    S.PS.Damage(0.75f);
             }
         }
     }

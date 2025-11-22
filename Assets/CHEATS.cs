@@ -50,7 +50,6 @@ public class CHEATS : MonoBehaviour
 
         if (Input.GetKey(KeyCode.U) && Input.GetKey(KeyCode.O) || Input.GetKey(KeyCode.O) && Input.GetKey(KeyCode.U))
         {
-            transform.position = new Vector3(3.22f, -165.3f, -2.87f);
             S.SceneSelector.OkayBroIAmStartingDoingThisFuckingShitBro();
         }
 
