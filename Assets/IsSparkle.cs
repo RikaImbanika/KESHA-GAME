@@ -12,6 +12,14 @@ public class IsSparkle : MonoBehaviour
     public GameObject _sparkleVis;
     public float _minScale;
     public float _minimisingSpeed;
+    private float _updateInterval;
+    private float _deltaTime;
+    private float _fpsDeltaTime;
+    private int _fpsD;
+    private bool _playerInScene;
+    private bool _needUpdate;
+    private float _minFps = 1 / 12f;
+    private float _maxFps = 1 / 120f;
 
     void Start()
     {
@@ -36,16 +44,92 @@ public class IsSparkle : MonoBehaviour
 
     void Update()
     {
-        if (_active)
+        if (FPS())
         {
-            Vector3 direction = Camera.main.transform.position - transform.position;
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            _sparkleVis.transform.rotation = lookRotation;
+            Do();
+            _deltaTime = 0;
+        }
 
-            transform.localScale *= (1 - _minimisingSpeed * Time.deltaTime * Random.Range(0f, 2f));
+        void Do()
+        {
+            if (_active)
+            {
+                Vector3 direction = Camera.main.transform.position - transform.position;
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                _sparkleVis.transform.rotation = lookRotation;
 
-            if (transform.localScale.x < _minScale)
-                Destroy(gameObject);
+                transform.localScale *= (1 - _minimisingSpeed * _deltaTime * Random.Range(0f, 2f));
+
+                if (transform.localScale.x < _minScale)
+                    Destroy(gameObject);
+            }
+        }
+    }
+
+    bool FPS()
+    {
+        _deltaTime += Time.deltaTime;
+        _fpsDeltaTime += Time.deltaTime;
+
+        bool check = Check();
+
+        if (_fpsDeltaTime > 0.2f || _needUpdate)
+            return RecalcFPS();
+        else
+            return check;
+
+        bool RecalcFPS()
+        {
+            _fpsDeltaTime = 0;
+            _fpsD++;
+
+            if (check || _fpsD >= 3)
+            {
+                _fpsD = 0;
+
+                float lim = 20f;
+                float step = 40f;
+                float dist = Vector3.Distance(transform.position, S.Ph.transform.position);
+                float t = (dist - lim) / step;
+
+                float smoothed = 1;
+                if (t > 0 && S.Camera.fieldOfView > 35f)
+                    smoothed = Mathf.SmoothStep(0f, 1f, 1f / (t * t));
+
+                float coef1 = Mathf.Lerp(_minFps, _maxFps, smoothed);
+
+                float angle = Vector3.Angle(S.Camera.transform.forward, (transform.position - S.Camera.transform.position).normalized);
+                //+ visible - invisible
+                float k = 0.5f - (S.Camera.fieldOfView - angle) / 30f; //degrees
+                float coef2 = 0.05f;
+                if (dist > 30f)
+                    coef2 = Mathf.Clamp(k, 0.05f, 1) * 20f;
+
+                _updateInterval = coef1 * coef2;
+
+                _needUpdate = false;
+
+                return true;
+            }
+            else
+                return false;
+        }
+
+        bool Check()
+        {
+            bool buf = S.PS._currentSceneName == gameObject.scene.name;
+
+            if (!_playerInScene && buf)
+                _needUpdate = true;
+
+            _playerInScene = buf;
+
+            float coef3 = 20f;
+
+            if (_playerInScene)
+                coef3 = 1f;
+
+            return _deltaTime > _updateInterval * coef3;
         }
     }
 }

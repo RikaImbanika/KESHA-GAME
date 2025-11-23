@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class IsGun : MonoBehaviour
 {
-    private GameObject _cameraHolder;
     public GameObject _ray;
     public int _sparklesCount;
     private Transform _root;
     public float _rayRight = 2f;
     public float _rayDown = 0.5f;
     public float _rayWidth = 6f;
+    private int _layerMask;
 
     void Start()
     {
@@ -20,6 +20,9 @@ public class IsGun : MonoBehaviour
         IEnumerator Start0()
         {
             S.IsGun = this;
+
+            _layerMask = ~(1 << LayerMask.NameToLayer("Player") |
+                1 << LayerMask.NameToLayer("Particles"));
 
             while (S.AllFather == null)
             {
@@ -36,14 +39,14 @@ public class IsGun : MonoBehaviour
     {
         if (S.Inventory.CountOfItem("Ammo") > 0)
         {
-            S.Inventory.Remove("Ammo", 1);
-
             Vector3 screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
             Ray ray = Camera.main.ScreenPointToRay(screenCenter);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, 1001f, _layerMask))
             {
+                S.Inventory.Remove("Ammo", 1);
+
                 S.AudioManager.Play("plasma", 1);
 
                 NoSpots noSpots = hit.collider.gameObject.GetComponent<NoSpots>();
@@ -54,9 +57,9 @@ public class IsGun : MonoBehaviour
                     spot.transform.rotation = Quaternion.LookRotation(hit.normal);
                     spot.transform.Rotate(0f, 0f, UnityEngine.Random.Range(-180, 180));
 
-                    float x = spot.transform.localScale.x;// / hit.collider.gameObject.transform.localScale.x;
-                    float y = spot.transform.localScale.y;// / hit.collider.gameObject.transform.localScale.y;
-                    float z = spot.transform.localScale.z;// / hit.collider.gameObject.transform.localScale.z;
+                    float x = spot.transform.localScale.x;
+                    float y = spot.transform.localScale.y;
+                    float z = spot.transform.localScale.z;
                     float f = 2.5f;
                     spot.transform.localScale = new Vector3(x * f, y * f, z * f);
                     spot.transform.SetParent(hit.collider.gameObject.transform);
@@ -125,6 +128,8 @@ public class IsGun : MonoBehaviour
                     sparkle.GetComponent<IsSparkle>()._active = true;
                 }
             }
+            else
+                S.AudioManager.Play("noAmmo", 2);
         }
         else
             S.AudioManager.Play("noAmmo", 1);

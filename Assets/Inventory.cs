@@ -39,8 +39,6 @@ public class Inventory : MonoBehaviour
 	public Camera showingCamera;
 	public Rigidbody prb;
 
-	public LayerMask notTransperent;
-
 	public GameObject numberLabelExample;
 
 	public float throwTime;
@@ -68,6 +66,7 @@ public class Inventory : MonoBehaviour
 	public TextMeshProUGUI showingText;
 	public float showingStartTime;
 	public float _negated;
+	private int _layerMask;
 
 	public GameObject _playerObject;
 
@@ -136,6 +135,9 @@ public class Inventory : MonoBehaviour
 	{
 		S.Inventory = this;
 		S.Negative = _negative;
+
+		_layerMask = ~(1 << LayerMask.NameToLayer("Player") |
+			LayerMask.NameToLayer("Particles"));
 
 		_empty = Resources.Load<Sprite>("Sprites/Items/Empty");
 
@@ -252,7 +254,7 @@ public class Inventory : MonoBehaviour
 
 			Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, 7f, notTransperent))
+			if (Physics.Raycast(ray, out hit, 7f, _layerMask))
 			{
 				Locker locker = hit.collider.gameObject.GetComponent<Locker>();
 				if (locker != null)
@@ -613,7 +615,7 @@ public class Inventory : MonoBehaviour
 		{
 			Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit, 7f, notTransperent))
+			if (Physics.Raycast(ray, out hit, 7f, _layerMask))
 			{
 				IsSceneName isSceneName = hit.collider.gameObject.GetComponent<IsSceneName>();
 				if (isSceneName != null)
@@ -720,7 +722,7 @@ public class Inventory : MonoBehaviour
 				}
 			}
 
-			if (Physics.Raycast(ray, out hit, 7f, notTransperent))
+			if (Physics.Raycast(ray, out hit, 7f, _layerMask))
 			{
 				IsDoor isDoor = hit.collider.gameObject.GetComponent<IsDoor>();
 				if (isDoor != null)
@@ -730,7 +732,7 @@ public class Inventory : MonoBehaviour
 				}
 			}
 
-			if (Physics.Raycast(ray, out hit, 7f, notTransperent))
+			if (Physics.Raycast(ray, out hit, 7f, _layerMask))
 			{
 				IsShuffle isShuffle = hit.collider.gameObject.GetComponent<IsShuffle>();
 				if (isShuffle != null)

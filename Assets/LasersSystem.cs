@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -22,9 +23,14 @@ public class LasersSystem : MonoBehaviour
     private float _width;
     private string _sceneName;
     private string _id;
+    private MeshRenderer _unityEditorMeshRenderer;
+    private MeshFilter _unityEditorMeshFilter;
 
     void Start()
     {
+        Destroy(GetComponent<MeshRenderer>());
+        Destroy(GetComponent<MeshFilter>());
+
         StartCoroutine(Start0());
 
         IEnumerator Start0()
@@ -177,7 +183,7 @@ public class LasersSystem : MonoBehaviour
                     _leftDir = (rotation * Vector3.left).normalized;
                     _downDir = (rotation * Vector3.down).normalized;
                     _rightDir = (rotation * Vector3.right).normalized;
-                    _upDir = (rotation * Vector3.up).normalized;;
+                    _upDir = (rotation * Vector3.up).normalized;
 
                     _left = Physics.Raycast(transform.position, _leftDir, out hit) ? hit.point : Vector3.zero;
                     _down = Physics.Raycast(transform.position, _downDir, out hit) ? hit.point : Vector3.zero;
@@ -198,7 +204,7 @@ public class LasersSystem : MonoBehaviour
                 {
                     if (_right == Vector3.zero || _left == Vector3.zero || _down == Vector3.zero || _up == Vector3.zero)
                     {
-                        Debug.LogError("LaserSystem can't be placed!");
+                        Debug.LogError($"LaserSystem can't be placed! {transform.position.x} {transform.position.y} {transform.position.z} {gameObject.scene}");
                         Destroy(gameObject);
                         return;
                     }
@@ -211,7 +217,7 @@ public class LasersSystem : MonoBehaviour
                     yield return new WaitForSeconds(0.2f);
 
                 _actualType = S.SM.LoadString(S.ID(_id, "laserSystemType")) ?? "oh no";
-                
+
                 if (_actualType.Equals("oh no"))
                     DefineActualType();
                 else
@@ -234,12 +240,12 @@ public class LasersSystem : MonoBehaviour
                     _actualType = "circular";
 
                 number = Convert.ToByte(UnityEngine.Random.Range(0, 10));
-                float d = 1.2f;
+                float d = 1.25f;
 
                 if (number == 0)
                     _period = d * 1f;
                 if (number == 1)
-                    _period = d * 1f;
+                    _period = d * 2.5f;
                 else if (number == 2)
                     _period = d * 1.25f;
                 else if (number == 3)
@@ -258,8 +264,11 @@ public class LasersSystem : MonoBehaviour
                     _period = d * 2f;
 
                 if (_typeFamily == "Backrooms")
-                    if (Convert.ToByte(UnityEngine.Random.Range(0, 5)) == 0)
+                {
+                    if (Convert.ToByte(UnityEngine.Random.Range(0, 10)) > 0)
                         _actualType = "skipped";
+                    //BackroomsConstant family will not not be skipped
+                }
 
                 S.SM.Save(S.ID(_id, "laserSystemType"), _actualType);
                 S.SM.Save(S.ID(_id, "laserSystemPeriod"), _period);
@@ -272,4 +281,44 @@ public class LasersSystem : MonoBehaviour
             }
         }
     }
+
+#if UNITY_EDITOR
+    private void EnsureMeshFilter()
+    {
+        if (GetComponent<MeshRenderer>() == null)
+        {
+            _unityEditorMeshRenderer = gameObject.AddComponent<MeshRenderer>();
+            _unityEditorMeshRenderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/Materials/DUMMY.mat");
+            //Debug.Log(AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/Materials/DUMMY.mat"));
+        }
+        /*else
+        {
+            DestroyImmediate(GetComponent<MeshRenderer>());
+            _unityEditorMeshRenderer = gameObject.AddComponent<MeshRenderer>();
+            _unityEditorMeshRenderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/Materials/DUMMY.mat");
+        }*/
+
+        if (GetComponent<MeshFilter>() == null)
+        {
+            _unityEditorMeshFilter = gameObject.AddComponent<MeshFilter>();
+            _unityEditorMeshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
+        }
+
+    }
+
+    void OnDrawGizmos()
+    {
+        EnsureMeshFilter();
+        transform.localScale = Vector3.one * 1f;
+
+        Gizmos.color = Color.red;
+        Quaternion rotation = Quaternion.LookRotation(transform.forward);
+        Vector3 right = rotation * Vector3.right * 6f;
+        Vector3 up = rotation * Vector3.up * 6f;
+
+        Gizmos.DrawLine(transform.position + up, transform.position - up);
+        Gizmos.DrawLine(transform.position + right, transform.position - right);
+        Gizmos.DrawWireSphere(transform.position, 1f);
+    }
+#endif
 }

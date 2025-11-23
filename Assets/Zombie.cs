@@ -15,12 +15,20 @@ public class Zombie : MonoBehaviour
     public float _heigh;
     public float _stopSpeed;
     public float _animationSpeed;
-    public bool _active; //What is it?
+    public bool _active; //What is it? //IDK //Deactivator mb?
+    private float _deltaTime;
+    private float _updateInterval;
+    private float _fpsDeltaTime;
+    private int _fpsD;
+    private bool _playerInScene;
+    private bool _needUpdate;
+    private float _minFps = 1 / 12f;
+    private float _maxFps = 1 / 120f;
+    private string _sceneName;
 
     Vector3 _startPosition;
     string _id;
 
-    string _sceneName;
     NavMeshAgent _agent;
 
     public float _nextFireTime;
@@ -96,18 +104,6 @@ public class Zombie : MonoBehaviour
             }
 
             InvokeRepeating("SavingMethod", 0f, 5f);
-
-            /*        StartCoroutine(DelayCoroutine());
-
-                    IEnumerator DelayCoroutine()
-                    {
-                        yield return new WaitForSeconds(0.25f);
-
-                        if (!_allFather._gunWasBuyed || !_allFather._ammoWasBuyed)
-                        {
-                            _active = true;
-                        }
-                    }*/
         }
     }
 
@@ -161,67 +157,76 @@ public class Zombie : MonoBehaviour
         {
             if (!_screamerStarted)
             {
-                if (S.PS._currentSceneName == _sceneName)
+                if (FPS())
                 {
-                    Vector3 from = transform.position + new Vector3(0, _heigh, 0);
-                    Vector3 toPlayer = Camera.main.transform.position - from;
-                    Ray ray = new Ray(from, toPlayer);
-                    RaycastHit hit;
-                    Physics.Raycast(ray, out hit);
+                    Do();
+                    _deltaTime = 0;
+                }
 
-                    _nextFireTime -= Time.deltaTime;
-
-                    if (hit.collider.gameObject.tag == "Player")
+                void Do()
+                {
+                    if (S.PS._currentSceneName == _sceneName)
                     {
-                        float angle = Vector3.Angle(toPlayer, transform.forward);
-                        if (angle > -90f && angle < 90f)
+                        Vector3 from = transform.position + new Vector3(0, _heigh, 0);
+                        Vector3 toPlayer = Camera.main.transform.position - from;
+                        Ray ray = new Ray(from, toPlayer);
+                        RaycastHit hit;
+                        Physics.Raycast(ray, out hit);
+
+                        _nextFireTime -= _deltaTime;
+
+                        if (hit.collider.gameObject.tag == "Player")
                         {
-                            _followPlayer = true;
+                            float angle = Vector3.Angle(toPlayer, transform.forward);
+                            if (angle > -90f && angle < 90f)
+                            {
+                                _followPlayer = true;
+                            }
+
+                            if (_followPlayer && !_dead)
+                                if (_nextFireTime <= 0)
+                                    Fire();
                         }
 
-                        if (_followPlayer && !_dead)
-                            if (_nextFireTime <= 0)
-                                Fire();
+                        if (_followPlayer)
+                        {
+                            _agent.destination = S.Ph.transform.position;
+                            Screamer();
+                        }
                     }
-
-                    if (_followPlayer)
+                    else
                     {
-                        _agent.destination = S.Ph.transform.position;
-                        Screamer();
+                        _followPlayer = false;
+                        _agent.destination = _startPosition;
                     }
-                }
-                else
-                {
-                    _followPlayer = false;
-                    _agent.destination = _startPosition;
-                }
 
-                Vector3 delta = transform.position - _pos;
-                _pos = transform.position;
-                _realSpeed = _realSpeed * 0.9f + delta.magnitude * 0.1f;
+                    Vector3 delta = transform.position - _pos;
+                    _pos = transform.position;
+                    _realSpeed = _realSpeed * 0.9f + delta.magnitude * 0.1f;
 
-                if (_realSpeed < _stopSpeed)
-                {
-                    if (_run)
+                    if (_realSpeed < _stopSpeed)
                     {
-                        _ani.SetTrigger("TrIdle");
-                        _run = false;
-                        Debug.Log("IDLE");
-                    }
+                        if (_run)
+                        {
+                            _ani.SetTrigger("TrIdle");
+                            _run = false;
+                            Debug.Log("IDLE");
+                        }
 
-                    if (_followPlayer)
-                        LookToPlayer();
-                }
-                if (_realSpeed > _stopSpeed)
-                {
-                    if (!_run)
+                        if (_followPlayer)
+                            LookToPlayer();
+                    }
+                    if (_realSpeed > _stopSpeed)
                     {
-                        _ani.SetTrigger("TrRun");
-                        _run = true;
-                        Debug.Log("RUN");
-                    }
+                        if (!_run)
+                        {
+                            _ani.SetTrigger("TrRun");
+                            _run = true;
+                            Debug.Log("RUN");
+                        }
 
-                    _ani.SetFloat("speed", _realSpeed * _animationSpeed);
+                        _ani.SetFloat("speed", _realSpeed * _animationSpeed);
+                    }
                 }
             }
             else
@@ -298,7 +303,8 @@ public class Zombie : MonoBehaviour
         EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
         eb._active = true;
         eb._speed = 30;
-        Destroy(bullet, 15);
+        eb._sceneName = _sceneName;
+        Destroy(bullet, 17);
 
         AudioSource shot = Instantiate(S.AllFather._shot);
         shot.transform.position = transform.position;
@@ -307,5 +313,72 @@ public class Zombie : MonoBehaviour
         shot.volume = MathF.Min(0.5f, 60 / (distance * distance));
         shot.Play();
         Destroy(shot, 5);
+    }
+
+    bool FPS()
+    {
+        _deltaTime += Time.deltaTime;
+        _fpsDeltaTime += Time.deltaTime;
+
+        bool check = Check();
+
+        if (_fpsDeltaTime > 0.2f || _needUpdate)
+            return RecalcFPS();
+        else
+            return check;
+
+        bool RecalcFPS()
+        {
+            _fpsDeltaTime = 0;
+            _fpsD++;
+
+            if (check || _fpsD >= 3)
+            {
+                _fpsD = 0;
+
+                float lim = 20f;
+                float step = 40f;
+                float dist = Vector3.Distance(transform.position, S.Ph.transform.position);
+                float t = (dist - lim) / step;
+
+                float smoothed = 1;
+                if (t > 0 && S.Camera.fieldOfView > 35f)
+                    smoothed = Mathf.SmoothStep(0f, 1f, 1f / (t * t));
+
+                float coef1 = Mathf.Lerp(_minFps, _maxFps, smoothed);
+
+                float angle = Vector3.Angle(S.Camera.transform.forward, (transform.position - S.Camera.transform.position).normalized);
+                //+ visible - invisible
+                float k = 0.5f - (S.Camera.fieldOfView - angle) / 30f; //degrees
+                float coef2 = 0.05f;
+                if (dist > 30f)
+                    coef2 = Mathf.Clamp(k, 0.05f, 1) * 20f;
+
+                _updateInterval = coef1 * coef2;
+
+                _needUpdate = false;
+
+                return true;
+            }
+            else
+                return false;
+        }
+
+        bool Check()
+        {
+            bool buf = S.PS._currentSceneName == gameObject.scene.name;
+
+            if (!_playerInScene && buf)
+                _needUpdate = true;
+
+            _playerInScene = buf;
+
+            float coef3 = 20f;
+
+            if (_playerInScene)
+                coef3 = 1f;
+
+            return _deltaTime > _updateInterval * coef3;
+        }
     }
 }

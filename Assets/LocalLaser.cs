@@ -1,13 +1,15 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
+using System;
 
 public class LocalLaser : MonoBehaviour
 {
     [Header("Timings")]
     public float _forwardTime = 2f;
-    public float _forwardPause = 0.5f;
+    public float _forwardPause = 0f;
     public float _backwardTime = 2f;
-    public float _backwardPause = 0.5f;
+    public float _backwardPause = 0f;
     public byte _currentState = 0;
     public float _currentTime;
 
@@ -29,14 +31,35 @@ public class LocalLaser : MonoBehaviour
     private GameObject _rightBotObj;
     private Vector3 _leftDelta;
     private Vector3 _rightDelta;
+    private float _updateInterval;
+    private float _deltaTime;
+    private float _fpsDeltaTime;
+    private bool _playerInScene;
+    private bool _needUpdate;
+    private int _fpsD;
+    private float _minFps = 1 / 12f;
+    private float _maxFps = 1 / 120f;
+    private float _period;
+    private float _frequency;
+    private int _layerMask;
+
 
     void Start()
     {
+        _period = (_forwardTime + _backwardTime + _forwardPause + _backwardPause);
+        _frequency = 2 * MathF.PI / _period;
+        _updateInterval = 0.1f;
         _forwardPosition = transform.position + _movementDirection * _forwardDistance;
         _backwardPosition = transform.position - _movementDirection * _backwardDistance;
 
         _leftLaserObj = Instantiate(S.RedLaser, transform);
         _rightLaserObj = Instantiate(S.RedLaser, transform);
+
+        _layerMask = 1 << LayerMask.NameToLayer("Player") |
+                         1 << LayerMask.NameToLayer("Static") |
+                         1 << LayerMask.NameToLayer("Enemies") |
+                         1 << LayerMask.NameToLayer("Items") |
+                         1 << LayerMask.NameToLayer("Default");
 
         InitLaserBots();
         UpdateLaserVisuals();
@@ -44,75 +67,20 @@ public class LocalLaser : MonoBehaviour
 
     void Update()
     {
-        UpdateMovement();
-        UpdateLaserVisuals();
+        if (FPS())
+        {
+            UpdateMovement();
+            UpdateLaserVisuals();
+
+            _deltaTime = 0;
+        }
     }
 
     void UpdateMovement()
     {
-        _currentTime += Time.deltaTime;
-
-        switch (_currentState)
-        {
-            case 0:
-                MoveToTarget(0);
-                break;
-
-            case 1:
-                if (_currentTime >= _forwardPause)
-                {
-                    _currentState = 2;
-                    _currentTime = 0f;
-                }
-                break;
-
-            case 2:
-                MoveToTarget(2);
-                break;
-
-            case 3:
-                if (_currentTime >= _backwardPause)
-                {
-                    _currentState = 0;
-                    _currentTime = 0f;
-                }
-                break;
-        }
-    }
-
-    void MoveToTarget(byte state)
-    {
-        float t = _currentTime / GetMoveTime(state);
-        t = Mathf.Clamp01(t);
-
-        //Sinusoidal
-        float smoothed = Mathf.SmoothStep(0f, 1f, t);
-        if (state == 0)
-           transform.position = Vector3.Lerp(_forwardPosition, _backwardPosition, smoothed);
-        else
-           transform.position = Vector3.Lerp(_backwardPosition, _forwardPosition, smoothed);
-
-        if (_currentTime >= GetMoveTime(state))
-        {
-            if (_currentState == 3)
-                _currentState = 0;
-            else
-                _currentState++;
-            _currentTime = 0f;
-        }
-    }
-
-    float GetMoveTime(byte state)
-    {
-        if (state == 0)
-            return _forwardTime;
-        else if (state == 1)
-            return _forwardPause;
-        else if (state == 2)
-            return _backwardTime;
-        else if (state == 3)
-            return _backwardPause;
-        else return 10;
+        _currentTime += _deltaTime;
+        float smoothed = (MathF.Sin(_currentTime * _frequency) + 1) / 2f;
+        transform.position = Vector3.Lerp(_forwardPosition, _backwardPosition, smoothed);
     }
 
     void InitLaserBots()
@@ -144,7 +112,7 @@ public class LocalLaser : MonoBehaviour
     Vector3 GetLaserHitPoint(Vector3 from, Vector3 direction)
     {
         RaycastHit hit;
-        if (Physics.Raycast(from, direction, out hit, _laserLimit))
+        if (Physics.Raycast(from, direction, out hit, _laserLimit, _layerMask))
         {
             if (hit.collider.gameObject.CompareTag("Player"))
                 S.PS.Damage(0.60f);
@@ -178,5 +146,72 @@ public class LocalLaser : MonoBehaviour
         );
 
         botObj.transform.position = startPoint;
+    }
+
+    bool FPS()
+    {
+        _deltaTime += Time.deltaTime;
+        _fpsDeltaTime += Time.deltaTime;
+
+        bool check = Check();
+
+        if (_fpsDeltaTime > 0.2f || _needUpdate)
+            return RecalcFPS();
+        else
+            return check;
+
+        bool RecalcFPS()
+        {
+            _fpsDeltaTime = 0;
+            _fpsD++;
+
+            if (check || _fpsD >= 3)
+            {
+                _fpsD = 0;
+
+                float lim = 20f;
+                float step = 40f;
+                float dist = Vector3.Distance(transform.position, S.Ph.transform.position);
+                float t = (dist - lim) / step;
+
+                float smoothed = 1;
+                if (t > 0 && S.Camera.fieldOfView > 35f)
+                    smoothed = Mathf.SmoothStep(0f, 1f, 1f / (t * t));
+
+                float coef1 = Mathf.Lerp(_minFps, _maxFps, smoothed);
+
+                float angle = Vector3.Angle(S.Camera.transform.forward, (transform.position - S.Camera.transform.position).normalized);
+                //+ visible - invisible
+                float k = 0.5f - (S.Camera.fieldOfView - angle) / 30f; //degrees
+                float coef2 = 0.05f;
+                if (dist > 30f)
+                    coef2 = Mathf.Clamp(k, 0.05f, 1) * 20f;
+
+                _updateInterval = coef1 * coef2;
+
+                _needUpdate = false;
+
+                return true;
+            }
+            else
+                return false;
+        }
+
+        bool Check()
+        {
+            bool buf = S.PS._currentSceneName == gameObject.scene.name;
+
+            if (!_playerInScene && buf)
+                _needUpdate = true;
+
+            _playerInScene = buf;
+
+            float coef3 = 20f;
+
+            if (_playerInScene)
+                coef3 = 1f;
+
+            return _deltaTime > _updateInterval * coef3;
+        }
     }
 }

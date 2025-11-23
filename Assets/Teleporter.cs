@@ -37,7 +37,7 @@ public class Teleporter : MonoBehaviour
                 if (SceneManager.GetSceneAt(i).name != "Start")
                     unloadScenesNames.Add(SceneManager.GetSceneAt(i).name);
 
-            ImportantStaticShitToDo(name);
+            ImportantStaticShitToDo(nextSceneName);
 
             foreach (string name in loadScenesNames)
                 if (!unloadScenesNames.Contains(name))
@@ -73,11 +73,8 @@ public class Teleporter : MonoBehaviour
 
     public void ImportantStaticShitToDo(string nextSceneName)
     {
-        if (nextSceneName != "Start")
-        {
-            S.PS._currentSceneName = nextSceneName;
-            S.SaveManager.CurrentSave.SaveString("sceneName", nextSceneName);
-        }
+        S.PS._currentSceneName = nextSceneName;
+        S.SaveManager.CurrentSave.SaveString("sceneName", nextSceneName);
 
         S.MM._playerOnIncome = (nextSceneName == "Income");
 
