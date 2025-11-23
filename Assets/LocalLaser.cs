@@ -147,7 +147,7 @@ public class LocalLaser : MonoBehaviour
         if (Physics.Raycast(from, direction, out hit, _laserLimit))
         {
             if (hit.collider.gameObject.CompareTag("Player"))
-                S.PS.Damage(0.75f);
+                S.PS.Damage(0.60f);
 
             return hit.point;
         }
