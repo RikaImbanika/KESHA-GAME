@@ -20,11 +20,19 @@ public class IsSparkle : MonoBehaviour
     private bool _needUpdate;
     private float _minFps = 1 / 12f;
     private float _maxFps = 1 / 120f;
+    private float _decreaser;
+    private int _counter;
 
     void Start()
     {
         if (_active)
         {
+            _decreaser = _minimisingSpeed * (Random.Range(0f, 0.4f) +
+            Random.Range(0f, 0.4f) +
+            Random.Range(0f, 0.4f) +
+            Random.Range(0f, 0.4f) +
+            Random.Range(0f, 0.4f));
+
             _rb = gameObject.GetComponent<Rigidbody>();
             _rb.AddForce(transform.forward * Random.Range(0, _speed));
 
@@ -54,11 +62,21 @@ public class IsSparkle : MonoBehaviour
         {
             if (_active)
             {
-                Vector3 direction = Camera.main.transform.position - transform.position;
-                Quaternion lookRotation = Quaternion.LookRotation(direction);
-                _sparkleVis.transform.rotation = lookRotation;
+                if (_counter == 0)
+                {
+                    Vector3 direction = Camera.main.transform.position - transform.position;
+                    Quaternion lookRotation = Quaternion.LookRotation(direction);
+                    _sparkleVis.transform.rotation = lookRotation;
 
-                transform.localScale *= (1 - _minimisingSpeed * _deltaTime * Random.Range(0f, 2f));
+                    _decreaser += _deltaTime * 0.2f;
+                }
+
+                _counter++;
+
+                if (_counter >= 4)
+                    _counter = 0;
+
+                transform.localScale *= 1 - _deltaTime * _decreaser;
 
                 if (transform.localScale.x < _minScale)
                     Destroy(gameObject);
@@ -117,10 +135,16 @@ public class IsSparkle : MonoBehaviour
 
         bool Check()
         {
+            if (S.PS == null)
+                return false;
+
             bool buf = S.PS._currentSceneName == gameObject.scene.name;
 
             if (!_playerInScene && buf)
+            {
                 _needUpdate = true;
+                _counter = 0;
+            }
 
             _playerInScene = buf;
 

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4336078645670679184}
   - component: {fileID: 4336078645670679185}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: GG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,8 @@ GameObject:
   - component: {fileID: 4336078646256428338}
   - component: {fileID: 4336078646256428301}
   - component: {fileID: 4336078646256428300}
-  m_Layer: 7
+  - component: {fileID: 4071513263652808290}
+  m_Layer: 10
   m_Name: Loot
   m_TagString: Untagged
   m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
@@ -111,6 +112,18 @@ MonoBehaviour:
   _unnatural: 1
   _locked: 0
   _obj: {fileID: 4336078646256428303}
+--- !u!114 &4071513263652808290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4336078646256428303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbbeec672b3eff5488c9641a8cc62367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4336078647034849101
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,7 +135,7 @@ GameObject:
   - component: {fileID: 4336078647034849138}
   - component: {fileID: 4336078647034849136}
   - component: {fileID: 4336078647034849139}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: EE
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -91,8 +91,6 @@ public class FirstZombie2 : MonoBehaviour
     {
         _zombie.gameObject.SetActive(true);
         _zombie._active = true;
-        _zombie._realSpeed = 100;
-        _zombie._stopSpeed = 0.06f;
         _zombie._ani.Rebind();
         _actuallySummoned = true;
     }

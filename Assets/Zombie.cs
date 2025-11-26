@@ -13,8 +13,8 @@ public class Zombie : MonoBehaviour
     public float _health;
     public float _speed;
     public float _heigh;
-    public float _stopSpeed;
-    public float _animationSpeed;
+    private float _stopSpeed;
+    private float _animationSpeed;
     public bool _active; //What is it? //IDK //Deactivator mb?
     private float _deltaTime;
     private float _updateInterval;
@@ -61,13 +61,12 @@ public class Zombie : MonoBehaviour
             if (_fireCooldown == 0)
                 _fireCooldown = 1.3f;
             if (_speed == 0)
-                _speed = 13f;
+                _speed = 19f;
             if (_heigh == 0)
                 _heigh = 4f;
-            if (_stopSpeed == 0)
-                _stopSpeed = 0.06f;
-            if (_animationSpeed == 0)
-                _animationSpeed = 13f;
+
+            _stopSpeed = 350;
+            _animationSpeed = 0.005f;
 
             _ep = S.AllFather.GetEnemyParams(_type);
 
@@ -98,10 +97,7 @@ public class Zombie : MonoBehaviour
             gameObject.SetActive(true);
 
             if (_health <= 0)
-            {
-                _dead = true;
                 Die();
-            }
 
             InvokeRepeating("SavingMethod", 0f, 5f);
         }
@@ -200,17 +196,19 @@ public class Zombie : MonoBehaviour
                         _agent.destination = _startPosition;
                     }
 
+                    float k = Math.Min(0.1f / (1 / 60f) * _deltaTime, 1f);
+
                     Vector3 delta = transform.position - _pos;
                     _pos = transform.position;
-                    _realSpeed = _realSpeed * 0.9f + delta.magnitude * 0.1f;
+                    _realSpeed = _realSpeed * (1 - k) + delta.magnitude * k * 60f / Time.deltaTime;
 
                     if (_realSpeed < _stopSpeed)
                     {
                         if (_run)
                         {
                             _ani.SetTrigger("TrIdle");
+                            //_ani.ResetTrigger("TrRun");
                             _run = false;
-                            Debug.Log("IDLE");
                         }
 
                         if (_followPlayer)
@@ -221,8 +219,8 @@ public class Zombie : MonoBehaviour
                         if (!_run)
                         {
                             _ani.SetTrigger("TrRun");
+                            //_ani.ResetTrigger("TrIdle");
                             _run = true;
-                            Debug.Log("RUN");
                         }
 
                         _ani.SetFloat("speed", _realSpeed * _animationSpeed);
@@ -231,8 +229,8 @@ public class Zombie : MonoBehaviour
             }
             else
             {
-                _realSpeed = 0f;
-                _ani.SetFloat("speed", 2f * _animationSpeed);
+                _realSpeed = _stopSpeed * 2;
+                _ani.SetFloat("speed", 4f * _animationSpeed);
 
                 transform.position = Camera.main.transform.position;
                 transform.rotation = Camera.main.transform.rotation;
@@ -264,6 +262,9 @@ public class Zombie : MonoBehaviour
             _collider.enabled = false;
             _agent.enabled = false;
 
+            _ani.SetTrigger("TrRun");
+            _ani.SetFloat("speed", 4f * _animationSpeed);
+
             Vector3 normalPosition = transform.position;
             Quaternion normalRotation = transform.rotation;
 
@@ -282,12 +283,10 @@ public class Zombie : MonoBehaviour
             yield return new WaitForSeconds(0.7f);
 
             _screamerStarted = false;
-
-            yield return new WaitForSeconds(0.1f);
+            _ani.SetFloat("speed", _realSpeed * _animationSpeed);
 
             transform.position = normalPosition;
             transform.rotation = normalRotation;
-            _realSpeed = 0;
 
             _agent.enabled = true;
             _collider.enabled = true;

@@ -31,6 +31,8 @@ public class Spider : MonoBehaviour
     private Animator _ani;
     private Vector3 _pos;
     private float _realSpeed;
+    private float _stopSpeed;
+    private float _animationSpeed;
     private bool _run;
     public bool _dead;
 
@@ -44,6 +46,7 @@ public class Spider : MonoBehaviour
 
     float _laserRotation;
     float _laserRotationDelta;
+    Collider _collider;
 
     void Start()
     {
@@ -63,6 +66,8 @@ public class Spider : MonoBehaviour
         for (int i = 0; i < 4; i++)
             _directions[i] = new Vector3();
 
+        _collider = gameObject.GetComponent<Collider>();
+
         _rays = new GameObject[4];
 
         _ray = S.RedLaser;
@@ -71,9 +76,11 @@ public class Spider : MonoBehaviour
 
         _laserCooldown = 0.3f;
         _fireCooldown = 0.7f;
+        _stopSpeed = 350;
+        _animationSpeed = 0.005f;
 
         _agent = GetComponent<NavMeshAgent>();
-        _agent.speed = 13f;
+        _agent.speed = _speed;
 
         _ani = GetComponent<Animator>();        
 
@@ -103,7 +110,7 @@ public class Spider : MonoBehaviour
             if (_health <= 0)
             {
                 _ani.SetFloat("deathSpeed", 100f);
-                Damage(1);
+                Die();
             }
         }
 
@@ -127,6 +134,13 @@ public class Spider : MonoBehaviour
         {
             if (!_dead)
             {
+                _dead = true;
+
+                for (int i = 0; i < 4; i++)
+                    Destroy(_rays[i]);
+
+                Die();
+
                 StartCoroutine(Loott());
 
                 IEnumerator Loott()
@@ -135,26 +149,20 @@ public class Spider : MonoBehaviour
                     GameObject loot = Instantiate(S.Loot);
                     loot.transform.position = transform.position;
                 }
-                
-                for (int i = 0; i < 4; i++)
-                    Destroy(_rays[i]);
-
-                _dead = true;
-
-                _ani.SetTrigger("TrDie");
-
-                _agent.speed = 0f;
-
-                _followPlayer = false;
-
-                Collider collider = gameObject.GetComponent<Collider>();
-                Destroy(collider);
 
                 S.AudioManager.Play("Kill", 1.1f);
             }
         }
         else
             S.AudioManager.Play("Kill", 0.9f);
+    }
+
+    public void Die()
+    {
+        _ani.SetTrigger("TrDie");
+        _agent.speed = 0f;
+        _followPlayer = false;
+        Destroy(_collider);
     }
 
     void Update()
@@ -197,26 +205,30 @@ public class Spider : MonoBehaviour
                 }
         }
 
+        float k = Math.Min(0.1f / (1 / 60f) * Time.deltaTime, 1f); /////////
+
         Vector3 delta = transform.position - _pos;
         _pos = transform.position;
-        _realSpeed = _realSpeed * 0.5f + delta.magnitude * 0.5f;
+        _realSpeed = _realSpeed * (1 - k) + delta.magnitude * k * 60f / Time.deltaTime;
 
-        if (_realSpeed < 0.03f)
+        if (_realSpeed < _stopSpeed)
         {
             if (_run)
             {
                 _ani.SetTrigger("TrIdle");
+                //_ani.ResetTrigger("TrRun");
                 _run = false;
             }
         }
-        if (_realSpeed > 0.03f)
+        if (_realSpeed > _stopSpeed)
         {
             if (!_run)
             {
                 _ani.SetTrigger("TrRun");
+                //_ani.ResetTrigger("TrIdle");
                 _run = true;
             }
-            _ani.SetFloat("speed", _realSpeed * 8f);
+            _ani.SetFloat("speed", _realSpeed * _animationSpeed);
         }
     }
 

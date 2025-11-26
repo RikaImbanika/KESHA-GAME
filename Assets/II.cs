@@ -15,14 +15,20 @@ public class II : MonoBehaviour
         _base = new Dictionary<string, ItemInfo>();
 
         _base.Add("PurpleBall", new ItemInfo(
-            spriteName: "PurpleBall",
+            spriteName: "CoinTex",
             prefabName: "PurpleBall",
             throwable: true
             ));
 
         _base.Add("BlueBall", new ItemInfo(
-            spriteName: "BlueBall",
+            spriteName: "CoinTex",
             prefabName: "BlueBall",
+            throwable: true
+            ));
+
+        _base.Add("FirstAidKit", new ItemInfo(
+            spriteName: "FirstAidKit",
+            prefabName: "FirstAidKit",
             throwable: true
             ));
     }

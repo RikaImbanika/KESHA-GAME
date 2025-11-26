@@ -137,7 +137,8 @@ public class Inventory : MonoBehaviour
 		S.Negative = _negative;
 
 		_layerMask = ~(1 << LayerMask.NameToLayer("Player") |
-			LayerMask.NameToLayer("Particles"));
+			1 << LayerMask.NameToLayer("Particles") |
+			1 << LayerMask.NameToLayer("Invisible Walls"));
 
 		_empty = Resources.Load<Sprite>("Sprites/Items/Empty");
 

@@ -74,6 +74,8 @@ public class EB2 : MonoBehaviour
 
         bool Check()
         {
+            if (S.PS == null)
+                return false;
             bool buf = S.PS._currentSceneName == gameObject.scene.name;
 
             if (!_playerInScene && buf)

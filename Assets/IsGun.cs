@@ -22,7 +22,9 @@ public class IsGun : MonoBehaviour
             S.IsGun = this;
 
             _layerMask = ~(1 << LayerMask.NameToLayer("Player") |
-                1 << LayerMask.NameToLayer("Particles"));
+                1 << LayerMask.NameToLayer("Particles") |
+                1 << LayerMask.NameToLayer("Invisible Walls") |
+                1 << LayerMask.NameToLayer("Transparent Items"));
 
             while (S.AllFather == null)
             {
