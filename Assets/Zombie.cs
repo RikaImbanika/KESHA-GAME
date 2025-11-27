@@ -12,40 +12,33 @@ public class Zombie : MonoBehaviour
     public float _fireCooldown;
     public float _health;
     public float _speed;
-    public float _heigh;
+    public float _nextFireTime;
+    public bool _followPlayer;
+    public float _realSpeed;
+    public bool _active; //Deactivator
+    public bool _dead;
+
+    private Animator _ani;
+    private float _heigh;
     private float _stopSpeed;
     private float _animationSpeed;
-    public bool _active; //What is it? //IDK //Deactivator mb?
-    private float _deltaTime;
-    private float _updateInterval;
-    private float _fpsDeltaTime;
-    private int _fpsD;
-    private bool _playerInScene;
-    private bool _needUpdate;
-    private float _minFps = 1 / 12f;
-    private float _maxFps = 1 / 120f;
     private string _sceneName;
-
-    Vector3 _startPosition;
-    string _id;
-
-    NavMeshAgent _agent;
-
-    public float _nextFireTime;
-    GameObject _theBullet;
-    public bool _followPlayer;
-    public Animator _ani;
+    private Vector3 _startPosition;
+    private string _id;
+    private NavMeshAgent _agent;
     private Vector3 _pos;
-    public float _realSpeed;
     private bool _run;
-    public bool _dead;
-    bool _screamerStarted;
-    Collider _collider;
-    EnemyParams _ep;
-    float _liveTime;
+    private bool _screamerStarted;
+    private Collider _collider;
+    private EnemyParams _ep;
+    private float _liveTime;
+    
+    private Optimiser _opti;
 
     void Start()
     {
+        _opti = new Optimiser(gameObject.scene.name);
+        
         StartCoroutine(Start0());
 
         IEnumerator Start0()
@@ -62,9 +55,8 @@ public class Zombie : MonoBehaviour
                 _fireCooldown = 1.3f;
             if (_speed == 0)
                 _speed = 19f;
-            if (_heigh == 0)
-                _heigh = 4f;
-
+                
+            _heigh = 4f;
             _stopSpeed = 350;
             _animationSpeed = 0.005f;
 
@@ -81,8 +73,6 @@ public class Zombie : MonoBehaviour
             _collider = gameObject.GetComponent<Collider>();
 
             _followPlayer = false;
-
-            _theBullet = GameObject.Find("EnemyBullet"); ///////////////////
 
             _startPosition = transform.position;
 
@@ -153,10 +143,10 @@ public class Zombie : MonoBehaviour
         {
             if (!_screamerStarted)
             {
-                if (FPS())
+                if (_opti.Optimise(transform.position)
                 {
                     Do();
-                    _deltaTime = 0;
+                    _opti.Reset();
                 }
 
                 void Do()
@@ -164,12 +154,12 @@ public class Zombie : MonoBehaviour
                     if (S.PS._currentSceneName == _sceneName)
                     {
                         Vector3 from = transform.position + new Vector3(0, _heigh, 0);
-                        Vector3 toPlayer = Camera.main.transform.position - from;
+                        Vector3 toPlayer = S.Camera.transform.position - from;
                         Ray ray = new Ray(from, toPlayer);
                         RaycastHit hit;
                         Physics.Raycast(ray, out hit);
 
-                        _nextFireTime -= _deltaTime;
+                        _nextFireTime -= _opti.DeltaTime;
 
                         if (hit.collider.gameObject.tag == "Player")
                         {
@@ -179,9 +169,8 @@ public class Zombie : MonoBehaviour
                                 _followPlayer = true;
                             }
 
-                            if (_followPlayer && !_dead)
-                                if (_nextFireTime <= 0)
-                                    Fire();
+                            if (_followPlayer)
+                                Fire();
                         }
 
                         if (_followPlayer)
@@ -196,7 +185,7 @@ public class Zombie : MonoBehaviour
                         _agent.destination = _startPosition;
                     }
 
-                    float k = Math.Min(0.1f / (1 / 60f) * _deltaTime, 1f);
+                    float k = Math.Min(0.1f / (1 / 60f) * _opti.DeltaTime, 1f);
 
                     Vector3 delta = transform.position - _pos;
                     _pos = transform.position;
@@ -207,19 +196,17 @@ public class Zombie : MonoBehaviour
                         if (_run)
                         {
                             _ani.SetTrigger("TrIdle");
-                            //_ani.ResetTrigger("TrRun");
                             _run = false;
                         }
 
                         if (_followPlayer)
                             LookToPlayer();
                     }
-                    if (_realSpeed > _stopSpeed)
+                    else
                     {
                         if (!_run)
                         {
                             _ani.SetTrigger("TrRun");
-                            //_ani.ResetTrigger("TrIdle");
                             _run = true;
                         }
 
@@ -229,8 +216,7 @@ public class Zombie : MonoBehaviour
             }
             else
             {
-                _realSpeed = _stopSpeed * 2;
-                _ani.SetFloat("speed", 4f * _animationSpeed);
+                _ani.SetFloat("speed", _stopSpeed * 2 * _animationSpeed);
 
                 transform.position = Camera.main.transform.position;
                 transform.rotation = Camera.main.transform.rotation;
@@ -295,89 +281,25 @@ public class Zombie : MonoBehaviour
 
     void Fire()
     {
-        _nextFireTime = _fireCooldown;
-        GameObject bullet = Instantiate(_theBullet);
-        bullet.transform.position = gameObject.transform.position + new Vector3(0, _heigh, 0);
-        bullet.transform.LookAt(Camera.main.transform.position);
-        EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
-        eb._active = true;
-        eb._speed = 30;
-        eb._sceneName = _sceneName;
-        Destroy(bullet, 17);
-
-        AudioSource shot = Instantiate(S.AllFather._shot);
-        shot.transform.position = transform.position;
-        shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-        float distance = (transform.position - S.Camera.transform.position).magnitude;
-        shot.volume = MathF.Min(0.5f, 60 / (distance * distance));
-        shot.Play();
-        Destroy(shot, 5);
-    }
-
-    bool FPS()
-    {
-        _deltaTime += Time.deltaTime;
-        _fpsDeltaTime += Time.deltaTime;
-
-        bool check = Check();
-
-        if (_fpsDeltaTime > 0.2f || _needUpdate)
-            return RecalcFPS();
-        else
-            return check;
-
-        bool RecalcFPS()
+        if (_nextFireTime <= 0)
         {
-            _fpsDeltaTime = 0;
-            _fpsD++;
-
-            if (check || _fpsD >= 3)
-            {
-                _fpsD = 0;
-
-                float lim = 20f;
-                float step = 40f;
-                float dist = Vector3.Distance(transform.position, S.Ph.transform.position);
-                float t = (dist - lim) / step;
-
-                float smoothed = 1;
-                if (t > 0 && S.Camera.fieldOfView > 35f)
-                    smoothed = Mathf.SmoothStep(0f, 1f, 1f / (t * t));
-
-                float coef1 = Mathf.Lerp(_minFps, _maxFps, smoothed);
-
-                float angle = Vector3.Angle(S.Camera.transform.forward, (transform.position - S.Camera.transform.position).normalized);
-                //+ visible - invisible
-                float k = 0.5f - (S.Camera.fieldOfView - angle) / 30f; //degrees
-                float coef2 = 0.05f;
-                if (dist > 30f)
-                    coef2 = Mathf.Clamp(k, 0.05f, 1) * 20f;
-
-                _updateInterval = coef1 * coef2;
-
-                _needUpdate = false;
-
-                return true;
-            }
-            else
-                return false;
-        }
-
-        bool Check()
-        {
-            bool buf = S.PS._currentSceneName == gameObject.scene.name;
-
-            if (!_playerInScene && buf)
-                _needUpdate = true;
-
-            _playerInScene = buf;
-
-            float coef3 = 20f;
-
-            if (_playerInScene)
-                coef3 = 1f;
-
-            return _deltaTime > _updateInterval * coef3;
+            _nextFireTime = _fireCooldown;
+            GameObject bullet = Instantiate(S.EnemyBullet);
+            bullet.transform.position = gameObject.transform.position + new Vector3(0, _heigh, 0);
+            bullet.transform.LookAt(S.Camera.transform.position);
+            EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
+            eb._active = true;
+            eb._speed = 30;
+            eb._sceneName = _sceneName;
+            Destroy(bullet, 17);
+    
+            AudioSource shot = Instantiate(S.Shot);
+            shot.transform.position = transform.position;
+            shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+            float distance = (transform.position - S.Camera.transform.position).magnitude;
+            shot.volume = MathF.Min(0.5f, 60 / (distance * distance));
+            shot.Play();
+            Destroy(shot, 5);
         }
     }
 }

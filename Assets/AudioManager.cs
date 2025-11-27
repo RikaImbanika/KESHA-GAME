@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    private AudioSource _shot;
+    
 	public AudioSource _gong;
 	public AudioSource _arfa;
 	public AudioSource _door;
@@ -38,17 +40,12 @@ public class AudioManager : MonoBehaviour
     public AudioSource _fzt2;
 
 	public AudioSource _incomeOST1;
-
 	public AudioSource _incomeOST2;
 
 	public AudioSource _adelaidaOST1;
-
 	public AudioSource _labyrinth;
-
 	public AudioSource _fenomen;
-
 	public AudioSource _greatMix;
-
 	public AudioSource _riddik;
 
 	public bool muted;
@@ -136,8 +133,8 @@ public class AudioManager : MonoBehaviour
 				_toilet.Play();
 				break;
 			case "kill":
-				pitch = 1f;
 				_kill.pitch = pitch;
+				_kill.volume = 0.75f;
 				_kill.Play();
 				break;
 			case "damage":
@@ -219,13 +216,8 @@ public class AudioManager : MonoBehaviour
 				_incomeOST2.Play();
 				break;
 			default:
-				Debug.Log($"No such audioSource {name} in code! Maybie you want to add it here?");
+				Debug.Log($"No such audioSource {name} in code! Maybe you want to add it into AudioManager?");
 				break;
 		}
-	}
-
-	public void Update()
-	{
-		
 	}
 }

@@ -12,9 +12,8 @@ using Unity.VisualScripting;
 public class AllFather : MonoBehaviour
 {
 	public List<GameObject> _spots;
-	public AudioSource _caboom; //
-	public AudioSource _shot; //
-	public int _enemyBulletSparklesCount;
+	public AudioSource _caboom; //What is this?
+	public int _enemyBulletSparklesCount; //
 
 	void Start()
 	{

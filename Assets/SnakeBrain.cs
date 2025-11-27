@@ -14,13 +14,14 @@ public class SnakeBrain : MonoBehaviour
 
     public Vector3[] _points;
 
-    UnityEngine.AI.NavMeshAgent _agent;
-    float _timeCapacity = 20;
-    bool _stuckAvoidance;
-    bool _tailEnabled;
+    private UnityEngine.AI.NavMeshAgent _agent;
+    private float _timeCapacity = 20;
+    private bool _stuckAvoidance;
+    private bool _tailEnabled;
     public GameObject _BLUE;
     public GameObject _GREEN;
-    Vector3 _dir;
+    private Vector3 _velocity;
+    private float _ditanceThreshold = 3f;
 
     void Start()
     {
@@ -34,18 +35,19 @@ public class SnakeBrain : MonoBehaviour
         if ((_head._aims[_head._aims.Count - 1] - transform.position).magnitude > 0.5f)
             _head._aims.Add(transform.position);
 
-        if ((transform.position - _agent.destination).magnitude < 3)
+        if ((transform.position - _agent.destination).magnitude < _ditanceThreshold)
         {
             _stuckAvoidance = false;
             SwitchTail(!_stuckAvoidance);
             _agent.destination = GetNewPoint();
             SwitchTail(!_stuckAvoidance);
+            //What?
         }
 
         Vector3 bestDir = (_agent.steeringTarget - _agent.transform.position).normalized;
-        _dir = Vector3.Slerp(_dir, bestDir, Time.deltaTime * _turn).normalized;
-        _dir *= _speed * 12 / (_head._aims.Count - _head._aimId);
-        transform.position += _dir * Time.deltaTime;
+        _velocity = Vector3.Slerp(_velocity, bestDir, Time.deltaTime * _turn).normalized;
+        _velocity *= _speed * 12 / (_head._aims.Count - _head._aimId);
+        transform.position += _velocity * Time.deltaTime;
     }
 
     void SwitchTail(bool enabled)
@@ -58,17 +60,13 @@ public class SnakeBrain : MonoBehaviour
         Vector3 point = new Vector3();
         for (int i = 0; i < 60; i++)
         {
-            point = GetRandomPointInQuad(_points[0], _points[1], _points[2], _points[3]);
-            if ((point - transform.position).magnitude < 8f)
+            point = transform.position;
+            while ((point - transform.position).magnitude < 8f)
             {
-                i--;
-                continue;
-            }
-
-            Vector3 direction = new Vector3(1, 0, 0);//_head._aims[_head._aims.Count - 1] - _head._aims[_head._aims.Count - 6];
-
+                point = GetRandomPointInQuad(_points[0], _points[1], _points[2], _points[3]);
+            
             bool reachable = false;
-            Vector3 newDirection = GetDirectionAndWait(point, direction, out reachable);
+            Vector3 newDirection = GetDirectionAndWait(point, Vector3.Zero, out reachable);
 
             if (reachable)
             {
@@ -87,9 +85,9 @@ public class SnakeBrain : MonoBehaviour
         NavMeshPath path = new NavMeshPath();
         _agent.CalculatePath(targetPosition, path);
 
-		for (int i = 0; i < 5000000; i++)
+		for (int i = 0; i < 500000; i++)
 			if (!_agent.pathPending)
-				break;
+				break;  //yield?
 
         if (path.corners.Length >= 2)
         {

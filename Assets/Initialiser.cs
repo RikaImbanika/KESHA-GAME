@@ -19,11 +19,11 @@ public class Initialiser : MonoBehaviour
 
         yield return WaitForObjectWithTag("Player", obj => S.PObj = obj);
         S.Ph = S.PObj.transform.parent?.gameObject;
-        S.Ps = null;
+        
         yield return StartCoroutine(GetComponentSafe<PlayerStorage>(S.Ph, playerStorage => S.Ps = playerStorage));
 
         yield return WaitForObjectWithTag("Canvas", obj => S.CanvasObj = obj);
-        S.Canvas = null;
+        
         yield return StartCoroutine(GetComponentSafe<Canvas>(S.CanvasObj, canvas => S.Canvas = canvas));
 
         yield return WaitForObjectWithTag("FPS", obj => S.FpsObj = obj);

@@ -36,6 +36,32 @@ public static class S : object
 	private static CHEATS _cheats;
 	private static GaymeBroker _gaymeBroker;
 	private static GameObject _redLaser;
+	private static AudioSource _shot;
+	private static GameObject _enemyBullet;
+
+    public static GameObject _enemyBullet
+    {
+		get
+		{
+			return _enemyBullet;
+		}
+		set
+		{
+			_enemyBullet = value;
+		}
+    }
+
+    public static GameObject Shot
+	{
+		get
+		{
+			return _shot;
+		}
+		set
+		{
+			_shot = value;
+		}
+	}
 
 	public static GameObject RedLaser
 	{

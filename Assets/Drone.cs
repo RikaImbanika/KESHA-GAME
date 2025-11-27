@@ -7,7 +7,7 @@ public class Drone : MonoBehaviour
 {
 	public string _type;
     public string _type2;
-    public List<GameObject> _rays;
+    public List<GameObject> _lasers;
     public float _rotationSpeed;
     public float _yRot;
     public float _zRot;
@@ -15,66 +15,76 @@ public class Drone : MonoBehaviour
     public int _fireCount;
     public float _currentFireDelay;
     public SnakeHead _head;
-    public GameObject _player;
-    public GameObject _theBullet;
-    public AllFather _allFather;
+    
+    private int _layerMask;
+    private Optimiser _opti;
+    
+    public void Start()
+    {
+        _opti = new Optimiser(gameObject.scene.name);
+        
+        _layerMask = 1 << LayerMask.NameToLayer("Player") |
+                         1 << LayerMask.NameToLayer("Static") |
+                         1 << LayerMask.NameToLayer("Enemies") |
+                         1 << LayerMask.NameToLayer("Items") |
+                         1 << LayerMask.NameToLayer("Default");
+    }
 
     public void Init(string type, string type2)
     {
-        var _ray = GameObject.Find("TheRedRay");
         _type = type;
-
+        _type2 = type2;
+        
         if (type == "6lasers")
         {
-            _rays = new List<GameObject>(6);
+            _lasers = new List<GameObject>(6);
 
             for (int i = 0; i < 6; i++)
-                _rays.Add(Instantiate(_ray));
+                _lasers.Add(Instantiate(S.RedLaser));
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "4lasers")
         {
-            _rays = new List<GameObject>(4);
+            _lasers = new List<GameObject>(4);
 
             for (int i = 0; i < 4; i++)
-                _rays.Add(Instantiate(_ray));
+                _lasers.Add(Instantiate(S.RedLaser));
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "3lasers")
         {
-            _rays = new List<GameObject>(3);
+            _lasers = new List<GameObject>(3);
 
             for (int i = 0; i < 3; i++)
-                _rays.Add(Instantiate(_ray));
+                _lasers.Add(Instantiate(S.RedLaser));
 
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "2lasers")
         {
-            _rays = new List<GameObject>(2);
+            _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _rays.Add(Instantiate(_ray));
+                _lasers.Add(Instantiate(S.RedLaser));
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "rotated2lasers")
         {
-            _rays = new List<GameObject>(2);
+            _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _rays.Add(Instantiate(_ray));
+                _lasers.Add(Instantiate(S.RedLaser));
             _yRot = UnityEngine.Random.Range(-55f, 55f);
             _zRot = UnityEngine.Random.Range(-90, 90f);
         }
         else if (type == "flat2lasers")
         {
-            _rays = new List<GameObject>(2);
+            _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _rays.Add(Instantiate(_ray));
+                _lasers.Add(Instantiate(S.RedLaser));
         }
 
-        _type2 = type2;
         if (type2 == "1")
         {
             _fireCount = 1;
@@ -161,21 +171,30 @@ public class Drone : MonoBehaviour
 
     public void Update()
     {
-        _currentFireDelay -= Time.deltaTime;
-        if (_head._seePlayer)
+        if(_opti.Optimise(transform._pos))
         {
-            if (_currentFireDelay < 0)
+            Do();
+            _opti.Reset();
+        }
+        
+        void Do()
+        {
+            _currentFireDelay -= _opti.DeltaTime;
+            if (_head._seePlayer)
             {
-                _currentFireDelay = _fireDelay;
-
-                if (_type2 == "1")
-                    Shoot2(1);
-                else if (_type2 == "2")
-                    Shoot2(2);
-                else if (_type2 == "3")
-                    Shoot2(3);
-                else if (_type2 == "sniper")
-                    Shoot1(_player.transform.position - transform.position);
+                if (_currentFireDelay < 0)
+                {
+                    _currentFireDelay = _fireDelay;
+    
+                    if (_type2 == "1")
+                        Shoot2(1);
+                    else if (_type2 == "2")
+                        Shoot2(2);
+                    else if (_type2 == "3")
+                        Shoot2(3);
+                    else if (_type2 == "sniper")
+                    Shoot1(S.Ph.transform.position - transform.position);
+                }
             }
         }
 
@@ -203,7 +222,7 @@ public class Drone : MonoBehaviour
             eb._speed = 30;
             Destroy(bullet, 15);
 
-            AudioSource shot = Instantiate(_allFather._shot);
+            AudioSource shot = Instantiate(S.Shot);
             shot.transform.position = transform.position;
             shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
             float distance = (transform.position - S.Camera.transform.position).magnitude;
@@ -232,26 +251,21 @@ public class Drone : MonoBehaviour
         Ray ray = new Ray(from, direction);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, _layerMask))
         {
-            float rx = (hit.point.x + from.x) / 2;
-            float ry = (hit.point.y + from.y) / 2;
-            float rz = (hit.point.z + from.z) / 2;
-            _rays[i].transform.position = new Vector3(rx, ry, rz);
-            _rays[i].transform.rotation = Quaternion.LookRotation(hit.point - from);
+            _lasers[i].transform.rotation = Quaternion.LookRotation(hit.point - from);
 
             float desiredLength = (hit.point - from).magnitude;
 
-            var scale = _rays[i].transform.localScale;
-            float factor = 100;
+            var scale = _lasers[i].transform.localScale;
+            float factor = 0.65ff; //
             scale.z = desiredLength * factor;
-            _rays[i].transform.localScale = scale;
+            _lasers[i].transform.localScale = scale;
 
             GameObject go = hit.collider.gameObject;
             if (go.CompareTag("Player"))
             {
-                PlayerStorage ps = go.transform.parent.gameObject.GetComponent<PlayerStorage>();
-                ps.Damage(0.75f);
+                S.PS.Damage(0.7f);
             }
         }
     }

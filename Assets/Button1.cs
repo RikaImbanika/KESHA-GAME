@@ -6,11 +6,9 @@ using System.Threading;
 
 public class Button1 : MonoBehaviour
 {
-	AllFather _allFather;
 	string _sceneName;
 	string _key;
 
-	private AudioManager _audioManager;
 	public string _audioName;
 	private bool _pressed;
 	private bool _finished;
@@ -28,8 +26,7 @@ public class Button1 : MonoBehaviour
 		_finalDeltaY = -10.63f; //Hardcode but correct
 		_startY = _obj.transform.position.y;
 
-		_allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-		_sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+		_sceneName = gameObject.scene.name;
 		_key = _sceneName + transform.position.x + transform.position.y + transform.position.z;
 
 		bool pressed = S.SaveManager.CurrentSave.LoadBool("Button1Pressed") ?? false;
@@ -61,13 +58,7 @@ public class Button1 : MonoBehaviour
 
 			_startY = _obj.transform.position.y;
 
-			if (_audioManager == null)
-			{
-				GameObject go = GameObject.FindGameObjectWithTag("AudioManager");
-				_audioManager = go.GetComponent<AudioManager>();
-			}
-
-			_audioManager.Play(_audioName, 1);
+			S.AM.Play(_audioName, 1);
 
 			_isDoor.Close();
 
