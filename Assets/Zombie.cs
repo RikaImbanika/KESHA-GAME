@@ -17,8 +17,8 @@ public class Zombie : MonoBehaviour
     public float _realSpeed;
     public bool _active; //Deactivator
     public bool _dead;
+    public Animator _ani; //public for FirstZombie.cs
 
-    private Animator _ani;
     private float _heigh;
     private float _stopSpeed;
     private float _animationSpeed;
@@ -143,7 +143,7 @@ public class Zombie : MonoBehaviour
         {
             if (!_screamerStarted)
             {
-                if (_opti.Optimise(transform.position)
+                if (_opti.Optimise(transform.position))
                 {
                     Do();
                     _opti.Reset();
@@ -290,7 +290,6 @@ public class Zombie : MonoBehaviour
             EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
             eb._active = true;
             eb._speed = 30;
-            eb._sceneName = _sceneName;
             Destroy(bullet, 17);
     
             AudioSource shot = Instantiate(S.Shot);

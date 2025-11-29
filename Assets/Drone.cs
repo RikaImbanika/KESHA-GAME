@@ -5,7 +5,7 @@ using System;
 
 public class Drone : MonoBehaviour
 {
-	public string _type;
+    public string _type;
     public string _type2;
     public List<GameObject> _lasers;
     public float _rotationSpeed;
@@ -16,16 +16,22 @@ public class Drone : MonoBehaviour
     public float _currentFireDelay;
     public SnakeHead _head;
     
-    private int _layerMask;
+    private int _layerMaskForLasers;
+    private int _layerMaskForPlayer;
     private Optimiser _opti;
     
     public void Start()
     {
         _opti = new Optimiser(gameObject.scene.name);
         
-        _layerMask = 1 << LayerMask.NameToLayer("Player") |
+        _layerMaskForLasers = 1 << LayerMask.NameToLayer("Player") |
                          1 << LayerMask.NameToLayer("Static") |
                          1 << LayerMask.NameToLayer("Enemies") |
+                         1 << LayerMask.NameToLayer("Items") |
+                         1 << LayerMask.NameToLayer("Default");
+                         
+        _layerMaskForPlayer = 1 << LayerMask.NameToLayer("Player") |
+                         1 << LayerMask.NameToLayer("Static") |
                          1 << LayerMask.NameToLayer("Items") |
                          1 << LayerMask.NameToLayer("Default");
     }
@@ -171,7 +177,7 @@ public class Drone : MonoBehaviour
 
     public void Update()
     {
-        if(_opti.Optimise(transform._pos))
+        if(_opti.Optimise(transform.position))
         {
             Do();
             _opti.Reset();
@@ -180,9 +186,10 @@ public class Drone : MonoBehaviour
         void Do()
         {
             _currentFireDelay -= _opti.DeltaTime;
-            if (_head._seePlayer)
+            
+            if (_currentFireDelay < 0)
             {
-                if (_currentFireDelay < 0)
+                if (SeePlayer())
                 {
                     _currentFireDelay = _fireDelay;
     
@@ -214,7 +221,7 @@ public class Drone : MonoBehaviour
         {
             Quaternion rq = Quaternion.LookRotation(dir);
 
-            GameObject bullet = Instantiate(_theBullet);
+            GameObject bullet = Instantiate(S.EnemyBullet);
             bullet.transform.position = transform.position + dir;
             bullet.transform.rotation = rq;
             EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
@@ -251,14 +258,14 @@ public class Drone : MonoBehaviour
         Ray ray = new Ray(from, direction);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, _layerMask))
+        if (Physics.Raycast(ray, out hit, _layerMaskForLasers))
         {
             _lasers[i].transform.rotation = Quaternion.LookRotation(hit.point - from);
 
             float desiredLength = (hit.point - from).magnitude;
 
             var scale = _lasers[i].transform.localScale;
-            float factor = 0.65ff; //
+            float factor = 0.65f; //TO CHECK
             scale.z = desiredLength * factor;
             _lasers[i].transform.localScale = scale;
 
@@ -268,5 +275,26 @@ public class Drone : MonoBehaviour
                 S.PS.Damage(0.7f);
             }
         }
+    }
+
+    bool SeePlayer()
+    {
+        if (S.PS._currentSceneName != _opti.SceneName)
+            return false;
+        
+        Vector3 from = transform.position;
+        Vector3 dir = S.Camera.transform.position - from;
+
+        Ray ray = new Ray(from, dir);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, _layerMaskForPlayer))
+        {
+            GameObject go = hit.collider.gameObject;
+            
+            return go.CompareTag("Player");
+        }
+        else
+            return false;
     }
 }

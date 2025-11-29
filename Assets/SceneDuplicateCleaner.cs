@@ -59,7 +59,7 @@ public class SceneDuplicateCleaner : MonoBehaviour
             {
                 if (!isFirst && scene.isLoaded)
                 {
-                    Debug.Log($"Выгружаем дубликат сцены: {scene.name}");
+                    Debug.Log($"UNLOADING SCENE DUPLICATE: {scene.name}");
                     StartCoroutine(UnloadSceneAsync(scene));
                 }
                 else isFirst = false;

@@ -52,7 +52,7 @@ public class EnemyBullet : MonoBehaviour
                     NoSpots ns = go.GetComponent<NoSpots>();
                     if (ns == null)
                     {
-                        AudioSource caboom = Instantiate(S.AllFather._caboom);
+                        AudioSource caboom = Instantiate(S.Caboom);
                         caboom.transform.position = gameObject.transform.position;
                         caboom.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
                         float distance = (transform.position - S.Camera.transform.position).magnitude;

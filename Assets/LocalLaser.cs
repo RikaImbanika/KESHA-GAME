@@ -44,7 +44,6 @@ public class LocalLaser : MonoBehaviour
         
         _period = (_forwardTime + _backwardTime + _forwardPause + _backwardPause);
         _frequency = 2 * MathF.PI / _period;
-        _updateInterval = 0.1f;
         _forwardPosition = transform.position + _movementDirection * _forwardDistance;
         _backwardPosition = transform.position - _movementDirection * _backwardDistance;
 
@@ -81,7 +80,7 @@ public class LocalLaser : MonoBehaviour
 
     void InitLaserBots()
     {
-        GameObject botPrefab = Resources.Load<GameObject>($"Prefabs/LaserBot");
+        GameObject botPrefab = Prefabs.Get("LaserBot");
 
         _leftBotObj = Instantiate(botPrefab, transform.position, Quaternion.LookRotation(_laserDirection), transform);
         _leftBotObj.transform.localScale = new Vector3(0.35f, 0.35f, 0.35f);
@@ -111,7 +110,7 @@ public class LocalLaser : MonoBehaviour
         if (Physics.Raycast(from, direction, out hit, _laserLimit, _layerMask))
         {
             if (hit.collider.gameObject.CompareTag("Player"))
-                S.PS.Damage(0.60f);
+                S.PS.Damage(16f * _opti.DeltaTime);
 
             return hit.point;
         }
@@ -142,8 +141,4 @@ public class LocalLaser : MonoBehaviour
 
         botObj.transform.position = startPoint;
     }
-}private Optimiser _opti;
-
-    void Start()
-    {
-        _opti = new Optimiser(gameObject.scene.name);
+}

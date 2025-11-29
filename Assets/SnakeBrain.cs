@@ -62,11 +62,10 @@ public class SnakeBrain : MonoBehaviour
         {
             point = transform.position;
             while ((point - transform.position).magnitude < 8f)
-            {
                 point = GetRandomPointInQuad(_points[0], _points[1], _points[2], _points[3]);
             
             bool reachable = false;
-            Vector3 newDirection = GetDirectionAndWait(point, Vector3.Zero, out reachable);
+            Vector3 newDirection = GetDirectionAndWait(point, Vector3.zero, out reachable);
 
             if (reachable)
             {

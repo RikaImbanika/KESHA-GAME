@@ -32,8 +32,23 @@ public class Initialiser : MonoBehaviour
         yield return WaitForObjectWithTag("Sparkle", obj => S.Sparkle = obj);
         yield return WaitForObjectWithTag("RedSparkle", obj => S.RedSparkle = obj);
         yield return WaitForObjectWithTag("Spot", obj => S.Spot = obj);
-        yield return WaitForObjectWithTag("RedLaser", obj => S.RedLaser = obj);
+        S.RedLaser = Prefabs.Get("RedLaser");
         S.Loot = Prefabs.Get("Loot");
+        S.EnemyBullet = Prefabs.Get("EnemyBullet");
+        S.Shot = Prefabs.GetAudioSource("Shot");
+        S.Caboom = Prefabs.GetAudioSource("Caboom");
+        S.SnakeBody = Prefabs.Get("SnakeBody");
+
+        S.SnakeBallMaterials = new List<Material>
+        {
+            Prefabs.GetMaterial("Balls/BlueBall"),
+            Prefabs.GetMaterial("Balls/PurpleBall"),
+            Prefabs.GetMaterial("Balls/RedBall"),
+            Prefabs.GetMaterial("Balls/YellowBall"),
+            Prefabs.GetMaterial("Balls/LimeBall"),
+            Prefabs.GetMaterial("Balls/CyanBall"),
+            Prefabs.GetMaterial("Balls/WhiteBall")
+        };
     }
 
     private static IEnumerator WaitForObjectWithTag(string tag, System.Action<GameObject> setter)

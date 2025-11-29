@@ -26,17 +26,18 @@ public class Frerard : MonoBehaviour
 
     public void Set(int number, bool value)
     {
-        Debug.Log($"FRERARD NUMBER {number} - {value}; valuesLen = {_values.Count}");
+        if (!_activated)
+        {
+            _values[number] = value;
 
-        _values[number] = value;
+            S.SM.Save("FrerardList", _values);
 
-        S.SM.Save("FrerardList", _values);
+            for (int i = 0; i < 6; i++)
+                if (!_values[i])
+                    return;
 
-        for (int i = 0; i < 6; i++)
-            if (!_values[i])
-                return;
-
-        Finish();
+            Finish();
+        }
     }
 
     void Finish()

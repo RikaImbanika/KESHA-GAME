@@ -38,8 +38,47 @@ public static class S : object
 	private static GameObject _redLaser;
 	private static AudioSource _shot;
 	private static GameObject _enemyBullet;
+	private static List<Material> _snakeBallMaterials;
+	private static GameObject _snakeBody;
+	private static AudioSource _caboom;
 
-    public static GameObject _enemyBullet
+	public static AudioSource Caboom
+    {
+		get
+        {
+			return _caboom;
+        }
+		set
+        {
+			_caboom = value;
+        }
+    }
+
+	public static GameObject SnakeBody
+    {
+		get
+		{
+			return _snakeBody;
+		}
+		set
+        {
+			_snakeBody = value;
+        }
+    }
+
+	public static List<Material> SnakeBallMaterials
+	{
+		get
+		{
+			return _snakeBallMaterials;
+		}
+		set
+		{
+			_snakeBallMaterials = value;
+		}
+	}
+
+	public static GameObject EnemyBullet
     {
 		get
 		{
@@ -51,7 +90,7 @@ public static class S : object
 		}
     }
 
-    public static GameObject Shot
+    public static AudioSource Shot
 	{
 		get
 		{
