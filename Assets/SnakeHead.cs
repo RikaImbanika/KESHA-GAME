@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 
 public class SnakeHead : MonoBehaviour
 {
@@ -12,47 +13,62 @@ public class SnakeHead : MonoBehaviour
     public float _speed;
     public float _turn;
     public float _h;
-    public float _dh;
-    public float _sin;
-    public float _rotationSpeed;
+
+    private float _rotationSpeed;
     public SnakeBrain _brain;
 
     public int _aimId;
 
+    private float _period;
+    private float _heigh;
+    private float _dHeigh;
     private float _saveInterval;
     public List<Vector3> _aims;
     private List<Vector3> _savedPositions;
     private List<GameObject> _clones;
     private List<SnakeBody> _bodies;
     private List<NavMeshObstacle> _clonesNMOs;
+    private List<Vector3> _prevDirs;
     private float L = 3.7f; //Wha?
     private float _timeCapacity = 20;
     private bool _tailEnabled;
     private Vector3 _dir;
     private float _walk = 0;
+    private float _dWalk = 0;
     public bool _seePlayer;
     private int _layerMaskForPlayer;
+    private int _layerMaskForAims;
+    private int _lastAimId;
+    public GameObject _BLUE;
 
     private Optimiser _opti;
 
     void Start()
     {
-        _ballsCount = 10;
+        _ballsCount = 30;
+        _period = 7f;
+        _heigh = 5.5f;
+        _dHeigh = 3.5f;
+        _rotationSpeed = 0.01f;
 
         _layerMaskForPlayer = 1 << LayerMask.NameToLayer("Player") |
                  1 << LayerMask.NameToLayer("Static") |
                  1 << LayerMask.NameToLayer("Items") |
                  1 << LayerMask.NameToLayer("Default");
 
+        _layerMaskForAims = 1 << LayerMask.NameToLayer("Static") |
+            1 << LayerMask.NameToLayer("Default");
+
         _opti = new Optimiser(gameObject.scene.name);
         _opti.MinFps = 1 / 120f;
         
         _aims = new List<Vector3>();
-        _savedPositions = new List<Vector3>();
+        _savedPositions = new List<Vector3>() { transform.position };
         _clones = new List<GameObject>();
         _bodies = new List<SnakeBody>();
         _clonesNMOs = new List<NavMeshObstacle>();
-        
+        _prevDirs = new List<Vector3>();
+
         int percents = 100;
         _tailEnabled = true;
         _saveInterval = 1 / 60f;
@@ -61,13 +77,15 @@ public class SnakeHead : MonoBehaviour
 
         for (int i = 0; i < _ballsCount; i++)
         {
-            GameObject clone = Instantiate(S.SnakeBody, transform.parent);
+            GameObject clone = Instantiate(S.SnakeBody, transform.position, transform.rotation, transform.parent);
             
             _clones.Add(clone);
             
             SnakeBody body = clone.GetComponent<SnakeBody>();
-            
+
             _bodies.Add(body);
+
+            _prevDirs.Add(new Vector3(0, 1, 0));
 
             NavMeshObstacle obstacle = body.Obstacle;
             
@@ -87,17 +105,17 @@ public class SnakeHead : MonoBehaviour
             percents = 100;
             string type = "";
 
-            if (GetPercent(1))
+            if (GetPercent(3))
                 type = "6lasers";
-            else if (GetPercent(1))
-                type = "4lasers";
-            else if (GetPercent(1))
-                type = "3lasers";
-            else if (GetPercent(2))
-                type = "2lasers";
-            else if (GetPercent(2))
-                type = "flat2lasers";
             else if (GetPercent(3))
+                type = "4lasers";
+            else if (GetPercent(3))
+                type = "3lasers";
+            else if (GetPercent(6))
+                type = "2lasers";
+            else if (GetPercent(6))
+                type = "flat2lasers";
+            else if (GetPercent(9))
                 type = "rotated2lasers";
 
             percents = 100;
@@ -119,6 +137,17 @@ public class SnakeHead : MonoBehaviour
             if (randomNumber == 0)
                 randomIndex = UnityEngine.Random.Range(0, S.SnakeBallMaterials.Count);
             body.Renderer.material = S.SnakeBallMaterials[randomIndex];
+
+            StartCoroutine(IEKek());
+
+            IEnumerator IEKek()
+            {
+                SwitchTail(false);
+                            
+                yield return new WaitForSeconds(3f);
+
+                SwitchTail(true);
+            }
         }
 
         bool GetPercent(int percent)
@@ -133,101 +162,201 @@ public class SnakeHead : MonoBehaviour
         if (_aims.Count > 10000)
         {
             _aims.RemoveRange(0, 1000);
-            _aimId -= 1000;
+            _aimId -= 1001;
+            _lastAimId -= 1001;
         }
 
         if (_savedPositions.Count > 50000)
             _savedPositions.RemoveRange(0, 5000);
 
-        _savedPositions.Add(transform.position);
+        float velocity = _speed * (500f + _aims.Count - _aimId) / 500f;
 
-        _walk = _speed * Time.deltaTime;
+        _dWalk = velocity * Time.deltaTime;
+
+        _walk += _dWalk;
+
+        if (_savedPositions.Count > 0)
+        {
+            float d = (_savedPositions.Last() - transform.position).magnitude;
+            if (d > 0.5f)
+                _savedPositions.Add(transform.position + new Vector3(0, _heigh + MathF.Sin(_walk / _period) * _dHeigh, 0));
+        }
+        else
+            _savedPositions.Add(transform.position);
 
         UpdateTail();
 
         Vector3 aim = GetAim();
+        _BLUE.transform.position = aim;
 
-        Vector3 bestDir = (aim - transform.position).normalized;
+        Vector3 bestDir = (aim - transform.position);
 
-        _dir = Vector3.Slerp(_dir, bestDir, Time.deltaTime * _turn).normalized;
-        _dir *= _speed;
+        bestDir.y = 0;
 
-        transform.position += _dir * Time.deltaTime;        
+        _dir = Vector3.Slerp(_dir.normalized, bestDir.normalized, Time.deltaTime * _turn).normalized;
+
+        _dir = Check(_dir).normalized;
+
+        _dir *= velocity;
+
+        transform.position += _dir * Time.deltaTime;
         transform.position = new Vector3(transform.position.x, aim.y, transform.position.z);
     }
 
+    Vector3 Check(Vector3 dir)
+    {
+        float radius = 8f;
+        Vector3 right = Quaternion.AngleAxis(45 + UnityEngine.Random.Range(-5, 5), Vector3.up) * dir;
+        Vector3 left = Quaternion.AngleAxis(45 + UnityEngine.Random.Range(-5, 5), Vector3.down) * dir;
+        float dright = radius;
+        float dleft = radius;
+        RaycastHit hit;
+        Vector3 start = transform.position + Vector3.up;
+        Ray ray = new Ray(start, right);
+
+        Debug.DrawRay(start, right * radius, Color.red, 0.1f);
+        Debug.DrawRay(start, left * radius, Color.red, 0.1f);
+        Debug.DrawRay(start, dir * radius, Color.red, 0.1f);
+
+        if (Physics.Raycast(ray, out hit, radius, _layerMaskForAims))
+            dright = (hit.point - start).magnitude;
+        ray = new Ray(start, left);
+        if (Physics.Raycast(ray, out hit, radius, _layerMaskForAims))
+            dleft = (hit.point - start).magnitude;
+
+        if (dleft < dright)
+        {
+            float k = (dleft / radius);
+            return right * (1 - k) + dir * k;
+        }
+        else if (dright < dleft)
+        {
+            float k = (dright / radius);
+            return left * (1 - k) + dir * k;
+        }
+        else
+            return dir;
+    }
+    
     Vector3 GetAim()
     {
-        while (true)
+        bool end = false;
+
+        for (int x = 0; x < 1000; x++)
         {
-            if (_aimId == 0)
-                _aimId = 1;
-            if (_aims.Count < 2)
-                return _aims[0];
-            else if (_aimId == _aims.Count - 1)
-                return _aims[_aimId];
-
-            //float distance0 = (_aims[_aimId - 1] - transform.position).magnitude;
-            float distance1 = (_aims[_aimId] - transform.position).magnitude;
-            float distance2 = (_aims[_aimId + 1] - transform.position).magnitude;
-
-            if (distance2 <= distance1)
+            if (_aims.Count == 0)
             {
-                _aimId++;
-                continue;
+                Debug.LogError($"WTF?");
+                return transform.position + transform.forward;
+            }
+            else if (_aimId >= _aims.Count)
+            {
+                _aimId = _aims.Count - 1;
+                return _aims[_aimId];
+            }
+
+            Vector3 dir = _aims[_aimId] - transform.position;
+            dir.y = 0;
+            float distance1 = dir.magnitude;
+
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position + new Vector3(0, 1, 0), dir, out hit, distance1, _layerMaskForAims))
+            {
+                end = true;
+
+                if (_aimId > 0)
+                    _aimId--;
+                if (_aimId > 0 && _aimId > _lastAimId - 600)
+                {
+                    if (_aims.Count > 30)
+                    {
+                        _aims.RemoveRange(0, 30);
+                        _aimId -= 29;
+                        _lastAimId -= 30;
+
+                        if (_aimId < 0)
+                            _aimId = 0;
+                        if (_lastAimId < 0)
+                            _aimId = 0;
+                    }
+                }
+                else
+                    return _aims[_aimId];
             }
             else
             {
-                return _aims[_aimId + 1];
+                if (!end)
+                {
+                    _aimId++;
+                    if (_aimId > _lastAimId)
+                        _lastAimId = _aimId;
+                }
+                else
+                    return _aims[_aimId];
             }
         }
+
+        Debug.LogError("WHAT?");
+        return transform.position + transform.forward;
     }
 
     void UpdateTail()
     {
         _seePlayer = false; ////////////////////
-        int p = 0;
-        int c = 1;
-        for (; c < _clones.Count && p < _savedPositions.Count - 1;)
+        float distance = 0;
+        int p = _savedPositions.Count - 1;
+        int c = 0;
+        for (; c < _clones.Count && p > 0;)
         {
-            Vector3 v = _savedPositions[_savedPositions.Count - 1 - p] - _clones[c - 1].transform.position;
-            if (v.magnitude > L)
+            Vector3 B = _savedPositions.Last();
+            if (c > 0)
+                B = _bodies[c - 1].Ball.transform.position;
+
+            Vector3 v = _savedPositions[p] - B;
+            Vector3 D = Vector3.zero;
+            if (p < _savedPositions.Count - 1)
             {
-                Vector3 B = transform.position + new Vector3(0, _h, 0);
-                if (c > 1)
-                    B = _bodies[c - 1].transform.position;
+                D = _savedPositions[p] - _savedPositions[p - 1];
+                distance += D.magnitude;
+            }
 
-                Vector3 C = _savedPositions[_savedPositions.Count - 1 - p];
-                float h2 = _h + _dh * Mathf.Sin((_walk - L * c) / _sin);
-                C += new Vector3(0, h2, 0);
+            if (distance > L)
+            {
+                Vector3 C = _savedPositions[p];
 
-                Vector3 bestPoint = FindPointEasyWay(C, B, _bodies[c].R);                
-                _clones[c].transform.position = new Vector3(bestPoint.x, transform.position.y, bestPoint.z);
+                Vector3 dirdi = _savedPositions[p - 1] - C;
 
-                var dir = _bodies[c].transform.position - transform.position;
-                if (c > 1)
-                    dir = _bodies[c].transform.position - _bodies[c - 1].transform.position;
-                //Is that so? ^
+                C += dirdi / dirdi.magnitude * (distance - L);
 
-                _bodies[c].Ball.transform.rotation = Quaternion.LookRotation(dir);
-                _bodies[c].BallInBall.transform.Rotate(-_rotationSpeed * _walk, 0, 0);
+                Vector3 bestPoint = FindPointEasyWay(C, B, L);
 
-                _bodies[c].Drone.transform.position = bestPoint;
-                _bodies[c].Drone.transform.rotation = Quaternion.LookRotation(dir);
+                var dir = bestPoint - _bodies[c].Ball.transform.position;
 
-                _bodies[c].Drone.Work(_walk);
+                float k = Math.Clamp(2 / Time.deltaTime, 0, 1);
 
-                if (SeePlayer())
-                    _seePlayer = true;
+                _prevDirs[c] = _prevDirs[c] * k + dir * (1 - k);
+
+                _bodies[c].transform.position = new Vector3(bestPoint.x, transform.position.y, bestPoint.z);
+                _bodies[c].Ball.transform.position = bestPoint;
+
+                Quaternion xRot = Quaternion.Euler(-_rotationSpeed * _walk, 0, 0);
+                //_bodies[c].Ball.transform.rotation = Quaternion.LookRotation(_prevDirs[c]);
+                _bodies[c].Ball.transform.rotation = Quaternion.LookRotation(_prevDirs[c], Vector3.up) * xRot;
+
+                _bodies[c].Drone.Work(_dWalk);
+
+                if (!_seePlayer)
+                    if (SeePlayer(_clones[c].transform.position))
+                        _seePlayer = true;
 
                 c++;
-                p--;
+                distance -= L;
             }
-            p++;
+            p--;
         }
     }
 
-    public bool SeePlayer()
+    public bool SeePlayer(Vector3 from)
     {
         Vector3 toPlayer = S.Camera.transform.position - transform.position;
         Ray ray = new Ray(transform.position, toPlayer);

@@ -17,7 +17,6 @@ public class Drone : MonoBehaviour
     public SnakeHead _head;
     
     private int _layerMaskForLasers;
-    private int _layerMaskForPlayer;
     private Optimiser _opti;
     
     public void Start()
@@ -27,11 +26,6 @@ public class Drone : MonoBehaviour
         _layerMaskForLasers = 1 << LayerMask.NameToLayer("Player") |
                          1 << LayerMask.NameToLayer("Static") |
                          1 << LayerMask.NameToLayer("Enemies") |
-                         1 << LayerMask.NameToLayer("Items") |
-                         1 << LayerMask.NameToLayer("Default");
-                         
-        _layerMaskForPlayer = 1 << LayerMask.NameToLayer("Player") |
-                         1 << LayerMask.NameToLayer("Static") |
                          1 << LayerMask.NameToLayer("Items") |
                          1 << LayerMask.NameToLayer("Default");
     }
@@ -46,7 +40,7 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(6);
 
             for (int i = 0; i < 6; i++)
-                _lasers.Add(Instantiate(S.RedLaser));
+                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "4lasers")
@@ -54,7 +48,7 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(4);
 
             for (int i = 0; i < 4; i++)
-                _lasers.Add(Instantiate(S.RedLaser));
+                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "3lasers")
@@ -62,7 +56,7 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(3);
 
             for (int i = 0; i < 3; i++)
-                _lasers.Add(Instantiate(S.RedLaser));
+               _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
 
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
@@ -71,7 +65,7 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _lasers.Add(Instantiate(S.RedLaser));
+                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "rotated2lasers")
@@ -79,7 +73,7 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _lasers.Add(Instantiate(S.RedLaser));
+                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
             _yRot = UnityEngine.Random.Range(-55f, 55f);
             _zRot = UnityEngine.Random.Range(-90, 90f);
         }
@@ -88,7 +82,7 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _lasers.Add(Instantiate(S.RedLaser));
+                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
         }
 
         if (type2 == "1")
@@ -262,13 +256,12 @@ public class Drone : MonoBehaviour
         {
             _lasers[i].transform.rotation = Quaternion.LookRotation(hit.point - from);
 
-            float desiredLength = (hit.point - from).magnitude;
-
-            var scale = _lasers[i].transform.localScale;
-            float factor = 0.65f; //TO CHECK
-            scale.z = desiredLength * factor;
-            _lasers[i].transform.localScale = scale;
-
+            float distance = Vector3.Distance(from, hit.point);
+            transform.localScale = new Vector3(
+            transform.localScale.x,
+            transform.localScale.y,
+            distance);
+    
             GameObject go = hit.collider.gameObject;
             if (go.CompareTag("Player"))
             {
@@ -279,22 +272,6 @@ public class Drone : MonoBehaviour
 
     bool SeePlayer()
     {
-        if (S.PS._currentSceneName != _opti.SceneName)
-            return false;
-        
-        Vector3 from = transform.position;
-        Vector3 dir = S.Camera.transform.position - from;
-
-        Ray ray = new Ray(from, dir);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, _layerMaskForPlayer))
-        {
-            GameObject go = hit.collider.gameObject;
-            
-            return go.CompareTag("Player");
-        }
-        else
-            return false;
+        return _head._seePlayer;
     }
 }

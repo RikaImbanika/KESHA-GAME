@@ -15,13 +15,12 @@ public class SnakeBrain : MonoBehaviour
     public Vector3[] _points;
 
     private UnityEngine.AI.NavMeshAgent _agent;
-    private float _timeCapacity = 20;
     private bool _stuckAvoidance;
     private bool _tailEnabled;
     public GameObject _BLUE;
     public GameObject _GREEN;
     private Vector3 _velocity;
-    private float _ditanceThreshold = 3f;
+    private float _distanceThreshold = 3f;
 
     void Start()
     {
@@ -35,12 +34,14 @@ public class SnakeBrain : MonoBehaviour
         if ((_head._aims[_head._aims.Count - 1] - transform.position).magnitude > 0.5f)
             _head._aims.Add(transform.position);
 
-        if ((transform.position - _agent.destination).magnitude < _ditanceThreshold)
+        CheckP();
+
+        if ((transform.position - _agent.destination).magnitude < _distanceThreshold)
         {
             _stuckAvoidance = false;
             SwitchTail(!_stuckAvoidance);
             _agent.destination = GetNewPoint();
-            SwitchTail(!_stuckAvoidance);
+            //SwitchTail(!_stuckAvoidance);
             //What?
         }
 
@@ -48,6 +49,25 @@ public class SnakeBrain : MonoBehaviour
         _velocity = Vector3.Slerp(_velocity, bestDir, Time.deltaTime * _turn).normalized;
         _velocity *= _speed * 12 / (_head._aims.Count - _head._aimId);
         transform.position += _velocity * Time.deltaTime;
+    }
+
+    void CheckP()
+    {
+        for (int i = 1; i < 15; i++)
+        {
+            if (i <= _head._aims.Count - 2)
+            {
+                if ((_head._aims[_head._aims.Count - 1] - _head._aims[_head._aims.Count - 2 - i]).magnitude < 0.5f)
+                {
+                    _head._aims.RemoveRange(_head._aims.Count - 2 - i, i);
+                    i = 0;
+                }
+            }
+            else
+                break;
+        }
+        if (_head._aimId >= _head._aims.Count)
+            _head._aimId = _head._aims.Count - 1;
     }
 
     void SwitchTail(bool enabled)
