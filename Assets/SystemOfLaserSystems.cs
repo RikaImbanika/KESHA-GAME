@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class SystemOfLaserSystems : MonoBehaviour
 {
     public int _count;
+    public string _typeFamily;
     private int _actualCount;
     private string _id;
     private string _sceneName;
@@ -58,6 +59,12 @@ public class SystemOfLaserSystems : MonoBehaviour
                 for (int i = 0; i < (_actualCount + 1) / 2; i++)
                     _mask.Add(UnityEngine.Random.Range(0, 2) == 1);
 
+                float prob = S.Backrooms._lasersProbabilities[_sceneName];
+
+                if (Convert.ToByte(UnityEngine.Random.Range(0, 100)) > prob)
+                    for (int i = 0; i < _mask.Count; i++)
+                        _mask[i] = false;
+
                 S.SM.Save(S.ID(_id, "mask"), _mask);
             }
 
@@ -89,7 +96,10 @@ public class SystemOfLaserSystems : MonoBehaviour
                     dummy.transform.position = pos;
                     dummy.transform.rotation = transform.rotation;
                     LasersSystem ls = dummy.AddComponent<LasersSystem>();
-                    ls._typeFamily = "BackroomsConstant";
+                    if (string.IsNullOrEmpty(_typeFamily))
+                        ls._typeFamily = "BRConstant";
+                    else
+                        ls._typeFamily = _typeFamily;
                 }
             }
 
@@ -107,7 +117,7 @@ public class SystemOfLaserSystems : MonoBehaviour
         if (GetComponent<MeshRenderer>() == null)
         {
             _unityEditorMeshRenderer = gameObject.AddComponent<MeshRenderer>();
-            _unityEditorMeshRenderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/Materials/DUMMY.mat");
+            _unityEditorMeshRenderer.sharedMaterial = Materials.GetInEditor("DUMMY");
         }
 
         if (GetComponent<MeshFilter>() == null)
@@ -125,7 +135,7 @@ public class SystemOfLaserSystems : MonoBehaviour
 
         Gizmos.color = Color.red;
         Quaternion rotation = Quaternion.LookRotation(transform.forward);
-        Vector3 right = rotation * Vector3.right * 6f;
+        Vector3 right = rotation * Vector3.right * 9f;
         Vector3 up = rotation * Vector3.up * 6f;
 
         if (_count < 2)

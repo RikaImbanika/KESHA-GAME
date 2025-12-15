@@ -14,18 +14,18 @@ public class Initialiser : MonoBehaviour
 
     private IEnumerator InitializeCoroutine()
     {
+        S.RND = new System.Random();
+
         S.SnakeBallMaterials = new List<Material>
         {
-            Prefabs.GetMaterial("Balls/BlueBall"),
-            Prefabs.GetMaterial("Balls/PurpleBall"),
-            Prefabs.GetMaterial("Balls/RedBall"),
-            Prefabs.GetMaterial("Balls/YellowBall"),
-            Prefabs.GetMaterial("Balls/LimeBall"),
-            Prefabs.GetMaterial("Balls/CyanBall"),
-            Prefabs.GetMaterial("Balls/WhiteBall")
+            Materials.Get("Balls/BlueBall"),
+            Materials.Get("Balls/PurpleBall"),
+            Materials.Get("Balls/RedBall"),
+            Materials.Get("Balls/YellowBall"),
+            Materials.Get("Balls/LimeBall"),
+            Materials.Get("Balls/CyanBall"),
+            Materials.Get("Balls/WhiteBall")
         };
-
-        Debug.LogError(S.SnakeBallMaterials.Count);
 
         yield return WaitForCondition(() => Camera.main != null, "Waiting for camera");
         S.Camera = Camera.main;
@@ -51,8 +51,10 @@ public class Initialiser : MonoBehaviour
         S.Shot = Prefabs.GetAudioSource("Shot");
         S.Caboom = Prefabs.GetAudioSource("Caboom");
         S.SnakeBody = Prefabs.Get("SnakeBody");
-
-
+        S.LighterObj = Prefabs.Get("Lighter");
+        S.Snakie1 = Prefabs.Get("SNAKIE 1");
+        S.Snakie2 = Prefabs.Get("SNAKIE 2");
+        S.Snakie3 = Prefabs.Get("SNAKIE 3");
     }
 
     private static IEnumerator WaitForObjectWithTag(string tag, System.Action<GameObject> setter)

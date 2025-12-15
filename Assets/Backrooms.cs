@@ -9,6 +9,10 @@ public class Backrooms : MonoBehaviour
     System.Random _rnd;
 
     List<string> _allRoomsList;
+    List<string> _allRoomsListCopy;
+    public Dictionary<string, byte> _snakes;
+    public Dictionary<string, float> _lasersProbabilities;
+    public Dictionary<string, float> _lightersProbabilities;
 
     //Room BR 5 should be at least 3 rooms from start
     //Room BR 8 should be maximally far
@@ -23,6 +27,8 @@ public class Backrooms : MonoBehaviour
         IEnumerator Yep()
         {
             _rnd = new System.Random();
+            _lasersProbabilities = new Dictionary<string, float>();
+            _lightersProbabilities = new Dictionary<string, float>();
 
             while (true)
             {
@@ -40,6 +46,8 @@ public class Backrooms : MonoBehaviour
                 }
             }
 
+            S.Backrooms = this;
+
             yield return new WaitForSeconds(1);
 
             FillAllRoomsList();
@@ -48,6 +56,122 @@ public class Backrooms : MonoBehaviour
 
             for (int i = 0; i < 100; i++)
                 yield return SwitchOneDoor(i);
+
+            FillLaserProbabilities();
+            SummonSnakes();
+            SummonLighters();
+        }
+    }
+
+    void FillLaserProbabilities()
+    {
+        List<float> probs = new List<float>
+        {
+            100f,
+            80f,
+            50f,
+            25f,
+            10f,
+            5f,
+            1f,
+            0f
+        };
+
+        List<float> counts = new List<float>
+        {
+            8f,
+            7f,
+            3f,
+            10f,
+            22f,
+            20f,
+            20f,
+            10f
+        };
+
+        float[] array = new float[100];
+
+        int j = 0;
+        int m = 0;
+        for (int i = 0; i < 100; i++)
+        {
+            array[i] = probs[j];
+            m++;
+            if (m > counts[j])
+            {
+                j++;
+                m = 0;
+            }
+        }
+
+        for (int i = 0; i < _allRoomsList.Count; i++)
+        {
+            int d = _rnd.Next(100);
+            _lasersProbabilities.Add(_allRoomsList[i], array[d]);
+        }
+    }
+
+    void SummonSnakes()
+    {
+        _snakes = new Dictionary<string, byte>();
+
+        for (byte i = 0; i < 3;)
+        {
+            int sceneId = _rnd.Next(_allRoomsList.Count());
+            string sceneName = _allRoomsList[sceneId];
+            if (!_snakes.ContainsKey(sceneName))
+            {
+                _snakes.Add(_allRoomsList[i], i);
+                i++;
+            }
+        }
+    }
+
+    void SummonLighters()
+    {
+        List<float> probs = new List<float>
+        {
+            100f,
+            70f,
+            50f,
+            25f,
+            10f,
+            5f,
+            1f,
+            0f
+        };
+
+        List<float> counts = new List<float>
+        {
+            10f,
+            5f,
+            5f,
+            5f,
+            8f,
+            22f,
+            35f,
+            10f
+        };
+
+        float[] array = new float[100];
+
+        int j = 0;
+        int m = 0;
+        for (int i = 0; i < 100; i++)
+        {
+            array[i] = probs[j];
+            m++;
+            if (m > counts[j])
+            {
+                j++;
+                m = 0;
+            }
+        }
+
+        for (int i = 0; i < _allRoomsList.Count; i++)
+        {
+            int d = _rnd.Next(100);
+            _lightersProbabilities.Add(_allRoomsList[i], array[d]);
         }
     }
 
@@ -217,6 +341,11 @@ public class Backrooms : MonoBehaviour
         _allRoomsList.Add("BR 6R");
         _allRoomsList.Add("BR 7R");
         _allRoomsList.Add("Hall");
+
+        _allRoomsListCopy = new List<string>();
+
+        for (int i = 0; i < _allRoomsList.Count; i++)
+            _allRoomsListCopy.Add(_allRoomsList[i]);
     }
 
     bool Check5and8()
@@ -225,7 +354,7 @@ public class Backrooms : MonoBehaviour
 
         string firstOne = "nope";
 
-        foreach (string room in _allRoomsList)
+        foreach (string room in _allRoomsListCopy)
         {
             List<string> neighbours = S.Loader._map[room];
             foreach (string neighbour in neighbours)
@@ -244,7 +373,7 @@ public class Backrooms : MonoBehaviour
 
         List<string> currentLevel = new List<string>();
         currentLevel.Add(firstOne);
-        _allRoomsList.Remove(firstOne);
+        _allRoomsListCopy.Remove(firstOne);
 
         int br5dist = -1;
         int br8dist = -1;
@@ -262,10 +391,10 @@ public class Backrooms : MonoBehaviour
                 {
                     string neighbour = neighbours[k];
 
-                    if (_allRoomsList.Contains(neighbour))
+                    if (_allRoomsListCopy.Contains(neighbour))
                     {
                         currentLevel.Add(neighbour);
-                        _allRoomsList.Remove(neighbour);
+                        _allRoomsListCopy.Remove(neighbour);
                     }
                 }
 
@@ -306,9 +435,9 @@ public class Backrooms : MonoBehaviour
 
             foreach (string room in gg)
             {
-                if (_allRoomsList.Contains(room))
+                if (_allRoomsListCopy.Contains(room))
                 {
-                    _allRoomsList.Remove(room);
+                    _allRoomsListCopy.Remove(room);
                     weAreHere.Add(room);
                 }
             }
@@ -316,14 +445,14 @@ public class Backrooms : MonoBehaviour
             weAreHere.RemoveAt(0);
         }
 
-        return _allRoomsList.Count == 0;
+        return _allRoomsListCopy.Count == 0;
     }
 
     bool CheckNotSmallCircles()
     {
         FillAllRoomsList();
 
-        string ourRoom = _allRoomsList.ElementAt(0);
+        string ourRoom = _allRoomsListCopy.ElementAt(0);
 
         List<string> neighbours = S.Loader._map[ourRoom];
         foreach (string neighbour in neighbours)

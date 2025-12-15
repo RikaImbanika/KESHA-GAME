@@ -13,9 +13,4 @@ public static class Prefabs : object
 	{
 		return Resources.Load<AudioSource>($"Prefabs/AudioSources/{name}");
 	}
-
-	public static Material GetMaterial(string name)
-	{
-		return Resources.Load<Material>($"Materials/{name}");
-	}
 }

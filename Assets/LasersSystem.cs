@@ -226,18 +226,47 @@ public class LasersSystem : MonoBehaviour
 
             void DefineActualType()
             {
-                int number = Convert.ToByte(UnityEngine.Random.Range(0, 5));
+                byte number = 0;
 
-                if (number == 0)
-                    _actualType = "singleVertical";
-                else if (number == 1)
-                    _actualType = "singleHorizontal";
-                else if (number == 2)
-                    _actualType = "doubleVertical";
-                else if (number == 3)
-                    _actualType = "doubleHorizontal";
-                else if (number == 4)
-                    _actualType = "circular";
+                if (_typeFamily == "BR")
+                {
+                    number = Convert.ToByte(UnityEngine.Random.Range(0, 5));
+
+                    if (number == 0)
+                        _actualType = "singleVertical";
+                    else if (number == 1)
+                        _actualType = "singleHorizontal";
+                    else if (number == 2)
+                        _actualType = "doubleVertical";
+                    else if (number == 3)
+                        _actualType = "doubleHorizontal";
+                    else if (number == 4)
+                        _actualType = "circular";
+                }
+                else if (_typeFamily == "BR Single LF")
+                {
+                    number = Convert.ToByte(UnityEngine.Random.Range(0, 2));
+
+                    if (number == 0)
+                        _actualType = "singleVertical";
+                    else
+                        _actualType = "singleHorizontal";
+                }
+                else
+                {
+                    number = Convert.ToByte(UnityEngine.Random.Range(0, 5));
+
+                    if (number == 0)
+                        _actualType = "singleVertical";
+                    else if (number == 1)
+                        _actualType = "singleHorizontal";
+                    else if (number == 2)
+                        _actualType = "doubleVertical";
+                    else if (number == 3)
+                        _actualType = "doubleHorizontal";
+                    else if (number == 4)
+                        _actualType = "circular";
+                }
 
                 number = Convert.ToByte(UnityEngine.Random.Range(0, 10));
                 float d = 1.25f;
@@ -263,11 +292,15 @@ public class LasersSystem : MonoBehaviour
                 else if (number == 9)
                     _period = d * 2f;
 
-                if (_typeFamily == "Backrooms")
+                float prob = S.Backrooms._lasersProbabilities[_sceneName];
+
+                if (Convert.ToByte(UnityEngine.Random.Range(0, 100)) > prob)
+                    _actualType = "skipped";
+
+                if (_typeFamily == "BR Single LF")
                 {
-                    if (Convert.ToByte(UnityEngine.Random.Range(0, 10)) > 0)
+                    if (Convert.ToByte(UnityEngine.Random.Range(0, 30)) > 10)
                         _actualType = "skipped";
-                    //BackroomsConstant family will not not be skipped
                 }
 
                 S.SM.Save(S.ID(_id, "laserSystemType"), _actualType);
@@ -288,15 +321,8 @@ public class LasersSystem : MonoBehaviour
         if (GetComponent<MeshRenderer>() == null)
         {
             _unityEditorMeshRenderer = gameObject.AddComponent<MeshRenderer>();
-            _unityEditorMeshRenderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/Materials/DUMMY.mat");
-            //Debug.Log(AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/Materials/DUMMY.mat"));
+            _unityEditorMeshRenderer.sharedMaterial = Materials.GetInEditor("DUMMY");
         }
-        /*else
-        {
-            DestroyImmediate(GetComponent<MeshRenderer>());
-            _unityEditorMeshRenderer = gameObject.AddComponent<MeshRenderer>();
-            _unityEditorMeshRenderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/Materials/DUMMY.mat");
-        }*/
 
         if (GetComponent<MeshFilter>() == null)
         {
@@ -313,12 +339,12 @@ public class LasersSystem : MonoBehaviour
 
         Gizmos.color = Color.red;
         Quaternion rotation = Quaternion.LookRotation(transform.forward);
-        Vector3 right = rotation * Vector3.right * 6f;
+        Vector3 right = rotation * Vector3.right * 9f;
         Vector3 up = rotation * Vector3.up * 6f;
 
         Gizmos.DrawLine(transform.position + up, transform.position - up);
         Gizmos.DrawLine(transform.position + right, transform.position - right);
         Gizmos.DrawWireSphere(transform.position, 1f);
     }
-#endif
+    #endif
 }

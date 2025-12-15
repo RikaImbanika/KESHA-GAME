@@ -6,6 +6,7 @@ using UnityEngine;
 
 public static class S : object
 {
+	private static System.Random _rnd;
 	private static GameObject _allFatherObj;
 	private static AllFather _allFather;
 	private static Loader _loader;
@@ -41,6 +42,83 @@ public static class S : object
 	private static List<Material> _snakeBallMaterials;
 	private static GameObject _snakeBody;
 	private static AudioSource _caboom;
+	private static Backrooms _backrooms;
+	private static GameObject _lighterObj;
+	private static GameObject _snakie1;
+	private static GameObject _snakie2;
+	private static GameObject _snakie3;
+
+	public static GameObject Snakie1
+	{
+		get
+		{
+			return _snakie1;
+		}
+		set
+		{
+			_snakie1 = value;
+		}
+	}
+
+	public static GameObject Snakie2
+	{
+		get
+		{
+			return _snakie2;
+		}
+		set
+		{
+			_snakie2 = value;
+		}
+	}
+
+	public static GameObject Snakie3
+	{
+		get
+		{
+			return _snakie3;
+		}
+		set
+		{
+			_snakie3 = value;
+		}
+	}
+
+	public static System.Random RND
+	{
+		get
+		{
+			return _rnd;
+		}
+		set
+		{
+			_rnd = value;
+		}
+	}
+
+	public static GameObject LighterObj
+	{
+		get
+		{
+			return _lighterObj;
+		}
+		set
+		{
+			_lighterObj = value;
+		}
+	}
+	
+	public static Backrooms Backrooms
+	{
+		get
+		{
+			return _backrooms;
+		}
+		set
+		{
+			_backrooms = value;
+		}
+	}
 
 	public static AudioSource Caboom
     {

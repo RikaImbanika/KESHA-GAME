@@ -82,7 +82,7 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
+                _lasers.Add(Instantiate(S.RedLaser, transform.position, Quaternion.identity, transform));
         }
 
         if (type2 == "1")
