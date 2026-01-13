@@ -49,17 +49,23 @@ public class AllFather : MonoBehaviour
 	IEnumerator LoggerOfTheSave()
 	{
 		float delay = 10f;
+
 		while (S.SaveManager == null)
 			yield return new WaitForSeconds(0.1f);
 
+		string savePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+									   "Kesha_Game_Save_Log.txt");
 
-        while (true)
+		while (true)
 		{
 			yield return new WaitForSeconds(delay);
-			string save = "=========================";
-			save += "\r\n" + S.SaveManager.CurrentSave.ToString();
-			save += "\r\n=======================";
-			Debug.Log(save);
+
+			string logContent = "=========================\r\n";
+			logContent += DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\r\n";
+			logContent += S.SaveManager.CurrentSave.ToString();
+			logContent += "\r\n=======================\r\n\r\n";
+
+			File.WriteAllText(savePath, logContent);
 		}
 	}
 

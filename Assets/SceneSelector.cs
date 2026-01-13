@@ -11,15 +11,14 @@ public class SceneSelector : MonoBehaviour
     Vector3 _p2;
     bool _done;
 
+    void Start()
+    {
+        S.SceneSelector = this;
+    }
+
     public void OkayBroIAmStartingDoingThisFuckingShitBro()
     {
         S.Ph.transform.position = new Vector3(3.22f, -165.3f, -2.87f);
-
-        if (_done)
-        {
-            Debug.Log("Oh no bro, I will not. I already done this shit. Sorry, goodbye, good luck bro.");
-            return;
-        }
 
         StartCoroutine(IEshit());
 
@@ -33,65 +32,72 @@ public class SceneSelector : MonoBehaviour
 
             S.Teleporter.ImportantStaticShitToDo("Start");
 
-            _literallyScenes = new List<string>();
-
-            _p1 = new Vector3(-61.2000008f, -169.089996f, 61.7400017f);
-            _p2 = new Vector3(67.9000015f, -150.399994f, 61.7400017f);
-
-            var shit = S.Loader._map.Keys;
-
-            for (int i = 0; i < S.Loader._map.Count; i++)
+            if (_done)
             {
-                if (shit.ElementAt(i) != "Start")
-                    _literallyScenes.Add(shit.ElementAt(i));
+                Debug.Log("Oh no bro, I will not. I already done this shit. Sorry, goodbye, good luck bro.");
+                yield return null;
             }
+            else
+                PlaceButtons();
 
-            float x = _p1.x + 1;
-            float y = _p1.y + 1;
-            float z = 61.7400017f;
-
-            for (int i = 0; i < S.Loader._map.Count; i++)
+            void PlaceButtons()
             {
-                int count = _literallyScenes[i].Length;
+                _literallyScenes = new List<string>();
 
-                for (int j = 0; j < count; j++)
+                _p1 = new Vector3(-61.2000008f, -169.089996f, 61.7400017f);
+                _p2 = new Vector3(67.9000015f, -150.399994f, 61.7400017f);
+
+                var shit = S.Loader._map.Keys;
+
+                for (int i = 0; i < S.Loader._map.Count; i++)
                 {
-                    string symbol = $"{_literallyScenes[i][j]}";
+                    if (shit.ElementAt(i) != "Start")
+                        _literallyScenes.Add(shit.ElementAt(i));
+                }
 
-                    if (char.IsLower(symbol[0]))
-                        symbol = $"_{symbol}";
+                float x = _p1.x + 1;
+                float y = _p1.y + 1;
+                float z = 61.7400017f;
 
-                    if (symbol == " ")
-                        symbol = "_";
+                for (int i = 0; i < S.Loader._map.Count; i++)
+                {
+                    int count = _literallyScenes[i].Length;
 
-                    string matName = $"Materials/Symbols/{symbol}";
+                    for (int j = 0; j < count; j++)
+                    {
+                        string symbol = $"{_literallyScenes[i][j]}";
 
-                    GameObject prefab = Resources.Load<GameObject>($"Prefabs/LETTER");
-                    Material material = Resources.Load<Material>(matName);
-                    GameObject obj = Instantiate(prefab, new Vector3(x, y, z), new Quaternion(0, 180, 0, 0));
-                    obj.GetComponent<Renderer>().material = material;
-                    obj.AddComponent(typeof(IsSceneName));
-                    IsSceneName isSceneName = obj.GetComponent<IsSceneName>();
-                    isSceneName._sceneName = _literallyScenes[i];
+                        if (char.IsLower(symbol[0]))
+                            symbol = $"_{symbol}";
+
+                        if (symbol == " ")
+                            symbol = "_";
+
+                        string matName = $"Materials/Symbols/{symbol}";
+
+                        GameObject prefab = Resources.Load<GameObject>($"Prefabs/LETTER");
+                        Material material = Resources.Load<Material>(matName);
+                        GameObject obj = Instantiate(prefab, new Vector3(x, y, z), Quaternion.Euler(0, 180, 0));
+                        obj.transform.SetParent(S.AllFatherObj.transform, true);
+                        obj.GetComponent<Renderer>().material = material;
+                        obj.AddComponent(typeof(IsSceneName));
+                        IsSceneName isSceneName = obj.GetComponent<IsSceneName>();
+                        isSceneName._sceneName = _literallyScenes[i];
+
+                        x += 1;
+                    }
 
                     x += 1;
+
+                    if (x > _p2.x)
+                    {
+                        x = _p1.x;
+                        y += 1;
+                    }
                 }
 
-                x += 1;
-
-                if (x > _p2.x)
-                {
-                    x = _p1.x;
-                    y += 1;
-                }
+                _done = true;
             }
-
-            _done = true;
         }
-    }
-
-    void Start()
-    {
-        S.SceneSelector = this;
     }
 }

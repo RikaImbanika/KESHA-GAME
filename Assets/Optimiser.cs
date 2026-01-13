@@ -10,6 +10,7 @@ public class Optimiser
     private float _fpsRecalcPeriod = 0.6f;
     private float _minFps = 1 / 12f;
     private float _maxFps = 1 / 120f;
+    private float _ifNotInScene = 0.75f;
     private float _fpsDeltaTime;
     private float _updateInterval;
     private float _recalcDeltaTime;
@@ -24,6 +25,7 @@ public class Optimiser
         _fpsRecalcPeriod = 0.6f;
         _minFps = 1 / 12f;
         _maxFps = 1 / 120f;
+        _ifNotInScene = 0.75f;
     }
     
     public float DeltaTime
@@ -73,7 +75,19 @@ public class Optimiser
             _fpsRecalcPeriod = value;
         }
     }
-    
+
+    public float IfNotInScene
+    {
+        get
+        {
+            return _ifNotInScene;
+        }
+        set
+        {
+            _ifNotInScene = value;
+        }
+    }
+
     public float MinFps
     {
         get
@@ -164,19 +178,22 @@ public class Optimiser
             if (S.PS == null)
                 return false;
                 
-            bool buf = S.PS._currentSceneName == _sceneName;
+            bool playerInScene = S.PS._currentSceneName == _sceneName;
 
-            if (!_playerInScene && buf)
+            if (!_playerInScene && playerInScene)
                 _needUpdate = true;
 
-            _playerInScene = buf;
+            _playerInScene = playerInScene;
 
             float coef3 = 20f;
 
             if (_playerInScene)
                 coef3 = 1f;
 
-            return _deltaTime > _updateInterval * coef3;
+            if (_playerInScene)
+                return _deltaTime > _updateInterval;
+            else
+                return _deltaTime > _ifNotInScene;
         }
     }
     

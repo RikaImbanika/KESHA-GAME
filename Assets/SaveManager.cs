@@ -101,6 +101,11 @@ public class SaveManager : MonoBehaviour
         return _currentSave.LoadQuaternion(key);
     }
 
+    public byte? LoadByte(string key)
+    {
+        return _currentSave.LoadByte(key);
+    }
+
     public void RemoveBool(string key)
     {
         _currentSave.RemoveBool(key);
@@ -129,6 +134,11 @@ public class SaveManager : MonoBehaviour
     public void RemoveQuaternion(string key)
     {
         _currentSave.RemoveQuaternion(key);
+    }
+
+    public void RemoveByte(string key)
+    {
+        _currentSave.RemoveByte(key);
     }
 
     public void RemoveListString(string key)
@@ -188,6 +198,10 @@ public class SaveManager : MonoBehaviour
         else if (type == typeof(Quaternion))
         {
             _currentSave.SaveQuaternion(key, (Quaternion)value);
+        }
+        else if (type == typeof(byte))
+        {
+            _currentSave.SaveByte(key, (byte)value);
         }
     }
 

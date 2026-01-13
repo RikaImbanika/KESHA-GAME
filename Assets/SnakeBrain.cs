@@ -31,7 +31,9 @@ public class SnakeBrain : MonoBehaviour
 
     void Update()
     {
-        if ((_head._aims[_head._aims.Count - 1] - transform.position).magnitude > 0.5f)
+        if (_head._aims.Count == 0)
+            _head._aims.Add(transform.position);
+        else if ((_head._aims[_head._aims.Count - 1] - transform.position).magnitude > 0.5f)
             _head._aims.Add(transform.position);
 
         CheckP();

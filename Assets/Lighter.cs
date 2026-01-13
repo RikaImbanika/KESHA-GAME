@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class Lighter : MonoBehaviour
 {
@@ -38,6 +39,8 @@ public class Lighter : MonoBehaviour
     private int _fpsD;
     private float _minFps = 1 / 12f;
     private float _maxFps = 1 / 120f;
+    public string _id;
+    public string _idPos;
 
     void Start()
     {
@@ -48,6 +51,22 @@ public class Lighter : MonoBehaviour
         _seed2 = UnityEngine.Random.Range(-500, 500) - 222.222f;
 
         _prevPos = transform.position;
+        InvokeRepeating("SavingMethod", 0f, 6.5f);
+    }
+
+    void SavingMethod()
+    {
+        S.SM.Save(_idPos, transform.position);
+    }
+
+    void GetId()
+    {
+        if (string.IsNullOrEmpty(_id))
+        {
+            string _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+            _id = _sceneName + transform.position.x + transform.position.y + transform.position.z;
+            _idPos = S.ID(_id, "pos");
+        }
     }
 
     void Update()

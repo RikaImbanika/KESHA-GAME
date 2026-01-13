@@ -81,7 +81,7 @@ public class Teleporter : MonoBehaviour
         if (S.MM._playerOnIncome)
             S.MM.EnterIncome();
         else
-            S.MM.LeaveIncome(); //What do u want from me?
+            S.MM.LeaveIncome(); //What do u want from me? .. IDK BRO
 
         if (nextSceneName.Contains("BR"))
             S.MM.EnterBackrooms();
@@ -90,6 +90,9 @@ public class Teleporter : MonoBehaviour
 
         if (!nextSceneName.Contains("TL"))
             S.MM.LeaveToilet();
+
+        if (!nextSceneName.Contains("MR"))
+            S.MM.LeaveMushrooms();
     }
 
     public IEnumerator WaitLoad(string nextSceneName, int doorId, Vector3 dir)

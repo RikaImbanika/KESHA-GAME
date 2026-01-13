@@ -48,6 +48,9 @@ public class AudioManager : MonoBehaviour
 	public AudioSource _greatMix;
 	public AudioSource _riddik;
 
+	public AudioSource _maylo;
+	public AudioSource _theRoom;
+
 	public bool muted;
 
 	public void Start()

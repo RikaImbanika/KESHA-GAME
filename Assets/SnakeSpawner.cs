@@ -9,6 +9,7 @@ public class SnakeSpawner : MonoBehaviour
     private string _sceneName;
     private float _life;
     private byte _type;
+    public GameObject[] _corners;
 
 
     void Start()
@@ -61,12 +62,37 @@ public class SnakeSpawner : MonoBehaviour
 
     void Summon()
     {
+        GameObject obj = null;
+
         if (_type == 1)
-            Instantiate(S.Snakie1, transform.position, transform.rotation, transform.parent);
+            obj = Instantiate(S.Snakie1, transform.position, transform.rotation, transform);
         else if (_type == 2)
-            Instantiate(S.Snakie2, transform.position, transform.rotation, transform.parent);
+            obj = Instantiate(S.Snakie2, transform.position, transform.rotation, transform);
         else if (_type == 3)
-            Instantiate(S.Snakie3, transform.position, transform.rotation, transform.parent);
-        Destroy(gameObject);
+            obj = Instantiate(S.Snakie3, transform.position, transform.rotation, transform);
+
+        //Debug.LogError("XXX 0");
+
+        Transform snakeBrainObj = obj.transform.Find("SnakeBrain");
+        if (snakeBrainObj != null)
+        {
+            //Debug.LogError("XXX 1");
+
+            SnakeBrain snakeBrain = snakeBrainObj.GetComponent<SnakeBrain>();
+
+            snakeBrain._points = new Vector3[4];
+            //Debug.LogError("XXX 3");
+            for (int i = 0; i < 4; i++)
+            {
+                snakeBrain._points[i] = _corners[i].transform.position;
+                Destroy(_corners[i]);
+            }
+            //Debug.LogError("XXX 4");
+        }
+        else
+            //Debug.LogError("XXX 2");
+
+        Destroy(this);
+
     }
 }

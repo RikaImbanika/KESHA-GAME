@@ -257,9 +257,9 @@ public class Drone : MonoBehaviour
             _lasers[i].transform.rotation = Quaternion.LookRotation(hit.point - from);
 
             float distance = Vector3.Distance(from, hit.point);
-            transform.localScale = new Vector3(
-            transform.localScale.x,
-            transform.localScale.y,
+            _lasers[i].transform.localScale = new Vector3(
+            1,
+            1,
             distance);
     
             GameObject go = hit.collider.gameObject;

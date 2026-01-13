@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class SnakeHead : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class SnakeHead : MonoBehaviour
 
     private float _rotationSpeed;
     public SnakeBrain _brain;
+    public GameObject _headVis;
 
     public int _aimId;
 
@@ -40,11 +42,14 @@ public class SnakeHead : MonoBehaviour
     private int _layerMaskForAims;
     private int _lastAimId;
     public GameObject _BLUE;
+    public string _sceneName;
 
     private Optimiser _opti;
 
     void Start()
     {
+        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+
         _ballsCount = 30;
         _period = 7f;
         _heigh = 5.5f;
@@ -59,9 +64,9 @@ public class SnakeHead : MonoBehaviour
         _layerMaskForAims = 1 << LayerMask.NameToLayer("Static") |
             1 << LayerMask.NameToLayer("Default");
 
-        _opti = new Optimiser(gameObject.scene.name);
-        _opti.MinFps = 1 / 120f;
-        
+        _opti = new Optimiser(_sceneName);
+        _opti.MinFps = 1 / 16f;
+
         _aims = new List<Vector3>();
         _savedPositions = new List<Vector3>() { transform.position };
         _clones = new List<GameObject>();
@@ -78,9 +83,9 @@ public class SnakeHead : MonoBehaviour
         for (int i = 0; i < _ballsCount; i++)
         {
             GameObject clone = Instantiate(S.SnakeBody, transform.position, transform.rotation, transform.parent);
-            
+
             _clones.Add(clone);
-            
+
             SnakeBody body = clone.GetComponent<SnakeBody>();
 
             _bodies.Add(body);
@@ -88,7 +93,7 @@ public class SnakeHead : MonoBehaviour
             _prevDirs.Add(new Vector3(0, 1, 0));
 
             NavMeshObstacle obstacle = body.Obstacle;
-            
+
             if (i < 3)
                 obstacle.enabled = false;
             _clonesNMOs.Add(obstacle);
@@ -143,7 +148,7 @@ public class SnakeHead : MonoBehaviour
             IEnumerator IEKek()
             {
                 SwitchTail(false);
-                            
+
                 yield return new WaitForSeconds(3f);
 
                 SwitchTail(true);
@@ -159,48 +164,57 @@ public class SnakeHead : MonoBehaviour
 
     void Update()
     {
-        if (_aims.Count > 10000)
+        if (_opti.Optimise(transform.position))
         {
-            _aims.RemoveRange(0, 1000);
-            _aimId -= 1001;
-            _lastAimId -= 1001;
+            Do();
+            _opti.Reset();
         }
 
-        if (_savedPositions.Count > 50000)
-            _savedPositions.RemoveRange(0, 5000);
-
-        float velocity = _speed * (500f + _aims.Count - _aimId) / 500f;
-
-        _dWalk = velocity * Time.deltaTime;
-
-        _walk += _dWalk;
-
-        if (_savedPositions.Count > 0)
+        void Do()
         {
-            float d = (_savedPositions.Last() - transform.position).magnitude;
-            if (d > 0.5f)
-                _savedPositions.Add(transform.position + new Vector3(0, _heigh + MathF.Sin(_walk / _period) * _dHeigh, 0));
+            if (_aims.Count > 10000)
+            {
+                _aims.RemoveRange(0, 1000);
+                _aimId -= 1001;
+                _lastAimId -= 1001;
+            }
+
+            if (_savedPositions.Count > 50000)
+                _savedPositions.RemoveRange(0, 5000);
+
+            float velocity = _speed * (500f + _aims.Count - _aimId) / 500f;
+
+            _dWalk = velocity * _opti.DeltaTime;
+
+            _walk += _dWalk;
+
+            if (_savedPositions.Count > 0)
+            {
+                float d = (_savedPositions.Last() - transform.position).magnitude;
+                if (d > 0.5f)
+                    _savedPositions.Add(transform.position + new Vector3(0, _heigh + MathF.Sin(_walk / _period) * _dHeigh, 0));
+            }
+            else
+                _savedPositions.Add(transform.position);
+
+            UpdateTail();
+
+            Vector3 aim = GetAim();
+            //_BLUE.transform.position = aim;
+
+            Vector3 bestDir = (aim - transform.position);
+
+            bestDir.y = 0;
+
+            _dir = Vector3.Slerp(_dir.normalized, bestDir.normalized, _opti.DeltaTime * _turn).normalized;
+
+            _dir = Check(_dir).normalized;
+
+            _dir *= velocity;
+
+            transform.position += _dir * _opti.DeltaTime;
+            transform.position = new Vector3(transform.position.x, aim.y, transform.position.z);
         }
-        else
-            _savedPositions.Add(transform.position);
-
-        UpdateTail();
-
-        Vector3 aim = GetAim();
-        _BLUE.transform.position = aim;
-
-        Vector3 bestDir = (aim - transform.position);
-
-        bestDir.y = 0;
-
-        _dir = Vector3.Slerp(_dir.normalized, bestDir.normalized, Time.deltaTime * _turn).normalized;
-
-        _dir = Check(_dir).normalized;
-
-        _dir *= velocity;
-
-        transform.position += _dir * Time.deltaTime;
-        transform.position = new Vector3(transform.position.x, aim.y, transform.position.z);
     }
 
     Vector3 Check(Vector3 dir)
@@ -302,7 +316,7 @@ public class SnakeHead : MonoBehaviour
 
     void UpdateTail()
     {
-        _seePlayer = false; ////////////////////
+        _seePlayer = false; //correct
         float distance = 0;
         int p = _savedPositions.Count - 1;
         int c = 0;
@@ -340,7 +354,6 @@ public class SnakeHead : MonoBehaviour
                 _bodies[c].Ball.transform.position = bestPoint;
 
                 Quaternion xRot = Quaternion.Euler(-_rotationSpeed * _walk, 0, 0);
-                //_bodies[c].Ball.transform.rotation = Quaternion.LookRotation(_prevDirs[c]);
                 _bodies[c].Ball.transform.rotation = Quaternion.LookRotation(_prevDirs[c], Vector3.up) * xRot;
 
                 _bodies[c].Drone.Work(_dWalk);
@@ -354,6 +367,12 @@ public class SnakeHead : MonoBehaviour
             }
             p--;
         }
+
+        Vector3 a = _bodies[0].Ball.transform.position;
+        Vector3 b = _bodies[1].Ball.transform.position;
+        Vector3 dir2 = a - b;
+        _headVis.transform.position = a + dir2;
+        _headVis.transform.rotation = Quaternion.LookRotation(dir2);
     }
 
     public bool SeePlayer(Vector3 from)
@@ -382,5 +401,10 @@ public class SnakeHead : MonoBehaviour
     Vector3 FindPointEasyWay(Vector3 C, Vector3 B, float L)
     {
         return B + (C - B).normalized * L; //---------
+    }
+
+    bool PlayerInScene()
+    {
+        return S.PS._currentSceneName == _sceneName;
     }
 }

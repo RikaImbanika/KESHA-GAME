@@ -13,6 +13,8 @@ public class Backrooms : MonoBehaviour
     public Dictionary<string, byte> _snakes;
     public Dictionary<string, float> _lasersProbabilities;
     public Dictionary<string, float> _lightersProbabilities;
+    public float[] _lightersSizes;
+    public string[] _lightersColors;
 
     //Room BR 5 should be at least 3 rooms from start
     //Room BR 8 should be maximally far
@@ -29,6 +31,21 @@ public class Backrooms : MonoBehaviour
             _rnd = new System.Random();
             _lasersProbabilities = new Dictionary<string, float>();
             _lightersProbabilities = new Dictionary<string, float>();
+
+            _lightersSizes = new float[]
+{
+            1f,
+            0.7f,
+            0.5f,
+            0.35f
+};
+
+            _lightersColors = new string[]
+            {
+            "Yellow",
+            "Red",
+            "Blue"
+            };
 
             while (true)
             {
@@ -115,13 +132,37 @@ public class Backrooms : MonoBehaviour
     {
         _snakes = new Dictionary<string, byte>();
 
-        for (byte i = 0; i < 3;)
+        for (byte i = 1; i <= 3;)
         {
             int sceneId = _rnd.Next(_allRoomsList.Count());
             string sceneName = _allRoomsList[sceneId];
             if (!_snakes.ContainsKey(sceneName))
             {
-                _snakes.Add(_allRoomsList[i], i);
+                if (string.Equals(sceneName, "BR 7"))
+                    if (_snakes.ContainsKey("BR 7R"))
+                        continue;
+
+                if (string.Equals(sceneName, "BR 7R"))
+                    if (_snakes.ContainsKey("BR 7"))
+                        continue;
+
+                if (string.Equals(sceneName, "BR 6R"))
+                    if (_snakes.ContainsKey("BR 6"))
+                        continue;
+
+                if (string.Equals(sceneName, "BR 6"))
+                    if (_snakes.ContainsKey("BR 6R"))
+                        continue;
+
+                if (string.Equals(sceneName, "BR 1"))
+                    if (_snakes.ContainsKey("BR 1R"))
+                        continue;
+
+                if (string.Equals(sceneName, "BR 1R"))
+                    if (_snakes.ContainsKey("BR 1"))
+                        continue;
+
+                _snakes.Add(sceneName, i);
                 i++;
             }
         }
@@ -143,14 +184,14 @@ public class Backrooms : MonoBehaviour
 
         List<float> counts = new List<float>
         {
-            10f,
             5f,
-            5f,
+            6f,
+            7f,
             5f,
             8f,
-            22f,
-            35f,
-            10f
+            24f,
+            30f,
+            15f
         };
 
         float[] array = new float[100];

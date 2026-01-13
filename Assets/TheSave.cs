@@ -37,6 +37,10 @@ public class TheSave : MonoBehaviour
     [SerializeField] private List<string> quaternionKeys = new List<string>();
     [SerializeField] private List<Quaternion?> quaternionValues = new List<Quaternion?>();
 
+    [SerializeField] private List<string> byteKeys = new List<string>();
+    [SerializeField] private List<byte?> byteValues = new List<byte?>();
+    
+
     public void RemoveBool(string key) => RemoveGeneric(key, boolKeys, boolValues);
     public void RemoveString(string key) => RemoveGeneric(key, stringKeys, stringValues);
     public void RemoveFloat(string key) => RemoveGeneric(key, floatKeys, floatValues);
@@ -46,6 +50,7 @@ public class TheSave : MonoBehaviour
     public void RemoveListFloat(string key) => RemoveGeneric(key, listFloatKeys, listFloatValues);
     public void RemoveListInt(string key) => RemoveGeneric(key, listIntKeys, listIntValues);
     public void RemoveQuaternion(string key) => RemoveGeneric(key, quaternionKeys, quaternionValues);
+    public void RemoveByte(string key) => RemoveGeneric(key, byteKeys, byteValues);
     public void RemoveListBool(string key) => RemoveGeneric(key, listBoolKeys, listBoolValues);
   
     private void RemoveGeneric<T>(string key, List<string> keys, List<T> values)
@@ -66,7 +71,8 @@ public class TheSave : MonoBehaviour
     public void SaveListFloat(string key, List<float>? value) => SaveGeneric(key, value, listFloatKeys, listFloatValues);
     public void SaveListInt(string key, List<int>? value) => SaveGeneric(key, value, listIntKeys, listIntValues);
     public void SaveQuaternion(string key, Quaternion? value) => SaveGeneric(key, value, quaternionKeys, quaternionValues);
-    public void SaveListBool(string key, List<bool>? value) => SaveGeneric(key, value, listBoolKeys, listBoolValues);  public List<bool>? LoadListBool(string key) => LoadGeneric(key, listBoolKeys, listBoolValues);
+    public void SaveByte(string key, byte? value) => SaveGeneric(key, value, byteKeys, byteValues);
+    public void SaveListBool(string key, List<bool>? value) => SaveGeneric(key, value, listBoolKeys, listBoolValues);
     private void SaveGeneric<T>(string key, T value, List<string> keys, List<T> values)
     {
         int index = keys.IndexOf(key);
@@ -91,8 +97,8 @@ public class TheSave : MonoBehaviour
     public List<float>? LoadListFloat(string key) => LoadGeneric(key, listFloatKeys, listFloatValues);
     public List<int>? LoadListInt(string key) => LoadGeneric(key, listIntKeys, listIntValues);
     public Quaternion? LoadQuaternion(string key) => LoadGeneric(key, quaternionKeys, quaternionValues);
-    //public List<bool>? LoadListBool(string key) => LoadGeneric(key, listBoolKeys, listBoolValues);
-
+    public byte? LoadByte(string key) => LoadGeneric(key, byteKeys, byteValues);
+    public List<bool>? LoadListBool(string key) => LoadGeneric(key, listBoolKeys, listBoolValues);
     private string? LoadGeneric(string key, List<string> keys, List<string?> values)
     {
         int index = keys.IndexOf(key);
@@ -206,6 +212,8 @@ public class TheSave : MonoBehaviour
             vector3Values = new List<Vector3?>(vector3Values),
             quaternionKeys = new List<string>(quaternionKeys),
             quaternionValues = new List<Quaternion?>(quaternionValues),
+            byteKeys = new List<string>(byteKeys),
+            byteValues = new List<byte?>(byteValues),
 
             // Глубокое копирование списков списков
             listStringKeys = new List<string>(listStringKeys),
@@ -224,7 +232,7 @@ public class TheSave : MonoBehaviour
                 .ToList(),
 
             listBoolKeys = new List<string>(listBoolKeys),
-                    listBoolValues = listBoolValues
+            listBoolValues = listBoolValues
                     .Select(list => list != null ? new List<bool>(list) : null)
                     .ToList()
         };
@@ -281,6 +289,12 @@ public class TheSave : MonoBehaviour
         if (quaternionKeys.Count > 0)
             for (int i = 0; i < quaternionKeys.Count; i++)
                 sb.AppendLine($"  {quaternionKeys[i]}: {quaternionValues[i]?.ToString() ?? "null"}");
+
+        sb.AppendLine("> Bytes:");
+
+        if (byteKeys.Count > 0)
+            for (int i = 0; i < byteKeys.Count; i++)
+                sb.AppendLine($"  {byteKeys[i]}: {byteValues[i]?.ToString() ?? "null"}");
 
         return sb.ToString();
     }

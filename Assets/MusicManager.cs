@@ -29,6 +29,17 @@ public class MusicManager : MonoBehaviour
     public float _backroomVolume;
     public int _backroomsTrackId;
     public int _backroomsPrevTrackId;
+    //MR
+    public AudioSource _mushroomsOldTrack;
+    public AudioSource _mushroomsNewTrack;
+    public AudioSource[] _mushroomsSources;
+    public float[] _mushroomsLengthes;
+    public float[] _mushroomsVolumes;
+    public float _mushroomVolume;
+    public int _mushroomsTrackId;
+    public int _mushroomsPrevTrackId;
+    public string _mushroomsPhase = "silence";
+
 
     void Start()
     {
@@ -38,7 +49,8 @@ public class MusicManager : MonoBehaviour
         _playerOnIncome = true;
         _incomePhase = "1";
         _backroomsTrackId = 0;
-        _backroomsPrevTrackId = 4;
+        _backroomsPrevTrackId = 4; //
+        _mushroomsPrevTrackId = 1; //
 
         StartCoroutine(LateStart(0.3f));
 
@@ -96,6 +108,19 @@ public class MusicManager : MonoBehaviour
             }
 
             S.AM._incomeOST1.Play();
+
+            //MR
+
+            _mushroomsVolumes = new float[2];
+            _mushroomsVolumes[0] = 1;
+
+            _mushroomsSources = new AudioSource[2];
+            _mushroomsSources[0] = S.AM._maylo;
+            _mushroomsSources[1] = S.AM._theRoom;
+
+            _mushroomsLengthes = new float[2];
+            _mushroomsLengthes[0] = 282;
+            _mushroomsLengthes[1] = 128;
         }
     }
 
@@ -112,6 +137,75 @@ public class MusicManager : MonoBehaviour
 
         Income(d);
         Backrooms(d);
+        Mushrooms(d);
+    }
+
+    public void Mushrooms(float d)
+    {
+        if (_mushroomsPhase == "silence")
+            return;
+
+        if (_mushroomsPhase == "leaving")
+        {
+            if (_mushroomVolume > 0)
+                _mushroomVolume -= 0.005f * d;
+            else
+            {
+                _mushroomsPhase = "silence";
+                _mushroomVolume = 0;
+                _mushroomsSources[_mushroomsTrackId].Pause();
+                _mushroomsSources[_mushroomsPrevTrackId].Pause();
+            }
+        }
+        else if (_mushroomsPhase == "entering")
+        {
+            _mushroomVolume += 0.005f * d;
+
+            if (_mushroomVolume > 1)
+            {
+                _mushroomVolume = 1;
+                _mushroomsPhase = "entered";
+            }
+        }
+
+        if (_mushroomsSources[_mushroomsTrackId].time > _mushroomsLengthes[_mushroomsTrackId])
+        {
+            _mushroomsPrevTrackId = _mushroomsTrackId;
+
+            _mushroomsTrackId += 1;
+            if (_mushroomsTrackId >= 2)
+                _mushroomsTrackId = 0;
+
+            _mushroomsSources[_mushroomsTrackId].time = 0;
+            _mushroomsVolumes[_mushroomsTrackId] = 1;
+            _mushroomsSources[_mushroomsTrackId].volume = 1 * _mushroomVolume;
+            _mushroomsSources[_mushroomsTrackId].Play();
+        }
+
+        if (_mushroomsVolumes[_mushroomsPrevTrackId] > 0)
+            _mushroomsVolumes[_mushroomsPrevTrackId] -= 0.005f * d;
+        else
+        {
+            _mushroomsVolumes[_mushroomsPrevTrackId] = 0;
+            _mushroomsSources[_mushroomsPrevTrackId].volume = 0;
+            _mushroomsSources[_mushroomsPrevTrackId].Stop();
+        }
+
+        _mushroomsSources[_mushroomsTrackId].volume = _mushroomsVolumes[_mushroomsTrackId] * _mushroomVolume;
+        _mushroomsSources[_mushroomsPrevTrackId].volume = _mushroomsVolumes[_mushroomsPrevTrackId] * _mushroomVolume;
+    }
+
+    public void EnterMushrooms()
+    {
+        if (_mushroomsPhase == "silence")
+            _mushroomsSources[_mushroomsTrackId].Play();
+
+        _mushroomsPhase = "entering";
+    }
+
+    public void LeaveMushrooms()
+    {
+        _mushroomsPhase = "leaving";
     }
 
     public void Backrooms(float d)
