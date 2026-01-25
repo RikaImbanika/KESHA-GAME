@@ -127,7 +127,7 @@ public class IsGun : MonoBehaviour
                     GameObject sparkle = Instantiate(S.Sparkle);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-                    sparkle.GetComponent<IsSparkle>()._active = true;
+                    sparkle.GetComponent<Sparkle3>()._active = true;
                 }
             }
             else
