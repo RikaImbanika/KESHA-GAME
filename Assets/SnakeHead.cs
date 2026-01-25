@@ -31,6 +31,7 @@ public class SnakeHead : MonoBehaviour
     private List<SnakeBody> _bodies;
     private List<NavMeshObstacle> _clonesNMOs;
     private List<Vector3> _prevDirs;
+    private Vector3 _headPrevDir;
     private float L = 3.7f; //Wha?
     private float _timeCapacity = 20;
     private bool _tailEnabled;
@@ -317,12 +318,18 @@ public class SnakeHead : MonoBehaviour
     void UpdateTail()
     {
         _seePlayer = false; //correct
+        bool skippedFirst = false;
+        float headLength = L * 1.2f;
         float distance = 0;
         int p = _savedPositions.Count - 1;
         int c = 0;
+
         for (; c < _clones.Count && p > 0;)
         {
             Vector3 B = _savedPositions.Last();
+            if (skippedFirst)
+                B = _headVis.transform.position;
+
             if (c > 0)
                 B = _bodies[c - 1].Ball.transform.position;
 
@@ -334,44 +341,82 @@ public class SnakeHead : MonoBehaviour
                 distance += D.magnitude;
             }
 
-            if (distance > L)
+            if (skippedFirst)
             {
-                Vector3 C = _savedPositions[p];
+                float L2 = L;
+                if (c == 0)
+                    L2 = headLength;
 
-                Vector3 dirdi = _savedPositions[p - 1] - C;
+                if (distance > L2)
+                {
+                    Vector3 C = _savedPositions[p];
 
-                C += dirdi / dirdi.magnitude * (distance - L);
+                    Vector3 dirdi = _savedPositions[p - 1] - C;
 
-                Vector3 bestPoint = FindPointEasyWay(C, B, L);
+                    C += dirdi / dirdi.magnitude * (distance - L2);
 
-                var dir = bestPoint - _bodies[c].Ball.transform.position;
+                    Vector3 bestPoint = FindPointEasyWay(C, B, L2);
 
-                float k = Math.Clamp(2 / Time.deltaTime, 0, 1);
+                    var dir = bestPoint - _bodies[c].Ball.transform.position;
 
-                _prevDirs[c] = _prevDirs[c] * k + dir * (1 - k);
+                    float k = Math.Clamp(2 / Time.deltaTime, 0, 1);
 
-                _bodies[c].transform.position = new Vector3(bestPoint.x, transform.position.y, bestPoint.z);
-                _bodies[c].Ball.transform.position = bestPoint;
+                    _prevDirs[c] = _prevDirs[c] * k + dir * (1 - k);
 
-                Quaternion xRot = Quaternion.Euler(-_rotationSpeed * _walk, 0, 0);
-                _bodies[c].Ball.transform.rotation = Quaternion.LookRotation(_prevDirs[c], Vector3.up) * xRot;
+                    _bodies[c].transform.position = new Vector3(bestPoint.x, transform.position.y, bestPoint.z);
+                    _bodies[c].Ball.transform.position = bestPoint;
 
-                _bodies[c].Drone.Work(_dWalk);
+                    Quaternion xRot = Quaternion.Euler(-_rotationSpeed * _walk, 0, 0);
+                    _bodies[c].Ball.transform.rotation = Quaternion.LookRotation(_prevDirs[c], Vector3.up) * xRot;
 
-                if (!_seePlayer)
-                    if (SeePlayer(_clones[c].transform.position))
-                        _seePlayer = true;
+                    _bodies[c].Drone.Work(_dWalk);
 
-                c++;
-                distance -= L;
+                    if (!_seePlayer)
+                        if (SeePlayer(_clones[c].transform.position))
+                            _seePlayer = true;
+
+                    c++;
+                    distance -= L2;
+                }
             }
+            else
+            {
+                if (distance > headLength)
+                {
+                    Vector3 C = _savedPositions[p];
+
+                    Vector3 dirdi = _savedPositions[p - 1] - C;
+
+                    C += dirdi / dirdi.magnitude * (distance - L);
+
+                    Vector3 bestPoint = FindPointEasyWay(C, B, L);
+
+                    var dir = bestPoint - _headVis.transform.position;
+
+                    float k = Math.Clamp(2 / Time.deltaTime, 0, 1);
+
+
+                    _headPrevDir = _headPrevDir * k + dir * (1 - k);
+
+                    _headVis.transform.position = bestPoint;
+
+                    if (!_seePlayer)
+                        if (SeePlayer(_headVis.transform.position))
+                            _seePlayer = true;
+
+                    //
+
+                    skippedFirst = true;
+                    distance -= headLength;
+                }
+            }
+
             p--;
         }
 
-        Vector3 a = _bodies[0].Ball.transform.position;
-        Vector3 b = _bodies[1].Ball.transform.position;
-        Vector3 dir2 = a - b;
-        _headVis.transform.position = a + dir2;
+        Vector3 a = _savedPositions.Last();
+        Vector3 b = _headVis.transform.position;
+        Vector3 dir2 = (a - b);
         _headVis.transform.rotation = Quaternion.LookRotation(dir2);
     }
 
