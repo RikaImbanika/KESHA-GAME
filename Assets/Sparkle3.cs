@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class Sparkle3 : MonoBehaviour
 {
-    public bool _active; 
     public float _pushNormal;
     public float _pushRandom;
     public float _minScale;
     public float _minimisingSpeed;
+    public float _minimisingSpeedCoef;
     public float _gravity;
     public float _period;
     public int _count;
     public float _width;
     public float _sizeRandom;
     public float _friction;
+    public string _color;
 
     [Header("Privates")]
     private Rigidbody _rb;
@@ -34,39 +35,41 @@ public class Sparkle3 : MonoBehaviour
 
     void Start()
     {
-        if (_active)
+        _deadLine = -1;
+
+        _layerMask = 1 << LayerMask.NameToLayer("Player") |
+        1 << LayerMask.NameToLayer("Static") |
+        1 << LayerMask.NameToLayer("Enemies") |
+        1 << LayerMask.NameToLayer("Items") |
+        1 << LayerMask.NameToLayer("Default");
+
+        _visual = new GameObject[_count];
+
+        _decreaser = (_minimisingSpeed * (Random.Range(0f, 0.4f) +
+        Random.Range(0f, 0.4f) +
+        Random.Range(0f, 0.4f) +
+        Random.Range(0f, 0.4f) +
+        Random.Range(0f, 0.4f))) * _minimisingSpeedCoef;
+
+        _rb = gameObject.GetComponent<Rigidbody>();
+
+        _direction = transform.right * _pushRandom * Random.Range(-1f, 1f);
+        _direction += transform.up * _pushRandom * Random.Range(-1f, 1f);
+        _direction += transform.forward * _pushNormal * Random.Range(0f, 1f);
+
+        _velocity = _direction.magnitude;
+        Insta();
+
+        _visual[0].transform.position = transform.position + _direction;
+        _visual[0].transform.rotation = Quaternion.LookRotation(-_direction);
+
+        _p = _width * Random.Range(1f, _sizeRandom);
+        if (_color == "red")
         {
-            _deadLine = -1;
-
-            _layerMask = 1 << LayerMask.NameToLayer("Player") |
-            1 << LayerMask.NameToLayer("Static") |
-            1 << LayerMask.NameToLayer("Enemies") |
-            1 << LayerMask.NameToLayer("Items") |
-            1 << LayerMask.NameToLayer("Default");
-
-            _visual = new GameObject[_count];
-
-            _decreaser = _minimisingSpeed * (Random.Range(0f, 0.4f) +
-            Random.Range(0f, 0.4f) +
-            Random.Range(0f, 0.4f) +
-            Random.Range(0f, 0.4f) +
-            Random.Range(0f, 0.4f));
-
-            _rb = gameObject.GetComponent<Rigidbody>();
-
-            _direction = transform.right * _pushRandom * Random.Range(-1f, 1f);
-            _direction += transform.up * _pushRandom * Random.Range(-1f, 1f);
-            _direction += transform.forward * _pushNormal * Random.Range(0f, 1f);
-
-            _velocity = _direction.magnitude;
-            Insta();
-
-            _visual[0].transform.position = transform.position + _direction;
-            _visual[0].transform.rotation = Quaternion.LookRotation(-_direction);
-
-            _p = _width * Random.Range(1f, _sizeRandom);
-            _visual[0].transform.localScale = new Vector3(_p, _p, _velocity);
+            _p *= 2;
+            _minScale *= 2;
         }
+        _visual[0].transform.localScale = new Vector3(_p, _p, _velocity);
     }
 
     void Insta()
@@ -76,7 +79,10 @@ public class Sparkle3 : MonoBehaviour
             if (_index == _count - 1)
                 _instantiated = true;
 
-            _visual[_index] = GameObject.Instantiate(S.RedLaser); /////////////////
+            if (_color == "red")
+                _visual[_index] = GameObject.Instantiate(S.RedLaser); /////////////////
+            else
+                _visual[_index] = GameObject.Instantiate(S.BlueLaser); /////////////////
         }
     }
 
@@ -110,48 +116,45 @@ public class Sparkle3 : MonoBehaviour
 
         void Do()
         {
-            if (_active)
+            _deltaTime += Time.deltaTime;
+
+            if (_deltaTime > _period)
             {
-                _deltaTime += Time.deltaTime;
+                _decreaser += _deltaTime * 0.2f;
+                _direction += new Vector3(0, _gravity * _deltaTime, 0); ///
 
-                if (_deltaTime > _period)
+                _velocity = _direction.magnitude;
+
+                _p *= 1 - _deltaTime * _decreaser;
+
+                _prevIndex = _index;
+                _index++;
+                if (_index >= _count)
+                    _index = 0;
+                else
+                    Insta();
+
+                if (Dying())
+                    return;
+
+                _visual[_index].transform.localScale = new Vector3(_p, _p, _velocity);
+
+                Ray ray = new Ray(_visual[_prevIndex].transform.position, _direction);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, _velocity, _layerMask))
                 {
-                    _decreaser += _deltaTime * 0.2f;
-                    _direction += new Vector3(0, _gravity * _deltaTime, 0); ///
-
-                    _velocity = _direction.magnitude;
-
-                    _p *= 1 - _deltaTime * _decreaser;
-
-                    _prevIndex = _index;
-                    _index++;
-                    if (_index >= _count)
-                        _index = 0;
-                    else
-                        Insta();
-
-                    if (Dying())
-                        return;
-
-                    _visual[_index].transform.localScale = new Vector3(_p, _p, _velocity);
-
-                    Ray ray = new Ray(_visual[_prevIndex].transform.position, _direction);
-                    RaycastHit hit;
-
-                    if (Physics.Raycast(ray, out hit, _velocity, _layerMask))
-                    {
-                        _visual[_index].transform.position = hit.point;
-                        _visual[_index].transform.transform.rotation = Quaternion.LookRotation(-_direction);
-                        _direction = Vector3.Reflect(_direction, hit.normal.normalized) * _friction;
-                    }
-                    else
-                    {
-                        _visual[_index].transform.position = _visual[_prevIndex].transform.position + _direction;
-                        _visual[_index].transform.transform.rotation = Quaternion.LookRotation(-_direction);
-                    }
-
-                    _deltaTime = 0;
+                    _visual[_index].transform.position = hit.point;
+                    _visual[_index].transform.transform.rotation = Quaternion.LookRotation(-_direction);
+                    _direction = Vector3.Reflect(_direction, hit.normal.normalized) * _friction;
                 }
+                else
+                {
+                    _visual[_index].transform.position = _visual[_prevIndex].transform.position + _direction;
+                    _visual[_index].transform.transform.rotation = Quaternion.LookRotation(-_direction);
+                }
+
+                _deltaTime = 0;
             }
         }
     }

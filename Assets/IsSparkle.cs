@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class IsSparkle : MonoBehaviour
 {
-    public bool _active;
     public float _speed;
     public float _moveNormal;
     public float _moveRandom;
@@ -22,30 +21,27 @@ public class IsSparkle : MonoBehaviour
     void Start()
     {
         _opti = new Optimiser(gameObject.scene.name);
-        
-        if (_active)
-        {
-            _decreaser = _minimisingSpeed * (Random.Range(0f, 0.4f) +
-            Random.Range(0f, 0.4f) +
-            Random.Range(0f, 0.4f) +
-            Random.Range(0f, 0.4f) +
-            Random.Range(0f, 0.4f));
 
-            _rb = gameObject.GetComponent<Rigidbody>();
-            _rb.AddForce(transform.forward * Random.Range(0, _speed));
+        _decreaser = _minimisingSpeed * (Random.Range(0f, 0.4f) +
+        Random.Range(0f, 0.4f) +
+        Random.Range(0f, 0.4f) +
+        Random.Range(0f, 0.4f) +
+        Random.Range(0f, 0.4f));
 
-            _rb.AddForce(transform.right * _speed * Random.Range(-1f, 1f));
-            _rb.AddForce(transform.up * _speed * Random.Range(-1f, 1f));
-            _rb.AddForce(transform.forward * _speed * Random.Range(0f, 1f));
+        _rb = gameObject.GetComponent<Rigidbody>();
+        _rb.AddForce(transform.forward * Random.Range(0, _speed));
 
-            Vector3 forward = transform.forward.normalized * _moveNormal;
-            Vector3 randomDirection = Random.insideUnitSphere * _moveRandom;
+        _rb.AddForce(transform.right * _speed * Random.Range(-1f, 1f));
+        _rb.AddForce(transform.up * _speed * Random.Range(-1f, 1f));
+        _rb.AddForce(transform.forward * _speed * Random.Range(0f, 1f));
 
-            transform.position += forward + transform.right * randomDirection.x + transform.up * randomDirection.y;
+        Vector3 forward = transform.forward.normalized * _moveNormal;
+        Vector3 randomDirection = Random.insideUnitSphere * _moveRandom;
 
-            float scale = Random.Range(0.1f, 1f);
-            transform.localScale = new Vector3(transform.localScale.x * scale, transform.localScale.y * scale, transform.localScale.z * scale);
-        }
+        transform.position += forward + transform.right * randomDirection.x + transform.up * randomDirection.y;
+
+        float scale = Random.Range(0.1f, 1f);
+        transform.localScale = new Vector3(transform.localScale.x * scale, transform.localScale.y * scale, transform.localScale.z * scale);
     }
 
     void Update()
@@ -58,27 +54,24 @@ public class IsSparkle : MonoBehaviour
 
         void Do()
         {
-            if (_active)
+            if (_counter == 0)
             {
-                if (_counter == 0)
-                {
-                    Vector3 direction = Camera.main.transform.position - transform.position;
-                    Quaternion lookRotation = Quaternion.LookRotation(direction);
-                    _sparkleVis.transform.rotation = lookRotation;
+                Vector3 direction = Camera.main.transform.position - transform.position;
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                _sparkleVis.transform.rotation = lookRotation;
 
-                    _decreaser += _opti.DeltaTime * 0.2f;
-                }
-
-                _counter++;
-
-                if (_counter >= 4)
-                    _counter = 0;
-
-                transform.localScale *= 1 - _opti.DeltaTime * _decreaser;
-
-                if (transform.localScale.x < _minScale)
-                    Destroy(gameObject);
+                _decreaser += _opti.DeltaTime * 0.2f;
             }
+
+            _counter++;
+
+            if (_counter >= 4)
+                _counter = 0;
+
+            transform.localScale *= 1 - _opti.DeltaTime * _decreaser;
+
+            if (transform.localScale.x < _minScale)
+                Destroy(gameObject);
         }
     }
 }

@@ -24,6 +24,8 @@ public class Spider : MonoBehaviour
 
     private Vector3[] _directions;
     private GameObject[] _lasers;
+    private GameObject[] _points;
+    private GameObject _laserDown;
     private float _damagePlayer;
     private float[] _laserLength;
 
@@ -52,7 +54,7 @@ public class Spider : MonoBehaviour
     void Start()
     {
         _lasersCount = 4;
-        _lasersOffset = new Vector3(0, 4, 0);
+        _lasersOffset = new Vector3(0, 6, 0);
 
         _opti = new Optimiser(gameObject.scene.name);
         _opti.MinFps = 1 / 24f;
@@ -83,6 +85,7 @@ public class Spider : MonoBehaviour
 
         _directions = new Vector3[4];
         _lasers = new GameObject[4];
+        _points = new GameObject[4];
 
         _collider = gameObject.GetComponent<Collider>();
 
@@ -94,10 +97,14 @@ public class Spider : MonoBehaviour
 
         for (int i = 0; i < _lasersCount; i++)
         {
-            _directions[i] = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-0.2f, 0.2f), UnityEngine.Random.Range(-1f, 1f));
+            _directions[i] = GetLasDir();
             _lasers[i] = Instantiate(S.RedLaser, transform.position + _lasersOffset, transform.rotation, transform); //
             _lasers[i].SetActive(false);
+            _points[i] = Instantiate(S.RedPoint, transform.position + _lasersOffset, transform.rotation, transform); //
+            _points[i].SetActive(false);
         }
+
+        _laserDown = Instantiate(S.RedLaser, transform.position + _lasersOffset, Quaternion.LookRotation(Vector3.down), transform); //
 
         var loadPos = S.SM.LoadVector3(S.ID(_key, "position"));
 
@@ -163,7 +170,10 @@ public class Spider : MonoBehaviour
         _agent.speed = 0f;
         _followPlayer = false;
         for (int i = 0; i < 4; i++)
-            Destroy(_lasers[i]); ;
+            Destroy(_lasers[i]);
+        for (int i = 0; i < 4; i++)
+            Destroy(_points[i]);
+        Destroy(_laserDown);
         Destroy(_collider);
     }
 
@@ -224,11 +234,16 @@ public class Spider : MonoBehaviour
                     _agent.destination = _startPosition;
 
                     for (int i = 0; i < 4; i++)
+                    {
                         _lasers[i].SetActive(false);
+                        _points[i].SetActive(false);
+                    }
+
+                    _laserDown.SetActive(false);
                 }
             }
             else
-            {               
+            {
                 Vector3 toPlayer = S.Camera.transform.position - transform.position;
                 Ray ray = new Ray(transform.position, toPlayer);
                 RaycastHit hit;
@@ -243,7 +258,16 @@ public class Spider : MonoBehaviour
                         {
                             _followPlayer = true;
                             for (int i = 0; i < 4; i++)
+                            {
                                 _lasers[i].SetActive(true);
+                                _points[i].SetActive(true);
+                            }
+
+                            //
+
+                            _laserDown.SetActive(true);
+                            var scale = new Vector3(1.5f, 1.5f, 3f);
+                            _laserDown.transform.localScale = scale;
                         }
                     }
                 }
@@ -260,16 +284,17 @@ public class Spider : MonoBehaviour
             {
                 _nextLaserTime = _laserCooldown;
 
-                _directions[Convert.ToInt32(UnityEngine.Random.Range(0, 3))] = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-0.2f, 0.2f), UnityEngine.Random.Range(-1f, 1f));
-            }
+                _directions[Convert.ToInt32(UnityEngine.Random.Range(0, 3))] = GetLasDir();
 
-            Vector3 from = transform.position + _lasersOffset;
+            }
 
             _laserOptimiser++;
 
             if (_laserOptimiser >= 4)
             {
                 _damagePlayer = 0;
+
+                Vector3 from = transform.position + _lasersOffset;
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -289,14 +314,14 @@ public class Spider : MonoBehaviour
                         float factor = 1f;
                         scale.z = _laserLength[i] * factor;
                         _lasers[i].transform.localScale = scale;
+                        _points[i].transform.position = hit.point;
 
-                        /*                if (UnityEngine.Random.Range(0, 4) < 1)
-                                        {
-                                            GameObject sparkle = Instantiate(_sparkle);
-                                            sparkle.transform.position = hit.point;
-                                            sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-                                            sparkle.GetComponent<IsSparkle>()._active = true;
-                                        }*/
+                        if (S.RND.Next(0, 15) == 0)
+                        {
+                            GameObject sparkle = Instantiate(S.RedSparkle);
+                            sparkle.transform.position = hit.point;
+                            sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
+                        } //
 
                         if (hit.collider.gameObject.CompareTag("Player"))
                             _damagePlayer += 24f;
@@ -308,6 +333,8 @@ public class Spider : MonoBehaviour
                 S.PS.Damage(_damagePlayer * _opti.DeltaTime);
         }
 
+
+
         void Fire()
         {
             _nextFireTime -= _opti.DeltaTime;
@@ -316,10 +343,10 @@ public class Spider : MonoBehaviour
             {
                 _nextFireTime = _fireCooldown;
                 GameObject bullet = Instantiate(S.EnemyBullet);
-                bullet.transform.position = gameObject.transform.position + new Vector3(0, 2, 0);
+                bullet.transform.position = gameObject.transform.position + new Vector3(0, 6, 0);
                 //bullet.transform.LookAt(S.Camera.transform.position);
                 //If I will make it sniper
-                bullet.transform.Rotate(0, UnityEngine.Random.Range(0f, 360f), 0);
+                bullet.transform.Rotate(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(-30f, 30));
                 EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
                 eb._active = true;
                 eb._speed = 30;
@@ -334,5 +361,10 @@ public class Spider : MonoBehaviour
                 Destroy(shot, 5);
             }
         }
+    }
+
+    Vector3 GetLasDir()
+    {
+        return new Vector3(UnityEngine.Random.Range(-15f, 15f), UnityEngine.Random.Range(-8, 7), UnityEngine.Random.Range(-15f, 15f));
     }
 }

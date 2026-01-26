@@ -42,10 +42,15 @@ public class Initialiser : MonoBehaviour
         yield return WaitForObjectWithTag("FPS", obj => S.FpsObj = obj);
         yield return StartCoroutine(GetComponentSafe<TextMeshProUGUI>(S.FpsObj, fpsObj => S.FpsTMP = fpsObj));
 
-        yield return WaitForObjectWithTag("Sparkle", obj => S.Sparkle = obj);
-        yield return WaitForObjectWithTag("RedSparkle", obj => S.RedSparkle = obj);
         yield return WaitForObjectWithTag("Spot", obj => S.Spot = obj);
         S.RedLaser = Prefabs.Get("RedLaser");
+        S.BlueLaser = Prefabs.Get("BlueLaser");
+        S.RedPoint = Prefabs.Get("RedPoint");
+        S.BlueRay = Prefabs.Get("BlueRay");
+        S.RedSparkle = Prefabs.Get("RedSparkle");
+        S.BlueSparkle = Prefabs.Get("BlueSparkle");
+        S.RedOldSparkle = Prefabs.Get("RedOldSparkle");
+        S.BlueOldSparkle = Prefabs.Get("BlueOldSparkle");
         S.Loot = Prefabs.Get("Loot");
         S.EnemyBullet = Prefabs.Get("EnemyBullet");
         S.Shot = Prefabs.GetAudioSource("Shot");

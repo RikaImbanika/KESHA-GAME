@@ -26,8 +26,10 @@ public static class S : object
     private static GameObject fpsObj;
     private static TextMeshProUGUI fpsTMP;
     private static GameObject _spot;
-    private static GameObject _sparkle;
-    private static GameObject _redSparkle;
+    private static GameObject _blueSparkle;
+	private static GameObject _redSparkle;
+	private static GameObject _blueOldSparkle;
+	private static GameObject _redOldSparkle;
 	private static FirstZombie2 _firstZombie2;
 	private static SceneDuplicateCleaner _sceneDuplicateCleaner;
 	private static MusicManager _musicManager;
@@ -37,6 +39,9 @@ public static class S : object
 	private static CHEATS _cheats;
 	private static GaymeBroker _gaymeBroker;
 	private static GameObject _redLaser;
+	private static GameObject _redPoint;
+	private static GameObject _blueLaser;
+	private static GameObject _blueRay;
 	private static AudioSource _shot;
 	private static GameObject _enemyBullet;
 	private static List<Material> _snakeBallMaterials;
@@ -192,6 +197,30 @@ public static class S : object
 		}
 	}
 
+	public static GameObject BlueLaser
+	{
+		get
+		{
+			return _blueLaser;
+		}
+		set
+		{
+			_blueLaser = value;
+		}
+	}
+
+	public static GameObject RedPoint
+	{
+		get
+		{
+			return _redPoint;
+		}
+		set
+		{
+			_redPoint = value;
+		}
+	}
+
 	public static GaymeBroker GaymeBroker
 	{
 		get
@@ -326,15 +355,27 @@ public static class S : object
 		}
 	}
 
-	public static GameObject Sparkle
+	public static GameObject BlueRay
 	{
 		get
 		{
-			return _sparkle;
+			return _blueRay;
 		}
 		set
 		{
-			_sparkle = value;
+			_blueRay = value;
+		}
+	}
+
+	public static GameObject BlueSparkle
+	{
+		get
+		{
+			return _blueSparkle;
+		}
+		set
+		{
+			_blueSparkle = value;
 		}
 	}
 
@@ -347,6 +388,30 @@ public static class S : object
 		set
 		{
 			_redSparkle = value;
+		}
+	}
+
+	public static GameObject BlueOldSparkle
+	{
+		get
+		{
+			return _blueOldSparkle;
+		}
+		set
+		{
+			_blueOldSparkle = value;
+		}
+	}
+
+	public static GameObject RedOldSparkle
+	{
+		get
+		{
+			return _redOldSparkle;
+		}
+		set
+		{
+			_redOldSparkle = value;
 		}
 	}
 

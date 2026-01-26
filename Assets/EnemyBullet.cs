@@ -80,7 +80,29 @@ public class EnemyBullet : MonoBehaviour
                         GameObject sparkle = Instantiate(S.RedSparkle);
                         sparkle.transform.position = hit.point;
                         sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-                        sparkle.GetComponent<IsSparkle>()._active = true;
+
+                        int gg2 = S.RND.Next(25);
+
+                        float decay = 1f;
+                        if (gg2 == 0)
+                            decay = 0.5f;
+                        else if (gg2 == 1)
+                            decay = 2f;
+                        else if (gg2 == 2)
+                            decay = 0.25f;
+                        else if (gg2 == 3)
+                            decay = 4f;
+
+                        sparkle.GetComponent<Sparkle3>()._minimisingSpeedCoef = decay;
+                    }
+
+                    int gg = S.RND.Next(10);
+
+                    if (gg == 0)
+                    {
+                        GameObject sparkle = Instantiate(S.RedOldSparkle);
+                        sparkle.transform.position = hit.point;
+                        sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
                     }
 
                     Destroy(gameObject);

@@ -8,6 +8,7 @@ public class Drone : MonoBehaviour
     public string _type;
     public string _type2;
     public List<GameObject> _lasers;
+    public List<GameObject> _points;
     public float _rotationSpeed;
     public float _yRot;
     public float _zRot;
@@ -34,13 +35,15 @@ public class Drone : MonoBehaviour
     {
         _type = type;
         _type2 = type2;
-        
+
         if (type == "6lasers")
         {
             _lasers = new List<GameObject>(6);
 
             for (int i = 0; i < 6; i++)
-                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
+            {
+                Add();
+            }
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "4lasers")
@@ -48,7 +51,8 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(4);
 
             for (int i = 0; i < 4; i++)
-                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
+                Add();
+
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "3lasers")
@@ -56,7 +60,7 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(3);
 
             for (int i = 0; i < 3; i++)
-               _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
+                Add();
 
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
@@ -65,7 +69,8 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
+                Add();
+
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
         else if (type == "rotated2lasers")
@@ -73,7 +78,8 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
+                Add();
+
             _yRot = UnityEngine.Random.Range(-55f, 55f);
             _zRot = UnityEngine.Random.Range(-90, 90f);
         }
@@ -82,7 +88,13 @@ public class Drone : MonoBehaviour
             _lasers = new List<GameObject>(2);
 
             for (int i = 0; i < 2; i++)
-                _lasers.Add(Instantiate(S.RedLaser, transform.position, Quaternion.identity, transform));
+                Add();
+        }
+        
+        void Add()
+        {
+            _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
+            _points.Add(Instantiate(S.RedPoint, transform.position, transform.rotation, transform));
         }
 
         if (type2 == "1")
@@ -256,17 +268,24 @@ public class Drone : MonoBehaviour
         {
             _lasers[i].transform.rotation = Quaternion.LookRotation(hit.point - from);
 
-            float distance = Vector3.Distance(from, hit.point);
-            _lasers[i].transform.localScale = new Vector3(
-            1,
-            1,
-            distance);
-    
+            float len = (hit.point - from).magnitude;
+            var scale = _lasers[i].transform.localScale;
+            scale.z = len;
+            _lasers[i].transform.localScale = scale;
+            _points[i].transform.position = hit.point;
+
             GameObject go = hit.collider.gameObject;
             if (go.CompareTag("Player"))
             {
                 S.PS.Damage(0.7f);
             }
+
+            if (S.RND.Next(0, 30) == 0)
+            {
+                GameObject sparkle = Instantiate(S.RedSparkle);
+                sparkle.transform.position = hit.point;
+                sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
+            } //
         }
     }
 

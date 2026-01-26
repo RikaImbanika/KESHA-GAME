@@ -124,11 +124,10 @@ public class Door : MonoBehaviour
 
 			for (int i = 0; i < _sparklesCount; i++)
 			{
-				GameObject sparkle = Instantiate(S.Sparkle);
+				GameObject sparkle = Instantiate(S.BlueSparkle);
 				sparkle.transform.position = transform.position;
 				sparkle.transform.rotation = Quaternion.LookRotation(direction);
 				sparkle.transform.localScale *= 4f;
-				sparkle.GetComponent<IsSparkle>()._active = true;
 			}
 		}
 	}

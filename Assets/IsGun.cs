@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class IsGun : MonoBehaviour
 {
-    public GameObject _ray;
     public int _sparklesCount;
     private Transform _root;
     public float _rayRight = 2f;
@@ -33,7 +32,6 @@ public class IsGun : MonoBehaviour
             }
 
             _root = S.AllFather.transform;
-            _ray.transform.SetParent(_root);
         }
     }
 
@@ -103,31 +101,52 @@ public class IsGun : MonoBehaviour
 
                 float desiredLength = (hit.point - from).magnitude;
 
-                GameObject ray2 = Instantiate(_ray);
+                GameObject ray2 = Instantiate(S.BlueRay);
 
                 ray2.transform.SetParent(null, true);
 
                 var scale = ray2.transform.localScale;
-                float factor = 100; //
+                float factor = 1; //
                 scale.z = desiredLength * factor;
                 scale.y *= _rayWidth;
                 scale.x *= _rayWidth;
                 ray2.transform.localScale = scale;
 
-                float rx = (hit.point.x + from.x) / 2;
-                float ry = (hit.point.y + from.y) / 2;
-                float rz = (hit.point.z + from.z) / 2;
+                float rx = from.x;
+                float ry = from.y;
+                float rz = from.z;
                 ray2.transform.position = new Vector3(rx, ry, rz);
                 ray2.transform.rotation = Quaternion.LookRotation(hit.point - from);
 
-                ray2.GetComponent<IsRay>()._active = true;
-
                 for (int i = 0; i < _sparklesCount; i++)
                 {
-                    GameObject sparkle = Instantiate(S.Sparkle);
+                    GameObject sparkle = Instantiate(S.BlueSparkle);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-                    sparkle.GetComponent<Sparkle3>()._active = true;
+
+                    int gg2 = S.RND.Next(25);
+
+                    float decay = 1f;
+
+                    if (gg2 == 0)
+                        decay = 0.5f;
+                    else if (gg2 == 1)
+                        decay = 2f;
+                    else if (gg2 == 2)
+                        decay = 0.25f;
+                    else if (gg2 == 3)
+                        decay = 4f;
+
+                    sparkle.GetComponent<Sparkle3>()._minimisingSpeedCoef = decay;
+                }
+
+                int gg = S.RND.Next(10);
+
+                if (gg == 0)
+                {
+                    GameObject sparkle = Instantiate(S.BlueOldSparkle);
+                    sparkle.transform.position = hit.point;
+                    sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
                 }
             }
             else
