@@ -73,16 +73,6 @@ public class Drone : MonoBehaviour
 
             _rotationSpeed = 2f + UnityEngine.Random.Range(0, 4f);
         }
-        else if (type == "rotated2lasers")
-        {
-            _lasers = new List<GameObject>(2);
-
-            for (int i = 0; i < 2; i++)
-                Add();
-
-            _yRot = UnityEngine.Random.Range(-55f, 55f);
-            _zRot = UnityEngine.Random.Range(-90, 90f);
-        }
         else if (type == "flat2lasers")
         {
             _lasers = new List<GameObject>(2);
@@ -169,16 +159,6 @@ public class Drone : MonoBehaviour
                 Laser(rotated, i);
             }
         }
-        else if (_type == "rotated2lasers")
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                Vector3 originalVector = transform.right;
-                var rotated = RotateAroundLocalAxis(originalVector, 180 * i * _yRot, "y");
-                rotated = RotateAroundLocalAxis(rotated, 180 * i * _zRot, "z");
-                Laser(rotated, i);
-            }
-        }
     }
 
     public void Update()
@@ -246,6 +226,24 @@ public class Drone : MonoBehaviour
     }
 
     Vector3 RotateAroundLocalAxis(Vector3 vector, float angle, string axis)
+    {
+        Vector3 localAxis;
+        switch (axis.ToLower())
+        {
+            case "x": localAxis = transform.right; break;
+            case "y": localAxis = transform.up; break;
+            case "z": localAxis = transform.forward; break;
+            default:
+                Debug.LogWarning($"Unknown axis: {axis}. Using forward (Z) axis.");
+                localAxis = transform.forward;
+                break;
+        }
+
+        Quaternion rotation = Quaternion.AngleAxis(angle, localAxis);
+        return rotation * vector;
+    }
+
+    Vector3 RotateAroundLocalAxisOld(Vector3 vector, float angle, string axis)
     {
         Vector3 localVector = transform.InverseTransformDirection(vector);
         Quaternion rotation = Quaternion.Euler(0, 0, angle);

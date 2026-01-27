@@ -64,11 +64,6 @@ public class Sparkle3 : MonoBehaviour
         _visual[0].transform.rotation = Quaternion.LookRotation(-_direction);
 
         _p = _width * Random.Range(1f, _sizeRandom);
-        if (_color == "red")
-        {
-            _p *= 2;
-            _minScale *= 2;
-        }
         _visual[0].transform.localScale = new Vector3(_p, _p, _velocity);
     }
 

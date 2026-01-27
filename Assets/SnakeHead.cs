@@ -55,7 +55,7 @@ public class SnakeHead : MonoBehaviour
         _period = 7f;
         _heigh = 5.5f;
         _dHeigh = 3.5f;
-        _rotationSpeed = 0.01f;
+        _rotationSpeed = 20f;
 
         _layerMaskForPlayer = 1 << LayerMask.NameToLayer("Player") |
                  1 << LayerMask.NameToLayer("Static") |
@@ -99,30 +99,26 @@ public class SnakeHead : MonoBehaviour
                 obstacle.enabled = false;
             _clonesNMOs.Add(obstacle);
 
-            Transform CBT = body.BallInBall.transform;
-
             body.R = L + UnityEngine.Random.Range(-0.0125f, 0.0125f); //Why?
 
-            Transform CCBT = body.BallInBall.transform;
-            CCBT.transform.Rotate(UnityEngine.Random.Range(0, 180), UnityEngine.Random.Range(0, 180), UnityEngine.Random.Range(0, 180));
+            Transform BIBIB = body.BallInBallInBall.transform;
+            BIBIB.transform.Rotate(UnityEngine.Random.Range(0, 180), UnityEngine.Random.Range(0, 180), UnityEngine.Random.Range(0, 180));
 
             body.Drone._head = this;
 
             percents = 100;
             string type = "";
 
-            if (GetPercent(3))
+            if (GetPercent(4))
                 type = "6lasers";
-            else if (GetPercent(3))
+            else if (GetPercent(5)) 
                 type = "4lasers";
-            else if (GetPercent(3))
+            else if (GetPercent(6))
                 type = "3lasers";
             else if (GetPercent(6))
                 type = "2lasers";
-            else if (GetPercent(6))
+            else if (GetPercent(3))
                 type = "flat2lasers";
-            else if (GetPercent(9))
-                type = "rotated2lasers";
 
             percents = 100;
 
@@ -165,7 +161,7 @@ public class SnakeHead : MonoBehaviour
 
     void Update()
     {
-        if (_opti.Optimise(transform.position))
+        if (_opti.Optimise(transform.position, _clones.Last().transform.position, _clones[_ballsCount / 2].transform.position))
         {
             Do();
             _opti.Reset();
@@ -359,17 +355,18 @@ public class SnakeHead : MonoBehaviour
 
                     var dir = bestPoint - _bodies[c].Ball.transform.position;
 
-                    float k = Math.Clamp(2 / Time.deltaTime, 0, 1);
+                    float k = Math.Clamp(2 * _opti.DeltaTime, 0, 1);
 
-                    _prevDirs[c] = _prevDirs[c] * k + dir * (1 - k);
+                    _prevDirs[c] = _prevDirs[c] * (1 - k) + dir * k;
 
-                    _bodies[c].transform.position = new Vector3(bestPoint.x, transform.position.y, bestPoint.z);
+                    _bodies[c].transform.position = new Vector3(bestPoint.x, bestPoint.y, bestPoint.z);
                     _bodies[c].Ball.transform.position = bestPoint;
 
-                    Quaternion xRot = Quaternion.Euler(-_rotationSpeed * _walk, 0, 0);
-                    _bodies[c].Ball.transform.rotation = Quaternion.LookRotation(_prevDirs[c], Vector3.up) * xRot;
+                    _bodies[c].Ball.transform.rotation = Quaternion.LookRotation(_prevDirs[c], Vector3.up);
+                    Quaternion xRot = Quaternion.Euler(_rotationSpeed * _walk, 0, 0);
+                    _bodies[c].BallInBall.transform.localRotation = xRot;
 
-                    _bodies[c].Drone.Work(_dWalk);
+                    _bodies[c].Drone.Work(_walk); ///CheckMe?
 
                     if (!_seePlayer)
                         if (SeePlayer(_clones[c].transform.position))

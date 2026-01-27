@@ -5,8 +5,9 @@ using UnityEngine.AI;
 
 public class SnakeBody : MonoBehaviour
 {
-    public GameObject _ball;
-    public GameObject _ballInBall;
+    public GameObject _ball; // For full system following path
+    public GameObject _ballInBall; // Rotating around Right axis while moving
+    public GameObject _ballInBallInBall; // For initial random rotation
     public GameObject _droneObj;
     public Drone _drone;
     public NavMeshObstacle _obstacle;
@@ -49,6 +50,13 @@ public class SnakeBody : MonoBehaviour
         get { return _ballInBall; }
         set { _ballInBall = value; }
     }
+
+    public GameObject BallInBallInBall
+    {
+        get { return _ballInBallInBall; }
+        set { _ballInBallInBall = value; }
+    }
+
 
     public GameObject DroneObj
     {

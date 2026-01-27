@@ -112,7 +112,7 @@ public class Optimiser
         }
     }
 
-    public bool Optimise(Vector3 pos)
+    public bool Optimise(Vector3 pos, Vector3? pos2 = null, Vector3? pos3 = null)
     {
         _deltaTime += Time.deltaTime;
         _fpsDeltaTime += Time.deltaTime;
@@ -150,7 +150,7 @@ public class Optimiser
 
             float lim = 20f;
             float step = 40f;
-            float dist = Vector3.Distance(pos, S.Camera.transform.position);
+            float dist = GetDist();
             float t = (dist - lim) / step;
 
             float smoothed = 1;
@@ -159,9 +159,7 @@ public class Optimiser
 
             float coef1 = Mathf.Lerp(_minFps, _maxFps, smoothed);
 
-            float angle = Vector3.Angle(S.Camera.transform.forward, (pos - S.Camera.transform.position).normalized);
-            //+ visible - invisible
-            float k = 0.5f - (S.Camera.fieldOfView - angle) / 30f; //degrees
+            float k = GetK();
             float coef2 = 0.05f;
             if (dist > 30f)
                 coef2 = Mathf.Clamp(k, 0.05f, 1) * 20f;
@@ -171,6 +169,67 @@ public class Optimiser
             _needUpdate = false;
 
             return true;
+        }
+
+        float GetDist()
+        {
+            float a1 = Vector3.Distance(pos, S.Camera.transform.position);
+
+            if (pos2 == null)
+                return a1;
+            else
+            {
+                float a2 = Vector3.Distance((Vector3)pos2, S.Camera.transform.position);
+
+                if (pos3 == null)
+                    return MathF.Min(a1, a2);
+                else
+                {
+                    float a3 = Vector3.Distance((Vector3)pos3, S.Camera.transform.position);
+                    return MathF.Min(MathF.Min(a1, a2), a3);
+                }
+            }
+        }
+
+        float GetK()
+        {
+            float angle = Vector3.Angle(S.Camera.transform.forward, (pos - S.Camera.transform.position)); //.normalised
+            //+ visible - invisible
+            float dif1 = S.Camera.fieldOfView - angle;
+
+            if (pos2 == null)
+                return 0.5f - dif1 / 30f; //degrees
+            else
+            {
+                angle = Vector3.Angle(S.Camera.transform.forward, ((Vector3)pos2 - S.Camera.transform.position)); //.normalised
+                                                                                                                  //+ visible - invisible
+                float dif2 = S.Camera.fieldOfView - angle;
+
+                if (pos3 == null)
+                {
+                    if (dif1 < dif2)
+                        return 0.5f - dif1 / 30f; //degrees
+                    else
+                        return 0.5f - dif2 / 30f; //degrees
+                }
+                else
+                {
+                    angle = Vector3.Angle(S.Camera.transform.forward, ((Vector3)pos3 - S.Camera.transform.position)); //.normalised
+                                                                                                                      //+ visible - invisible
+                    float dif3 = S.Camera.fieldOfView - angle;
+
+                    if (dif1 < dif2)
+                        if (dif1 < dif3)
+                            return 0.5f - dif1 / 30f; //degrees
+                        else
+                            return 0.5f - dif3 / 30f; //degrees
+                    else
+                        if (dif2 < dif3)
+                            return 0.5f - dif2 / 30f; //degrees
+                        else
+                            return 0.5f - dif3 / 30f; //degrees
+                }
+            }
         }
 
         bool Check()

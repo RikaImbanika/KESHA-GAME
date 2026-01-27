@@ -49,6 +49,7 @@ public class Spider : MonoBehaviour
     private int _layerMask;
     private int _laserOptimiser;
     private Vector3 _lasersOffset;
+    private float _lasersScaleFactor;
 
 
     void Start()
@@ -99,6 +100,8 @@ public class Spider : MonoBehaviour
         {
             _directions[i] = GetLasDir();
             _lasers[i] = Instantiate(S.RedLaser, transform.position + _lasersOffset, transform.rotation, transform); //
+
+            _lasersScaleFactor = 1f / _lasers[i].transform.lossyScale.z;
             _lasers[i].SetActive(false);
             _points[i] = Instantiate(S.RedPoint, transform.position + _lasersOffset, transform.rotation, transform); //
             _points[i].SetActive(false);
@@ -285,7 +288,6 @@ public class Spider : MonoBehaviour
                 _nextLaserTime = _laserCooldown;
 
                 _directions[Convert.ToInt32(UnityEngine.Random.Range(0, 3))] = GetLasDir();
-
             }
 
             _laserOptimiser++;
@@ -293,26 +295,25 @@ public class Spider : MonoBehaviour
             if (_laserOptimiser >= 4)
             {
                 _damagePlayer = 0;
+                _laserOptimiser = 0;
 
                 Vector3 from = transform.position + _lasersOffset;
 
                 for (int i = 0; i < 4; i++)
                 {
+                    Quaternion rotation = Quaternion.Euler(0, _laserRotation, 0);
+                    _directions[i] = rotation * _directions[i];
+
                     _lasers[i].transform.rotation = Quaternion.LookRotation(_directions[i]);
 
-                    _laserOptimiser = 0;
-
-                    Quaternion rotation = Quaternion.Euler(0, _laserRotation, 0);
-
-                    Ray ray = new Ray(from, rotation * _directions[i]);
+                    Ray ray = new Ray(from, _directions[i]);
                     RaycastHit hit;
 
                     if (Physics.Raycast(ray, out hit, _layerMask))
                     {
                         _laserLength[i] = (hit.point - from).magnitude;
                         var scale = _lasers[i].transform.localScale;
-                        float factor = 1f;
-                        scale.z = _laserLength[i] * factor;
+                        scale.z = _laserLength[i] * _lasersScaleFactor;
                         _lasers[i].transform.localScale = scale;
                         _points[i].transform.position = hit.point;
 

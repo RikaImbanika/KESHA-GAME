@@ -115,12 +115,24 @@ public class LighterSpawner : MonoBehaviour
 
             byte colorN = 0;
 
-            if (n < 80)
-                colorN = 0;
-            else if (n <= 90) /////////
-                colorN = 1;
+            if (_sceneName != "BR 7" && _sceneName != "BR 7R" && _sceneName != "BR 6" && _sceneName != "BR 6R")
+            {
+                if (n < 90)
+                    colorN = 0;
+                else if (n <= 95) /////////
+                    colorN = 1;
+                else
+                    colorN = 2;
+            }
             else
-                colorN = 2;
+            {
+                if (n < 90)
+                    colorN = 2;
+                else if (n <= 95) /////////
+                    colorN = 1;
+                else
+                    colorN = 0;
+            }
 
             _color = S.Backrooms._lightersColors[colorN];
             S.SM.Save(_idColor, colorN);
@@ -136,7 +148,7 @@ public class LighterSpawner : MonoBehaviour
     {
         GameObject obj = Instantiate(S.LighterObj, _pos, transform.rotation, transform);
         Lighter lighter = obj.GetComponent<Lighter>();
-        Debug.LogError("L #4");
+        //Debug.LogError("L #4");
         SetSize();
         SetColor();
         SetPosition();
@@ -167,7 +179,7 @@ public class LighterSpawner : MonoBehaviour
             {
                 MeshRenderer renderer = lighter._vis.GetComponent<MeshRenderer>();
                 renderer.sharedMaterial = Materials.Get($"Sparkles/Sparkle{_color}");
-                Debug.LogError("L #5");
+                //Debug.LogError("L #5");
             }
         }
 
@@ -177,7 +189,7 @@ public class LighterSpawner : MonoBehaviour
             {
                 var sc = lighter._vis.transform.localScale;
                 lighter._vis.transform.localScale = new Vector3(sc.x * _size, sc.y * _size, sc.z * _size);
-                Debug.LogError("L #6");
+                //Debug.LogError("L #6");
             }
         }
     }

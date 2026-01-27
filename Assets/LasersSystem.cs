@@ -104,6 +104,7 @@ public class LasersSystem : MonoBehaviour
                         laser2._laserDirection = _upDir;
                         laser2._forwardTime = _period / 2;
                         laser2._backwardTime = _period / 2;
+                        laser2._currentTime = _period / 2;
                         laser2._forwardPause = 0f;
                         laser2._backwardPause = 0f;
                         laser2._currentState = 2;
@@ -130,6 +131,7 @@ public class LasersSystem : MonoBehaviour
                         laser2._laserDirection = _rightDir;
                         laser2._forwardTime = _period / 2;
                         laser2._backwardTime = _period / 2;
+                        laser2._currentTime = _period / 2;
                         laser2._forwardPause = 0f;
                         laser2._backwardPause = 0f;
                         laser2._currentState = 2;
