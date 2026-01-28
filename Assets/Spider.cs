@@ -169,6 +169,7 @@ public class Spider : MonoBehaviour
 
     public void Die()
     {
+        _dead = true;
         _ani.SetTrigger("TrDie");
         _agent.speed = 0f;
         _followPlayer = false;
@@ -316,13 +317,15 @@ public class Spider : MonoBehaviour
                         scale.z = _laserLength[i] * _lasersScaleFactor;
                         _lasers[i].transform.localScale = scale;
                         _points[i].transform.position = hit.point;
+                        _points[i].transform.rotation = S.RandRot.Get();
 
-                        if (S.RND.Next(0, 15) == 0)
+                        int speed = (int)(3 * 60f * _opti.DeltaTime);
+                        if (S.RND.Next(0, speed) == 0)
                         {
                             GameObject sparkle = Instantiate(S.RedSparkle);
                             sparkle.transform.position = hit.point;
                             sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-                        } //
+                        } /////////////
 
                         if (hit.collider.gameObject.CompareTag("Player"))
                             _damagePlayer += 24f;

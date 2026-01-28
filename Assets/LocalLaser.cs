@@ -27,6 +27,8 @@ public class LocalLaser : MonoBehaviour
     private Vector3 _backwardPosition;
     private GameObject _leftLaserObj;
     private GameObject _rightLaserObj;
+    private GameObject _leftPointObj;
+    private GameObject _rightPointObj;
     private GameObject _leftBotObj;
     private GameObject _rightBotObj;
     private Vector3 _leftDelta;
@@ -34,6 +36,8 @@ public class LocalLaser : MonoBehaviour
     private float _period;
     private float _frequency;
     private int _layerMask;
+    private float _normalLength;
+    private bool _hitSomething;
 
     private Optimiser _opti;
 
@@ -49,6 +53,10 @@ public class LocalLaser : MonoBehaviour
 
         _leftLaserObj = Instantiate(S.RedLaser, transform);
         _rightLaserObj = Instantiate(S.RedLaser, transform);
+        _leftPointObj = Instantiate(S.RedPoint, transform);
+        _rightPointObj = Instantiate(S.RedPoint, transform);
+        _leftPointObj.SetActive(false);
+        _rightPointObj.SetActive(false);
 
         _layerMask = 1 << LayerMask.NameToLayer("Player") |
                          1 << LayerMask.NameToLayer("Static") |
@@ -82,13 +90,17 @@ public class LocalLaser : MonoBehaviour
     {
         GameObject botPrefab = Prefabs.Get("LaserBot");
 
-        _leftBotObj = Instantiate(botPrefab, transform.position, Quaternion.LookRotation(_laserDirection), transform);
-        _leftBotObj.transform.localScale = new Vector3(0.35f, 0.35f, 0.35f);
-        _rightBotObj = Instantiate(botPrefab, transform.position, Quaternion.LookRotation(-_laserDirection), transform);
-        _rightBotObj.transform.localScale = new Vector3(0.35f, 0.35f, 0.35f);
+        float sc = 0.35f;
 
-        Vector3 leftHitPoint = GetLaserHitPoint(transform.position, -_laserDirection);
-        Vector3 rightHitPoint = GetLaserHitPoint(transform.position, _laserDirection);
+        _leftBotObj = Instantiate(botPrefab, transform.position, Quaternion.LookRotation(_laserDirection), transform);
+        _leftBotObj.transform.localScale = new Vector3(sc, sc, sc);
+        _rightBotObj = Instantiate(botPrefab, transform.position, Quaternion.LookRotation(-_laserDirection), transform);
+        _rightBotObj.transform.localScale = new Vector3(sc, sc, sc);
+
+        Vector3 leftHitPoint = GetLaserHitPoint(transform.position, -_laserDirection, _leftPointObj);
+        Vector3 rightHitPoint = GetLaserHitPoint(transform.position, _laserDirection, _rightPointObj);
+        _normalLength = (leftHitPoint - rightHitPoint).magnitude;
+
         _leftDelta = leftHitPoint - transform.position;
         _rightDelta = rightHitPoint - transform.position;
     }
@@ -97,20 +109,50 @@ public class LocalLaser : MonoBehaviour
     {
         Vector3 leftHitPoint = transform.position + _leftDelta;
         Vector3 rightHitPoint = transform.position + _rightDelta;
-        Vector3 leftHitPoint2 = GetLaserHitPoint(leftHitPoint, _laserDirection);
-        Vector3 rightHitPoint2 = GetLaserHitPoint(rightHitPoint, -_laserDirection);
 
-        UpdateSingleLaser(_leftLaserObj, _leftBotObj, leftHitPoint, leftHitPoint2);
-        UpdateSingleLaser(_rightLaserObj, _rightBotObj, rightHitPoint, rightHitPoint2);
+        Vector3 leftHitPoint2 = GetLaserHitPoint(leftHitPoint, _laserDirection, _leftPointObj);
+        Vector3 rightHitPoint2 = GetLaserHitPoint(rightHitPoint, -_laserDirection, _rightPointObj);
+
+        UpdateSingleLaser(_leftLaserObj, _leftBotObj, leftHitPoint, leftHitPoint2, _leftPointObj);
+        UpdateSingleLaser(_rightLaserObj, _rightBotObj, rightHitPoint, rightHitPoint2, _rightPointObj);
     }
 
-    Vector3 GetLaserHitPoint(Vector3 from, Vector3 direction)
+    Vector3 GetLaserHitPoint(Vector3 from, Vector3 direction, GameObject point)
     {
         RaycastHit hit;
         if (Physics.Raycast(from, direction, out hit, _laserLimit, _layerMask))
         {
-            if (hit.collider.gameObject.CompareTag("Player"))
-                S.PS.Damage(16f * _opti.DeltaTime);
+            float len = (hit.point - from).magnitude;
+
+            if (len < _normalLength * 0.99f)
+            {
+                if (!_hitSomething)
+                {
+                    _hitSomething = true;
+                    _leftPointObj.SetActive(true);
+                    _rightPointObj.SetActive(true);
+                }
+
+                if (hit.collider.gameObject.CompareTag("Player"))
+                    S.PS.Damage(16f * _opti.DeltaTime);
+            }
+            else if (_hitSomething)
+            {
+                _hitSomething = false;
+                _leftPointObj.SetActive(false);
+                _rightPointObj.SetActive(false);
+            }
+
+            if (_hitSomething)
+            {
+                int speed = (int)(15 * 60f * _opti.DeltaTime);
+                if (S.RND.Next(0, speed) == 0)
+                {
+                    GameObject sparkle = Instantiate(S.RedSparkle);
+                    sparkle.transform.position = hit.point;
+                    sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
+                } /////////////
+            }
 
             return hit.point;
         }
@@ -118,7 +160,7 @@ public class LocalLaser : MonoBehaviour
         return transform.position + direction * _laserLimit;
     }
 
-    void UpdateSingleLaser(GameObject laserObj, GameObject botObj, Vector3 startPoint, Vector3 endPoint)
+    void UpdateSingleLaser(GameObject laserObj, GameObject botObj, Vector3 startPoint, Vector3 endPoint, GameObject point)
     {
         if (laserObj == null) return;
 
@@ -138,6 +180,12 @@ public class LocalLaser : MonoBehaviour
             laserObj.transform.localScale.y,
             distance
         );
+
+        if (_hitSomething)
+        {
+            point.transform.position = endPoint;
+            point.transform.rotation = S.RandRot.Get();
+        }
 
         botObj.transform.position = startPoint;
     }

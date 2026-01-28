@@ -46,6 +46,8 @@ public class Initialiser : MonoBehaviour
         S.RedLaser = Prefabs.Get("RedLaser");
         S.BlueLaser = Prefabs.Get("BlueLaser");
         S.RedPoint = Prefabs.Get("RedPoint");
+        S.RedHitPoint = Prefabs.Get("RedHitPoint");
+        S.BlueHitPoint = Prefabs.Get("BlueHitPoint");
         S.BlueRay = Prefabs.Get("BlueRay");
         S.RedSparkle = Prefabs.Get("RedSparkle");
         S.BlueSparkle = Prefabs.Get("BlueSparkle");

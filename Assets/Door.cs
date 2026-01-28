@@ -9,7 +9,6 @@ using Unity.VisualScripting;
 public class Door : MonoBehaviour
 {
 	public int _number;
-	public string _sceneName;
 	public int _nextDoorId;
 	private string _nextSceneName;
 	public Collider col;
@@ -20,6 +19,7 @@ public class Door : MonoBehaviour
 	public int _sparklesCount;
 	public DoorModel _doorModel;
 	public DoorModel __nextDoorModel;
+	private string _sceneName;
 
 	public void Start()
 	{
@@ -28,6 +28,8 @@ public class Door : MonoBehaviour
 
 		IEnumerator Wait()
 		{
+			_sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+			
 			bool ok = false;
 
 			while (true)

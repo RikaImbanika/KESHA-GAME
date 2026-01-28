@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1512112643474508232}
-  - component: {fileID: 1512112643474508235}
   - component: {fileID: 1512112643474508234}
   - component: {fileID: 1512112643474508237}
   - component: {fileID: 1512112643474508233}
@@ -35,14 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1512112643474508235
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1512112643474508239}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!135 &1512112643474508234
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -86,7 +77,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _pushNormal: 1
   _pushRandom: 1
-  _minScale: 0.1
+  _minScale: 0.2
+  _finalMinScale: 0.001
   _minimisingSpeed: 10
   _minimisingSpeedCoef: 0
   _gravity: -2
@@ -94,5 +86,5 @@ MonoBehaviour:
   _count: 3
   _width: 0.2
   _sizeRandom: 8
-  _friction: 0.9
+  _friction: 0.85
   _color: red

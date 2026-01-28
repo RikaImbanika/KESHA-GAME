@@ -96,6 +96,8 @@ public class EnemyBullet : MonoBehaviour
                         sparkle.GetComponent<Sparkle3>()._minimisingSpeedCoef = decay;
                     }
 
+                    Instantiate(S.RedHitPoint, hit.point, Quaternion.identity);
+
                     int gg = S.RND.Next(10);
 
                     if (gg == 0)

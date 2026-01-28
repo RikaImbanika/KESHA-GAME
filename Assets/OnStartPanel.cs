@@ -8,7 +8,9 @@ using TMPro;
 
 public class OnStartPanel : MonoBehaviour
 {
-	public TextMeshProUGUI text;
+	public TextMeshProUGUI _text;
+	public Image _p1;
+	public Image _p2;
 
 	void Start()
 	{
@@ -18,19 +20,19 @@ public class OnStartPanel : MonoBehaviour
 
 		IEnumerator WaitLoad()
 		{
-			Color clr = img.color;
-			Color tclr = text.color;
+			Color tclr = new Color(230, 0, 255, 0);
 
 			gameObject.SetActive(true);
-			text.color = new Color(tclr.r, tclr.g, tclr.b, 0);
 
 			float alfa = 0;
+
+			UPD();
 
 			while (alfa < 1)
 			{
 				alfa += 0.03f;
 
-				text.color = new Color(tclr.r, tclr.g, tclr.b, alfa);
+				UPD();
 
 				yield return new WaitForSeconds(0.02f);
 			}
@@ -39,13 +41,10 @@ public class OnStartPanel : MonoBehaviour
 			{
 				alfa -= 0.015f;
 
-				text.color = new Color(tclr.r, tclr.g, tclr.b, alfa);
+				UPD();
 
 				yield return new WaitForSeconds(0.02f);
 			}
-
-/*			while (!SceneCurrentlyLoaded("Income"))
-				yield return new WaitForSeconds(0.2f);*/
 
 			alfa = 1;
 
@@ -53,7 +52,7 @@ public class OnStartPanel : MonoBehaviour
 			{
 				alfa -= 0.005f;
 
-				img.color = new Color(clr.r, clr.g, clr.b, alfa);
+				UPD2();
 
 				yield return new WaitForSeconds(0.02f);
 			}
@@ -62,12 +61,28 @@ public class OnStartPanel : MonoBehaviour
 			{
 				alfa -= 0.025f;
 
-				img.color = new Color(clr.r, clr.g, clr.b, alfa);
+				UPD2();
 
 				yield return new WaitForSeconds(0.02f);
 			}
 
 			gameObject.SetActive(false);
+
+			void UPD()
+			{
+				Color nc = new Color(tclr.r, tclr.g, tclr.b, alfa);
+
+				_text.color = nc;
+				_p1.color = nc;
+				_p2.color = nc;
+			}
+
+			void UPD2()
+			{
+				Color nc = new Color(0, 0, 0, alfa);
+
+				img.color = nc;
+			}
 
 			yield return null;
 		}
@@ -86,7 +101,7 @@ public class OnStartPanel : MonoBehaviour
 				}
 			}
 
-			return false;//scene not currently loaded in the $$anonymous$$erarchy
+			return false;
 		}
 	}
 }

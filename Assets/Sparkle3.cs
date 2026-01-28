@@ -7,6 +7,7 @@ public class Sparkle3 : MonoBehaviour
     public float _pushNormal;
     public float _pushRandom;
     public float _minScale;
+    public float _finalMinScale;
     public float _minimisingSpeed;
     public float _minimisingSpeedCoef;
     public float _gravity;
@@ -85,7 +86,7 @@ public class Sparkle3 : MonoBehaviour
     {
         if (_deadLine == -1)
         {
-            if (_p < _minScale)
+            if (_p < _finalMinScale)
             {
                 _deadLine = _prevIndex;
 
@@ -115,7 +116,11 @@ public class Sparkle3 : MonoBehaviour
 
             if (_deltaTime > _period)
             {
-                _decreaser += _deltaTime * 0.2f;
+                if (_p > _minScale)
+                    _decreaser += _deltaTime * 0.2f;
+                else
+                    _decreaser += _deltaTime * 1f;
+
                 _direction += new Vector3(0, _gravity * _deltaTime, 0); ///
 
                 _velocity = _direction.magnitude;

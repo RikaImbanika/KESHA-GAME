@@ -6,15 +6,11 @@ using UnityEngine;
 
 public class Backrooms : MonoBehaviour
 {
-    System.Random _rnd;
-
     List<string> _allRoomsList;
     List<string> _allRoomsListCopy;
     public Dictionary<string, byte> _snakes;
     public Dictionary<string, float> _lasersProbabilities;
     public Dictionary<string, float> _lightersProbabilities;
-    public float[] _lightersSizes;
-    public string[] _lightersColors;
 
     //Room BR 5 should be at least 3 rooms from start
     //Room BR 8 should be maximally far
@@ -28,24 +24,10 @@ public class Backrooms : MonoBehaviour
 
         IEnumerator Yep()
         {
-            _rnd = new System.Random();
             _lasersProbabilities = new Dictionary<string, float>();
             _lightersProbabilities = new Dictionary<string, float>();
 
-            _lightersSizes = new float[]
-{
-            1f,
-            0.7f,
-            0.5f,
-            0.35f
-};
 
-            _lightersColors = new string[]
-            {
-            "Yellow",
-            "Red",
-            "Blue"
-            };
 
             while (true)
             {
@@ -53,7 +35,7 @@ public class Backrooms : MonoBehaviour
 
                 try
                 {
-                    int delme = _rnd.Next(S.Loader._rooms.Count);
+                    int delme = S.RND.Next(S.Loader._rooms.Count);
                     break;
                 }
                 catch (Exception ex)
@@ -123,7 +105,7 @@ public class Backrooms : MonoBehaviour
 
         for (int i = 0; i < _allRoomsList.Count; i++)
         {
-            int d = _rnd.Next(100);
+            int d = S.RND.Next(100);
             _lasersProbabilities.Add(_allRoomsList[i], array[d]);
         }
     }
@@ -134,7 +116,7 @@ public class Backrooms : MonoBehaviour
 
         for (byte i = 1; i <= 3;)
         {
-            int sceneId = _rnd.Next(_allRoomsList.Count());
+            int sceneId = S.RND.Next(_allRoomsList.Count());
             string sceneName = _allRoomsList[sceneId];
             if (!_snakes.ContainsKey(sceneName))
             {
@@ -211,7 +193,7 @@ public class Backrooms : MonoBehaviour
 
         for (int i = 0; i < _allRoomsList.Count; i++)
         {
-            int d = _rnd.Next(100);
+            int d = S.RND.Next(100);
             _lightersProbabilities.Add(_allRoomsList[i], array[d]);
         }
     }
@@ -229,14 +211,14 @@ public class Backrooms : MonoBehaviour
 
             while (true)
             {
-                id1 = _rnd.Next(S.Loader._rooms.Count);
+                id1 = S.RND.Next(S.Loader._rooms.Count);
                 if (S.Loader._rooms.ElementAt(id1).Key.Contains("BR") || S.Loader._rooms.ElementAt(id1).Key.Contains("Hall"))
                     break;
             }
 
             while (true)
             {
-                id2 = _rnd.Next(S.Loader._rooms.Count);
+                id2 = S.RND.Next(S.Loader._rooms.Count);
                 if (id2 != id1) //Should this stroke be here?
                     if (S.Loader._rooms.ElementAt(id2).Key.Contains("BR") || S.Loader._rooms.ElementAt(id2).Key.Contains("Hall"))
                         break;
@@ -245,8 +227,8 @@ public class Backrooms : MonoBehaviour
             KeyValuePair<string, RoomModel> a = S.Loader._rooms.ElementAt(id1);
             KeyValuePair<string, RoomModel> b = S.Loader._rooms.ElementAt(id2);
 
-            int currentDoorNumber1 = 1 + _rnd.Next(a.Value._doors.Count);
-            int currentDoorNumber2 = 1 + _rnd.Next(b.Value._doors.Count);
+            int currentDoorNumber1 = 1 + S.RND.Next(a.Value._doors.Count);
+            int currentDoorNumber2 = 1 + S.RND.Next(b.Value._doors.Count);
 
             if (S.Loader._rooms.ElementAt(id1).Key.Contains("Hall"))
                 currentDoorNumber1 = 2;

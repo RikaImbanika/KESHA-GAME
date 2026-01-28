@@ -91,11 +91,11 @@ public class Loader : MonoBehaviour
         AddValue("Hall", "TL 0", 3, 1);
         AddValue("Hall", "MR 2", 4, 1);
 
-        AddValue("MR 2", "Hall", 1, 4);
-        AddValue("MR 2", "MR 1", 2, 1);
+        AddValue("MR 1", "Hall", 1, 4);
+        AddValue("MR 1", "MR 2", 2, 1);
 
-        AddValue("MR 1", "MR 2", 1, 2);
-        AddValue("MR 1", "MR 3", 2, 1);
+        AddValue("MR 2", "MR 1", 1, 2);
+        AddValue("MR 2", "MR 3", 2, 1);
 
         AddValue("MR 3", "MR 1", 1, 2);
         AddValue("MR 3", "MR 4", 2, 1);

@@ -243,18 +243,6 @@ public class Drone : MonoBehaviour
         return rotation * vector;
     }
 
-    Vector3 RotateAroundLocalAxisOld(Vector3 vector, float angle, string axis)
-    {
-        Vector3 localVector = transform.InverseTransformDirection(vector);
-        Quaternion rotation = Quaternion.Euler(0, 0, angle);
-        if (axis == "y")
-            rotation = Quaternion.Euler(0, angle, 0);
-        else if (axis == "x")
-            rotation = Quaternion.Euler(angle, 0, 0);
-        Vector3 rotated = rotation * localVector;
-        return transform.TransformDirection(rotated);
-    }
-
     void Laser(Vector3 direction, int i)
     {
         Vector3 from = transform.position;
@@ -271,6 +259,7 @@ public class Drone : MonoBehaviour
             scale.z = len;
             _lasers[i].transform.localScale = scale;
             _points[i].transform.position = hit.point;
+            _points[i].transform.rotation = S.RandRot.Get();
 
             GameObject go = hit.collider.gameObject;
             if (go.CompareTag("Player"))
@@ -278,12 +267,13 @@ public class Drone : MonoBehaviour
                 S.PS.Damage(0.7f);
             }
 
-            if (S.RND.Next(0, 30) == 0)
+            int speed = (int)(2 * 60f * _opti.DeltaTime);
+            if (S.RND.Next(0, speed) == 0)
             {
                 GameObject sparkle = Instantiate(S.RedSparkle);
                 sparkle.transform.position = hit.point;
                 sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-            } //
+            } /////////////
         }
     }
 

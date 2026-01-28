@@ -20,8 +20,6 @@ public class LighterSpawner : MonoBehaviour
 
     void Start()
     {
-
-
         StartCoroutine(Start0());
 
         IEnumerator Start0()
@@ -42,7 +40,7 @@ public class LighterSpawner : MonoBehaviour
 
     IEnumerator Birn()
     {
-        while (S.SM == null)
+        while (S.SM == null || S.LighterObj == null)
             yield return new WaitForSeconds(0.2f);
 
         _pos = S.SM.LoadVector3(_idPos) ?? Vector3.zero;
@@ -61,15 +59,23 @@ public class LighterSpawner : MonoBehaviour
     void Load()
     {
         byte sizeN = S.SM.LoadByte(_idScale) ?? 104;
-        _size = S.Backrooms._lightersSizes[sizeN];
+        _size = S.Lighters._lightersSizes[sizeN];
         byte colorN = S.SM.LoadByte(_idColor) ?? 104;
-        _color = S.Backrooms._lightersColors[colorN];
+        _color = S.Lighters._lightersColors[colorN];
     }
 
     void DefineExistenz()
     {
-        //Debug.LogError($"L #1");
-        float prob = S.Backrooms._lightersProbabilities[_sceneName];
+        float prob = 0;
+        if (_sceneName.Contains("BR"))
+            prob = S.Backrooms._lightersProbabilities[_sceneName];
+        else if (_sceneName.Contains("Income"))
+            prob = 40;
+        else if (_sceneName.Contains("TL"))
+            prob = 30;
+        else if (_sceneName.Contains("MR"))
+            prob = prob = S.Mushrooms._lightersProbabilities[_sceneName];
+
         int n = S.RND.Next(100);
         if (n > prob)
         {
@@ -80,7 +86,7 @@ public class LighterSpawner : MonoBehaviour
         {
             DefinePos();
             DefineSize();
-            DefineColor();
+            DefineColor();            
             Summon();
         }
 
@@ -93,19 +99,54 @@ public class LighterSpawner : MonoBehaviour
         void DefineSize()
         {
             int n = S.RND.Next(100);
-
             byte sizeN = 0;
 
-            if (n < 35)
-                sizeN = 0;
-            else if (n < 60)
-                sizeN = 1;
-            else if (n < 85)
-                sizeN = 2;
-            else
-                sizeN = 3;
+            if (_sceneName.Contains("BR"))
+            {
+                if (n < 35)
+                    sizeN = 0;
+                else if (n < 60)
+                    sizeN = 1;
+                else if (n < 85)
+                    sizeN = 2;
+                else
+                    sizeN = 3;
+            }
+            else if (_sceneName.Contains("MR"))
+            {
+                if (n < 10)
+                    sizeN = 0;
+                else if (n < 25)
+                    sizeN = 1;
+                else if (n < 50)
+                    sizeN = 2;
+                else
+                    sizeN = 3;
+            }
+            else if (_sceneName.Contains("TL"))
+            {
+                if (n < 8)
+                    sizeN = 0;
+                else if (n < 28)
+                    sizeN = 1;
+                else if (n < 55)
+                    sizeN = 2;
+                else
+                    sizeN = 3;
+            }
+            else if (_sceneName.Contains("Income"))
+            {
+                if (n < 12)
+                    sizeN = 0;
+                else if (n < 25)
+                    sizeN = 1;
+                else if (n < 55)
+                    sizeN = 2;
+                else
+                    sizeN = 3;
+            }
 
-            _size = S.Backrooms._lightersSizes[sizeN];
+            _size = S.Lighters._lightersSizes[sizeN];
             S.SM.Save(_idScale, sizeN);
         }
         
@@ -115,26 +156,52 @@ public class LighterSpawner : MonoBehaviour
 
             byte colorN = 0;
 
-            if (_sceneName != "BR 7" && _sceneName != "BR 7R" && _sceneName != "BR 6" && _sceneName != "BR 6R")
+            if (_sceneName.Contains("BR"))
             {
-                if (n < 90)
-                    colorN = 0;
-                else if (n <= 95) /////////
-                    colorN = 1;
+                if (_sceneName != "BR 7" && _sceneName != "BR 7R" && _sceneName != "BR 6" && _sceneName != "BR 6R")
+                {
+                    if (n < 90)
+                        colorN = S.Lighters.ColorN["Yellow"];
+                    else if (n <= 95)
+                        colorN = S.Lighters.ColorN["Red"];
+                    else
+                        colorN = S.Lighters.ColorN["Blue"];
+                }
                 else
-                    colorN = 2;
+                {
+                    if (n < 90)
+                        colorN = S.Lighters.ColorN["Blue"];
+                    else if (n <= 95)
+                        colorN = S.Lighters.ColorN["Red"];
+                    else
+                        colorN = S.Lighters.ColorN["Yellow"];
+                }
             }
-            else
+            else if (_sceneName.Contains("MR"))
             {
-                if (n < 90)
-                    colorN = 2;
-                else if (n <= 95) /////////
-                    colorN = 1;
+                if (n < 92)
+                    colorN = S.Lighters.ColorN["Blue"];
+                else if (n <= 97)
+                    colorN = S.Lighters.ColorN["Yellow"];
                 else
-                    colorN = 0;
+                    colorN = S.Lighters.ColorN["Red"];
+            }
+            else if (_sceneName.Contains("Income"))
+            {
+                if (n < 98)
+                    colorN = S.Lighters.ColorN["Yellow"];
+                else
+                    colorN = S.Lighters.ColorN["Red"];
+            }
+            else if (_sceneName.Contains("TL"))
+            {
+                if (n < 98)
+                    colorN = S.Lighters.ColorN["Blue"];
+                else
+                    colorN = S.Lighters.ColorN["Red"];
             }
 
-            _color = S.Backrooms._lightersColors[colorN];
+            _color = S.Lighters._lightersColors[colorN];
             S.SM.Save(_idColor, colorN);
         }
     }
@@ -148,7 +215,7 @@ public class LighterSpawner : MonoBehaviour
     {
         GameObject obj = Instantiate(S.LighterObj, _pos, transform.rotation, transform);
         Lighter lighter = obj.GetComponent<Lighter>();
-        //Debug.LogError("L #4");
+
         SetSize();
         SetColor();
         SetPosition();
@@ -179,7 +246,6 @@ public class LighterSpawner : MonoBehaviour
             {
                 MeshRenderer renderer = lighter._vis.GetComponent<MeshRenderer>();
                 renderer.sharedMaterial = Materials.Get($"Sparkles/Sparkle{_color}");
-                //Debug.LogError("L #5");
             }
         }
 
@@ -189,7 +255,6 @@ public class LighterSpawner : MonoBehaviour
             {
                 var sc = lighter._vis.transform.localScale;
                 lighter._vis.transform.localScale = new Vector3(sc.x * _size, sc.y * _size, sc.z * _size);
-                //Debug.LogError("L #6");
             }
         }
     }

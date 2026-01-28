@@ -3,15 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsRay : MonoBehaviour
+public class GunRay : MonoBehaviour
 {
+    public GameObject _child;
     private Camera _mainCamera;
     private float _timeLeft;
+    private Vector3 _scale;
 
     void Start()
     {
         _mainCamera = S.Camera;
         _timeLeft = 0.3f;
+        _scale = _child.transform.localScale;
     }
 
     void Update()
@@ -27,6 +30,9 @@ public class IsRay : MonoBehaviour
 
         float angle = Angle(transform.up, projection);
         transform.Rotate(new Vector3(0, 0, angle));
+
+        float c = _timeLeft / 0.3f;
+        _child.transform.localScale = new Vector3(_scale.x * c, _scale.y * c, _scale.z);
 
         float Angle(Vector3 vector1, Vector3 vector2)
         {

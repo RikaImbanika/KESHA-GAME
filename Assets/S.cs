@@ -52,6 +52,71 @@ public static class S : object
 	private static GameObject _snakie1;
 	private static GameObject _snakie2;
 	private static GameObject _snakie3;
+	private static Mushrooms _mushrooms;
+	private static Lighters _lighters;
+	private static RandomRotation _randomRotations;
+	private static GameObject _blueHitPoint;
+	private static GameObject _redHitPoint;
+
+	public static GameObject BlueHitPoint
+	{
+		get
+		{
+			return _blueHitPoint;
+		}
+		set
+		{
+			_blueHitPoint = value;
+		}
+	}
+
+	public static GameObject RedHitPoint
+	{
+		get
+		{
+			return _redHitPoint;
+		}
+		set
+		{
+			_redHitPoint = value;
+		}
+	}
+
+	public static RandomRotation RandRot
+	{
+		get
+		{
+			return _randomRotations;
+		}
+		set
+		{
+			_randomRotations = value;
+		}
+	}
+
+	public static Lighters Lighters
+	{
+		get
+		{
+			return _lighters;
+		}
+		set
+		{
+			_lighters = value;
+		}
+	}
+
+	public static Mushrooms Mushrooms
+	{
+		get
+		{
+			return _mushrooms;
+		}
+		set
+		{
+			_mushrooms = value;
+		}
+	}
 
 	public static GameObject Snakie1
 	{
