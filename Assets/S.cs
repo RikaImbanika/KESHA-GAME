@@ -57,6 +57,19 @@ public static class S : object
 	private static RandomRotation _randomRotations;
 	private static GameObject _blueHitPoint;
 	private static GameObject _redHitPoint;
+	private static PortalsBase _portalsBase;
+
+	public static PortalsBase PortalsBase
+	{
+		get
+		{
+			return _portalsBase;
+		}
+		set
+		{
+			_portalsBase = value;
+		}
+	}
 
 	public static GameObject BlueHitPoint
 	{
