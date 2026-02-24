@@ -30,6 +30,9 @@ public class Initialiser : MonoBehaviour
         yield return WaitForCondition(() => Camera.main != null, "Waiting for camera");
         S.Camera = Camera.main;
 
+        S.Camera.usePhysicalProperties = true;
+        S.Camera.fieldOfView = 75f;
+
         yield return WaitForObjectWithTag("Player", obj => S.PObj = obj);
         S.Ph = S.PObj.transform.parent?.gameObject;
         

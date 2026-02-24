@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -201,105 +202,110 @@ public class Portal : MonoBehaviour
     {
         Vector3[] quad = (Vector3[])quad0.Clone();
 
-        //Vector3 look = _secondCamera.transform.forward;
-        //Vector3 c = _secondCamera.transform.position;
-
-        //for (int i = 0; i < 4; i++)
-        //    Adjust(i);
-
-        Vector3[] uv = new Vector3[4];
-
-        float left = 1f;
-        float right = 0f;
-        float top = 0f;
-        float bottom = 1f;
-
         Rect r = GetVisibleRect(quad, S.Camera);
-        left = r.xMin;
-        bottom = r.yMin;
 
-        float w = r.width;
-        float h = r.height;
+        SetCameraRect(r);      
 
-        //
+        _meshRenderer.material.SetFloat("_RectX", r.xMin);
+        _meshRenderer.material.SetFloat("_RectY", r.yMin);
+        _meshRenderer.material.SetFloat("_RectWidth", r.width);
+        _meshRenderer.material.SetFloat("_RectHeight", r.height);
 
-        _secondCamera.sensorSize = new Vector2(_sensorSize.x * w, _sensorSize.y * h);
-
-        float centerX = left + w / 2;
-        float centerY = bottom + h / 2;
-
-        float shiftX = (centerX - 0.5f) * 2;
-        float shiftY = (centerY - 0.5f) * 2; //
-
-        _secondCamera.lensShift = new Vector2(shiftX, shiftY);
-
-        _THE_RECT = new Rect(left, bottom, w, h);
-
-        _meshRenderer.material.SetFloat("_RectX", left);
-        _meshRenderer.material.SetFloat("_RectY", bottom);
-        _meshRenderer.material.SetFloat("_RectWidth", w);
-        _meshRenderer.material.SetFloat("_RectHeight", h);
-
-        Rect GetVisibleRect(Vector3[] corners, Camera cam)
+        Rect GetVisibleRect(Vector3[] quad, Camera cam)
         {
             List<Vector2> points = new List<Vector2>();
 
-            foreach (var corner in corners)
+            for (int i = 0; i < quad.Length; i++)
             {
-                Vector3 vp = cam.WorldToViewportPoint(corner);
-
-                if (vp.z > 0)
+                Vector3 vp = cam.WorldToViewportPoint(quad[i]);
+                if (vp.z >= 0)
+                {
                     points.Add(vp);
+                }
                 else
                 {
-                    // Проецируем на ближнюю плоскость
-                    Vector3 dir = (corner - cam.transform.position).normalized;
-                    Vector3 onNearPlane = cam.transform.position + dir * cam.nearClipPlane;
-                    points.Add(cam.WorldToViewportPoint(onNearPlane));
+                    Vector3 fromPointOnPlaneToPoint = quad[i] - cam.transform.position;
+
+                    float halfVert = cam.fieldOfView * Mathf.Deg2Rad * 0.5f;
+                    float halfHoriz = Mathf.Atan(Mathf.Tan(halfVert) * cam.aspect);
+
+                    Vector3 bottomNormal = Quaternion.AngleAxis(halfVert * Mathf.Rad2Deg, cam.transform.right) * -cam.transform.up;                 
+                    Vector3 topNormal = Quaternion.AngleAxis(-halfVert * Mathf.Rad2Deg, cam.transform.right) * cam.transform.up;               
+                    Vector3 leftNormal = Quaternion.AngleAxis(-halfHoriz * Mathf.Rad2Deg, cam.transform.up) * -cam.transform.right;              
+                    Vector3 rightNormal = Quaternion.AngleAxis(halfHoriz * Mathf.Rad2Deg, cam.transform.up) * cam.transform.right;
+
+                    float dr = Vector3.Dot(fromPointOnPlaneToPoint, rightNormal);
+                    float dl = Vector3.Dot(fromPointOnPlaneToPoint, leftNormal);
+                    float dt = Vector3.Dot(fromPointOnPlaneToPoint, topNormal);
+                    float db = Vector3.Dot(fromPointOnPlaneToPoint, bottomNormal);
+
+                    float l = vp.x;
+                    float r = vp.x;
+                    float t = vp.y;
+                    float b = vp.y;
+
+                    if (dr < 0f)
+                        r = 1000f;
+                    else if (dl < 0f)
+                        l = -1000f;
+                    else
+                    {
+                        r = 1000f;
+                        l = -1000f;
+                    }
+
+                    if (dt < 0f)
+                        t = 1000f;
+                    else if (db < 0f)
+                        b = -1000f;
+                    else
+                    {
+                        t = 1000f;
+                        b = -1000f;
+                    }
+
+                    vp = new Vector3(r, t);
+                    points.Add(vp);
+                    vp = new Vector3(l, b);
+                    points.Add(vp);
                 }
             }
 
-            if (points.Count == 0) return Rect.zero;
-
-            float minX = 1f, minY = 1f, maxX = 0f, maxY = 0f;
+            float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
             foreach (var p in points)
             {
-                minX = Mathf.Min(minX, Mathf.Clamp01(p.x));
-                minY = Mathf.Min(minY, Mathf.Clamp01(p.y));
-                maxX = Mathf.Max(maxX, Mathf.Clamp01(p.x));
-                maxY = Mathf.Max(maxY, Mathf.Clamp01(p.y));
+                minX = Mathf.Min(minX, p.x);
+                minY = Mathf.Min(minY, p.y);
+                maxX = Mathf.Max(maxX, p.x);
+                maxY = Mathf.Max(maxY, p.y);
             }
+
+            if (maxX < 0f || minX > 1f || maxY < 0f || minY > 1f)
+                return Rect.zero;
+
+            minX = Mathf.Clamp01(minX);
+            minY = Mathf.Clamp01(minY);
+            maxX = Mathf.Clamp01(maxX);
+            maxY = Mathf.Clamp01(maxY);
 
             return Rect.MinMaxRect(minX, minY, maxX, maxY);
         }
 
-        void FindUV(int i)
+        void SetCameraRect(Rect rect)
         {
-            uv[i] = S.Camera.WorldToViewportPoint(quad[i]);
+            Camera cam = S.Camera;
+            float origSW = cam.sensorSize.x;
+            float origSH = cam.sensorSize.y;
 
-            if (uv[i].z < 0)
-            {
-                // if (uv[i].x < 0.5)
-                //     left = 0;
-                // else
-                //     right = 1;
+            float newSW = rect.width * origSW;
+            float newSH = rect.height * origSH;
 
-                // if (uv[i].y < 0.5)
-                //     bottom = 0;
-                // else
-                //     top = 1;
-            }
-            else
-            {
-                if (uv[i].x < left)
-                    left = uv[i].x;
-                if (uv[i].x > right)
-                    right = uv[i].x;
-                if (uv[i].y > top)
-                    top = uv[i].y;
-                if (uv[i].y < bottom)
-                    bottom = uv[i].y;
-            }
+            float newLX = (0.5f - rect.x) / rect.width - 0.5f;
+            float newLY = (0.5f - rect.y) / rect.height - 0.5f;
+
+            _secondCamera.sensorSize = new Vector2(newSW, newSH);
+            _secondCamera.lensShift = new Vector2(-newLX, -newLY);
+            _secondCamera.focalLength = cam.focalLength;
         }
     }
 
@@ -324,7 +330,7 @@ public class Portal : MonoBehaviour
         if (minDistance == float.MaxValue)
             minDistance = _secondCamera.nearClipPlane;
 
-        _secondCamera.nearClipPlane = minDistance;
+        _secondCamera.nearClipPlane = minDistance * S.Camera.fieldOfView / _secondCamera.fieldOfView;
         return minDistance;
     }
 
