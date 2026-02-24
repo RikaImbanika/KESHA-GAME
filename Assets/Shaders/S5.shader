@@ -55,9 +55,9 @@ Shader "Custom/S5"
                 float2 screenUV = i.screenPos.xy / i.screenPos.w;
                 
                 // Преобразуем экранные координаты в координаты прямоугольника
-                float2 rectUV = screenUV;
-                //rectUV.x = (screenUV.x - _RectX) / _RectWidth;
-                //rectUV.y = (screenUV.y - _RectY) / _RectHeight;
+                float2 rectUV;
+                rectUV.x = (screenUV.x - _RectX) / _RectWidth;
+                rectUV.y = (screenUV.y - _RectY) / _RectHeight;
 
                 //rectUV.x = screenUV.x * _RectWidth + _RectX;
                 //rectUV.y = screenUV.y * _RectHeight + _RectY;

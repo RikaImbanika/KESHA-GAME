@@ -22,6 +22,8 @@ public class Portal : MonoBehaviour
     RenderTexture[] _rts;
     public Vector3[] _worldSecPort;
     public ushort _resolutionIndex;
+    Vector2 _sensorSize;
+    public Rect _THE_RECT;
 
     void Start()
     {
@@ -34,6 +36,10 @@ public class Portal : MonoBehaviour
 
             GameObject camObj = new GameObject("SecondPortalCamera");
             _secondCamera = camObj.AddComponent<Camera>();
+            _secondCamera.usePhysicalProperties = true;
+            _secondCamera.fieldOfView = S.Camera.fieldOfView;
+            _secondCamera.gateFit = Camera.GateFitMode.None;
+            _sensorSize = S.Camera.sensorSize;
             _secondCamera.enabled = false;
 
             MeshInit();
@@ -80,10 +86,10 @@ public class Portal : MonoBehaviour
 
         _meshFilter.mesh = mesh;
 
-        Vector3 bottomLeft = _secondPortal.transform.TransformPoint(vertices[0]);
-        Vector3 bottomRight = _secondPortal.transform.TransformPoint(vertices[1]);
-        Vector3 topLeft = _secondPortal.transform.TransformPoint(vertices[2]);
-        Vector3 topRight = _secondPortal.transform.TransformPoint(vertices[3]);
+        Vector3 bottomLeft = transform.TransformPoint(vertices[0]);
+        Vector3 bottomRight = transform.TransformPoint(vertices[1]);
+        Vector3 topLeft = transform.TransformPoint(vertices[2]);
+        Vector3 topRight = transform.TransformPoint(vertices[3]);
 
         _worldSecPort = new Vector3[]
         {
@@ -186,9 +192,8 @@ public class Portal : MonoBehaviour
         _secondCamera.transform.position = _secondPortal.transform.TransformPoint(relativePosition);
         _secondCamera.transform.rotation = _secondPortal.transform.rotation * relativeRotation;
         _secondCamera.fieldOfView = mainCam.fieldOfView;
-        _secondCamera.focalLength = mainCam.focalLength;// * _focalLengthMultiplier;
 
-        float clip = SetObliqueNearPlane();
+        SetObliqueNearPlane();
         WTH(_worldSecPort);
     }
 
@@ -196,10 +201,8 @@ public class Portal : MonoBehaviour
     {
         Vector3[] quad = (Vector3[])quad0.Clone();
 
-        Vector3 look = _secondCamera.transform.forward;
-        Vector3 c = _secondCamera.transform.position;
-
-        _secondCamera.rect = new Rect(0, 0, 1, 1);
+        //Vector3 look = _secondCamera.transform.forward;
+        //Vector3 c = _secondCamera.transform.position;
 
         //for (int i = 0; i < 4; i++)
         //    Adjust(i);
@@ -211,31 +214,68 @@ public class Portal : MonoBehaviour
         float top = 0f;
         float bottom = 1f;
 
-        for (int i = 0; i < 4; i++)
-            FindUV(i);
+        Rect r = GetVisibleRect(quad, S.Camera);
+        left = r.xMin;
+        bottom = r.yMin;
 
-        if (right > left && top > bottom)
-        {
-            left = MathF.Max(0, left);
-            right = MathF.Min(1, right);
-            bottom = MathF.Max(0, bottom);
-            top = MathF.Min(1, top);
-        }
+        float w = r.width;
+        float h = r.height;
 
-        float w = right - left;
-        float h = top - bottom;
+        //
 
-        Rect cropRect = new Rect(left, bottom, w, h);
-        _secondCamera.rect = cropRect;
+        _secondCamera.sensorSize = new Vector2(_sensorSize.x * w, _sensorSize.y * h);
+
+        float centerX = left + w / 2;
+        float centerY = bottom + h / 2;
+
+        float shiftX = (centerX - 0.5f) * 2;
+        float shiftY = (centerY - 0.5f) * 2; //
+
+        _secondCamera.lensShift = new Vector2(shiftX, shiftY);
+
+        _THE_RECT = new Rect(left, bottom, w, h);
 
         _meshRenderer.material.SetFloat("_RectX", left);
         _meshRenderer.material.SetFloat("_RectY", bottom);
         _meshRenderer.material.SetFloat("_RectWidth", w);
         _meshRenderer.material.SetFloat("_RectHeight", h);
 
+        Rect GetVisibleRect(Vector3[] corners, Camera cam)
+        {
+            List<Vector2> points = new List<Vector2>();
+
+            foreach (var corner in corners)
+            {
+                Vector3 vp = cam.WorldToViewportPoint(corner);
+
+                if (vp.z > 0)
+                    points.Add(vp);
+                else
+                {
+                    // Проецируем на ближнюю плоскость
+                    Vector3 dir = (corner - cam.transform.position).normalized;
+                    Vector3 onNearPlane = cam.transform.position + dir * cam.nearClipPlane;
+                    points.Add(cam.WorldToViewportPoint(onNearPlane));
+                }
+            }
+
+            if (points.Count == 0) return Rect.zero;
+
+            float minX = 1f, minY = 1f, maxX = 0f, maxY = 0f;
+            foreach (var p in points)
+            {
+                minX = Mathf.Min(minX, Mathf.Clamp01(p.x));
+                minY = Mathf.Min(minY, Mathf.Clamp01(p.y));
+                maxX = Mathf.Max(maxX, Mathf.Clamp01(p.x));
+                maxY = Mathf.Max(maxY, Mathf.Clamp01(p.y));
+            }
+
+            return Rect.MinMaxRect(minX, minY, maxX, maxY);
+        }
+
         void FindUV(int i)
         {
-            uv[i] = _secondCamera.WorldToViewportPoint(quad[i]);
+            uv[i] = S.Camera.WorldToViewportPoint(quad[i]);
 
             if (uv[i].z < 0)
             {
@@ -266,7 +306,7 @@ public class Portal : MonoBehaviour
     private float SetObliqueNearPlane()
     {
         float minDistance = float.MaxValue;
-        Transform cameraTransform = _secondCamera.transform;
+        Transform cameraTransform = S.Camera.transform;
 
         foreach (Vector3 point in _worldSecPort)
         {
