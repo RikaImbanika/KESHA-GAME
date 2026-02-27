@@ -12,7 +12,7 @@ public class PortalPlacer1 : MonoBehaviour
         IEnumerator LateStart()
         {
             Portal _portal = gameObject.AddComponent<Portal>();
-            _portal._rotation = Quaternion.LookRotation(new Vector3(1, 0, 0));
+            //_portal.gameObject.transform.rotation;
             _portal._sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
             _portal._otherSceneName = "Corridor";
 
@@ -24,7 +24,9 @@ public class PortalPlacer1 : MonoBehaviour
             while (!S.PortalsBase.Portals.ContainsKey("CorridorPortal"))
                 yield return new WaitForSeconds(0.033f);
 
-            _portal._secondPortal = S.PortalsBase.Portals["CorridorPortal"];
+            Transform spt = S.PortalsBase.Portals["CorridorPortal"].transform;
+            _portal._secondPortalPosition = spt.position;
+            _portal._secondPortalRotation = spt.rotation;
         }
     }
 }

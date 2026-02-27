@@ -98,12 +98,10 @@ public class Teleporter : MonoBehaviour
     public IEnumerator WaitLoad(string nextSceneName, int doorId, Vector3 dir)
     {
         while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
-            yield return new WaitForSeconds(0.2f);
-
-        PlayerMovement pm = S.Ph.GetComponent<PlayerMovement>();
+            yield return new WaitForSeconds(0.05f);
 
         Vector3 v = new Vector3(0, -1.7f, 0);
-        if (pm.isCrouching)
+        if (S.Pm.isCrouching)
             v = new Vector3(0, -3.9f, 0);
 
         var nextDoorModel = S.Loader._rooms[nextSceneName]._doors[doorId];
@@ -118,5 +116,19 @@ public class Teleporter : MonoBehaviour
         Debug.Log($"GONE TO SCENE {nextSceneName}");
 
         S.SDC.RequestCleanup();
+    }
+
+    public IEnumerator WaitLoadPortal(string nextSceneName, Vector3 dir)
+    {
+        while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
+            yield return new WaitForSeconds(0.2f);
+
+        PlayerMovement pm = S.Ph.GetComponent<PlayerMovement>();
+
+        Vector3 v = new Vector3(0, -1.7f, 0);
+        if (pm.isCrouching)
+            v = new Vector3(0, -3.9f, 0);
+
+        Debug.Log($"GONE TO SCENE {nextSceneName}");
     }
 }

@@ -267,7 +267,7 @@ public class Drone : MonoBehaviour
                 S.PS.Damage(0.7f);
             }
 
-            int speed = (int)(2 * 60f * _opti.DeltaTime);
+            int speed = (int)(28 * 60f * _opti.DeltaTime);
             if (S.RND.Next(0, speed) == 0)
             {
                 GameObject sparkle = Instantiate(S.RedSparkle);

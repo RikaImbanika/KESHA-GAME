@@ -31,11 +31,13 @@ public class Initialiser : MonoBehaviour
         S.Camera = Camera.main;
 
         S.Camera.usePhysicalProperties = true;
+        S.Camera.gateFit = Camera.GateFitMode.None;
         S.Camera.fieldOfView = 75f;
 
         yield return WaitForObjectWithTag("Player", obj => S.PObj = obj);
         S.Ph = S.PObj.transform.parent?.gameObject;
-        
+        S.Pm = S.Ph.GetComponent<PlayerMovement>();
+
         yield return StartCoroutine(GetComponentSafe<PlayerStorage>(S.Ph, playerStorage => S.Ps = playerStorage));
 
         yield return WaitForObjectWithTag("Canvas", obj => S.CanvasObj = obj);

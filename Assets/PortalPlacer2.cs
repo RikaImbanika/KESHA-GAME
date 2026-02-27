@@ -12,7 +12,7 @@ public class PortalPlacer2 : MonoBehaviour
         IEnumerator LateStart()
         {
             Portal _portal = gameObject.AddComponent<Portal>();
-            _portal._rotation = Quaternion.LookRotation(new Vector3(1, 0, 0));
+            _portal.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1));
             _portal._sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
             _portal._otherSceneName = "Income";
 
@@ -24,7 +24,9 @@ public class PortalPlacer2 : MonoBehaviour
             while (!S.PortalsBase.Portals.ContainsKey("IncomePortal"))
                 yield return new WaitForSeconds(0.033f);
 
-            _portal._secondPortal = S.PortalsBase.Portals["IncomePortal"];
+            Transform spt = S.PortalsBase.Portals["IncomePortal"].transform;
+            _portal._secondPortalPosition = spt.position;
+            _portal._secondPortalRotation = spt.rotation;
         }
     }
 }

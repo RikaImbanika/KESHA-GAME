@@ -83,32 +83,7 @@ public class Door : MonoBehaviour
 			_nextDoorId = _doorModel._nextDoorNumber;
 
 			S.Teleporter.ImportantStaticShitToDo(_nextSceneName);
-
-			List<string> loadScenesNames = new List<string>();
-			loadScenesNames.AddRange(S.Loader._map[_nextSceneName]);
-			loadScenesNames.Add(_nextSceneName); //
-
-			List<string> unloadScenesNames = new List<string>();
-			unloadScenesNames.AddRange(S.Loader._map[_sceneName]);
-			unloadScenesNames.Add(_sceneName); //?
-
-			foreach (string name in loadScenesNames)
-				if (!unloadScenesNames.Contains(name))
-				{
-					SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
-					S.Loader.PleaseLoadScene(name);
-				}
-
-			foreach (string name in unloadScenesNames)
-				if (!loadScenesNames.Contains(name))
-					try
-					{
-						SceneManager.UnloadSceneAsync(name);
-					}
-					catch (System.Exception ex)
-					{
-						Debug.LogError($"Error unloading scene {name}: {ex.Message}");
-					}
+			S.Loader.GoTo(_sceneName, _nextSceneName);
 
 			StartCoroutine(S.Teleporter.WaitLoad(_nextSceneName, _nextDoorId, transform.right));
 		}

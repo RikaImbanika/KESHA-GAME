@@ -118,6 +118,9 @@ public class PlayerMovement : MonoBehaviour
 
 		if (grounded && readyToPush)
 			_pushed = false;
+
+		S.PS._prevCamPos = S.PS._camPos;
+		S.PS._camPos = S.Camera.transform.position;
 	}
 
 	private void FixedUpdate()

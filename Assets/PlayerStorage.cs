@@ -9,7 +9,9 @@ public class PlayerStorage : MonoBehaviour
     public string _currentSceneName;
     public float _health;
     public Image _healthImage;
-    public GameObject _onDiePanel;    
+    public GameObject _onDiePanel;
+    public Vector3 _camPos;
+    public Vector3 _prevCamPos;
 
     void Start()
     {

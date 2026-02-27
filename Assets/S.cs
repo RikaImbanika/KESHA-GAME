@@ -16,6 +16,7 @@ public static class S : object
 	private static GameObject _pObj;
 	private static GameObject _ph;
 	private static PlayerStorage _ps;
+	private static PlayerMovement _playerMovement;
 	private static Canvas _canvas;
 	private static AudioManager _audioManager;
 	private static GameObject _negative;
@@ -58,6 +59,56 @@ public static class S : object
 	private static GameObject _blueHitPoint;
 	private static GameObject _redHitPoint;
 	private static PortalsBase _portalsBase;
+	private static VisibleLayers _visibleLayers;
+
+	public static VisibleLayers VisibleLayers
+	{
+		get
+		{
+			return _visibleLayers;
+		}
+		set
+		{
+			_visibleLayers = value;
+		}
+	}
+
+	public static PlayerMovement PlayerMovement
+	{
+		get
+		{
+			return _playerMovement;
+		}
+		set
+		{
+			_playerMovement = value;
+		}
+	}
+
+	public static PlayerMovement PM
+	{
+		get
+		{
+			return _playerMovement;
+		}
+		set
+		{
+			_playerMovement = value;
+		}
+	}
+
+
+	public static PlayerMovement Pm
+	{
+		get
+		{
+			return _playerMovement;
+		}
+		set
+		{
+			_playerMovement = value;
+		}
+	}
 
 	public static PortalsBase PortalsBase
 	{

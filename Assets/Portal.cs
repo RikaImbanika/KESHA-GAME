@@ -2,13 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 public class Portal : MonoBehaviour
 {
-    public Quaternion _rotation;
-    public Portal _secondPortal;
+    public Vector3 _secondPortalPosition;
+    public Quaternion _secondPortalRotation;
     public List<ItemP> _objects;
     public List<EnemyBullet> _enemyBullets;
     public string _sceneName;
@@ -21,10 +23,13 @@ public class Portal : MonoBehaviour
     public MeshFilter _meshFilter;
     public MeshRenderer _meshRenderer;
     RenderTexture[] _rts;
-    public Vector3[] _worldSecPort;
+    public Vector3[] _quad;
     public ushort _resolutionIndex;
     Vector2 _sensorSize;
-    public Rect _THE_RECT;
+    Mesh _mesh;
+
+    //All cameras has set gateFit to none
+    //And Physical.
 
     void Start()
     {
@@ -32,17 +37,10 @@ public class Portal : MonoBehaviour
 
         IEnumerator LateStart()
         {
-            while (_secondPortal == null)
+            while (_secondPortalPosition == null)
                 yield return new WaitForSeconds(0.32f);
 
-            GameObject camObj = new GameObject("SecondPortalCamera");
-            _secondCamera = camObj.AddComponent<Camera>();
-            _secondCamera.usePhysicalProperties = true;
-            _secondCamera.fieldOfView = S.Camera.fieldOfView;
-            _secondCamera.gateFit = Camera.GateFitMode.None;
-            _sensorSize = S.Camera.sensorSize;
-            _secondCamera.enabled = false;
-
+            InitSecondCamera();
             MeshInit();
             CreateQuadMesh();
             CreateMaterial();
@@ -60,10 +58,28 @@ public class Portal : MonoBehaviour
             _meshRenderer = gameObject.AddComponent<MeshRenderer>();
     }
 
+    void InitSecondCamera()
+    {
+        GameObject camObj = new GameObject("SecondPortalCamera");
+        camObj.transform.SetParent(transform, true);
+        _secondCamera = camObj.AddComponent<Camera>();
+        _secondCamera.usePhysicalProperties = true;
+        _secondCamera.fieldOfView = S.Camera.fieldOfView;
+        _secondCamera.gateFit = Camera.GateFitMode.None;
+        _sensorSize = S.Camera.sensorSize;
+        _secondCamera.enabled = false;
+        Skybox sourceSkybox = S.Camera.GetComponent<Skybox>();
+        if (sourceSkybox != null)
+        {
+            Skybox targetSkybox = _secondCamera.gameObject.AddComponent<Skybox>();
+            targetSkybox.material = sourceSkybox.material;
+        }
+    }
+
     private void CreateQuadMesh()
     {
-        Mesh mesh = new Mesh();
-        mesh.name = "quad";
+        _mesh = new Mesh();
+        _mesh.name = "quad";
 
         Vector3[] vertices = new Vector3[4];
         vertices[0] = new Vector3(-_w / 2, 0, 0);
@@ -80,31 +96,22 @@ public class Portal : MonoBehaviour
             new Vector2(1, 1)
         };
 
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.uv = uv;
-        mesh.RecalculateNormals();
+        _mesh.vertices = vertices;
+        _mesh.triangles = triangles;
+        _mesh.uv = uv;
+        _mesh.RecalculateNormals();
 
-        _meshFilter.mesh = mesh;
+        _meshFilter.mesh = _mesh;
 
-        Vector3 bottomLeft = transform.TransformPoint(vertices[0]);
-        Vector3 bottomRight = transform.TransformPoint(vertices[1]);
-        Vector3 topLeft = transform.TransformPoint(vertices[2]);
-        Vector3 topRight = transform.TransformPoint(vertices[3]);
+        _quad = new Vector3[4];
 
-        _worldSecPort = new Vector3[]
-        {
-            bottomLeft,
-            bottomRight,
-            topLeft,
-            topRight
-        };
+        UpdateQuad();
     }
 
     private void CreateMaterial()
     {
         _rts = new RenderTexture[6];
-        //_rts[0] = new RenderTexture(1280, 720, 24); // 100% (исходное)
+   
         _rts[0] = new RenderTexture(1280, 720, 24); // 100% (исходное)
         _rts[0].Create();
 
@@ -137,20 +144,61 @@ public class Portal : MonoBehaviour
 
     void Update()
     {
-        if (_secondPortal == null) return;
+        if (_secondPortalPosition == null) return;
         if (_secondCamera == null) return;
 
         if (S.PS._currentSceneName == _sceneName)
         {
+            UpdateQuad();
             _secondCamera.enabled = true;
             _meshRenderer.enabled = true;
             UpdateResolution();
             PlaceSecondCamera();
+            CheckTeleports();
         }
         else
         {
             _secondCamera.enabled = false;
             _meshRenderer.enabled = false;
+        }
+    }
+
+    private void UpdateQuad()
+    {
+        _quad[0] = transform.TransformPoint(_mesh.vertices[0]);
+        _quad[1] = transform.TransformPoint(_mesh.vertices[1]);
+        _quad[2] = transform.TransformPoint(_mesh.vertices[2]);
+        _quad[3] = transform.TransformPoint(_mesh.vertices[3]);
+    }
+
+    private void CheckTeleports()
+    {
+        if (S.PS._currentSceneName == _sceneName)
+        {
+            Vector3 a = S.PS._prevCamPos;
+            Vector3 b = S.PS._camPos;
+            Vector3 dir = b - a;
+            Vector3 c = b + dir;
+
+            if (SegmentIntersectingRectangle(a, c, _quad[0], _quad[1], _quad[2], _quad[3]))
+            {
+                S.PS._currentSceneName = _otherSceneName;
+                S.SaveManager.CurrentSave.SaveString("sceneName", _otherSceneName);
+
+                Vector3 relativePosition = transform.InverseTransformPoint(S.Ph.transform.position + dir);
+                Quaternion relativeRotation = Quaternion.Inverse(transform.rotation) * S.Ph.transform.rotation;
+
+                S.Ph.transform.position = _secondPortalPosition + _secondPortalRotation * relativePosition;
+                S.Ph.transform.rotation = _secondPortalRotation * relativeRotation;
+                
+                S.PS._prevCamPos = c;
+                S.PS._camPos = c;
+
+                S.Teleporter.ImportantStaticShitToDo(_otherSceneName);
+                S.Loader.GoTo(_sceneName, _otherSceneName);
+
+                S.SDC.RequestCleanup();
+            }
         }
     }
 
@@ -173,12 +221,12 @@ public class Portal : MonoBehaviour
         else
             resId = 5;
 
-        resId = 0; ///////////////
+            //
 
         if (resId != _resolutionIndex)
         {
             _meshRenderer.material.mainTexture = _rts[resId];
-            _secondCamera.targetTexture = _rts[resId]; //
+            _secondCamera.targetTexture = _rts[resId];
             _resolutionIndex = resId;
         }
     }
@@ -190,12 +238,11 @@ public class Portal : MonoBehaviour
         Vector3 relativePosition = transform.InverseTransformPoint(mainCam.transform.position);
         Quaternion relativeRotation = Quaternion.Inverse(transform.rotation) * mainCam.transform.rotation;
 
-        _secondCamera.transform.position = _secondPortal.transform.TransformPoint(relativePosition);
-        _secondCamera.transform.rotation = _secondPortal.transform.rotation * relativeRotation;
-        _secondCamera.fieldOfView = mainCam.fieldOfView;
+        _secondCamera.transform.position = _secondPortalPosition + _secondPortalRotation * relativePosition;
+        _secondCamera.transform.rotation = _secondPortalRotation * relativeRotation;
 
+        WTH(_quad);
         SetObliqueNearPlane();
-        WTH(_worldSecPort);
     }
 
     private void WTH(Vector3[] quad0)
@@ -204,7 +251,7 @@ public class Portal : MonoBehaviour
 
         Rect r = GetVisibleRect(quad, S.Camera);
 
-        SetCameraRect(r);      
+        SetCameraRect(r);
 
         _meshRenderer.material.SetFloat("_RectX", r.xMin);
         _meshRenderer.material.SetFloat("_RectY", r.yMin);
@@ -215,69 +262,44 @@ public class Portal : MonoBehaviour
         {
             List<Vector2> points = new List<Vector2>();
 
+            Vector3 planePoint = cam.transform.position + cam.transform.forward * cam.nearClipPlane;
+
+            Vector3[] vps = new Vector3[4];
+
             for (int i = 0; i < quad.Length; i++)
-            {
-                Vector3 vp = cam.WorldToViewportPoint(quad[i]);
-                if (vp.z >= 0)
-                {
-                    points.Add(vp);
-                }
+                vps[i] = cam.WorldToViewportPoint(quad[i]);
+
+            for (int i = 0; i < quad.Length; i++)
+                if (vps[i].z > 0)
+                    points.Add(vps[i]);
                 else
                 {
-                    Vector3 fromPointOnPlaneToPoint = quad[i] - cam.transform.position;
+                    int prev = i - 1;
+                    if (prev < 0)
+                        prev = 3;
+                    int next = i + 1;
+                    if (next > 3)
+                        next = 0;
 
-                    float halfVert = cam.fieldOfView * Mathf.Deg2Rad * 0.5f;
-                    float halfHoriz = Mathf.Atan(Mathf.Tan(halfVert) * cam.aspect);
-
-                    Vector3 bottomNormal = Quaternion.AngleAxis(halfVert * Mathf.Rad2Deg, cam.transform.right) * -cam.transform.up;                 
-                    Vector3 topNormal = Quaternion.AngleAxis(-halfVert * Mathf.Rad2Deg, cam.transform.right) * cam.transform.up;               
-                    Vector3 leftNormal = Quaternion.AngleAxis(-halfHoriz * Mathf.Rad2Deg, cam.transform.up) * -cam.transform.right;              
-                    Vector3 rightNormal = Quaternion.AngleAxis(halfHoriz * Mathf.Rad2Deg, cam.transform.up) * cam.transform.right;
-
-                    float dr = Vector3.Dot(fromPointOnPlaneToPoint, rightNormal);
-                    float dl = Vector3.Dot(fromPointOnPlaneToPoint, leftNormal);
-                    float dt = Vector3.Dot(fromPointOnPlaneToPoint, topNormal);
-                    float db = Vector3.Dot(fromPointOnPlaneToPoint, bottomNormal);
-
-                    float l = vp.x;
-                    float r = vp.x;
-                    float t = vp.y;
-                    float b = vp.y;
-
-                    if (dr < 0f)
-                        r = 1000f;
-                    else if (dl < 0f)
-                        l = -1000f;
-                    else
+                    if (vps[prev].z > 0)
                     {
-                        r = 1000f;
-                        l = -1000f;
+                        Vector3 p1 = IntersectSegmentPlane(quad[i], quad[prev], planePoint, cam.transform.forward);
+                        points.Add(cam.WorldToViewportPoint(p1));
                     }
-
-                    if (dt < 0f)
-                        t = 1000f;
-                    else if (db < 0f)
-                        b = -1000f;
-                    else
+                    if (vps[next].z > 0)
                     {
-                        t = 1000f;
-                        b = -1000f;
+                        Vector3 p2 = IntersectSegmentPlane(quad[i], quad[next], planePoint, cam.transform.forward);
+                        points.Add(cam.WorldToViewportPoint(p2));
                     }
-
-                    vp = new Vector3(r, t);
-                    points.Add(vp);
-                    vp = new Vector3(l, b);
-                    points.Add(vp);
                 }
-            }
 
             float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
-            foreach (var p in points)
+            foreach (var pp in points)
             {
-                minX = Mathf.Min(minX, p.x);
-                minY = Mathf.Min(minY, p.y);
-                maxX = Mathf.Max(maxX, p.x);
-                maxY = Mathf.Max(maxY, p.y);
+                minX = Mathf.Min(minX, pp.x);
+                minY = Mathf.Min(minY, pp.y);
+                maxX = Mathf.Max(maxX, pp.x);
+                maxY = Mathf.Max(maxY, pp.y);
             }
 
             if (maxX < 0f || minX > 1f || maxY < 0f || minY > 1f)
@@ -314,7 +336,7 @@ public class Portal : MonoBehaviour
         float minDistance = float.MaxValue;
         Transform cameraTransform = S.Camera.transform;
 
-        foreach (Vector3 point in _worldSecPort)
+        foreach (Vector3 point in _quad)
         {
             Vector3 directionToPoint = point - cameraTransform.position;
 
@@ -330,8 +352,75 @@ public class Portal : MonoBehaviour
         if (minDistance == float.MaxValue)
             minDistance = _secondCamera.nearClipPlane;
 
-        _secondCamera.nearClipPlane = minDistance * S.Camera.fieldOfView / _secondCamera.fieldOfView;
+        _secondCamera.nearClipPlane = minDistance;// * S.Camera.fieldOfView / _secondCamera.fieldOfView;
         return minDistance;
+    }
+
+    public Vector3 IntersectSegmentPlane(Vector3 a, Vector3 b, Vector3 planePoint, Vector3 planeNormal)
+    {
+        Vector3 direction = b - a;
+        float denominator = Vector3.Dot(planeNormal, direction);
+
+        float t = Vector3.Dot(planeNormal, planePoint - a) / denominator;
+        return a + t * direction;
+    }
+
+    bool SegmentIntersectingRectangle(Vector3 segA, Vector3 segB,
+                                       Vector3 rect0, Vector3 rect1, Vector3 rect2, Vector3 rect3)
+    {
+        Plane plane = new Plane(rect0, rect1, rect2);
+
+        Vector3 intersectionPoint;
+        float epsilon = 1e-6f;
+
+        float distA = plane.GetDistanceToPoint(segA);
+        float distB = plane.GetDistanceToPoint(segB);
+
+        if (Mathf.Abs(distA) < epsilon && Mathf.Abs(distB) < epsilon)
+            intersectionPoint = (segA + segB) * 0.5f;
+
+        if (distA * distB > epsilon)
+            return false;
+
+        float t = distA / (distA - distB);
+
+        if (t < -epsilon || t > 1 + epsilon)
+            return false;
+
+        intersectionPoint = segA + t * (segB - segA);
+
+        return IsPointInRectangle(intersectionPoint);
+    }
+
+    public Vector2 WorldToPlaneCoordinates(Vector3 point, Vector3 center, Vector3 normal, Vector3 up, Vector3 right)
+    {
+        Vector3 offset = point - center;
+
+        float normalComponent = Vector3.Dot(offset, normal);
+        Vector3 onPlane = offset - normalComponent * normal;
+
+        float x = Vector3.Dot(onPlane, right);
+        float y = Vector3.Dot(onPlane, up);
+
+        return new Vector2(x, y);
+    }
+
+    bool IsPointInRectangle(Vector3 point)
+    {
+        Vector2 cd = WorldToPlaneCoordinates(point, transform.position, transform.forward, transform.up, transform.right);
+            return cd.y > 0 && cd.y < _h && cd.x < _w / 2 && cd.x > -_w / 2;
+    }
+
+    void OnDestroy()
+    {
+        if (_rts != null)
+        {
+            foreach (var rt in _rts)
+            {
+                if (rt != null)
+                    rt.Release();
+            }
+        }
     }
 
 #if UNITY_EDITOR

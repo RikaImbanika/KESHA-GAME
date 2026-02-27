@@ -21,7 +21,7 @@ public class Loader : MonoBehaviour
     void WaitLoad()
     {
         StartCoroutine(MT());
-        
+
         IEnumerator MT()
         {
             S.Loader = this;
@@ -76,6 +76,35 @@ public class Loader : MonoBehaviour
         }
     }
 
+    public void GoTo(string sceneName, string nextSceneName)
+    {
+        List<string> loadScenesNames = new List<string>();
+        loadScenesNames.AddRange(S.Loader._map[nextSceneName]);
+        loadScenesNames.Add(nextSceneName); //
+
+        List<string> unloadScenesNames = new List<string>();
+        unloadScenesNames.AddRange(S.Loader._map[sceneName]);
+        unloadScenesNames.Add(sceneName); //?
+
+        foreach (string name in loadScenesNames)
+            if (!unloadScenesNames.Contains(name))
+            {
+                SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
+                S.Loader.PleaseLoadScene(name);
+            }
+
+        foreach (string name in unloadScenesNames)
+            if (!loadScenesNames.Contains(name))
+                try
+                {
+                    SceneManager.UnloadSceneAsync(name);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"Error unloading scene {name}: {ex.Message}");
+                }
+    }
+
     public void InitMap()
     {
         _map = new Dictionary<string, List<string>>();
@@ -89,7 +118,7 @@ public class Loader : MonoBehaviour
         AddValue("Hall", "Corridor", 1, 2);
         AddValue("Hall", "BR 1", 2, 1);
         AddValue("Hall", "TL 0", 3, 1);
-        AddValue("Hall", "MR 2", 4, 1);
+        AddValue("Hall", "MR 1", 4, 1);
 
         AddValue("MR 1", "Hall", 1, 4);
         AddValue("MR 1", "MR 2", 2, 1);
@@ -182,22 +211,22 @@ public class Loader : MonoBehaviour
             Debug.LogError($"Sorre, scene {sceneName} already in queue.");
     }
 
-    public void AddValue(string key, string nextSceneName, int doorId1, int doorId2)
+    public void AddValue(string sceneName, string nextSceneName, int doorId1, int doorId2)
     {
-        if (!_map.ContainsKey(key))
-            _map.Add(key, new List<string>());
+        if (!_map.ContainsKey(sceneName))
+            _map.Add(sceneName, new List<string>());
 
-        if (!_map[key].Contains(nextSceneName))
-            _map[key].Add(nextSceneName);
+        if (!_map[sceneName].Contains(nextSceneName))
+            _map[sceneName].Add(nextSceneName);
 
-        if (!_rooms.ContainsKey(key))
-            _rooms.Add(key, new RoomModel(key));
+        if (!_rooms.ContainsKey(sceneName))
+            _rooms.Add(sceneName, new RoomModel(sceneName));
 
-        if (!_rooms[key]._doors.ContainsKey(doorId1))
-            _rooms[key]._doors.Add(doorId1, new DoorModel());
+        if (!_rooms[sceneName]._doors.ContainsKey(doorId1))
+            _rooms[sceneName]._doors.Add(doorId1, new DoorModel());
 
-        _rooms[key]._doors[doorId1]._nextDoorNumber = doorId2;
-        _rooms[key]._doors[doorId1]._nextSceneName = nextSceneName;
+        _rooms[sceneName]._doors[doorId1]._nextDoorNumber = doorId2;
+        _rooms[sceneName]._doors[doorId1]._nextSceneName = nextSceneName;
     }
 
     private void AddictiveLoadAsync()
