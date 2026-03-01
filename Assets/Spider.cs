@@ -58,7 +58,7 @@ public class Spider : MonoBehaviour
         _lasersOffset = new Vector3(0, 6, 0);
 
         _opti = new Optimiser(gameObject.scene.name);
-        _opti.MinFps = 1 / 24f;
+        _opti.MaxPeriodForDistance = 1 / 24f;
 
         _laserCooldown = 0.3f;
         _fireCooldown = 0.7f;
@@ -346,11 +346,9 @@ public class Spider : MonoBehaviour
             if (_nextFireTime <= 0)
             {
                 _nextFireTime = _fireCooldown;
-                GameObject bullet = Instantiate(S.EnemyBullet);
-                bullet.transform.position = gameObject.transform.position + new Vector3(0, 6, 0);
-                //bullet.transform.LookAt(S.Camera.transform.position);
-                //If I will make it sniper
-                bullet.transform.Rotate(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(-30f, 30));
+                Quaternion rotation = Quaternion.Euler(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(-30f, 30));
+                GameObject bullet = Instantiate(S.EnemyBullet, gameObject.transform.position + new Vector3(0, 6, 0), rotation, S.Loader.Roots[_sceneName]);
+
                 EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
                 eb._active = true;
                 eb._speed = 30;

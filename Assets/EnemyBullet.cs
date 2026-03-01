@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemyBullet : MonoBehaviour
 {
@@ -10,11 +11,13 @@ public class EnemyBullet : MonoBehaviour
     private int _layerMask;
 
     private Optimiser _opti;
+    private string _sceneName;
     
     void Start()
     {
-        _opti = new Optimiser(gameObject.scene.name);
-        _opti.MinFps = 1 / 24f;
+        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+        _opti = new Optimiser(_sceneName);
+        _opti.MaxPeriodForDistance = 1 / 12f;
         
         _layerMask = 1 << LayerMask.NameToLayer("Player") |
                  1 << LayerMask.NameToLayer("Static") |

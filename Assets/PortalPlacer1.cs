@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,22 +12,28 @@ public class PortalPlacer1 : MonoBehaviour
 
         IEnumerator LateStart()
         {
+            float ang = S.RND.Next(360);
+            transform.Rotate(0, ang, 0);
+
             Portal _portal = gameObject.AddComponent<Portal>();
-            //_portal.gameObject.transform.rotation;
             _portal._sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-            _portal._otherSceneName = "Corridor";
+            string otn = "Corridor";
+            _portal._secondSceneName = otn;
+            _portal._id = S.ID(gameObject);
+
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 20f))
+                transform.position = hit.point;
 
             while (S.PortalsBase == null)
                 yield return new WaitForSeconds(0.025f);
 
-            S.PortalsBase.Portals["IncomePortal"] = _portal;
+            S.PortalsBase.AddPortal(_portal._sceneName, _portal._id, _portal);
+            S.PortalsBase.AddFreePort(_portal._sceneName, _portal._id);
 
-            while (!S.PortalsBase.Portals.ContainsKey("CorridorPortal"))
-                yield return new WaitForSeconds(0.033f);
-
-            Transform spt = S.PortalsBase.Portals["CorridorPortal"].transform;
-            _portal._secondPortalPosition = spt.position;
-            _portal._secondPortalRotation = spt.rotation;
+            var enumerator = S.PortalsBase.TakeFreePort(_portal._sceneName, _portal._id, otn);
+            yield return enumerator;
+            _portal._secondPortalId = (string)enumerator.Current;
         }
     }
 }

@@ -36,7 +36,6 @@ public class PlayerCamScript : MonoBehaviour
 
                     yRotation = Mathf.Clamp(yRotation, -90f, 90f);
 
-                    transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
                     orientation.rotation = Quaternion.Euler(yRotation, xRotation, 0);
                 }
     }

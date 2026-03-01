@@ -82,14 +82,25 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Start()
 	{
-		rb = GetComponent<Rigidbody>();
-		rb.freezeRotation = true;
-		readyToJump = true;
-		readyToPush = true;
+		StartCoroutine(LateStart());
+
+		IEnumerator LateStart()
+		{
+			while (S.PS == null)
+				yield return new WaitForSeconds(0.1f);
+
+			rb = GetComponent<Rigidbody>();
+			rb.freezeRotation = true;
+			readyToJump = true;
+			readyToPush = true;
+		}
 	}
 
 	private void Update()
 	{
+		if (S.PS == null)
+			return;
+
 		MyInput();
 		GetSpeed();
 		CutSpeed();
@@ -125,6 +136,12 @@ public class PlayerMovement : MonoBehaviour
 
 	private void FixedUpdate()
 	{
+		//This is bad!
+		//////////////////////////////////////
+
+		if (S.PS == null)
+			return;
+
 		MovePlayer();
 		Crouch();
 		Gravity();

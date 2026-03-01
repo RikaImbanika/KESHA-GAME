@@ -38,6 +38,11 @@ public class Initialiser : MonoBehaviour
         S.Ph = S.PObj.transform.parent?.gameObject;
         S.Pm = S.Ph.GetComponent<PlayerMovement>();
 
+        GameObject fp = Instantiate(Prefabs.Get("FakePlayer"));
+        S.FakePlayerScene = "Start";
+        S.FakePlayer = fp.transform;
+        S.FakePlayerCamera = fp.transform.GetChild(0);
+
         yield return StartCoroutine(GetComponentSafe<PlayerStorage>(S.Ph, playerStorage => S.Ps = playerStorage));
 
         yield return WaitForObjectWithTag("Canvas", obj => S.CanvasObj = obj);

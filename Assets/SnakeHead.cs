@@ -66,7 +66,9 @@ public class SnakeHead : MonoBehaviour
             1 << LayerMask.NameToLayer("Default");
 
         _opti = new Optimiser(_sceneName);
-        _opti.MinFps = 1 / 16f;
+        _opti.MaxPeriodForDistance = 1 / 24f;
+        _opti.MaxPeriodForRotation = 1 / 60f;
+        _opti.MaxPeriodForScene = 2f;
 
         _aims = new List<Vector3>();
         _savedPositions = new List<Vector3>() { transform.position };
@@ -366,7 +368,7 @@ public class SnakeHead : MonoBehaviour
                     Quaternion xRot = Quaternion.Euler(_rotationSpeed * _walk, 0, 0);
                     _bodies[c].BallInBall.transform.localRotation = xRot;
 
-                    _bodies[c].Drone.Work(_walk); ///CheckMe?
+                    _bodies[c].Drone.Work(_walk, _dWalk);
 
                     if (!_seePlayer)
                         if (SeePlayer(_clones[c].transform.position))

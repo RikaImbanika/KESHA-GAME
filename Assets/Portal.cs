@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
@@ -9,17 +10,19 @@ using UnityEngine.SceneManagement;
 
 public class Portal : MonoBehaviour
 {
+    public string _id;
+    public string _secondPortalId;
     public Vector3 _secondPortalPosition;
-    public Quaternion _secondPortalRotation;
+    public Quaternion _secondPortalRotation; //
+    public string _sceneName;
+    public string _secondSceneName;
     public List<ItemP> _objects;
     public List<EnemyBullet> _enemyBullets;
-    public string _sceneName;
-    public string _otherSceneName;
     public Camera _secondCamera;
     private Material _material;
     private RenderTexture _secondCameraRenTex;
-    public float _w = 2.5f;
-    public float _h = 5f;
+    public float _w = 3f;
+    public float _h = 6f;
     public MeshFilter _meshFilter;
     public MeshRenderer _meshRenderer;
     RenderTexture[] _rts;
@@ -27,6 +30,10 @@ public class Portal : MonoBehaviour
     public ushort _resolutionIndex;
     Vector2 _sensorSize;
     Mesh _mesh;
+    bool _initialised;
+    bool _isTeleporting;
+    bool _fixerStarted;
+    private int _layerMaskForPlayer;
 
     //All cameras has set gateFit to none
     //And Physical.
@@ -37,19 +44,54 @@ public class Portal : MonoBehaviour
 
         IEnumerator LateStart()
         {
-            while (_secondPortalPosition == null)
+            while (string.IsNullOrEmpty(_secondPortalId))
                 yield return new WaitForSeconds(0.32f);
 
+            while (!S.PortalsBase.Portals.ContainsKey(_secondSceneName))
+                yield return new WaitForSeconds(0.32f);
+
+            while (!S.PortalsBase.Portals[_secondSceneName].ContainsKey(_secondPortalId))
+                yield return new WaitForSeconds(0.32f);
+
+            while (S.PortalsBase.Portals[_secondSceneName][_secondPortalId] == null)
+                yield return new WaitForSeconds(0.32f);
+
+            InitLayerMask();
             InitSecondCamera();
             MeshInit();
             CreateQuadMesh();
             CreateMaterial();
+            _initialised = true;
         }
+
+        void InitLayerMask()
+        {
+            _layerMaskForPlayer = 1 << LayerMask.NameToLayer("Player") |
+                1 << LayerMask.NameToLayer("Static") |
+                1 << LayerMask.NameToLayer("Items") |
+                1 << LayerMask.NameToLayer("Default");
+        }
+    }
+
+    private bool UpdateSecondPortalParams()
+    {
+        if (!S.PortalsBase.Portals.ContainsKey(_secondSceneName))
+            return false;
+        if (!S.PortalsBase.Portals[_secondSceneName].ContainsKey(_secondPortalId))
+            return false;
+        if (S.PortalsBase.Portals[_secondSceneName][_secondPortalId] == null)
+            return false;
+
+        Transform secPortTrans = S.PortalsBase.Portals[_secondSceneName][_secondPortalId].transform;
+        _secondPortalPosition = secPortTrans.position;
+        _secondPortalRotation = secPortTrans.rotation;
+
+        return true;
     }
 
     private void MeshInit()
     {
-        _meshFilter = gameObject.AddComponent<MeshFilter>();
+        _meshFilter = gameObject.GetComponent<MeshFilter>();
         if (_meshFilter == null)
             _meshFilter = gameObject.AddComponent<MeshFilter>();
 
@@ -68,6 +110,7 @@ public class Portal : MonoBehaviour
         _secondCamera.gateFit = Camera.GateFitMode.None;
         _sensorSize = S.Camera.sensorSize;
         _secondCamera.enabled = false;
+        _secondCamera.farClipPlane = S.Camera.farClipPlane;
         Skybox sourceSkybox = S.Camera.GetComponent<Skybox>();
         if (sourceSkybox != null)
         {
@@ -84,16 +127,17 @@ public class Portal : MonoBehaviour
         Vector3[] vertices = new Vector3[4];
         vertices[0] = new Vector3(-_w / 2, 0, 0);
         vertices[1] = new Vector3(_w / 2, 0, 0);
-        vertices[2] = new Vector3(-_w / 2, _h, 0);
-        vertices[3] = new Vector3(_w / 2, _h, 0);
+        vertices[2] = new Vector3(_w / 2, _h, 0);
+        vertices[3] = new Vector3(-_w / 2, _h, 0);
 
-        int[] triangles = new int[] { 0, 1, 2, 2, 1, 3 };
+
+        int[] triangles = new int[] { 0, 1, 2, 2, 0, 3 };
         Vector2[] uv = new Vector2[4]
         {
             new Vector2(0, 0),
             new Vector2(1, 0),
-            new Vector2(0, 1),
-            new Vector2(1, 1)
+            new Vector2(1, 1),
+            new Vector2(0, 1)
         };
 
         _mesh.vertices = vertices;
@@ -134,7 +178,7 @@ public class Portal : MonoBehaviour
 
         _secondCamera.targetTexture = _rts[_resolutionIndex]; //
 
-        _material = new Material(Shader.Find("Custom/S5"));
+        _material = new Material(Resources.Load<Shader>("Shaders/PortalShader"));
         _material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
 
         _material.mainTexture = _rts[_resolutionIndex];
@@ -144,19 +188,39 @@ public class Portal : MonoBehaviour
 
     void Update()
     {
-        if (_secondPortalPosition == null) return;
-        if (_secondCamera == null) return;
+        if (!_initialised || string.IsNullOrEmpty(_secondSceneName))
+            return;
 
-        if (S.PS._currentSceneName == _sceneName)
+        if (!S.PortalsBase.Portals.ContainsKey(_secondSceneName))
+            return;
+
+        if (!S.PortalsBase.Portals[_secondSceneName].ContainsKey(_secondPortalId))
+            return;
+
+        if (S.PortalsBase.Portals[_secondSceneName][_secondPortalId] == null)
+            return;
+
+        if (S.PS._currentSceneName == _sceneName && UpdateSecondPortalParams())
         {
+            PutFakePlayer();
             UpdateQuad();
-            _secondCamera.enabled = true;
-            _meshRenderer.enabled = true;
+            EnableCamera();
             UpdateResolution();
             PlaceSecondCamera();
             CheckTeleports();
         }
         else
+        {
+            DisableCamera();
+        }
+
+        void EnableCamera()
+        {
+            _secondCamera.enabled = true;
+            _meshRenderer.enabled = true;
+        }
+
+        void DisableCamera()
         {
             _secondCamera.enabled = false;
             _meshRenderer.enabled = false;
@@ -171,6 +235,37 @@ public class Portal : MonoBehaviour
         _quad[3] = transform.TransformPoint(_mesh.vertices[3]);
     }
 
+    private void PutFakePlayer()
+    {
+        //Player already in scene when we here
+        S.PortalToPlayerDistance = Math.Clamp(S.PortalToPlayerDistance * 1.2f, 0.05f, 10000f);
+
+        Vector3 center = new Vector3(transform.position.x, transform.position.y + _h / 2, transform.position.z);
+        Vector3 toPlayer = S.Camera.transform.position - center;
+        Ray ray = new Ray(transform.position, toPlayer);
+        RaycastHit hit;
+        Physics.Raycast(ray, out hit, _layerMaskForPlayer);
+
+        bool see = hit.collider.gameObject.tag == "Player";
+
+        float distance = toPlayer.magnitude;
+
+        if (see || distance < _h * 3f)
+        {
+            if (distance < S.PortalToPlayerDistance)
+            {
+                //Debug.Log($"Dist: {distance}, SPS: {_secondSceneName}");
+
+                S.FakePlayerLastUpdated = Time.time;
+                S.PortalToPlayerDistance = distance;
+                S.FakePlayerScene = _secondSceneName;
+                S.FakePlayer.position = SecondPortal.transform.position + new Vector3(0, _h / 2, 0);
+
+                S.FakePlayerCamera.rotation = _secondCamera.transform.rotation;
+            }
+        }
+    }
+
     private void CheckTeleports()
     {
         if (S.PS._currentSceneName == _sceneName)
@@ -182,23 +277,94 @@ public class Portal : MonoBehaviour
 
             if (SegmentIntersectingRectangle(a, c, _quad[0], _quad[1], _quad[2], _quad[3]))
             {
-                S.PS._currentSceneName = _otherSceneName;
-                S.SaveManager.CurrentSave.SaveString("sceneName", _otherSceneName);
+                if (S.PortalsBase.Portals[_secondSceneName][_secondPortalId]._isTeleporting)
+                {
+                    // S.Ph.transform.position = a;
+                    // S.PS._camPos = a;
+                    // S.PS._camPos = S.PS._prevCamPos = a;
+                    return;
+                }
+                if (_isTeleporting)
+                {
+                    // S.Ph.transform.position = a;
+                    // S.PS._camPos = a;
+                    // S.PS._camPos = S.PS._prevCamPos = a;
+                    return;
+                }
+                _isTeleporting = true;
 
-                Vector3 relativePosition = transform.InverseTransformPoint(S.Ph.transform.position + dir);
-                Quaternion relativeRotation = Quaternion.Inverse(transform.rotation) * S.Ph.transform.rotation;
+                S.PS._currentSceneName = _secondSceneName;
+                S.SaveManager.CurrentSave.SaveString("sceneName", _secondSceneName);
 
-                S.Ph.transform.position = _secondPortalPosition + _secondPortalRotation * relativePosition;
-                S.Ph.transform.rotation = _secondPortalRotation * relativeRotation;
-                
-                S.PS._prevCamPos = c;
-                S.PS._camPos = c;
+                S.Ph.transform.position += dir;
 
-                S.Teleporter.ImportantStaticShitToDo(_otherSceneName);
-                S.Loader.GoTo(_sceneName, _otherSceneName);
+                Vector3 localPos = Quaternion.Inverse(transform.rotation) * (S.Ph.transform.position - transform.position);
+                Vector3 newWorldPos = SecondPortal.transform.position + SecondPortal.transform.rotation * localPos;
+                S.Ph.transform.position = newWorldPos;
+
+                Vector3 oldForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+                Vector3 newForward = Vector3.ProjectOnPlane(SecondPortal.transform.forward, Vector3.up).normalized;
+
+                float angle = Vector3.SignedAngle(oldForward, newForward, Vector3.up);
+                S.PlayerCamScript.Rotate(angle);
+
+                S.PS._prevCamPos = S.Camera.transform.position;
+                S.PS._camPos = S.PS._prevCamPos;
+
+                Debug.LogError($"Going To {_secondSceneName}... #1");
+
+                S.Teleporter.ImportantStaticShitToDo(_secondSceneName);
+
+                Debug.LogError($"Going To {_secondSceneName}... #2");
+
+                S.Loader.GoTo(_sceneName, _secondSceneName);
+
+                Debug.LogError($"Going To {_secondSceneName}... #3");
 
                 S.SDC.RequestCleanup();
+
+                Debug.LogError($"Gone To {_secondSceneName}!");
+
+                StartCoroutine(Fixer());
             }
+            _isTeleporting = false;
+        }
+
+        IEnumerator Fixer()
+        {
+            if (_fixerStarted)
+                yield break;
+
+            _fixerStarted = true;
+
+            while (_isTeleporting || SecondPortal._isTeleporting)
+                yield return new WaitForSeconds(0.333f);
+
+            yield return new WaitForSeconds(0.5f);
+
+            float a = (S.Camera.transform.position - transform.position).magnitude;
+            float b = (S.Camera.transform.position - S.PortalsBase.Portals[_secondSceneName][_secondPortalId].transform.position).magnitude;
+
+            if (a < b)
+            {
+                S.PS._currentSceneName = _sceneName;
+                S.SaveManager.CurrentSave.SaveString("sceneName", _sceneName);
+            }
+            else
+            {
+                S.PS._currentSceneName = _secondSceneName;
+                S.SaveManager.CurrentSave.SaveString("sceneName", _secondSceneName);
+            }
+
+            _fixerStarted = false;
+        }
+    }
+
+    Portal SecondPortal
+    {
+        get
+        {
+            return S.PortalsBase.Portals[_secondSceneName][_secondPortalId];
         }
     }
 
@@ -262,7 +428,7 @@ public class Portal : MonoBehaviour
         {
             List<Vector2> points = new List<Vector2>();
 
-            Vector3 planePoint = cam.transform.position + cam.transform.forward * cam.nearClipPlane;
+            Vector3 planePoint = cam.transform.position + cam.transform.forward * _secondCamera.nearClipPlane;
 
             Vector3[] vps = new Vector3[4];
 
@@ -296,6 +462,8 @@ public class Portal : MonoBehaviour
             float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
             foreach (var pp in points)
             {
+                Vector3 worldPos = S.Camera.ScreenToWorldPoint((Vector3)pp + Vector3.forward);
+
                 minX = Mathf.Min(minX, pp.x);
                 minY = Mathf.Min(minY, pp.y);
                 maxX = Mathf.Max(maxX, pp.x);
@@ -351,6 +519,11 @@ public class Portal : MonoBehaviour
 
         if (minDistance == float.MaxValue)
             minDistance = _secondCamera.nearClipPlane;
+
+        if (minDistance < 0.05f)
+            S.Camera.nearClipPlane = minDistance;
+        else
+            S.Camera.nearClipPlane = 0.05f;
 
         _secondCamera.nearClipPlane = minDistance;// * S.Camera.fieldOfView / _secondCamera.fieldOfView;
         return minDistance;
@@ -433,7 +606,7 @@ public class Portal : MonoBehaviour
         Vector3 topLeft = new Vector3(-_w / 2, _h, 0);
         Vector3 topRight = new Vector3(_w / 2, _h, 0);
         Vector3 center = new Vector3(0, _h / 2, 0);
-        Vector3 forward = center + transform.forward;
+        Vector3 forward = center + new Vector3(0, 0, _w);
 
         bottomLeft = transform.TransformPoint(bottomLeft);
         bottomRight = transform.TransformPoint(bottomRight);

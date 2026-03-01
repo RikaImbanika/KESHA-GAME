@@ -16,6 +16,8 @@ public class PlayerStorage : MonoBehaviour
     void Start()
     {
         _health = 100f; /////////
+        _camPos = new Vector3(0, 0, 0);
+        _prevCamPos = new Vector3(0, 0, 0);
     }
 
     public void Damage(float amount)

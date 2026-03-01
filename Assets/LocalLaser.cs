@@ -44,7 +44,7 @@ public class LocalLaser : MonoBehaviour
     void Start()
     {
         _opti = new Optimiser(gameObject.scene.name);
-        _opti.MinFps = 1 / 24f;
+        _opti.MaxPeriodForDistance = 1 / 24f;
         
         _period = (_forwardTime + _backwardTime + _forwardPause + _backwardPause);
         _frequency = 2 * MathF.PI / _period;

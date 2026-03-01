@@ -11,11 +11,37 @@ public class Loader : MonoBehaviour
     public Dictionary<string, List<string>> _map;
     private List<string> _scenesToLoad;
     private bool _workingOnIt;
+    private Dictionary<string, Transform> _sceneRoots;
 
     public void Start()
     {
+        _sceneRoots = new Dictionary<string, Transform>();
         _scenesToLoad = new List<string>();
         WaitLoad();
+    }
+
+    public Dictionary<string, Transform> Roots
+    {
+        get
+        {
+            return _sceneRoots;
+        }
+        set
+        {
+            _sceneRoots = value;
+        }
+    }
+
+    public Dictionary<string, Transform> SceneRoots
+    {
+        get
+        {
+            return _sceneRoots;
+        }
+        set
+        {
+            _sceneRoots = value;
+        }
     }
 
     void WaitLoad()
@@ -126,7 +152,7 @@ public class Loader : MonoBehaviour
         AddValue("MR 2", "MR 1", 1, 2);
         AddValue("MR 2", "MR 3", 2, 1);
 
-        AddValue("MR 3", "MR 1", 1, 2);
+        AddValue("MR 3", "MR 2", 1, 2);
         AddValue("MR 3", "MR 4", 2, 1);
 
         AddValue("MR 4", "MR 3", 1, 2);
@@ -240,6 +266,7 @@ public class Loader : MonoBehaviour
         IEnumerator ALA()
         {
             string scene = _scenesToLoad[0];
+            Transform root = SceneRoots[scene];
 
             while (S.AllFather == null)
             {
@@ -250,17 +277,6 @@ public class Loader : MonoBehaviour
             while (!S.AllFather.SceneCurrentlyLoaded(scene))
                 yield return new WaitForSeconds(0.05f);
 
-            try
-            {
-                Scene targetScene = SceneManager.GetSceneByName(scene);
-                SceneManager.SetActiveScene(targetScene);
-                //S.SM.Save("sceneName", scene);
-            }
-            catch
-            {
-                Debug.LogError($"Can't select scene {scene}");
-            }
-
             List<string> ids = S.SM.LoadListString(S.ID(scene, "ids"));
             if (ids != null)
                 for (int i = 0; i < ids.Count; i++)
@@ -270,9 +286,8 @@ public class Loader : MonoBehaviour
                         string name = S.SM.LoadString(S.ID(ids[i], "name"));
                         try
                         {
-
                             GameObject prefab = Prefabs.Get(name);
-                            GameObject obj = Instantiate(prefab, S.SM.LoadVector3(S.ID(ids[i], "position")) ?? Vector3.zero, S.SM.LoadQuaternion(S.ID(ids[i], "rotation")) ?? Quaternion.identity);
+                            GameObject obj = Instantiate(prefab, S.SM.LoadVector3(S.ID(ids[i], "position")) ?? Vector3.zero, S.SM.LoadQuaternion(S.ID(ids[i], "rotation")) ?? Quaternion.identity, root);
                             ItemP itemP = obj.GetComponent<ItemP>();
                             itemP._unnatural = true;
                         }
@@ -289,17 +304,6 @@ public class Loader : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.1f);
                 Debug.Log("Loader waiting for S.SaverManager");
-            }
-
-            string scene0 = S.SM.LoadString("sceneName");
-            try
-            {
-                Scene tScene = SceneManager.GetSceneByName(scene0);
-                SceneManager.SetActiveScene(tScene);
-            }
-            catch
-            {
-                Debug.Log($"Wrong scene name: \"{scene0}\"");
             }
 
             _workingOnIt = false;

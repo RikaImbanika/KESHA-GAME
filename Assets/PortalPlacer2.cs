@@ -11,22 +11,28 @@ public class PortalPlacer2 : MonoBehaviour
 
         IEnumerator LateStart()
         {
+            float ang = S.RND.Next(360);
+            transform.Rotate(0, ang, 0);
+
             Portal _portal = gameObject.AddComponent<Portal>();
-            _portal.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1));
             _portal._sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-            _portal._otherSceneName = "Income";
+            string otn = "Income";
+            _portal._secondSceneName = otn;
+            _portal._id = S.ID(gameObject);
+
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 20f))
+                transform.position = hit.point;
 
             while (S.PortalsBase == null)
                 yield return new WaitForSeconds(0.025f);
 
-            S.PortalsBase.Portals["CorridorPortal"] = _portal;
+            S.PortalsBase.AddPortal(_portal._sceneName, _portal._id, _portal);
+            S.PortalsBase.AddFreePort(_portal._sceneName, _portal._id);
 
-            while (!S.PortalsBase.Portals.ContainsKey("IncomePortal"))
-                yield return new WaitForSeconds(0.033f);
-
-            Transform spt = S.PortalsBase.Portals["IncomePortal"].transform;
-            _portal._secondPortalPosition = spt.position;
-            _portal._secondPortalRotation = spt.rotation;
+            var enumerator = S.PortalsBase.TakeFreePort(_portal._sceneName, _portal._id, otn);
+            yield return enumerator;
+            _portal._secondPortalId = (string)enumerator.Current;
         }
     }
 }

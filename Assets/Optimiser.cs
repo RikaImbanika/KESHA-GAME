@@ -8,13 +8,14 @@ public class Optimiser
     private string _sceneName;
     private float _fpsUpdatePeriod = 0.2f;
     private float _fpsRecalcPeriod = 0.6f;
-    private float _minFps = 1 / 12f;
-    private float _maxFps = 1 / 120f;
-    private float _ifNotInScene = 0.75f;
+    private float _maxPeriodForDistance;
+    private float _maxPeriodForRotation;
+    private float _maxPeriodForScene;
+    private float _minPeriod;
     private float _fpsDeltaTime;
     private float _updateInterval;
     private float _recalcDeltaTime;
-    private bool _playerInScene;
+    private bool _playerReallyInScene;
     private bool _needUpdate;
     private float _deltaTime;
     
@@ -23,9 +24,10 @@ public class Optimiser
         _sceneName = sceneName;
         _fpsUpdatePeriod = 0.2f;
         _fpsRecalcPeriod = 0.6f;
-        _minFps = 1 / 12f;
-        _maxFps = 1 / 120f;
-        _ifNotInScene = 0.75f;
+        _maxPeriodForDistance = 1 / 12f;
+        _maxPeriodForScene = 2f;
+        _maxPeriodForRotation = 1 / 2f;
+        _minPeriod = 1 / 120f;
     }
     
     public float DeltaTime
@@ -76,47 +78,51 @@ public class Optimiser
         }
     }
 
-    public float IfNotInScene
+    public float MaxPeriodForDistance
     {
         get
         {
-            return _ifNotInScene;
+            return _maxPeriodForDistance;
         }
         set
         {
-            _ifNotInScene = value;
+            _maxPeriodForDistance = value;
         }
     }
 
-    public float MinFps
+    public float MaxPeriodForScene
     {
         get
         {
-            return _minFps;
+            return _maxPeriodForScene;
         }
         set
         {
-            _minFps = value;
+            _maxPeriodForScene = value;
         }
     }
-    
-    public float MaxFps
+
+    public float MaxPeriodForRotation
     {
         get
         {
-            return _maxFps;
+            return _maxPeriodForRotation;
         }
         set
         {
-            _maxFps = value;
+            _maxPeriodForRotation = value;
         }
     }
+
 
     public bool Optimise(Vector3 pos, Vector3? pos2 = null, Vector3? pos3 = null)
     {
         _deltaTime += Time.deltaTime;
         _fpsDeltaTime += Time.deltaTime;
         _recalcDeltaTime += Time.deltaTime;
+
+        Vector3 targetPos = S.PlayerTarget(_sceneName);
+        Vector3 targetForward = S.PlayerTargetForward(_sceneName);
 
         bool check = Check();
 
@@ -157,12 +163,12 @@ public class Optimiser
             if (t > 0 && S.Camera.fieldOfView > 35f)
                 smoothed = Mathf.SmoothStep(0f, 1f, 1f / (t * t));
 
-            float coef1 = Mathf.Lerp(_minFps, _maxFps, smoothed);
+            float coef1 = Mathf.Lerp(_maxPeriodForDistance, _minPeriod, smoothed);
 
             float k = GetK();
-            float coef2 = 0.05f;
+            float coef2 = 1f;
             if (dist > 30f)
-                coef2 = Mathf.Clamp(k, 0.05f, 1) * 20f;
+                coef2 = Mathf.Clamp(k, 1f, _maxPeriodForRotation / _minPeriod);
 
             _updateInterval = coef1 * coef2;
 
@@ -173,19 +179,19 @@ public class Optimiser
 
         float GetDist()
         {
-            float a1 = Vector3.Distance(pos, S.Camera.transform.position);
+            float a1 = Vector3.Distance(pos, targetPos);
 
             if (pos2 == null)
                 return a1;
             else
             {
-                float a2 = Vector3.Distance((Vector3)pos2, S.Camera.transform.position);
+                float a2 = Vector3.Distance((Vector3)pos2, targetPos);
 
                 if (pos3 == null)
                     return MathF.Min(a1, a2);
                 else
                 {
-                    float a3 = Vector3.Distance((Vector3)pos3, S.Camera.transform.position);
+                    float a3 = Vector3.Distance((Vector3)pos3, targetPos);
                     return MathF.Min(MathF.Min(a1, a2), a3);
                 }
             }
@@ -193,7 +199,8 @@ public class Optimiser
 
         float GetK()
         {
-            float angle = Vector3.Angle(S.Camera.transform.forward, (pos - S.Camera.transform.position)); //.normalised
+
+            float angle = Vector3.Angle(targetForward, (pos - targetPos)); //.normalised
             //+ visible - invisible
             float dif1 = S.Camera.fieldOfView - angle;
 
@@ -201,7 +208,7 @@ public class Optimiser
                 return 0.5f - dif1 / 30f; //degrees
             else
             {
-                angle = Vector3.Angle(S.Camera.transform.forward, ((Vector3)pos2 - S.Camera.transform.position)); //.normalised
+                angle = Vector3.Angle(targetForward, (Vector3)pos2 - targetPos); //.normalised
                                                                                                                   //+ visible - invisible
                 float dif2 = S.Camera.fieldOfView - angle;
 
@@ -214,7 +221,7 @@ public class Optimiser
                 }
                 else
                 {
-                    angle = Vector3.Angle(S.Camera.transform.forward, ((Vector3)pos3 - S.Camera.transform.position)); //.normalised
+                    angle = Vector3.Angle(targetForward, (Vector3)pos3 - targetPos); //.normalised
                                                                                                                       //+ visible - invisible
                     float dif3 = S.Camera.fieldOfView - angle;
 
@@ -236,23 +243,20 @@ public class Optimiser
         {
             if (S.PS == null)
                 return false;
-                
-            bool playerInScene = S.PS._currentSceneName == _sceneName;
 
-            if (!_playerInScene && playerInScene)
+            bool playerReallyInScene = S.PS._currentSceneName == _sceneName;
+
+            if (!_playerReallyInScene && playerReallyInScene)
                 _needUpdate = true;
 
-            _playerInScene = playerInScene;
+            _playerReallyInScene = playerReallyInScene;
 
-            float coef3 = 20f;
+            bool playerInScene = _playerReallyInScene || S.FakePlayerScene == _sceneName;
 
-            if (_playerInScene)
-                coef3 = 1f;
-
-            if (_playerInScene)
+            if (playerInScene)
                 return _deltaTime > _updateInterval;
             else
-                return _deltaTime > _ifNotInScene;
+                return _deltaTime > _maxPeriodForScene;
         }
     }
     

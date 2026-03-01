@@ -238,6 +238,7 @@ public class LighterSpawner : MonoBehaviour
         {
             lighter._id = _id;
             lighter._idPos = _idPos;
+            lighter._sceneName = _sceneName;
         }
 
         void SetColor()

@@ -60,6 +60,71 @@ public static class S : object
 	private static GameObject _redHitPoint;
 	private static PortalsBase _portalsBase;
 	private static VisibleLayers _visibleLayers;
+	private static Transform _fakePlayer; //for checking player on the other side of portal
+	private static Transform _fakePlayerCamera;
+	private static string _fakePlayerScene;
+	private static float _portalToPlayerDistance;
+	private static float _fakePlayerLastUpdated;
+
+	public static float FakePlayerLastUpdated
+	{
+		get
+		{
+			return _fakePlayerLastUpdated;
+		}
+		set
+		{
+			_fakePlayerLastUpdated = value;
+		}
+	}
+
+	public static float PortalToPlayerDistance
+	{
+		get
+		{
+			return _portalToPlayerDistance;
+		}
+		set
+		{
+			_portalToPlayerDistance = value;
+		}
+	}
+
+	public static string FakePlayerScene
+	{
+		get
+		{
+			return _fakePlayerScene;
+		}
+		set
+		{
+			_fakePlayerScene = value;
+		}
+	}
+
+	public static Transform FakePlayer
+	{
+		get
+		{
+			return _fakePlayer;
+		}
+		set
+		{
+			_fakePlayer = value;
+		}
+	}
+
+	public static Transform FakePlayerCamera
+	{
+		get
+		{
+			return _fakePlayerCamera;
+		}
+		set
+		{
+			_fakePlayerCamera = value;
+		}
+	}
 
 	public static VisibleLayers VisibleLayers
 	{
@@ -785,19 +850,44 @@ public static class S : object
 	}
 
     public static GameObject FpsObj
-    {
-        get
-        {
-            return fpsObj;
-        }
-        set
-        {
-            fpsObj = value;
-        }
-    }
+	{
+		get
+		{
+			return fpsObj;
+		}
+		set
+		{
+			fpsObj = value;
+		}
+	}
 
-    public static string ID(object id1, object id2)
+	public static Vector3 PlayerTarget(string sceneName)
+	{
+		if (sceneName == PS._currentSceneName)
+			return Camera.transform.position;
+		else if (sceneName == _fakePlayerScene)
+			return FakePlayerCamera.position;
+		else
+			return Camera.transform.position; //
+	}
+
+	public static Vector3 PlayerTargetForward(string sceneName)
+	{
+		if (sceneName == PS._currentSceneName)
+			return Camera.transform.forward;
+		else if (sceneName == _fakePlayerScene)
+			return FakePlayerCamera.forward;
+		else
+			return Camera.transform.forward; //
+	}
+
+	public static string ID(object id1, object id2)
 	{
 		return $"{id1.ToString()} {id2.ToString()}";
+	}
+
+	public static string ID(GameObject pos)
+	{
+		return $"{pos.transform.position.x} {pos.transform.position.y} {pos.transform.position.z}";
 	}
 }

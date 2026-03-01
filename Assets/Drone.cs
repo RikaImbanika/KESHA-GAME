@@ -112,7 +112,7 @@ public class Drone : MonoBehaviour
             _rotationSpeed = -_rotationSpeed;
     }
 
-    public void Work(float walk)
+    public void Work(float walk, float deltaWalk)
 	{
 		if (_type == "6lasers")
 		{           
@@ -120,7 +120,7 @@ public class Drone : MonoBehaviour
             {
                 Vector3 originalVector = transform.right;
                 var rotated = RotateAroundLocalAxis(originalVector, 60 * i + _rotationSpeed * walk, "z");
-                Laser(rotated, i);
+                Laser(rotated, i, deltaWalk);
             }
         }
         else if (_type == "4lasers")
@@ -129,7 +129,7 @@ public class Drone : MonoBehaviour
             {
                 Vector3 originalVector = transform.right;
                 var rotated = RotateAroundLocalAxis(originalVector, 90 * i + _rotationSpeed * walk, "z");
-                Laser(rotated, i);
+                Laser(rotated, i, deltaWalk);
             }
         }
         else if (_type == "3lasers")
@@ -138,7 +138,7 @@ public class Drone : MonoBehaviour
             {
                 Vector3 originalVector = transform.right;
                 var rotated = RotateAroundLocalAxis(originalVector, 120 * i + _rotationSpeed * walk, "z");
-                Laser(rotated, i);
+                Laser(rotated, i, deltaWalk);
             }
         }
         else if (_type == "2lasers")
@@ -147,7 +147,7 @@ public class Drone : MonoBehaviour
             {
                 Vector3 originalVector = transform.right;
                 var rotated = RotateAroundLocalAxis(originalVector, 180 * i + _rotationSpeed * walk, "z");
-                Laser(rotated, i);
+                Laser(rotated, i, deltaWalk);
             }
         }
         else if (_type == "flat2lasers")
@@ -156,7 +156,7 @@ public class Drone : MonoBehaviour
             {
                 Vector3 originalVector = transform.right;
                 var rotated = RotateAroundLocalAxis(originalVector, 180 * i, "z");
-                Laser(rotated, i);
+                Laser(rotated, i, deltaWalk);
             }
         }
     }
@@ -186,7 +186,7 @@ public class Drone : MonoBehaviour
                     else if (_type2 == "3")
                         Shoot2(3);
                     else if (_type2 == "sniper")
-                    Shoot1(S.Ph.transform.position - transform.position);
+                        Shoot1(S.PlayerTarget(_head._sceneName) - transform.position);
                 }
             }
         }
@@ -205,11 +205,10 @@ public class Drone : MonoBehaviour
 
         void Shoot1(UnityEngine.Vector3 dir)
         {
-            Quaternion rq = Quaternion.LookRotation(dir);
+            Quaternion rotation = Quaternion.LookRotation(dir);
 
-            GameObject bullet = Instantiate(S.EnemyBullet);
-            bullet.transform.position = transform.position + dir;
-            bullet.transform.rotation = rq;
+            GameObject bullet = Instantiate(S.EnemyBullet, transform.position + dir, rotation, S.Loader.Roots[_head._sceneName]);
+
             EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
             eb._active = true;
             eb._speed = 30;
@@ -243,7 +242,7 @@ public class Drone : MonoBehaviour
         return rotation * vector;
     }
 
-    void Laser(Vector3 direction, int i)
+    void Laser(Vector3 direction, int i, float deltaWalk)
     {
         Vector3 from = transform.position;
 
@@ -267,18 +266,21 @@ public class Drone : MonoBehaviour
                 S.PS.Damage(0.7f);
             }
 
-            int speed = (int)(28 * 60f * _opti.DeltaTime);
-            if (S.RND.Next(0, speed) == 0)
+            if (S.Ps._currentSceneName == _head._sceneName || S.FakePlayerScene == _head._sceneName)
             {
-                GameObject sparkle = Instantiate(S.RedSparkle);
-                sparkle.transform.position = hit.point;
-                sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-            } /////////////
+                int period = (int)(60f * 1f / deltaWalk);
+                if (S.RND.Next(0, period) == 0)
+                {
+                    GameObject sparkle = Instantiate(S.RedSparkle);
+                    sparkle.transform.position = hit.point;
+                    sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
+                } /////////////
+            }
         }
     }
 
     bool SeePlayer()
     {
-        return _head._seePlayer;
+        return _head._seePlayer && (_head._sceneName == S.Ps._currentSceneName || _head._sceneName == S.FakePlayerScene);
     }
 }

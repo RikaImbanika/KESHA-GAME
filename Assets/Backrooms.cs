@@ -11,9 +11,7 @@ public class Backrooms : MonoBehaviour
     public Dictionary<string, byte> _snakes;
     public Dictionary<string, float> _lasersProbabilities;
     public Dictionary<string, float> _lightersProbabilities;
-    public Dictionary<string, Dictionary<string, (string, string)>> _portalsSystem;
-    public Dictionary<string, Dictionary<string, (Vector3, Quaternion)>> _portals;
-    public List<string> _roomsWithInitialisedPortals;
+    //public List<string> _roomsWithInitialisedPortals;
 
     //Room BR 5 should be at least 3 rooms from start
     //Room BR 8 should be maximally far
@@ -29,9 +27,7 @@ public class Backrooms : MonoBehaviour
         {
             _lasersProbabilities = new Dictionary<string, float>();
             _lightersProbabilities = new Dictionary<string, float>();
-            _roomsWithInitialisedPortals = new List<string>();
-            _portalsSystem = new Dictionary<string, Dictionary<string, (string, string)>>();
-            _portals = new Dictionary<string, Dictionary<string, (Vector3, Quaternion)>>();
+            //_roomsWithInitialisedPortals = new List<string>();
 
             while (true)
             {
@@ -63,7 +59,7 @@ public class Backrooms : MonoBehaviour
             FillLaserProbabilities();
             SummonSnakes();
             SummonLighters();
-            AddPortals();
+            StartCoroutine(AddPortals());
         }
     }
 
@@ -203,51 +199,11 @@ public class Backrooms : MonoBehaviour
         }
     }
 
-    public IEnumerator UpdateInitPortalsInRoom(string room)
-    {
-        if (_roomsWithInitialisedPortals.Contains(room))
-            yield return null;
-        else
-            _roomsWithInitialisedPortals.Add(room);
-
-        if (_portalsSystem.ContainsKey(room))
-        {
-            yield return new WaitForSeconds(0.5f);
-
-            var di = _portalsSystem[room];
-
-            for (int i = 0; i < di.Count(); i++)
-            {
-                if (di.ElementAt(i).Key.Contains("take me"))
-                {
-                    string takeMe = di.ElementAt(i).Key;
-                    (string, string) otherOne = di[takeMe];
-                    di.Remove(takeMe);
-
-                    Dictionary<string, (Vector3, Quaternion)> portals = _portals[room];
-                    int portalsInRoomCount = portals.Count;
-
-                    int randomIndex = S.RND.Next(portalsInRoomCount);
-                    string portalId = _portals[room].ElementAt(randomIndex).Key;
-
-                    di.Add(portalId, otherOne);
-
-                    //Part 2
-
-                    string secondPortalRoom = otherOne.Item1;
-                    string secondPortalId = otherOne.Item2;
-
-                    var di2 = _portalsSystem[secondPortalRoom];
-                    di2[secondPortalId] = (room, portalId);
-                }
-            }
-        }
-    }
-
     IEnumerator AddPortals()
     {
-        int indexer = 0;
-
+        int id1;
+        int id2;
+        
         List<int> farPortalsAt = new List<int>();
 
         string firstRoom = S.Loader._rooms["Hall"]._doors[2]._nextSceneName;
@@ -257,9 +213,6 @@ public class Backrooms : MonoBehaviour
 
         IEnumerator AddFarPortal()
         {
-            int id1 = -1;
-            int id2 = -1;
-
             while (true)
             {
                 id1 = S.RND.Next(S.Loader._rooms.Count);
@@ -277,26 +230,14 @@ public class Backrooms : MonoBehaviour
                             break;
             }
 
-            string portal1id = $"take me {indexer}";
-            indexer++;
-            string portal2id = $"take me {indexer}";
-            indexer++;
-
             string room1 = S.Loader._rooms.ElementAt(id1).Key;
             string room2 = S.Loader._rooms.ElementAt(id2).Key;
 
             //Not saving yet
             //Rotation they will save buy themselves
 
-            if (!_portalsSystem.ContainsKey(room1))
-                _portalsSystem.Add(room1, new Dictionary<string, (string, string)>());
-
-            _portalsSystem[room1].Add(portal1id, (room2, portal2id));
-            
-            if (!_portalsSystem.ContainsKey(room2))
-                _portalsSystem.Add(room2, new Dictionary<string, (string, string)>());
-
-            _portalsSystem[room2].Add(portal2id, (room1, portal1id));
+            S.PortalsBase.AddConnection(room1, room2);
+            S.PortalsBase.AddConnection(room2, room1);
 
             S.Loader.AddValue(room1, room2, -1, -1);
             S.Loader.AddValue(room2, room1, -1, -1);
