@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading;
+using System;
 
 public class Button1 : MonoBehaviour
 {
@@ -20,10 +21,16 @@ public class Button1 : MonoBehaviour
 	private Camera _playerCamera;
 	public IsDoor _isDoor;
 	public ToiletZombie _toiletZombie;
+	public float _startTime;
 
 	public void Start()
 	{
-		_finalDeltaY = -10.63f; //Hardcode but correct
+		//-10.62 too low
+		//-10.64 too high
+		//-10.63 too low
+		//-10.635 too low
+		//-10.6375 too much
+		_finalDeltaY = -10.63625f; //Hardcode but correct
 		_startY = _obj.transform.position.y;
 
 		_sceneName = gameObject.scene.name;
@@ -54,15 +61,17 @@ public class Button1 : MonoBehaviour
 			_camera.gameObject.SetActive(true);
 			_playerCamera.gameObject.SetActive(false);
 
-			_pressed = true;
-
 			_startY = _obj.transform.position.y;
 
 			S.AM.Play(_audioName, 1);
 
 			_isDoor.Close();
 
-			Thread.Sleep(300);
+			while (!_isDoor.Closed)
+				yield return new WaitForSeconds(0.1f);
+
+			_startTime = Time.time;
+			_pressed = true;
 
 			OldSave save = new OldSave();
 			save._pressed = true;
@@ -76,10 +85,17 @@ public class Button1 : MonoBehaviour
 	{
 		if (_pressed && !_finished)
 		{
-			if (_obj.transform.position.y > _startY + _finalDeltaY)
+			float nowTime = Time.time;
+			float deltaTime = nowTime - _startTime;
+
+			float duration = 3.5f;
+
+			float t = deltaTime / duration;
+			float t2 = (-Mathf.Cos(t * 180 * Mathf.Deg2Rad) + 1) / 2f;
+
+			if (t < 1)
 			{
-				if (_isDoor.Closed)
-					_obj.transform.position = _obj.transform.position + new Vector3(0, _deltaY * Time.deltaTime * 60, 0);
+				_obj.transform.position = new Vector3(_obj.transform.position.x, _startY + _finalDeltaY * t2, _obj.transform.position.z);
 			}
 			else
 			{

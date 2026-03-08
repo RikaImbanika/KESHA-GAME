@@ -902,7 +902,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 1
-  _nextDoorId: -1
   col: {fileID: 471790724}
   audioName: Door
   _locked: 0
@@ -910,7 +909,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &471790723
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2697,7 +2695,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 2
-  _nextDoorId: -1
   col: {fileID: 1487711252}
   audioName: Door
   _locked: 0
@@ -2705,7 +2702,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &1487711251
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5061,7 +5057,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _opened: 0
   _maxMove: 1
-  _audioName: toiletDoor
   _locked: 0
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5
@@ -5145,7 +5140,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _opened: 0
   _maxMove: 1
-  _audioName: toiletDoor
   _locked: 0
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5
@@ -5212,7 +5206,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _opened: 0
   _maxMove: 1
-  _audioName: toiletDoor
   _locked: 0
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5
@@ -5322,7 +5315,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _opened: 0
   _maxMove: 1
-  _audioName: toiletDoor
   _locked: 0
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5
@@ -5447,7 +5439,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _opened: 0
   _maxMove: 1
-  _audioName: toiletDoor
   _locked: 0
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5
@@ -5586,7 +5577,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _opened: 0
   _maxMove: 1
-  _audioName: toiletDoor
   _locked: 1
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5
@@ -5874,7 +5864,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _opened: 0
   _maxMove: 1
-  _audioName: toiletDoor
   _locked: 1
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5
@@ -6128,7 +6117,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _opened: 0
   _maxMove: 1
-  _audioName: toiletDoor
   _locked: 0
   _3dDirection: {x: -1, y: 0, z: 0}
   _speed: 0.5

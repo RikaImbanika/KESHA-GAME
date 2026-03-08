@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading;
 using System;
+using Unity.VisualScripting;
 
 public class Loader : MonoBehaviour
 {
@@ -143,13 +144,13 @@ public class Loader : MonoBehaviour
 
         AddValue("Hall", "Corridor", 1, 2);
         AddValue("Hall", "BR 1", 2, 1);
-        AddValue("Hall", "TL 0", 3, 1);
+        AddValue("Hall", "TL 0", 3, 1, true);
         AddValue("Hall", "MR 1", 4, 1);
 
         AddValue("MR 1", "Hall", 1, 4);
-        AddValue("MR 1", "MR 2", 2, 1);
+        AddValue("MR 1", "MR 2", 2, 1, true);
 
-        AddValue("MR 2", "MR 1", 1, 2);
+        AddValue("MR 2", "MR 1", 1, 2, true);
         AddValue("MR 2", "MR 3", 2, 1);
 
         AddValue("MR 3", "MR 2", 1, 2);
@@ -157,7 +158,7 @@ public class Loader : MonoBehaviour
 
         AddValue("MR 4", "MR 3", 1, 2);
 
-        AddValue("TL 0", "Hall", 1, 3);
+        AddValue("TL 0", "Hall", 1, 3, true);
         AddValue("TL 0", "TL 1", 2, 1);
         AddValue("TL 0", "TL 1", 3, 2);
 
@@ -237,7 +238,7 @@ public class Loader : MonoBehaviour
             Debug.LogError($"Sorre, scene {sceneName} already in queue.");
     }
 
-    public void AddValue(string sceneName, string nextSceneName, int doorId1, int doorId2)
+    public void AddValue(string sceneName, string nextSceneName, int doorId1, int doorId2, bool locked = false)
     {
         if (!_map.ContainsKey(sceneName))
             _map.Add(sceneName, new List<string>());
@@ -249,9 +250,9 @@ public class Loader : MonoBehaviour
             _rooms.Add(sceneName, new RoomModel(sceneName));
 
         if (!_rooms[sceneName]._doors.ContainsKey(doorId1))
-            _rooms[sceneName]._doors.Add(doorId1, new DoorModel());
+            _rooms[sceneName]._doors.Add(doorId1, new DoorModel(locked));
 
-        _rooms[sceneName]._doors[doorId1]._nextDoorNumber = doorId2;
+        _rooms[sceneName]._doors[doorId1]._nextDoorId = doorId2;
         _rooms[sceneName]._doors[doorId1]._nextSceneName = nextSceneName;
     }
 
@@ -266,7 +267,32 @@ public class Loader : MonoBehaviour
         IEnumerator ALA()
         {
             string scene = _scenesToLoad[0];
+
+            float elapsed = 0;
+
+            while (!SceneRoots.ContainsKey(scene))
+            {
+                elapsed += 0.1f;
+
+                if (elapsed > 20f)
+                    yield break;
+
+                yield return new WaitForSeconds(0.1f);
+            }
+
             Transform root = SceneRoots[scene];
+
+            elapsed = 0;
+
+            while (root == null)
+            {
+                elapsed += 0.1f;
+
+                if (elapsed > 20f)
+                    yield break;
+
+                yield return new WaitForSeconds(0.1f);
+            }
 
             while (S.AllFather == null)
             {

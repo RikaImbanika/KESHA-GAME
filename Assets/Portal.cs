@@ -151,22 +151,22 @@ public class Portal : MonoBehaviour
     {
         _rts = new RenderTexture[6];
    
-        _rts[0] = new RenderTexture(1280, 720, 24); // 100% (исходное)
+        _rts[0] = new RenderTexture(1280, 720, 24); // 100%
         _rts[0].Create();
 
-        _rts[1] = new RenderTexture(960, 540, 24); // 75% (между 0 и 2)
+        _rts[1] = new RenderTexture(540, 540, 24); // 75%
         _rts[1].Create();
 
-        _rts[2] = new RenderTexture(640, 360, 24); // 50% (исходное)
+        _rts[2] = new RenderTexture(360, 360, 24); // 50%
         _rts[2].Create();
 
-        _rts[3] = new RenderTexture(480, 270, 24); // 37.5% (между 2 и 4)
+        _rts[3] = new RenderTexture(270, 270, 24); // 37.5%
         _rts[3].Create();
 
-        _rts[4] = new RenderTexture(320, 180, 24); // 25% (исходное)
+        _rts[4] = new RenderTexture(180, 180, 24); // 25%
         _rts[4].Create();
 
-        _rts[5] = new RenderTexture(240, 135, 24); // 18.75% (меньше 4)
+        _rts[5] = new RenderTexture(135, 135, 24); // 18.75%
         _rts[5].Create();
 
         _resolutionIndex = 5;

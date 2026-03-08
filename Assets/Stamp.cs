@@ -10,6 +10,7 @@ public class Stamp : MonoBehaviour
     string _sceneName;
     public GameObject _go;
     public GameObject _blueFlames;
+    bool _alreadyUnlocked;
 
     public void Start()
     {
@@ -56,17 +57,21 @@ public class Stamp : MonoBehaviour
 
 	public void Unlock()
 	{
-        S.AudioManager.Play("arfa", 1);
-        S.SM.Save(S.ID(_id, "destroyed"), true);
-        Debug.Log($"STAMP UNLOCKED AND SAVED!!! id = {_id}");
-        _door.Unlock();
-
-        float count = _blueFlames.transform.childCount;
-
-        for (int i = 0; i < count; i++)
+        if (!_alreadyUnlocked)
         {
-            GameObject child = _blueFlames.transform.GetChild(i).gameObject;
-            child.AddComponent<BlueFlame>();
+            _alreadyUnlocked = true;
+            S.AudioManager.Play("stampSound", 1);
+            S.SM.Save(S.ID(_id, "destroyed"), true);
+            Debug.Log($"STAMP UNLOCKED AND SAVED!!! id = {_id}");
+            _door.Unlock();
+
+            float count = _blueFlames.transform.childCount;
+
+            for (int i = 0; i < count; i++)
+            {
+                GameObject child = _blueFlames.transform.GetChild(i).gameObject;
+                child.AddComponent<BlueFlame>();
+            }
         }
     }
 }

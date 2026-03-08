@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class IsShuffle : MonoBehaviour
+public class Drawer : MonoBehaviour
 {
 	public bool _opened;
 	public float _maxMove;
-	public string _audioName;
 	public bool _locked;
 	public Vector3 _3dDirection;
 	public float _speed;
@@ -22,9 +21,9 @@ public class IsShuffle : MonoBehaviour
 
 	private void Start()
 	{
-        StartCoroutine(Start0());
+		StartCoroutine(Start0());
 
-        IEnumerator Start0()
+		IEnumerator Start0()
 		{
 			if (_speed == 0)
 				_speed = 1;
@@ -38,8 +37,8 @@ public class IsShuffle : MonoBehaviour
 			while (S.SM == null)
 			{
 				yield return new WaitForSeconds(0.1f);
-                Debug.Log("IsShuffle waiting for S.SaveManager");
-            }
+				Debug.Log("IsShuffle waiting for S.SaveManager");
+			}
 
 			bool opened = S.SM.LoadBool(S.ID(_id, "opened")) ?? _opened;
 			_locked = S.SM.LoadBool(S.ID(_id, "locked")) ?? _locked;
@@ -55,8 +54,8 @@ public class IsShuffle : MonoBehaviour
 	public void ToggleLock(bool locked)
 	{
 		_locked = locked;
-        S.SM.Save(S.ID(_id, "locked"), locked);
-    }
+		S.SM.Save(S.ID(_id, "locked"), locked);
+	}
 
 	public void Move()
 	{
@@ -65,23 +64,23 @@ public class IsShuffle : MonoBehaviour
 			if (_item != null)
 				_item.ToggleLock(false);
 
-			S.AudioManager.Play(_audioName, 1);			
-
 			bool opened = false;
 
 			if (cp < _maxMove / 2f)
 			{
 				direction = _speed;
 				opened = true;
+				S.AudioManager.Play("drawerO", 1);
 			}
 			else
 			{
 				direction = -_speed;
 				opened = false;
+				S.AudioManager.Play("drawerC", 1);
 			}
 
-            S.SM.Save(S.ID(_id, "opened"), opened);
-        }
+			S.SM.Save(S.ID(_id, "opened"), opened);
+		}
 		else
 			S.AudioManager.Play("notEnoughCash", 1);
 	}
@@ -90,8 +89,8 @@ public class IsShuffle : MonoBehaviour
 	{
 		direction = -_speed;
 
-        S.SM.Save(S.ID(_id, "opened"), false);
-    }
+		S.SM.Save(S.ID(_id, "opened"), false);
+	}
 
 	public bool Closed
 	{
@@ -118,9 +117,12 @@ public class IsShuffle : MonoBehaviour
 					_item.ToggleLock(true);
 			}
 
-
 			cp += direction * Time.deltaTime * 60;
-			transform.position = zp + _3dDirection * cp;
+
+			// Синусоидальное движение с замедлением в начале и конце для обоих направлений
+			float t = cp / _maxMove; // Нормализованное положение (0-1)
+			float sinT = Mathf.Sin(t * Mathf.PI - Mathf.PI / 2) / 2 + 0.5f; // Полная синусоида от 0 до 1
+			transform.position = zp + _3dDirection * (_maxMove * sinT);
 		}
 	}
 }

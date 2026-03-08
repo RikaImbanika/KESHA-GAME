@@ -313,8 +313,8 @@ public class Inventory : MonoBehaviour
 					goto render;
 				}
 
-				IsShuffle isShuffle = hit.collider.gameObject.GetComponent<IsShuffle>();
-				if (isShuffle != null)
+				Drawer drawer = hit.collider.gameObject.GetComponent<Drawer>();
+				if (drawer != null)
 				{
 					clickable = true;
 					goto render;
@@ -735,10 +735,10 @@ public class Inventory : MonoBehaviour
 
 			if (Physics.Raycast(ray, out hit, 7f, _layerMask))
 			{
-				IsShuffle isShuffle = hit.collider.gameObject.GetComponent<IsShuffle>();
-				if (isShuffle != null)
+				Drawer drawer = hit.collider.gameObject.GetComponent<Drawer>();
+				if (drawer != null)
 				{
-					isShuffle.Move();
+					drawer.Move();
 					return;
 				}
 			}

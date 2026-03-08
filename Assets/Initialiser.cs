@@ -77,6 +77,7 @@ public class Initialiser : MonoBehaviour
         S.Musculus = Prefabs.Get("Musculus");
         S.Ghost = Prefabs.Get("Ghost");
         S.Spider = Prefabs.Get("Spider");
+        S.Stamp = Prefabs.Get("Stamp");
     }
 
     private static IEnumerator WaitForObjectWithTag(string tag, System.Action<GameObject> setter)

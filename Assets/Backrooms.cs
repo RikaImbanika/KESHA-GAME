@@ -56,12 +56,18 @@ public class Backrooms : MonoBehaviour
             for (int i = 0; i < 100; i++)
                 yield return SwitchOneDoor(i);
 
+            for (int i = 0; i < 15; i++)
+                yield return LockOneConnection();
+
+            yield return LockLast();
+
             FillLaserProbabilities();
             SummonSnakes();
             SummonLighters();
             StartCoroutine(AddPortals());
         }
     }
+    
 
     void FillLaserProbabilities()
     {
@@ -250,6 +256,66 @@ public class Backrooms : MonoBehaviour
         }
     }
 
+    IEnumerator LockOneConnection()
+    {
+        int i = 0;
+
+        for (; i < 100; i++)
+        {
+            int id = -1;
+
+            while (true)
+            {
+                id = S.RND.Next(S.Loader._rooms.Count);
+                if (S.Loader._rooms.ElementAt(id).Key.Contains("BR") || S.Loader._rooms.ElementAt(id).Key.Contains("Hall"))
+                    break;
+            }
+
+            KeyValuePair<string, RoomModel> a = S.Loader._rooms.ElementAt(id);
+
+            RoomModel roomModel1 = a.Value;
+
+            int doorNum1 = 1 + S.RND.Next(a.Value._doors.Count);
+
+            if (roomModel1._doors[doorNum1]._locked)
+                continue;
+
+            string room2name = roomModel1._doors[doorNum1]._nextSceneName;
+
+            if (!room2name.Contains("BR"))
+                continue;
+
+            RoomModel roomModel2 = S.Loader._rooms[room2name];
+
+            int doorNum2 = roomModel1._doors[doorNum1]._nextDoorId;
+
+            roomModel1._doors[doorNum1]._locked = true;
+            roomModel2._doors[doorNum2]._locked = true;
+
+            break;
+        }
+
+        yield return null;
+    }
+
+    IEnumerator LockLast()
+    {
+        RoomModel roomModelHall = S.Loader._rooms["Hall"];
+        int doorNum = 2;
+        DoorModel doorMod = roomModelHall._doors[doorNum];
+
+        string room2name = doorMod._nextSceneName;
+
+        RoomModel roomModel2 = S.Loader._rooms[room2name];
+
+        int doorNum2 = doorMod._nextDoorId;
+
+        roomModelHall._doors[doorNum]._locked = true;
+        roomModel2._doors[doorNum2]._locked = true;
+
+        yield return null;
+    }
+
     IEnumerator SwitchOneDoor(int n)
     {
         Debug.Log($"n {n}");
@@ -258,8 +324,8 @@ public class Backrooms : MonoBehaviour
 
         for (; i < 100; i++)
         {
-            int id1 = -1;
-            int id2 = -1;
+            int id1 = -5;
+            int id2 = -5;
 
             while (true)
             {
@@ -296,8 +362,8 @@ public class Backrooms : MonoBehaviour
             string nextRoom1name = (string)a.Value._doors[currentDoorNumber1]._nextSceneName.Clone();
             string nextRoom2name = (string)b.Value._doors[currentDoorNumber2]._nextSceneName.Clone();
 
-            int nextDoorNumber1 = a.Value._doors[currentDoorNumber1]._nextDoorNumber;
-            int nextDoorNumber2 = b.Value._doors[currentDoorNumber2]._nextDoorNumber;
+            int nextDoorNumber1 = a.Value._doors[currentDoorNumber1]._nextDoorId;
+            int nextDoorNumber2 = b.Value._doors[currentDoorNumber2]._nextDoorId;
 
             if (currentRoom1name.Equals(nextRoom1name) || currentRoom2name.Equals(nextRoom2name) || currentRoom1name.Equals(nextRoom2name) || currentRoom2name.Equals(nextRoom1name) || nextRoom1name.Equals(nextRoom2name) && nextDoorNumber1.Equals(nextDoorNumber2))
             {
@@ -308,16 +374,16 @@ public class Backrooms : MonoBehaviour
             S.Loader._rooms[currentRoom1name]._doors[currentDoorNumber1]._nextSceneName = (string)nextRoom2name.Clone();
             S.Loader._rooms[currentRoom2name]._doors[currentDoorNumber2]._nextSceneName = (string)nextRoom1name.Clone();
 
-            S.Loader._rooms[currentRoom1name]._doors[currentDoorNumber1]._nextDoorNumber = nextDoorNumber2;
-            S.Loader._rooms[currentRoom2name]._doors[currentDoorNumber2]._nextDoorNumber = nextDoorNumber1;
+            S.Loader._rooms[currentRoom1name]._doors[currentDoorNumber1]._nextDoorId = nextDoorNumber2;
+            S.Loader._rooms[currentRoom2name]._doors[currentDoorNumber2]._nextDoorId = nextDoorNumber1;
 
             //
 
             S.Loader._rooms[nextRoom1name]._doors[nextDoorNumber1]._nextSceneName = (string)currentRoom2name.Clone();
             S.Loader._rooms[nextRoom2name]._doors[nextDoorNumber2]._nextSceneName = (string)currentRoom1name.Clone();
 
-            S.Loader._rooms[nextRoom1name]._doors[nextDoorNumber1]._nextDoorNumber = currentDoorNumber2;
-            S.Loader._rooms[nextRoom2name]._doors[nextDoorNumber2]._nextDoorNumber = currentDoorNumber1;
+            S.Loader._rooms[nextRoom1name]._doors[nextDoorNumber1]._nextDoorId = currentDoorNumber2;
+            S.Loader._rooms[nextRoom2name]._doors[nextDoorNumber2]._nextDoorId = currentDoorNumber1;
 
             //
 
@@ -363,16 +429,16 @@ public class Backrooms : MonoBehaviour
                 S.Loader._rooms[currentRoom1name]._doors[currentDoorNumber1]._nextSceneName = (string)nextRoom1name.Clone();
                 S.Loader._rooms[currentRoom2name]._doors[currentDoorNumber2]._nextSceneName = (string)nextRoom2name.Clone();
 
-                S.Loader._rooms[currentRoom1name]._doors[currentDoorNumber1]._nextDoorNumber = nextDoorNumber1;
-                S.Loader._rooms[currentRoom2name]._doors[currentDoorNumber2]._nextDoorNumber = nextDoorNumber2;
+                S.Loader._rooms[currentRoom1name]._doors[currentDoorNumber1]._nextDoorId = nextDoorNumber1;
+                S.Loader._rooms[currentRoom2name]._doors[currentDoorNumber2]._nextDoorId = nextDoorNumber2;
 
                 //
 
                 S.Loader._rooms[nextRoom1name]._doors[nextDoorNumber1]._nextSceneName = (string)currentRoom1name.Clone();
                 S.Loader._rooms[nextRoom2name]._doors[nextDoorNumber2]._nextSceneName = (string)currentRoom2name.Clone();
 
-                S.Loader._rooms[nextRoom1name]._doors[nextDoorNumber1]._nextDoorNumber = currentDoorNumber1;
-                S.Loader._rooms[nextRoom2name]._doors[nextDoorNumber2]._nextDoorNumber = currentDoorNumber2;
+                S.Loader._rooms[nextRoom1name]._doors[nextDoorNumber1]._nextDoorId = currentDoorNumber1;
+                S.Loader._rooms[nextRoom2name]._doors[nextDoorNumber2]._nextDoorId = currentDoorNumber2;
 
                 //
 

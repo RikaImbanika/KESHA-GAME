@@ -71,6 +71,19 @@ public static class S : object
 	private static GameObject _musculus;
 	private static GameObject _ghost;
 	private static GameObject _spider;
+	private static GameObject _stamp;
+
+	public static GameObject Stamp
+	{
+		get
+		{
+			return _stamp;
+		}
+		set
+		{
+			_stamp = value;
+		}
+	}
 
 	public static GameObject Zombie
 	{

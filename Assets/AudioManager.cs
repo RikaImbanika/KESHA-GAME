@@ -51,6 +51,10 @@ public class AudioManager : MonoBehaviour
 	public AudioSource _maylo;
 	public AudioSource _theRoom;
 
+	public AudioSource _stampSound;
+	public AudioSource _drawerO;
+	public AudioSource _drawerC;
+
 	public bool muted;
 
 	public void Start()
@@ -137,7 +141,7 @@ public class AudioManager : MonoBehaviour
 				break;
 			case "kill":
 				_kill.pitch = pitch;
-				_kill.volume = 0.75f;
+				_kill.volume = 0.3f; ///
 				_kill.Play();
 				break;
 			case "damage":
@@ -218,8 +222,20 @@ public class AudioManager : MonoBehaviour
 				_incomeOST2.pitch = pitch;
 				_incomeOST2.Play();
 				break;
+			case "stampsound":
+				_stampSound.pitch = pitch;
+				_stampSound.Play();
+				break;
+			case "drawero":
+				_drawerO.pitch = pitch;
+				_drawerO.Play();
+				break;
+			case "drawerc":
+				_drawerC.pitch = pitch;
+				_drawerC.Play();
+				break;
 			default:
-				Debug.Log($"No such audioSource {name} in code! Maybe you want to add it into AudioManager?");
+				Debug.LogError($"No such audioSource {name} in code! Maybe you want to add it into AudioManager?");
 				break;
 		}
 	}

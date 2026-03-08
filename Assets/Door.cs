@@ -9,8 +9,6 @@ using Unity.VisualScripting;
 public class Door : MonoBehaviour
 {
 	public int _number;
-	public int _nextDoorId;
-	private string _nextSceneName;
 	public Collider col;
 	public string audioName;
 	public bool _locked;
@@ -18,7 +16,6 @@ public class Door : MonoBehaviour
 	public float _stampAnimationTimeLeft;
 	public int _sparklesCount;
 	public DoorModel _doorModel;
-	public DoorModel __nextDoorModel;
 	private string _sceneName;
 
 	public void Start()
@@ -43,14 +40,11 @@ public class Door : MonoBehaviour
 						Debug.Log($"Wtf#2 sceneName {_sceneName} obj {S.Loader._rooms[_sceneName]}");
 
 					RoomModel roomModel = S.Loader._rooms[_sceneName];
-					if (!roomModel._doors.ContainsKey(_number))
-						roomModel._doors.Add(_number, new DoorModel(transform.position.x, transform.position.y, transform.position.z, transform.right));
-					else
-					{
-						DoorModel doorModel = roomModel._doors[_number];
-						doorModel._coordinates = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-						doorModel._right = transform.right;
-					}
+					_doorModel = roomModel._doors[_number];
+					_doorModel._door = this;
+					_doorModel._coordinates = transform.position;
+					_doorModel._right = transform.right;
+					_locked = _doorModel._locked;
 					ok = true;
 				}
 				catch
@@ -62,6 +56,43 @@ public class Door : MonoBehaviour
 					break;
 				else
 					yield return new WaitForSeconds(0.5f);
+			}
+
+			if (_locked)
+			{
+				Vector3 point0 = transform.position += transform.right * 0.15f;
+
+				Quaternion rot = Quaternion.LookRotation(transform.right);
+
+				StartCoroutine(SetParent());
+
+				IEnumerator SetParent()
+				{
+					while (S.Loader.Roots[_sceneName] == null)
+						yield return new WaitForSeconds(0.25f);
+
+					GameObject stampObj = GameObject.Instantiate(S.Stamp, point0, rot, S.Loader.Roots[_sceneName]);
+
+					RaycastHit hit;
+					if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
+					{
+						Vector3 point1 = hit.point;
+						point1 += Vector3.up * 3.75f;
+						stampObj.transform.position = point1;
+					}
+
+					Vector3 originalScale = S.Stamp.transform.localScale;
+					Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
+
+					stampObj.transform.localScale = new Vector3(
+						originalScale.x / parentScale.x,
+						originalScale.y / parentScale.y,
+						originalScale.z / parentScale.z
+					);
+
+					_stamp = stampObj.GetComponent<Stamp>();
+					_stamp._door = this;
+				}		
 			}
 		}
 	}
@@ -79,13 +110,11 @@ public class Door : MonoBehaviour
 			S.AudioManager.Play(audioName, 0);
 
 			_doorModel = S.Loader._rooms[_sceneName]._doors[_number];
-			_nextSceneName = _doorModel._nextSceneName;
-			_nextDoorId = _doorModel._nextDoorNumber;
 
-			S.Teleporter.ImportantStaticShitToDo(_nextSceneName);
-			S.Loader.GoTo(_sceneName, _nextSceneName);
+			S.Teleporter.ImportantStaticShitToDo(_doorModel._nextSceneName);
+			S.Loader.GoTo(_sceneName, _doorModel._nextSceneName);
 
-			StartCoroutine(S.Teleporter.WaitLoad(_nextSceneName, _nextDoorId, transform.right));
+			StartCoroutine(S.Teleporter.WaitLoad(_doorModel._nextSceneName, _doorModel._nextDoorId, transform.right));
 		}
 		else
 		{
@@ -111,8 +140,16 @@ public class Door : MonoBehaviour
 
 	public void Unlock()
 	{
-		_stampAnimationTimeLeft = 1f;
-		_locked = false;
+		if (_locked)
+		{
+			_stampAnimationTimeLeft = 1f;
+			_stamp.Unlock();
+			_locked = false;
+			_doorModel._locked = false;
+			Debug.LogError($"sc {_doorModel._nextSceneName} did {_doorModel._nextDoorId}");
+			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._locked = false;
+			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._door.Unlock();
+		}
 	}
 
 	public void Update()
