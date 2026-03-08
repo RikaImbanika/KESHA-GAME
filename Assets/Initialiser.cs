@@ -72,6 +72,11 @@ public class Initialiser : MonoBehaviour
         S.Snakie1 = Prefabs.Get("SNAKIE 1");
         S.Snakie2 = Prefabs.Get("SNAKIE 2");
         S.Snakie3 = Prefabs.Get("SNAKIE 3");
+        S.Zombie = Prefabs.Get("FirstZombie");
+        S.Bakalavr = Prefabs.Get("Bakalavr");
+        S.Musculus = Prefabs.Get("Musculus");
+        S.Ghost = Prefabs.Get("Ghost");
+        S.Spider = Prefabs.Get("Spider");
     }
 
     private static IEnumerator WaitForObjectWithTag(string tag, System.Action<GameObject> setter)

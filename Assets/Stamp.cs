@@ -34,16 +34,6 @@ public class Stamp : MonoBehaviour
         {
             Debug.Log($"Stamp Not Opened. id = {_id}");
 
-            _blueFlames = GameObject.Instantiate(Prefabs.Get("BlueFlames"));
-
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, 20f))
-            {
-                Vector3 point = hit.point;
-                _blueFlames.transform.position = point;
-                _blueFlames.transform.rotation = Quaternion.LookRotation(transform.forward);
-            }
-
             StartCoroutine(SetParent());
 
             IEnumerator SetParent()
@@ -51,7 +41,15 @@ public class Stamp : MonoBehaviour
                 while (S.Loader.Roots[_sceneName] == null)
                     yield return new WaitForSeconds(0.25f);
 
-                _blueFlames.transform.SetParent(S.Loader.Roots[_sceneName], true);
+                _blueFlames = GameObject.Instantiate(Prefabs.Get("BlueFlames"), S.Loader.Roots[_sceneName]);
+
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, Vector3.down, out hit, 20f))
+                {
+                    Vector3 point = hit.point;
+                    _blueFlames.transform.position = point;
+                    _blueFlames.transform.rotation = Quaternion.LookRotation(transform.forward);
+                }
             }
         }
     }

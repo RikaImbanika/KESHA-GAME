@@ -25,14 +25,15 @@ public class Zombie : MonoBehaviour
     private string _sceneName;
     private Vector3 _startPosition;
     private string _id;
+    private string _idPos;
+    private string _idHealth;
+    private string _idRot;
     private NavMeshAgent _agent;
     private Vector3 _pos;
     private bool _run;
     private bool _screamerStarted;
     private Collider _collider;
-    private EnemyParams _ep;
-    private float _liveTime;
-    
+    private EnemyParams _ep;    
     private Optimiser _opti;
 
     void Start()
@@ -63,7 +64,10 @@ public class Zombie : MonoBehaviour
             _ep = S.AllFather.GetEnemyParams(_type);
 
             _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-            _id = _sceneName + transform.position.x + transform.position.y + transform.position.z;
+            _id = S.ID(_sceneName, S.ID(gameObject));
+            _idPos = S.ID(_id, "pos");
+            _idRot = S.ID(_id, "rot");
+            _idHealth = S.ID(_id, "health");
 
             _agent = GetComponent<NavMeshAgent>();
             _agent.speed = _speed;
@@ -76,15 +80,12 @@ public class Zombie : MonoBehaviour
 
             _startPosition = transform.position;
 
-            gameObject.SetActive(false);
-
             while (S.SM == null)
                 yield return new WaitForSeconds(0.1f);
 
-            transform.position = S.SM.LoadVector3(S.ID(_id, "position")) ?? transform.position;
-            transform.rotation = S.SM.LoadQuaternion(S.ID(_id, "rotation")) ?? transform.rotation;
-            _health = S.SM.LoadFloat(S.ID(_id, "health")) ?? _health;
-            gameObject.SetActive(true);
+            transform.position = S.SM.LoadVector3(_idPos) ?? transform.position;
+            transform.rotation = S.SM.LoadQuaternion(_idRot) ?? transform.rotation;
+            _health = S.SM.LoadFloat(_idHealth) ?? _health;
 
             if (_health <= 0)
                 Die();
@@ -95,9 +96,9 @@ public class Zombie : MonoBehaviour
 
     void SavingMethod()
     {
-        S.SM.Save(S.ID(_id, "position"), transform.position);
-        S.SM.Save(S.ID(_id, "rotation"), transform.rotation);
-        S.SM.Save(S.ID(_id, "health"), _health);
+        S.SM.Save(_idPos, transform.position);
+        S.SM.Save(_idRot, transform.rotation);
+        S.SM.Save(_idHealth, _health);
     }
 
     public void Damage(float amount)
@@ -134,11 +135,16 @@ public class Zombie : MonoBehaviour
         _ani.SetTrigger("TrDie");
         _agent.speed = 0f;
         _followPlayer = false;
+        _health = 0;
+        _dead = true;
         Destroy(_collider);
     }
 
     void Update()
     {
+        if (_health <= 0)
+            _dead = true;
+
         if (!_dead && _active)
         {
             if (!_screamerStarted)
@@ -284,13 +290,13 @@ public class Zombie : MonoBehaviour
         if (_nextFireTime <= 0)
         {
             _nextFireTime = _fireCooldown;
-            GameObject bullet = Instantiate(S.EnemyBullet);
+            GameObject bullet = Instantiate(S.EnemyBullet, S.Loader.Roots[_sceneName]);
             bullet.transform.position = gameObject.transform.position + new Vector3(0, _heigh, 0);
             bullet.transform.LookAt(S.Camera.transform.position);
             EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
-            eb._active = true;
             eb._speed = 30;
-            Destroy(bullet, 17);
+
+            Destroy(bullet, 15);
     
             AudioSource shot = Instantiate(S.Shot);
             shot.transform.position = transform.position;

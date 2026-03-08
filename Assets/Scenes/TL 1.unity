@@ -1015,6 +1015,36 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2657376555276552313, guid: 5377be938a53e8647a3be66dc16f5f17, type: 3}
+--- !u!114 &682171065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922473550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.53000003
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 5f3fe2424988f2d43a671aac15701eee, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!114 &698579069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1344,6 +1374,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -3027286994115479276, guid: 51579abcb97b7484d80cd93ac10df2f8, type: 3}
+--- !u!1 &922473550 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5377be938a53e8647a3be66dc16f5f17, type: 3}
+  m_PrefabInstance: {fileID: 1899162279}
+  m_PrefabAsset: {fileID: 0}
 --- !u!64 &1037819832
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3633,6 +3668,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 543450652330801857}
+  - component: {fileID: 919132148409163900}
   m_Layer: 0
   m_Name: Toilet 1
   m_TagString: Untagged
@@ -3640,6 +3676,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &919132148409163900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148409163899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.53000003
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: fc386e32de3ee294d84b7dfc729f0ba3, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!23 &1065653179902211013
 MeshRenderer:
   m_ObjectHideFlags: 0

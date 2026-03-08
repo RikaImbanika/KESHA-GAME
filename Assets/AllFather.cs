@@ -99,7 +99,7 @@ public class AllFather : MonoBehaviour
 			ep._screamerZ = 0.60f;
 			ep._screamerSounds = new string[] { "screamer1", "screamer2", "screamer3", "screamer4", "screamer5", "screamer6", "screamer7" };
 		}
-		else if (name == "professor")
+		else if (name == "bakalavr")
 		{
 			ep._screamerX = 0;
 			ep._screamerY = -4.2f;

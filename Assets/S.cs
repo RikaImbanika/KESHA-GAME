@@ -65,6 +65,84 @@ public static class S : object
 	private static string _fakePlayerScene;
 	private static float _portalToPlayerDistance;
 	private static float _fakePlayerLastUpdated;
+	private static Enemies _enemies;
+	private static GameObject _zombie;
+	private static GameObject _bakalavr;
+	private static GameObject _musculus;
+	private static GameObject _ghost;
+	private static GameObject _spider;
+
+	public static GameObject Zombie
+	{
+		get
+		{
+			return _zombie;
+		}
+		set
+		{
+			_zombie = value;
+		}
+	}
+
+	public static GameObject Bakalavr
+	{
+		get
+		{
+			return _bakalavr;
+		}
+		set
+		{
+			_bakalavr = value;
+		}
+	}
+
+	public static GameObject Musculus
+	{
+		get
+		{
+			return _musculus;
+		}
+		set
+		{
+			_musculus = value;
+		}
+	}
+
+	public static GameObject Ghost
+	{
+		get
+		{
+			return _ghost;
+		}
+		set
+		{
+			_ghost = value;
+		}
+	}
+
+	public static GameObject Spider
+	{
+		get
+		{
+			return _spider;
+		}
+		set
+		{
+			_spider = value;
+		}
+	}
+
+	public static Enemies Enemies
+	{
+		get
+		{
+			return _enemies;
+		}
+		set
+		{
+			_enemies = value;
+		}
+	}
 
 	public static float FakePlayerLastUpdated
 	{

@@ -108,6 +108,7 @@ public class Spider : MonoBehaviour
         }
 
         _laserDown = Instantiate(S.RedLaser, transform.position + _lasersOffset, Quaternion.LookRotation(Vector3.down), transform); //
+        _laserDown.SetActive(false);
 
         var loadPos = S.SM.LoadVector3(S.ID(_key, "position"));
 

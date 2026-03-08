@@ -52,7 +52,7 @@ public class PortalPlacer : MonoBehaviour
                 _portal._id = _id;
                 _portal._sceneName = _sceneName;
 
-                Debug.LogError($"Loading portal... ({_sceneName} {_id} - {_portal._secondSceneName} {secondPortId})");
+                //Debug.LogError($"Loading portal... ({_sceneName} {_id} - {_portal._secondSceneName} {secondPortId})");
 
                 transform.rotation = S.SM.LoadQuaternion(idRotation) ?? Quaternion.identity;
 
@@ -74,17 +74,17 @@ public class PortalPlacer : MonoBehaviour
                     _secondSceneName = S.PortalsBase.TakeConnection(_sceneName);
                     if (string.IsNullOrEmpty(_secondSceneName))
                     {
-                        Debug.LogError("No connection, destroying.");
+                        //Debug.LogError("No connection, destroying.");
 
                         S.SM.Save(idSecondPortId, "none");
                         Destroy(gameObject);
                         yield break;
                     }
 
-                    Debug.LogError($"Instantiating... (Connection TAKEN {_sceneName} - {_secondSceneName})");
+                    //Debug.LogError($"Instantiating... (Connection TAKEN {_sceneName} - {_secondSceneName})");
                 }
-                else
-                    Debug.LogError($"Instantiating... (Connection LOADED {_sceneName} - {_secondSceneName})");
+                //else
+                //    Debug.LogError($"Instantiating... (Connection LOADED {_sceneName} - {_secondSceneName})");
 
                 S.SM.Save(idNextSceneName, _secondSceneName);
 

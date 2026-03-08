@@ -1,12 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.SceneManagement;
 
 public class Portal : MonoBehaviour
 {
@@ -311,19 +306,19 @@ public class Portal : MonoBehaviour
                 S.PS._prevCamPos = S.Camera.transform.position;
                 S.PS._camPos = S.PS._prevCamPos;
 
-                Debug.LogError($"Going To {_secondSceneName}... #1");
+                //Debug.LogError($"Going To {_secondSceneName}... #1");
 
                 S.Teleporter.ImportantStaticShitToDo(_secondSceneName);
 
-                Debug.LogError($"Going To {_secondSceneName}... #2");
+                //Debug.LogError($"Going To {_secondSceneName}... #2");
 
                 S.Loader.GoTo(_sceneName, _secondSceneName);
 
-                Debug.LogError($"Going To {_secondSceneName}... #3");
+                //Debug.LogError($"Going To {_secondSceneName}... #3");
 
                 S.SDC.RequestCleanup();
 
-                Debug.LogError($"Gone To {_secondSceneName}!");
+                //Debug.LogError($"Gone To {_secondSceneName}!");
 
                 StartCoroutine(Fixer());
             }

@@ -238,8 +238,6 @@ public class SaveManager : MonoBehaviour
 
         IEnumerator CR()
         {
-            while (!SceneManager.GetSceneByName(S.PS._currentSceneName).isLoaded)
-                yield return new WaitForSeconds(0.2f);
             while (!S.Loader.LoadedScene(S.PS._currentSceneName))
                 yield return new WaitForSeconds(0.2f); //Okay okay
 
