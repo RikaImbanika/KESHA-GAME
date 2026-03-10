@@ -64,12 +64,7 @@ public class SnakeSpawner : MonoBehaviour
     {
         GameObject obj = null;
 
-        if (_type == 1)
-            obj = Instantiate(S.Snakie1, transform.position, transform.rotation, transform);
-        else if (_type == 2)
-            obj = Instantiate(S.Snakie2, transform.position, transform.rotation, transform);
-        else if (_type == 3)
-            obj = Instantiate(S.Snakie3, transform.position, transform.rotation, transform);
+        obj = Instantiate(S.Snakes[_type - 1], transform.position, transform.rotation, transform);
 
         //Debug.LogError("XXX 0");
 
@@ -93,6 +88,5 @@ public class SnakeSpawner : MonoBehaviour
             //Debug.LogError("XXX 2");
 
         Destroy(this);
-
     }
 }

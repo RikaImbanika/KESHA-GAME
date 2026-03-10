@@ -16,7 +16,7 @@ public class II : MonoBehaviour
 
         _base.Add("PurpleBall", new ItemInfo(
             spriteName: "CoinTex",
-            prefabName: "PurpleBall",
+            prefabName: "PurpleBall 0",
             throwable: true
             ));
 

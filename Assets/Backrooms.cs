@@ -121,7 +121,7 @@ public class Backrooms : MonoBehaviour
     {
         _snakes = new Dictionary<string, byte>();
 
-        for (byte i = 1; i <= 3;)
+        for (byte i = 1; i <= 4;)
         {
             int sceneId = S.RND.Next(_allRoomsList.Count());
             string sceneName = _allRoomsList[sceneId];

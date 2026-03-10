@@ -20,7 +20,7 @@ public static class S : object
 	private static Canvas _canvas;
 	private static AudioManager _audioManager;
 	private static GameObject _negative;
-	private static IsGun _isGun;
+	private static Gun _gun;
 	private static SaveManager _saveManager;
 	private static PlayerCamScript _playerCamScript;
 	private static Camera _camera;
@@ -29,6 +29,8 @@ public static class S : object
     private static GameObject _spot;
     private static GameObject _blueSparkle;
 	private static GameObject _redSparkle;
+	private static GameObject _greenSparkle;
+	private static GameObject _playerSparkle;
 	private static GameObject _blueOldSparkle;
 	private static GameObject _redOldSparkle;
 	private static FirstZombie2 _firstZombie2;
@@ -41,7 +43,10 @@ public static class S : object
 	private static GaymeBroker _gaymeBroker;
 	private static GameObject _redLaser;
 	private static GameObject _redPoint;
+	private static GameObject _bluePoint;
+	private static GameObject _greenPoint;
 	private static GameObject _blueLaser;
+	private static GameObject _greenLaser;
 	private static GameObject _blueRay;
 	private static AudioSource _shot;
 	private static GameObject _enemyBullet;
@@ -50,9 +55,7 @@ public static class S : object
 	private static AudioSource _caboom;
 	private static Backrooms _backrooms;
 	private static GameObject _lighterObj;
-	private static GameObject _snakie1;
-	private static GameObject _snakie2;
-	private static GameObject _snakie3;
+	private static List<GameObject> _snakes;
 	private static Mushrooms _mushrooms;
 	private static Lighters _lighters;
 	private static RandomRotation _randomRotations;
@@ -72,7 +75,19 @@ public static class S : object
 	private static GameObject _ghost;
 	private static GameObject _spider;
 	private static GameObject _stamp;
+	private static Dictionary<string, List<GameObject>> _snakeBalls;
 
+	public static Dictionary<string, List<GameObject>> SnakeBalls
+	{
+		get
+		{
+			return _snakeBalls;
+		}
+		set
+		{
+			_snakeBalls = value;
+		}
+	}
 	public static GameObject Stamp
 	{
 		get
@@ -338,39 +353,15 @@ public static class S : object
 		}
 	}
 
-	public static GameObject Snakie1
+	public static List<GameObject> Snakes
 	{
 		get
 		{
-			return _snakie1;
+			return _snakes;
 		}
 		set
 		{
-			_snakie1 = value;
-		}
-	}
-
-	public static GameObject Snakie2
-	{
-		get
-		{
-			return _snakie2;
-		}
-		set
-		{
-			_snakie2 = value;
-		}
-	}
-
-	public static GameObject Snakie3
-	{
-		get
-		{
-			return _snakie3;
-		}
-		set
-		{
-			_snakie3 = value;
+			_snakes = value;
 		}
 	}
 
@@ -494,6 +485,18 @@ public static class S : object
 		}
 	}
 
+	public static GameObject GreenLaser
+	{
+		get
+		{
+			return _greenLaser;
+		}
+		set
+		{
+			_greenLaser = value;
+		}
+	}
+
 	public static GameObject RedPoint
 	{
 		get
@@ -503,6 +506,30 @@ public static class S : object
 		set
 		{
 			_redPoint = value;
+		}
+	}
+
+	public static GameObject BluePoint
+	{
+		get
+		{
+			return _bluePoint;
+		}
+		set
+		{
+			_bluePoint = value;
+		}
+	}
+
+	public static GameObject GreenPoint
+	{
+		get
+		{
+			return _greenPoint;
+		}
+		set
+		{
+			_greenPoint = value;
 		}
 	}
 
@@ -664,6 +691,30 @@ public static class S : object
 		}
 	}
 
+	public static GameObject PlayerSparkle
+	{
+		get
+		{
+			return _playerSparkle;
+		}
+		set
+		{
+			_playerSparkle = value;
+		}
+	}
+
+	public static GameObject GreenSparkle
+	{
+		get
+		{
+			return _greenSparkle;
+		}
+		set
+		{
+			_greenSparkle = value;
+		}
+	}
+
 	public static GameObject RedSparkle
 	{
 		get
@@ -724,15 +775,15 @@ public static class S : object
 		}
 	}
 
-	public static IsGun IsGun
+	public static Gun Gun
 	{
 		get
 		{
-			return _isGun;
+			return _gun;
 		}
 		set
 		{
-			_isGun = value;
+			_gun = value;
 		}
 	}
 

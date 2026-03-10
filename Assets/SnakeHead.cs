@@ -44,6 +44,7 @@ public class SnakeHead : MonoBehaviour
     private int _lastAimId;
     public GameObject _BLUE;
     public string _sceneName;
+    public string _type;
 
     private Optimiser _opti;
 
@@ -135,12 +136,25 @@ public class SnakeHead : MonoBehaviour
             else if (GetPercent(5))
                 type2 = "sniper";
 
-            body.Drone.Init(type, type2);
+            string color = "";
 
-            int randomNumber = UnityEngine.Random.Range(0, 2); //Why 2?
+            if (_type == "Classic" || _type == "Silent")
+                color = "red";
+            else if (_type == "Nature")
+                color = "green";
+            else if (_type == "Ice")
+                color = "blue";
+
+            body.Drone.Init(type, type2, color);
+
+            int count = S.SnakeBalls[_type].Count;
+
+            int randomNumber = UnityEngine.Random.Range(0, 2);
             if (randomNumber == 0)
-                randomIndex = UnityEngine.Random.Range(0, S.SnakeBallMaterials.Count);
-            body.Renderer.material = S.SnakeBallMaterials[randomIndex];
+                randomIndex = UnityEngine.Random.Range(0, count);
+
+            GameObject ballInBallInBallInBall = GameObject.Instantiate(S.SnakeBalls[_type][randomIndex], body.BallInBallInBall.transform);
+            ballInBallInBallInBall.transform.position = body.BallInBallInBall.transform.position;
 
             StartCoroutine(IEKek());
 

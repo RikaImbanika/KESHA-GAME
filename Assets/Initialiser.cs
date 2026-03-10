@@ -27,6 +27,45 @@ public class Initialiser : MonoBehaviour
             Materials.Get("Balls/WhiteBall")
         };
 
+        S.SnakeBalls = new Dictionary<string, List<GameObject>>();
+        S.SnakeBalls.Add("Classic", new List<GameObject>());
+        S.SnakeBalls.Add("Ice", new List<GameObject>());
+        S.SnakeBalls.Add("Nature", new List<GameObject>());
+        S.SnakeBalls.Add("Silent", new List<GameObject>());
+
+        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/RedBall"));
+        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/BlueBall"));
+        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/PurpleBall"));
+        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/YellowBall"));
+        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/GreenBall"));
+        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/WhiteBall"));
+        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/CyanBall"));
+
+        S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/CyanBall"));
+        S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/IceBall 1"));
+        S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/IceBall 2"));
+        S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/IceBall 3"));
+        S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/IceBall 4"));
+        S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/IceBall 5"));
+        S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/IceBall 6"));
+
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/GreenBall"));
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/NatureBall 1"));
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/NatureBall 2"));
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/NatureBall 3"));
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/NatureBall 4"));
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/NatureBall 5"));
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/NatureBall 6"));
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/NatureBall 7"));
+        S.SnakeBalls["Nature"].Add(Prefabs.Get("Balls/NatureBall 8"));
+
+        S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 1"));
+        S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 2"));
+        S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 3"));
+        S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 4"));
+        S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 5"));
+        S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 6"));
+
         yield return WaitForCondition(() => Camera.main != null, "Waiting for camera");
         S.Camera = Camera.main;
 
@@ -46,7 +85,7 @@ public class Initialiser : MonoBehaviour
         yield return StartCoroutine(GetComponentSafe<PlayerStorage>(S.Ph, playerStorage => S.Ps = playerStorage));
 
         yield return WaitForObjectWithTag("Canvas", obj => S.CanvasObj = obj);
-        
+
         yield return StartCoroutine(GetComponentSafe<Canvas>(S.CanvasObj, canvas => S.Canvas = canvas));
 
         yield return WaitForObjectWithTag("FPS", obj => S.FpsObj = obj);
@@ -55,12 +94,17 @@ public class Initialiser : MonoBehaviour
         yield return WaitForObjectWithTag("Spot", obj => S.Spot = obj);
         S.RedLaser = Prefabs.Get("RedLaser");
         S.BlueLaser = Prefabs.Get("BlueLaser");
+        S.GreenLaser = Prefabs.Get("GreenLaser");
         S.RedPoint = Prefabs.Get("RedPoint");
+        S.BluePoint = Prefabs.Get("BluePoint");
+        S.GreenPoint = Prefabs.Get("GreenPoint");
         S.RedHitPoint = Prefabs.Get("RedHitPoint");
         S.BlueHitPoint = Prefabs.Get("BlueHitPoint");
         S.BlueRay = Prefabs.Get("BlueRay");
         S.RedSparkle = Prefabs.Get("RedSparkle");
         S.BlueSparkle = Prefabs.Get("BlueSparkle");
+        S.GreenSparkle = Prefabs.Get("GreenSparkle");
+        S.PlayerSparkle = Prefabs.Get("PlayerSparkle");
         S.RedOldSparkle = Prefabs.Get("RedOldSparkle");
         S.BlueOldSparkle = Prefabs.Get("BlueOldSparkle");
         S.Loot = Prefabs.Get("Loot");
@@ -69,9 +113,11 @@ public class Initialiser : MonoBehaviour
         S.Caboom = Prefabs.GetAudioSource("Caboom");
         S.SnakeBody = Prefabs.Get("SnakeBody");
         S.LighterObj = Prefabs.Get("Lighter");
-        S.Snakie1 = Prefabs.Get("SNAKIE 1");
-        S.Snakie2 = Prefabs.Get("SNAKIE 2");
-        S.Snakie3 = Prefabs.Get("SNAKIE 3");
+
+        S.Snakes = new List<GameObject>();
+        for (int i = 1; i <= 4; i++)
+            S.Snakes.Add(Prefabs.Get($"SNAKIE {i}"));
+
         S.Zombie = Prefabs.Get("FirstZombie");
         S.Bakalavr = Prefabs.Get("Bakalavr");
         S.Musculus = Prefabs.Get("Musculus");

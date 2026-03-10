@@ -239,24 +239,25 @@ public class Portal : MonoBehaviour
         Vector3 toPlayer = S.Camera.transform.position - center;
         Ray ray = new Ray(transform.position, toPlayer);
         RaycastHit hit;
-        Physics.Raycast(ray, out hit, _layerMaskForPlayer);
-
-        bool see = hit.collider.gameObject.tag == "Player";
-
-        float distance = toPlayer.magnitude;
-
-        if (see || distance < _h * 3f)
+        if (Physics.Raycast(ray, out hit, _layerMaskForPlayer))
         {
-            if (distance < S.PortalToPlayerDistance)
+            bool see = hit.collider.gameObject.tag == "Player";
+
+            float distance = toPlayer.magnitude;
+
+            if (see || distance < _h * 3f)
             {
-                //Debug.Log($"Dist: {distance}, SPS: {_secondSceneName}");
+                if (distance < S.PortalToPlayerDistance)
+                {
+                    //Debug.Log($"Dist: {distance}, SPS: {_secondSceneName}");
 
-                S.FakePlayerLastUpdated = Time.time;
-                S.PortalToPlayerDistance = distance;
-                S.FakePlayerScene = _secondSceneName;
-                S.FakePlayer.position = SecondPortal.transform.position + new Vector3(0, _h / 2, 0);
+                    S.FakePlayerLastUpdated = Time.time;
+                    S.PortalToPlayerDistance = distance;
+                    S.FakePlayerScene = _secondSceneName;
+                    S.FakePlayer.position = SecondPortal.transform.position + new Vector3(0, _h / 2, 0);
 
-                S.FakePlayerCamera.rotation = _secondCamera.transform.rotation;
+                    S.FakePlayerCamera.rotation = _secondCamera.transform.rotation;
+                }
             }
         }
     }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsGun : MonoBehaviour
+public class Gun : MonoBehaviour
 {
     public int _sparklesCount;
     private Transform _root;
@@ -18,7 +18,7 @@ public class IsGun : MonoBehaviour
 
         IEnumerator Start0()
         {
-            S.IsGun = this;
+            S.Gun = this;
 
             _layerMask = ~(1 << LayerMask.NameToLayer("Player") |
                 1 << LayerMask.NameToLayer("Particles") |
@@ -120,7 +120,7 @@ public class IsGun : MonoBehaviour
 
                 for (int i = 0; i < _sparklesCount; i++)
                 {
-                    GameObject sparkle = Instantiate(S.BlueSparkle);
+                    GameObject sparkle = Instantiate(S.PlayerSparkle);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
 

@@ -718,7 +718,7 @@ public class Inventory : MonoBehaviour
 
 				if (item._name == "Gun")
 				{
-					S.IsGun.Fire();
+					S.Gun.Fire();
 					return;
 				}
 			}

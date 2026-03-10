@@ -9,6 +9,7 @@ public class Drone : MonoBehaviour
     public string _type2;
     public List<GameObject> _lasers;
     public List<GameObject> _points;
+    public GameObject _sparklePrefab;
     public float _rotationSpeed;
     public float _yRot;
     public float _zRot;
@@ -16,6 +17,7 @@ public class Drone : MonoBehaviour
     public int _fireCount;
     public float _currentFireDelay;
     public SnakeHead _head;
+    private string _color;
     
     private int _layerMaskForLasers;
     private Optimiser _opti;
@@ -31,10 +33,18 @@ public class Drone : MonoBehaviour
                          1 << LayerMask.NameToLayer("Default");
     }
 
-    public void Init(string type, string type2)
+    public void Init(string type, string type2, string color)
     {
         _type = type;
         _type2 = type2;
+        _color = color;
+
+        if (color == "red")
+            _sparklePrefab = S.RedSparkle;
+        else if (color == "green")
+            _sparklePrefab = S.GreenSparkle;
+        else if (color == "blue")
+            _sparklePrefab = S.BlueSparkle;
 
         if (type == "6lasers")
         {
@@ -83,8 +93,21 @@ public class Drone : MonoBehaviour
         
         void Add()
         {
-            _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
-            _points.Add(Instantiate(S.RedPoint, transform.position, transform.rotation, transform));
+            if (_color == "red")
+            {
+                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
+                _points.Add(Instantiate(S.RedPoint, transform.position, transform.rotation, transform));
+            }
+            else if (_color == "blue")
+            {
+                _lasers.Add(Instantiate(S.BlueLaser, transform.position, transform.rotation, transform));
+                _points.Add(Instantiate(S.BluePoint, transform.position, transform.rotation, transform));
+            }
+            else if (_color == "green")
+            {
+                _lasers.Add(Instantiate(S.GreenLaser, transform.position, transform.rotation, transform));
+                _points.Add(Instantiate(S.GreenPoint, transform.position, transform.rotation, transform));
+            }
         }
 
         if (type2 == "1")
@@ -207,7 +230,7 @@ public class Drone : MonoBehaviour
         {
             Quaternion rotation = Quaternion.LookRotation(dir);
 
-            GameObject bullet = Instantiate(S.EnemyBullet, transform.position + dir, rotation, S.Loader.Roots[_head._sceneName]);
+            GameObject bullet = Instantiate(S.EnemyBullet, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
 
             EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
             eb._active = true;
@@ -271,7 +294,7 @@ public class Drone : MonoBehaviour
                 int period = (int)(60f * 1f / deltaWalk);
                 if (S.RND.Next(0, period) == 0)
                 {
-                    GameObject sparkle = Instantiate(S.RedSparkle);
+                    GameObject sparkle = Instantiate(_sparklePrefab);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
                 } /////////////
