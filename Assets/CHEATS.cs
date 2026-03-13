@@ -121,13 +121,13 @@ public class CHEATS : MonoBehaviour
         GameObject.Find("PurpleLocker").GetComponent<Locker>().Cheat();
         yield return new WaitForSeconds(0.15f);
 
-        GameObject.Find("DoorBlue").GetComponent<IsDoor>().Move();
+        GameObject.Find("DoorBlue").GetComponent<DoorLocal>().Move();
         yield return new WaitForSeconds(0.15f);
-        GameObject.Find("DoorRed").GetComponent<IsDoor>().Move();
+        GameObject.Find("DoorRed").GetComponent<DoorLocal>().Move();
         yield return new WaitForSeconds(0.15f);
-        GameObject.Find("DoorLime").GetComponent<IsDoor>().Move();
+        GameObject.Find("DoorLime").GetComponent<DoorLocal>().Move();
         yield return new WaitForSeconds(0.15f);
-        GameObject.Find("DoorNone").GetComponent<IsDoor>().Move();
+        GameObject.Find("DoorNone").GetComponent<DoorLocal>().Move();
         yield return new WaitForSeconds(0.15f);
 
         yield return TakeItemWithDelay("BlueKey");

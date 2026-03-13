@@ -278,7 +278,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 112054336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ee7019c4828ce43a4b05be7fd3c78e, type: 3}
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _maxAngle: 100
@@ -286,23 +286,6 @@ MonoBehaviour:
   _locked: 1
   _direction: 0
   _item: {fileID: 277950673}
---- !u!114 &112054341
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112054337}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ee7019c4828ce43a4b05be7fd3c78e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxAngle: 100
-  _audioName: toiletDoor
-  _locked: 1
-  _direction: 0
-  _item: {fileID: 1520998693}
 --- !u!64 &112054342
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -337,10 +320,27 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112054337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 100
+  _audioName: toiletDoor
+  _locked: 1
+  _direction: 0
+  _item: {fileID: 1520998693}
+--- !u!114 &112054345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 112054338}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ee7019c4828ce43a4b05be7fd3c78e, type: 3}
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _maxAngle: 100
@@ -667,23 +667,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.004052468, y: 0.030850671, z: 0.08}
   m_Center: {x: 0.0013694194, y: -0.015224928, z: 0.01}
---- !u!114 &165789415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 165789413}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ee7019c4828ce43a4b05be7fd3c78e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxAngle: 100
-  _audioName: toiletDoor
-  _locked: 1
-  _direction: 1
-  _item: {fileID: 0}
 --- !u!208 &165789416
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -700,6 +683,23 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0.001, y: -0.015000001, z: -0.009000001}
   m_TimeToStationary: 0.5
+--- !u!114 &165789417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165789413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 100
+  _audioName: toiletDoor
+  _locked: 1
+  _direction: 1
+  _item: {fileID: 0}
 --- !u!64 &218142404
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2459,7 +2459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5597563c4cb4db741888afc26195a6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _door: {fileID: 165789415}
+  _door: {fileID: 165789417}
   _correctKey: PurpleKey
 --- !u!65 &935527942
 BoxCollider:
@@ -2486,7 +2486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5597563c4cb4db741888afc26195a6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _door: {fileID: 112054344}
+  _door: {fileID: 112054345}
   _correctKey: BlueKey
 --- !u!65 &935527944
 BoxCollider:
@@ -3123,7 +3123,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 1
-  _nextDoorId: 2
   col: {fileID: 1151142937}
   audioName: Door
   _locked: 0
@@ -3131,7 +3130,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &1151142936
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5076,23 +5074,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -8531168876033118001, guid: 149b70b914496834582a189d0a332541, type: 3}
   m_PrefabInstance: {fileID: 1363033448}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1579964073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1579964072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ee7019c4828ce43a4b05be7fd3c78e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxAngle: 100
-  _audioName: toiletDoor
-  _locked: 0
-  _direction: 0
-  _item: {fileID: 1434572675}
 --- !u!64 &1579964074
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5107,6 +5088,23 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -457131070039125694, guid: 149b70b914496834582a189d0a332541, type: 3}
+--- !u!114 &1579964075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579964072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 100
+  _audioName: toiletDoor
+  _locked: 0
+  _direction: 0
+  _item: {fileID: 1434572675}
 --- !u!1001 &1586780473
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6986,7 +6984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5597563c4cb4db741888afc26195a6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _door: {fileID: 112054341}
+  _door: {fileID: 112054344}
   _correctKey: GreenKey
 --- !u!65 &2070555111
 BoxCollider:

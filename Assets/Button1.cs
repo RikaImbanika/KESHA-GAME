@@ -19,7 +19,7 @@ public class Button1 : MonoBehaviour
 	private float _finalDeltaY;
 	public Camera _camera;
 	private Camera _playerCamera;
-	public IsDoor _isDoor;
+	public DoorLocal _doorLocal;
 	public ToiletZombie _toiletZombie;
 	public float _startTime;
 
@@ -65,9 +65,9 @@ public class Button1 : MonoBehaviour
 
 			S.AM.Play(_audioName, 1);
 
-			_isDoor.Close();
+			_doorLocal.Close();
 
-			while (!_isDoor.Closed)
+			while (!_doorLocal.Closed)
 				yield return new WaitForSeconds(0.1f);
 
 			_startTime = Time.time;

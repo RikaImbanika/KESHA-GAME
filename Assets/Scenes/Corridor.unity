@@ -3867,6 +3867,7 @@ GameObject:
   - component: {fileID: 7403184980516878550}
   - component: {fileID: 7403184980516878552}
   - component: {fileID: 7403184980516878551}
+  - component: {fileID: 7403184980516878553}
   m_Layer: 9
   m_Name: God8.004
   m_TagString: Untagged
@@ -3929,6 +3930,7 @@ GameObject:
   - component: {fileID: 2911289538960493537}
   - component: {fileID: 8508216875019306889}
   - component: {fileID: 8508216875019306888}
+  - component: {fileID: 8508216875019306890}
   m_Layer: 9
   m_Name: God8.003
   m_TagString: Untagged
@@ -3969,6 +3971,7 @@ GameObject:
   - component: {fileID: 6221972151999014525}
   - component: {fileID: 8969253235207745751}
   - component: {fileID: 8969253235207745750}
+  - component: {fileID: 8969253235207745752}
   m_Layer: 9
   m_Name: God8.002
   m_TagString: Untagged
@@ -4315,6 +4318,7 @@ GameObject:
   - component: {fileID: 4416631815582257189}
   - component: {fileID: 5486375401076590881}
   - component: {fileID: 5486375401076590880}
+  - component: {fileID: 5486375401076590882}
   m_Layer: 9
   m_Name: God8.008
   m_TagString: Untagged
@@ -4647,6 +4651,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0012845134, y: 0.0056209574, z: 0.00714987}
   m_Center: {x: 0.0006409215, y: -0.0028145225, z: -0.003565197}
+--- !u!114 &5486375401076590882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4476432625267837265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 75
+  _audioName: 
+  _locked: 0
+  _direction: 1
+  _item: {fileID: 623083396}
 --- !u!23 &5541598543528270275
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4732,6 +4753,7 @@ GameObject:
   - component: {fileID: 1748204310761799134}
   - component: {fileID: 8962751713665740140}
   - component: {fileID: 8962751713665740139}
+  - component: {fileID: 8962751713665740141}
   m_Layer: 9
   m_Name: God8.006
   m_TagString: Untagged
@@ -4849,7 +4871,7 @@ GameObject:
   - component: {fileID: 8706155030882941041}
   - component: {fileID: 9118394647037239571}
   - component: {fileID: 9118394647037239573}
-  - component: {fileID: 9118394647037239572}
+  - component: {fileID: 9118394647037239574}
   m_Layer: 9
   m_Name: God8.005
   m_TagString: Untagged
@@ -5370,11 +5392,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2327640970443117468}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ee7019c4828ce43a4b05be7fd3c78e, type: 3}
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _maxAngle: 75
-  _audioName: toiletDoor
+  _audioName: 
   _locked: 0
   _direction: 1
   _item: {fileID: 0}
@@ -5391,6 +5413,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0012865064, y: 0.005620993, z: 0.007149866}
   m_Center: {x: 0.0006249427, y: -0.0028104966, z: -0.0035535665}
+--- !u!114 &7403184980516878553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2327640970443117468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 0
+  _audioName: 
+  _locked: 0
+  _direction: 0
+  _item: {fileID: 0}
 --- !u!1 &7593853594167924006
 GameObject:
   m_ObjectHideFlags: 0
@@ -5594,6 +5633,7 @@ GameObject:
   - component: {fileID: 105276535915721716}
   - component: {fileID: 8435471060298520434}
   - component: {fileID: 8435471060298520433}
+  - component: {fileID: 8435471060298520435}
   m_Layer: 9
   m_Name: God8.007
   m_TagString: Untagged
@@ -5631,6 +5671,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0012875746, y: 0.005620993, z: 0.007149866}
   m_Center: {x: 0.00063941, y: 0.0027907554, z: -0.0035927151}
+--- !u!114 &8435471060298520435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8435471060298520432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 75
+  _audioName: 
+  _locked: 0
+  _direction: 0
+  _item: {fileID: 0}
 --- !u!1 &8449699565333365524
 GameObject:
   m_ObjectHideFlags: 0
@@ -5779,6 +5836,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0012875745, y: 0.005620993, z: 0.007149866}
   m_Center: {x: 0.0006260776, y: 0.0027928536, z: -0.0035749194}
+--- !u!114 &8508216875019306890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2493686604693817813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 75
+  _audioName: 
+  _locked: 0
+  _direction: 0
+  _item: {fileID: 1177741698}
 --- !u!23 &8533769843041720596
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5904,6 +5978,7 @@ GameObject:
   - component: {fileID: 8533769843041720596}
   - component: {fileID: 8734790377716839016}
   - component: {fileID: 8734790377716839015}
+  - component: {fileID: 8734790377716839017}
   m_Layer: 9
   m_Name: God8.010
   m_TagString: Untagged
@@ -5941,6 +6016,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0012875746, y: 0.005620955, z: 0.007149866}
   m_Center: {x: 0.0006372356, y: 0.002788028, z: -0.003574925}
+--- !u!114 &8734790377716839017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8734790377716839014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 75
+  _audioName: 
+  _locked: 0
+  _direction: 0
+  _item: {fileID: 0}
 --- !u!23 &8820902160896543307
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6028,6 +6120,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0012875746, y: 0.0056209927, z: 0.007149866}
   m_Center: {x: 0.0006334876, y: -0.0028110496, z: -0.0035536503}
+--- !u!114 &8962751713665740141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738830851755945820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 75
+  _audioName: 
+  _locked: 0
+  _direction: 1
+  _item: {fileID: 0}
 --- !u!4 &8969253235207745749
 Transform:
   m_ObjectHideFlags: 0
@@ -6073,6 +6182,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0012831878, y: 0.005620993, z: 0.0071498663}
   m_Center: {x: 0.0005597686, y: -0.0028500168, z: -0.003596171}
+--- !u!114 &8969253235207745752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2778853998335469386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 75
+  _audioName: 
+  _locked: 0
+  _direction: 1
+  _item: {fileID: 0}
 --- !u!4 &9094787211890077458
 Transform:
   m_ObjectHideFlags: 0
@@ -6163,23 +6289,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &9118394647037239572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6221323842920171991}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ee7019c4828ce43a4b05be7fd3c78e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxAngle: 75
-  _audioName: toiletDoor
-  _locked: 0
-  _direction: 0
-  _item: {fileID: 0}
 --- !u!65 &9118394647037239573
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6193,3 +6302,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0012816332, y: 0.0056209927, z: 0.007149866}
   m_Center: {x: 0.00064035883, y: 0.0027891342, z: -0.0035749595}
+--- !u!114 &9118394647037239574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6221323842920171991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c08f5d5edc94548b65fd884fa07124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxAngle: 75
+  _audioName: 
+  _locked: 0
+  _direction: 0
+  _item: {fileID: 0}

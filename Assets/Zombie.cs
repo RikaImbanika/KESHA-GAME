@@ -83,14 +83,21 @@ public class Zombie : MonoBehaviour
             while (S.SM == null)
                 yield return new WaitForSeconds(0.1f);
 
-            transform.position = S.SM.LoadVector3(_idPos) ?? transform.position;
-            transform.rotation = S.SM.LoadQuaternion(_idRot) ?? transform.rotation;
-            _health = S.SM.LoadFloat(_idHealth) ?? _health;
+            var loadPos = S.SM.LoadVector3(_idPos);
 
-            if (_health <= 0)
-                Die();
+            if (loadPos.HasValue)
+            {
+                transform.position = loadPos ?? transform.position;
+                transform.rotation = S.SM.LoadQuaternion(_idRot) ?? transform.rotation;
+                _health = S.SM.LoadFloat(_idHealth) ?? _health;
 
-            InvokeRepeating("SavingMethod", 0f, 5f);
+                if (_health <= 0)
+                    Die();
+                else
+                    InvokeRepeating("SavingMethod", 0f, 5f);
+            }
+            else
+                InvokeRepeating("SavingMethod", 0f, 5f);
         }
     }
 
@@ -138,6 +145,7 @@ public class Zombie : MonoBehaviour
         _health = 0;
         _dead = true;
         Destroy(_collider);
+        Destroy(_agent);
     }
 
     void Update()

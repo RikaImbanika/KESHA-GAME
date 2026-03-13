@@ -11,6 +11,7 @@ public class EnemyBullet : MonoBehaviour
     private int _layerMask;
 
     private Optimiser _opti;
+    public Transform[] _children;
     private string _sceneName;
     
     void Start()
@@ -111,6 +112,12 @@ public class EnemyBullet : MonoBehaviour
                     }
 
                     Destroy(gameObject);
+                }
+
+                foreach (Transform child in _children)
+                {
+                    child.LookAt(S.PlayerTarget(_sceneName));
+                    child.Rotate(0f, 0f, S.RandRot.GetFloat());
                 }
             }
         }

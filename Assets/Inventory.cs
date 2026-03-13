@@ -306,7 +306,7 @@ public class Inventory : MonoBehaviour
 					goto render;
 				}
 
-				IsDoor isDoor = hit.collider.gameObject.GetComponent<IsDoor>();
+				DoorLocal isDoor = hit.collider.gameObject.GetComponent<DoorLocal>();
 				if (isDoor != null)
 				{
 					clickable = true;
@@ -725,7 +725,7 @@ public class Inventory : MonoBehaviour
 
 			if (Physics.Raycast(ray, out hit, 7f, _layerMask))
 			{
-				IsDoor isDoor = hit.collider.gameObject.GetComponent<IsDoor>();
+				DoorLocal isDoor = hit.collider.gameObject.GetComponent<DoorLocal>();
 				if (isDoor != null)
 				{
 					isDoor.Move();

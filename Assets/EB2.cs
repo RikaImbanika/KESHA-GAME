@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class EB2 : MonoBehaviour
 {
+    //I will remove it
     private string _sceneName;
     private Optimiser _opti;
 

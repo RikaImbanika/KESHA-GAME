@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Locker : MonoBehaviour
 {
-	public IsDoor _door;
+	public DoorLocal _door;
 	public string _correctKey;
 
 	string _id;
