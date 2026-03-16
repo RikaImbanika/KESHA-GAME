@@ -62,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 
 	Vector3 moveDirection;
 
-	Rigidbody rb;
+	public Rigidbody rb;
 
 	public PhysicMaterial pm;
 
@@ -132,24 +132,19 @@ public class PlayerMovement : MonoBehaviour
 
 		S.PS._prevCamPos = S.PS._camPos;
 		S.PS._camPos = S.Camera.transform.position;
+
+		//
+
+		float k = Time.deltaTime * 60f;
+
+		MovePlayer(k);
+		Crouch(k);
+		Gravity(k);
 	}
 
-	private void FixedUpdate()
+	private void Gravity(float k)
 	{
-		//This is bad!
-		//////////////////////////////////////
-
-		if (S.PS == null)
-			return;
-
-		MovePlayer();
-		Crouch();
-		Gravity();
-	}
-
-	private void Gravity()
-	{
-		rb.AddForce(Vector3.down * gravity);
+		rb.AddForce(Vector3.down * gravity * k);
 	}
 
 	private void GetSpeed()
@@ -185,15 +180,16 @@ public class PlayerMovement : MonoBehaviour
 				}
 	}
 
-	private void Crouch()
+	private void Crouch(float k)
 	{
 		if (isCrouching)
 		{
 			if (playerObject.transform.localScale.y > crouchScale)
 			{
-				playerObject.transform.localScale = new Vector3(playerObject.transform.localScale.x, playerObject.transform.localScale.y - crouchDeltaDown, playerObject.transform.localScale.z);
-				playerObject.transform.localPosition = new Vector3(playerObject.transform.localPosition.x, playerObject.transform.localPosition.y + crouchDeltaDown, playerObject.transform.localPosition.z);
-				transform.position = new Vector3(transform.position.x, transform.position.y - crouchDeltaDown, transform.position.z);
+				float buf = crouchDeltaDown * k;
+				playerObject.transform.localScale = new Vector3(playerObject.transform.localScale.x, playerObject.transform.localScale.y - buf, playerObject.transform.localScale.z);
+				playerObject.transform.localPosition = new Vector3(playerObject.transform.localPosition.x, playerObject.transform.localPosition.y + buf, playerObject.transform.localPosition.z);
+				transform.position = new Vector3(transform.position.x, transform.position.y - buf, transform.position.z);
 			}
 		}
 
@@ -201,21 +197,22 @@ public class PlayerMovement : MonoBehaviour
 		{
 			if (playerObject.transform.localScale.y < 1)
 			{
-				playerObject.transform.localScale = new Vector3(playerObject.transform.localScale.x, playerObject.transform.localScale.y + crouchDeltaUp, playerObject.transform.localScale.z);
-				playerObject.transform.localPosition = new Vector3(playerObject.transform.localPosition.x, playerObject.transform.localPosition.y - crouchDeltaUp, playerObject.transform.localPosition.z);
-				transform.position = new Vector3(transform.position.x, transform.position.y + crouchDeltaUp, transform.position.z);
+				float buf = crouchDeltaUp * k;
+				playerObject.transform.localScale = new Vector3(playerObject.transform.localScale.x, playerObject.transform.localScale.y + buf, playerObject.transform.localScale.z);
+				playerObject.transform.localPosition = new Vector3(playerObject.transform.localPosition.x, playerObject.transform.localPosition.y - buf, playerObject.transform.localPosition.z);
+				transform.position = new Vector3(transform.position.x, transform.position.y + buf, transform.position.z);
 			}
 		}
 	}
 
-	private void MovePlayer()
+	private void MovePlayer(float k)
 	{
 		if (!showingCamera.enabled)
 			if (!inventory.opened)
 			{
-				float multiplier = 1;
+				float multiplier = k;
 				if (verticalInput != 0 && horizontalInput != 0)
-					multiplier = 0.7071f;
+					multiplier = k * 0.7071f;
 
 				moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 				moveDirection = new Vector3(moveDirection.x, 0f, moveDirection.z);

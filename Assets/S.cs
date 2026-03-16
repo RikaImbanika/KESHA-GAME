@@ -75,7 +75,32 @@ public static class S : object
 	private static GameObject _ghost;
 	private static GameObject _spider;
 	private static GameObject _stamp;
+	private static GameObject _arrow;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
+
+	public static PlayerMovement PlayerMovement
+	{
+		get
+		{
+			return _playerMovement;
+		}
+		set
+		{
+			_playerMovement = value;
+		}
+	}
+
+	public static PlayerMovement PM
+	{
+		get
+		{
+			return _playerMovement;
+		}
+		set
+		{
+			_playerMovement = value;
+		}
+	}
 
 	public static Dictionary<string, List<GameObject>> SnakeBalls
 	{
@@ -97,6 +122,18 @@ public static class S : object
 		set
 		{
 			_stamp = value;
+		}
+	}
+
+	public static GameObject Arrow
+	{
+		get
+		{
+			return _arrow;
+		}
+		set
+		{
+			_arrow = value;
 		}
 	}
 
@@ -243,31 +280,6 @@ public static class S : object
 			_visibleLayers = value;
 		}
 	}
-
-	public static PlayerMovement PlayerMovement
-	{
-		get
-		{
-			return _playerMovement;
-		}
-		set
-		{
-			_playerMovement = value;
-		}
-	}
-
-	public static PlayerMovement PM
-	{
-		get
-		{
-			return _playerMovement;
-		}
-		set
-		{
-			_playerMovement = value;
-		}
-	}
-
 
 	public static PlayerMovement Pm
 	{

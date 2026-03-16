@@ -275,18 +275,13 @@ public class Portal : MonoBehaviour
             {
                 if (S.PortalsBase.Portals[_secondSceneName][_secondPortalId]._isTeleporting)
                 {
-                    // S.Ph.transform.position = a;
-                    // S.PS._camPos = a;
-                    // S.PS._camPos = S.PS._prevCamPos = a;
                     return;
                 }
                 if (_isTeleporting)
                 {
-                    // S.Ph.transform.position = a;
-                    // S.PS._camPos = a;
-                    // S.PS._camPos = S.PS._prevCamPos = a;
                     return;
                 }
+
                 _isTeleporting = true;
 
                 S.PS._currentSceneName = _secondSceneName;
@@ -303,6 +298,9 @@ public class Portal : MonoBehaviour
 
                 float angle = Vector3.SignedAngle(oldForward, newForward, Vector3.up);
                 S.PlayerCamScript.Rotate(angle);
+
+                Quaternion rotation = Quaternion.FromToRotation(oldForward, newForward);
+                S.PM.rb.velocity = rotation * S.PM.rb.velocity;
 
                 S.PS._prevCamPos = S.Camera.transform.position;
                 S.PS._camPos = S.PS._prevCamPos;

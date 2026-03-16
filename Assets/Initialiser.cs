@@ -71,7 +71,7 @@ public class Initialiser : MonoBehaviour
 
         S.Camera.usePhysicalProperties = true;
         S.Camera.gateFit = Camera.GateFitMode.None;
-        S.Camera.fieldOfView = 75f;
+        S.Camera.fieldOfView = 76f;
 
         yield return WaitForObjectWithTag("Player", obj => S.PObj = obj);
         S.Ph = S.PObj.transform.parent?.gameObject;
@@ -124,6 +124,7 @@ public class Initialiser : MonoBehaviour
         S.Ghost = Prefabs.Get("Ghost");
         S.Spider = Prefabs.Get("Spider");
         S.Stamp = Prefabs.Get("Stamp");
+        S.Arrow = Prefabs.Get("Arrow");
     }
 
     private static IEnumerator WaitForObjectWithTag(string tag, System.Action<GameObject> setter)

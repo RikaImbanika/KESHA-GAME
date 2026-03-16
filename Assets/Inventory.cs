@@ -83,6 +83,9 @@ public class Inventory : MonoBehaviour
 	public GameObject _circleCursor;
 
 	public GameObject _negative;
+	public float _zoomed;
+	public int _zooming;
+	public float _zoomTime;
 
 	public int CountOfItem(string name)
 	{
@@ -135,6 +138,8 @@ public class Inventory : MonoBehaviour
 	{
 		S.Inventory = this;
 		S.Negative = _negative;
+
+		_zoomTime = 0.1f;
 
 		_layerMask = ~(1 << LayerMask.NameToLayer("Player") |
 			1 << LayerMask.NameToLayer("Particles") |
@@ -486,9 +491,54 @@ public class Inventory : MonoBehaviour
 					Click();
 
 				if (Input.GetKeyDown(KeyCode.C) || Input.GetMouseButtonDown(1))
-					_camera.fieldOfView = 28;
+					_zooming = 1;
 				if (Input.GetKeyUp(KeyCode.C) || Input.GetMouseButtonUp(1))
-					_camera.fieldOfView = 76; ///////////////////////////////////
+					_zooming = -1;
+
+				if (_zooming == 1)
+				{
+					if (_zoomed >= _zoomTime)
+					{
+						_camera.fieldOfView = 28;
+						_zooming = 0;
+						_zoomed = _zoomTime;
+					}
+					else
+					{
+						_zoomed += Time.deltaTime;
+
+						Upd();
+					}
+				}
+				if (_zooming == -1)
+				{
+					if (_zoomed < 0f)
+					{
+						_camera.fieldOfView = 76;
+						_zooming = 0;
+						_zoomed = 0;
+					}
+					else
+					{
+						_zoomed -= Time.deltaTime;
+
+						Upd();
+					}
+				}
+
+				void Upd()
+				{
+					float t = _zoomed / _zoomTime;
+
+					float t2 = 1 - Ease(t);
+
+					_camera.fieldOfView = 28 + 48 * t2;
+				}
+
+				float Ease(float t)
+				{
+					return 0.5f - 0.5f * Mathf.Cos(t * Mathf.PI);
+				}
 			}
 
 			bool throwable = false;

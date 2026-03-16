@@ -17,6 +17,7 @@ public class Door : MonoBehaviour
 	public int _sparklesCount;
 	public DoorModel _doorModel;
 	private string _sceneName;
+	private bool _needArrow;
 
 	public void Start()
 	{
@@ -45,6 +46,7 @@ public class Door : MonoBehaviour
 					_doorModel._coordinates = transform.position;
 					_doorModel._right = transform.right;
 					_locked = _doorModel._locked;
+					_needArrow = _doorModel._needArrow;
 					ok = true;
 				}
 				catch
@@ -58,9 +60,42 @@ public class Door : MonoBehaviour
 					yield return new WaitForSeconds(0.5f);
 			}
 
+			if (_needArrow)
+			{
+				Vector3 point0 = transform.position + transform.right * 3f; ///
+
+				Quaternion rot = Quaternion.LookRotation(transform.right);
+
+				StartCoroutine(SetParent0());
+
+				IEnumerator SetParent0()
+				{
+					while (S.Loader.Roots[_sceneName] == null)
+						yield return new WaitForSeconds(0.25f);
+
+					GameObject arrowObj = GameObject.Instantiate(S.Arrow, point0, rot, S.Loader.Roots[_sceneName]);
+
+					RaycastHit hit;
+					if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
+					{
+						Vector3 point1 = hit.point;
+						arrowObj.transform.position = point1;
+					}
+
+					Vector3 originalScale = S.Arrow.transform.localScale;
+					Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
+
+					arrowObj.transform.localScale = new Vector3(
+						originalScale.x / parentScale.x,
+						originalScale.y / parentScale.y,
+						originalScale.z / parentScale.z
+					);
+				}
+			}
+
 			if (_locked)
 			{
-				Vector3 point0 = transform.position += transform.right * 0.15f;
+				Vector3 point0 = transform.position + transform.right * 0.15f;
 
 				Quaternion rot = Quaternion.LookRotation(transform.right);
 
@@ -92,8 +127,8 @@ public class Door : MonoBehaviour
 
 					_stamp = stampObj.GetComponent<Stamp>();
 					_stamp._door = this;
-				}		
-			}
+				}
+			}			
 		}
 	}
 

@@ -966,6 +966,9 @@ MonoBehaviour:
   _playerStorage: {fileID: 1980044000}
   _circleCursor: {fileID: 498726862}
   _negative: {fileID: 1963252406}
+  _zoomed: 0
+  _zooming: 0
+  _zoomTime: 0
 --- !u!114 &93810936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9490,8 +9493,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3e09f014f76dd45a9014d9790fffb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensetivityX: 353.3
-  sensetivityY: 353.5
+  sensetivityX: 11
+  sensetivityY: 11
   orientation: {fileID: 963194228}
   inventory: {fileID: 93810935}
   xRotation: 0
@@ -16749,7 +16752,7 @@ MonoBehaviour:
   walkSpeed: 8
   sprintSpeed: 15
   crouchSpeed: 3
-  gravity: 56
+  gravity: 48
   groundDrag: 0.25
   airDrag: 1
   pushingDrag: 1

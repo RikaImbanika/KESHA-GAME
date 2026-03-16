@@ -28,8 +28,8 @@ public class PlayerCamScript : MonoBehaviour
             if (!inventory.opened)
                 if (!inventory._marketOpened)
                 {
-                    float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensetivityX;
-                    float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensetivityY;
+                    float mouseX = Input.GetAxisRaw("Mouse X") * sensetivityX;
+                    float mouseY = Input.GetAxisRaw("Mouse Y") * sensetivityY;
 
                     xRotation += mouseX;
                     yRotation -= mouseY;

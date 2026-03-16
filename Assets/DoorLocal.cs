@@ -57,6 +57,9 @@ public class DoorLocal : MonoBehaviour
 			}
 
 			_locked = S.SM.LoadBool(S.ID(_id, "locked")) ?? _locked;
+
+			if (string.IsNullOrEmpty(_audioName))
+				_audioName = "toiletDoor";
 		}
 	}
 

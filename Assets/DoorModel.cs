@@ -10,6 +10,7 @@ public class DoorModel : MonoBehaviour
     public string _nextSceneName;
     public int _nextDoorId;
     public bool _locked;
+    public bool _needArrow;
 
     public DoorModel(bool locked)
     {

@@ -56,6 +56,8 @@ public class Backrooms : MonoBehaviour
             for (int i = 0; i < 100; i++)
                 yield return SwitchOneDoor(i);
 
+            AddArrows();
+
             for (int i = 0; i < 15; i++)
                 yield return LockOneConnection();
 
@@ -68,6 +70,47 @@ public class Backrooms : MonoBehaviour
         }
     }
     
+    void AddArrows()
+    {
+        RoomModel hall = S.Loader._rooms["Hall"];
+        DoorModel door1 = hall._doors[2];
+        int nid = door1._nextDoorId;
+        string nextSceneName0 = door1._nextSceneName;
+
+        List<string> visited = new List<string>();
+
+        Next(nextSceneName0, nid, 1);
+        
+        void Next(string sceneName, int doorId, int depth)
+        {
+            if (!visited.Contains(sceneName))
+            {
+                RoomModel scene = S.Loader._rooms[sceneName];
+                DoorModel door = scene._doors[doorId];
+                door._needArrow = true;
+                visited.Add(sceneName);
+
+                if (depth < 2)
+                {
+                    int doorsCount = scene._doors.Count;
+
+                    if (doorsCount > 2)
+                        depth++;
+
+                    for (int i = 0; i < doorsCount; i++)
+                    {
+                        if (i + 1 != doorId)
+                        {
+                            DoorModel newDoor = scene._doors[i + 1];
+                            int nextDoorId = newDoor._nextDoorId;
+                            string nextSceneName = newDoor._nextSceneName;
+                            Next(nextSceneName, nextDoorId, depth);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     void FillLaserProbabilities()
     {

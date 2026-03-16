@@ -123,9 +123,11 @@ public class Spider : MonoBehaviour
                 _ani.SetFloat("deathSpeed", 100f);
                 Die();
             }
+            else
+                InvokeRepeating("SavingMethod", 0f, 3f);
         }
-
-        InvokeRepeating("SavingMethod", 0f, 3f);
+        else
+            InvokeRepeating("SavingMethod", 0f, 3f);
     }
 
     void SavingMethod()
