@@ -27,6 +27,8 @@ public class Initialiser : MonoBehaviour
             Materials.Get("Balls/WhiteBall")
         };
 
+        S.PortalObj1 = Prefabs.Get("Portal 1");
+
         S.SnakeBalls = new Dictionary<string, List<GameObject>>();
         S.SnakeBalls.Add("Classic", new List<GameObject>());
         S.SnakeBalls.Add("Ice", new List<GameObject>());
@@ -92,23 +94,42 @@ public class Initialiser : MonoBehaviour
         yield return StartCoroutine(GetComponentSafe<TextMeshProUGUI>(S.FpsObj, fpsObj => S.FpsTMP = fpsObj));
 
         yield return WaitForObjectWithTag("Spot", obj => S.Spot = obj);
-        S.RedLaser = Prefabs.Get("RedLaser");
-        S.BlueLaser = Prefabs.Get("BlueLaser");
-        S.GreenLaser = Prefabs.Get("GreenLaser");
-        S.RedPoint = Prefabs.Get("RedPoint");
-        S.BluePoint = Prefabs.Get("BluePoint");
-        S.GreenPoint = Prefabs.Get("GreenPoint");
-        S.RedHitPoint = Prefabs.Get("RedHitPoint");
-        S.BlueHitPoint = Prefabs.Get("BlueHitPoint");
-        S.BlueRay = Prefabs.Get("BlueRay");
-        S.RedSparkle = Prefabs.Get("RedSparkle");
-        S.BlueSparkle = Prefabs.Get("BlueSparkle");
-        S.GreenSparkle = Prefabs.Get("GreenSparkle");
+        S.RedLaser = Prefabs.Get("Lasers/RedLaser");
+        S.BlueLaser = Prefabs.Get("Lasers/BlueLaser");
+        S.GreenLaser = Prefabs.Get("Lasers/GreenLaser");
+        S.PurpleLaser = Prefabs.Get("Lasers/PurpleLaser");
+
+        S.RedPoint = Prefabs.Get("Sparkles/Points/RedPoint");
+        S.BluePoint = Prefabs.Get("Sparkles/Points/BluePoint");
+        S.GreenPoint = Prefabs.Get("Sparkles/Points/GreenPoint");
+        S.PurplePoint = Prefabs.Get("Sparkles/Points/PurplePoint");
+
+        S.RedHitPoint = Prefabs.Get("Sparkles/HitPoints/HitPointRed");
+        S.BlueHitPoint = Prefabs.Get("Sparkles/HitPoints/HitPointBlue");
+        S.GreenHitPoint = Prefabs.Get("Sparkles/HitPoints/HitPointGreen");
+        S.PurpleHitPoint = Prefabs.Get("Sparkles/HitPoints/HitPointPurple");
+
+        S.BlueRay = Prefabs.Get("Lasers/GunLaser");
+
+        S.RedSparkle = Prefabs.Get("Sparkles/Normal/RedSparkle");
+        S.BlueSparkle = Prefabs.Get("Sparkles/Normal/BlueSparkle");
+        S.GreenSparkle = Prefabs.Get("Sparkles/Normal/GreenSparkle");
+        S.PurpleSparkle = Prefabs.Get("Sparkles/Normal/PurpleSparkle");
+
         S.PlayerSparkle = Prefabs.Get("PlayerSparkle");
-        S.RedOldSparkle = Prefabs.Get("RedOldSparkle");
-        S.BlueOldSparkle = Prefabs.Get("BlueOldSparkle");
+
+        S.RedHeavySparkle = Prefabs.Get("Sparkles/HeavySparkles/HeavySparkleRed");
+        S.BlueHeavySparkle = Prefabs.Get("Sparkles/HeavySparkles/HeavySparkleBlue");
+        S.GreenHeavySparkle = Prefabs.Get("Sparkles/HeavySparkles/HeavySparkleGreen");
+        S.PurpleHeavySparkle = Prefabs.Get("Sparkles/HeavySparkles/HeavySparklePurple");
+
+        S.FireballRed = Prefabs.Get("Fireballs/FireballRed");
+        S.FireballBlue = Prefabs.Get("Fireballs/FireballBlue");
+        S.FireballGreen = Prefabs.Get("Fireballs/FireballGreen");
+        S.FireballPurple = Prefabs.Get("Fireballs/FireballPurple");
+
         S.Loot = Prefabs.Get("Loot");
-        S.EnemyBullet = Prefabs.Get("EnemyBullet");
+
         S.Shot = Prefabs.GetAudioSource("Shot");
         S.Caboom = Prefabs.GetAudioSource("Caboom");
         S.SnakeBody = Prefabs.Get("SnakeBody");

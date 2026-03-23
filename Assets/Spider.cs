@@ -350,9 +350,9 @@ public class Spider : MonoBehaviour
             {
                 _nextFireTime = _fireCooldown;
                 Quaternion rotation = Quaternion.Euler(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(-30f, 30));
-                GameObject bullet = Instantiate(S.EnemyBullet, gameObject.transform.position + new Vector3(0, 6, 0), rotation, S.Loader.Roots[_sceneName]);
+                GameObject bullet = Instantiate(S.FireballRed, gameObject.transform.position + new Vector3(0, 6, 0), rotation, S.Loader.Roots[_sceneName]);
 
-                EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
+                Fireball eb = bullet.GetComponent<Fireball>();
                 eb._active = true;
                 eb._speed = 30;
                 Destroy(bullet, 15);

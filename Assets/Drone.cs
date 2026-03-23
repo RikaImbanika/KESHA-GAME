@@ -5,6 +5,7 @@ using System;
 
 public class Drone : MonoBehaviour
 {
+    //That drone is for snakes.
     public string _type;
     public string _type2;
     public List<GameObject> _lasers;
@@ -44,6 +45,8 @@ public class Drone : MonoBehaviour
         else if (color == "green")
             _sparklePrefab = S.GreenSparkle;
         else if (color == "blue")
+            _sparklePrefab = S.BlueSparkle;
+        else if (color == "purple")
             _sparklePrefab = S.BlueSparkle;
 
         if (type == "6lasers")
@@ -107,6 +110,11 @@ public class Drone : MonoBehaviour
             {
                 _lasers.Add(Instantiate(S.GreenLaser, transform.position, transform.rotation, transform));
                 _points.Add(Instantiate(S.GreenPoint, transform.position, transform.rotation, transform));
+            }
+            else if (_color == "purple")
+            {
+                _lasers.Add(Instantiate(S.PurpleLaser, transform.position, transform.rotation, transform));
+                _points.Add(Instantiate(S.PurplePoint, transform.position, transform.rotation, transform));
             }
         }
 
@@ -229,13 +237,21 @@ public class Drone : MonoBehaviour
         void Shoot1(UnityEngine.Vector3 dir)
         {
             Quaternion rotation = Quaternion.LookRotation(dir);
+            GameObject fireball = null;
 
-            GameObject bullet = Instantiate(S.EnemyBullet, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
+            if (_color == "red")
+                fireball = Instantiate(S.FireballRed, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
+            else if (_color == "blue")
+                fireball = Instantiate(S.FireballBlue, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
+            else if (_color == "green")
+                fireball = Instantiate(S.FireballGreen, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
+            else if (_color == "purple")
+                fireball = Instantiate(S.FireballPurple, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
 
-            EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
+            Fireball eb = fireball.GetComponent<Fireball>();
             eb._active = true;
             eb._speed = 30;
-            Destroy(bullet, 15);
+            Destroy(fireball, 15);
 
             AudioSource shot = Instantiate(S.Shot);
             shot.transform.position = transform.position;

@@ -30,9 +30,12 @@ public static class S : object
     private static GameObject _blueSparkle;
 	private static GameObject _redSparkle;
 	private static GameObject _greenSparkle;
+	private static GameObject _purpleSparkle;
 	private static GameObject _playerSparkle;
-	private static GameObject _blueOldSparkle;
-	private static GameObject _redOldSparkle;
+	private static GameObject _blueHeavySparkle;
+	private static GameObject _redHeavySparkle;
+	private static GameObject _greenHeavySparkle;
+	private static GameObject _purpleHeavySparkle;
 	private static FirstZombie2 _firstZombie2;
 	private static SceneDuplicateCleaner _sceneDuplicateCleaner;
 	private static MusicManager _musicManager;
@@ -41,15 +44,20 @@ public static class S : object
 	private static Teleporter _teleporter;
 	private static CHEATS _cheats;
 	private static GaymeBroker _gaymeBroker;
-	private static GameObject _redLaser;
 	private static GameObject _redPoint;
 	private static GameObject _bluePoint;
 	private static GameObject _greenPoint;
+	private static GameObject _purplePoint;
+	private static GameObject _redLaser;
 	private static GameObject _blueLaser;
 	private static GameObject _greenLaser;
+	private static GameObject _purpleLaser;
 	private static GameObject _blueRay;
 	private static AudioSource _shot;
-	private static GameObject _enemyBullet;
+	private static GameObject _fireballRed;
+	private static GameObject _fireballBlue;
+	private static GameObject _fireballPurple;
+	private static GameObject _fireballGreen;
 	private static List<Material> _snakeBallMaterials;
 	private static GameObject _snakeBody;
 	private static AudioSource _caboom;
@@ -61,6 +69,8 @@ public static class S : object
 	private static RandomRotation _randomRotations;
 	private static GameObject _blueHitPoint;
 	private static GameObject _redHitPoint;
+	private static GameObject _greenHitPoint;
+	private static GameObject _purpleHitPoint;
 	private static PortalsBase _portalsBase;
 	private static VisibleLayers _visibleLayers;
 	private static Transform _fakePlayer; //for checking player on the other side of portal
@@ -76,8 +86,21 @@ public static class S : object
 	private static GameObject _spider;
 	private static GameObject _stamp;
 	private static GameObject _arrow;
+	public static GameObject _portalObj1;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
 
+	public static GameObject PortalObj1
+	{
+		get
+		{
+			return _portalObj1;
+		}
+		set
+		{
+			_portalObj1 = value;
+		}
+	}
+	
 	public static PlayerMovement PlayerMovement
 	{
 		get
@@ -329,6 +352,30 @@ public static class S : object
 		}
 	}
 
+	public static GameObject GreenHitPoint
+	{
+		get
+		{
+			return _greenHitPoint;
+		}
+		set
+		{
+			_greenHitPoint = value;
+		}
+	}
+
+	public static GameObject PurpleHitPoint
+	{
+		get
+		{
+			return _purpleHitPoint;
+		}
+		set
+		{
+			_purpleHitPoint = value;
+		}
+	}
+
 	public static RandomRotation RandRot
 	{
 		get
@@ -449,19 +496,55 @@ public static class S : object
 		}
 	}
 
-	public static GameObject EnemyBullet
+	public static GameObject FireballRed
     {
 		get
 		{
-			return _enemyBullet;
+			return _fireballRed;
 		}
 		set
 		{
-			_enemyBullet = value;
+			_fireballRed = value;
 		}
     }
 
-    public static AudioSource Shot
+		public static GameObject FireballBlue
+    {
+		get
+		{
+			return _fireballBlue;
+		}
+		set
+		{
+			_fireballBlue = value;
+		}
+    }
+
+		public static GameObject FireballGreen
+    {
+		get
+		{
+			return _fireballGreen;
+		}
+		set
+		{
+			_fireballGreen = value;
+		}
+    }
+
+	public static GameObject FireballPurple
+	{
+		get
+		{
+			return _fireballPurple;
+		}
+		set
+		{
+			_fireballPurple = value;
+		}
+	}
+
+	public static AudioSource Shot
 	{
 		get
 		{
@@ -509,6 +592,18 @@ public static class S : object
 		}
 	}
 
+	public static GameObject PurpleLaser
+	{
+		get
+		{
+			return _purpleLaser;
+		}
+		set
+		{
+			_purpleLaser = value;
+		}
+	}
+
 	public static GameObject RedPoint
 	{
 		get
@@ -542,6 +637,18 @@ public static class S : object
 		set
 		{
 			_greenPoint = value;
+		}
+	}
+
+	public static GameObject PurplePoint
+	{
+		get
+		{
+			return _purplePoint;
+		}
+		set
+		{
+			_purplePoint = value;
 		}
 	}
 
@@ -691,6 +798,18 @@ public static class S : object
 		}
 	}
 
+	public static GameObject PurpleSparkle
+	{
+		get
+		{
+			return _purpleSparkle;
+		}
+		set
+		{
+			_purpleSparkle = value;
+		}
+	}
+
 	public static GameObject BlueSparkle
 	{
 		get
@@ -739,27 +858,51 @@ public static class S : object
 		}
 	}
 
-	public static GameObject BlueOldSparkle
+	public static GameObject BlueHeavySparkle
 	{
 		get
 		{
-			return _blueOldSparkle;
+			return _blueHeavySparkle;
 		}
 		set
 		{
-			_blueOldSparkle = value;
+			_blueHeavySparkle = value;
 		}
 	}
 
-	public static GameObject RedOldSparkle
+	public static GameObject RedHeavySparkle
 	{
 		get
 		{
-			return _redOldSparkle;
+			return _redHeavySparkle;
 		}
 		set
 		{
-			_redOldSparkle = value;
+			_redHeavySparkle = value;
+		}
+	}
+
+	public static GameObject GreenHeavySparkle
+	{
+		get
+		{
+			return _greenHeavySparkle;
+		}
+		set
+		{
+			_greenHeavySparkle = value;
+		}
+	}
+
+	public static GameObject PurpleHeavySparkle
+	{
+		get
+		{
+			return _purpleHeavySparkle;
+		}
+		set
+		{
+			_purpleHeavySparkle = value;
 		}
 	}
 

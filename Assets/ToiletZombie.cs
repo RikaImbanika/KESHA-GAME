@@ -41,7 +41,7 @@ public class ToiletZombie : MonoBehaviour
                     GameObject bullet = Instantiate(_theBullet);
                     bullet.transform.position = gameObject.transform.position + new Vector3(0, 0, 0);
                     bullet.transform.LookAt(_camera.transform.position);
-                    EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
+                    Fireball eb = bullet.GetComponent<Fireball>();
                     eb._active = true;
                     eb._speed = 30;
                     Destroy(bullet, 15);

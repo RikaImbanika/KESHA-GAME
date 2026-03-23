@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using System.Threading.Tasks;
+using System;
 
 public class SnakeBrain : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class SnakeBrain : MonoBehaviour
     public SnakeHead _head;
 
     public Vector3[] _points;
+    private Vector2[] _corners2d;
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private bool _stuckAvoidance;
@@ -21,12 +23,41 @@ public class SnakeBrain : MonoBehaviour
     public GameObject _GREEN;
     private Vector3 _velocity;
     private float _distanceThreshold = 3f;
+    private float _areaDivideTotalBuffered;
 
     void Start()
     {
         _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         _agent.acceleration = 0;
         _head._aims.Add(transform.position);
+
+        MakeCorners2d();
+        PreCalculateAreas(_corners2d);
+    }
+
+    void MakeCorners2d()
+    {
+        _corners2d = new Vector2[4];
+        for (int i = 0; i < 4; i++)
+            _corners2d[i] = new Vector2(_points[i].x, _points[i].z);
+
+        _corners2d = OrderQuadPointsClockwise(_corners2d);
+
+        Vector2[] OrderQuadPointsClockwise(Vector2[] points)
+        {
+            Vector2 center = (points[0] + points[1] + points[2] + points[3]) / 4f;
+
+            Vector2[] ordered = (Vector2[])points.Clone();
+
+            Array.Sort(ordered, (p1, p2) =>
+            {
+                float angle1 = Mathf.Atan2(p1.y - center.y, p1.x - center.x);
+                float angle2 = Mathf.Atan2(p2.y - center.y, p2.x - center.x);
+                return angle1.CompareTo(angle2);
+            });
+
+            return ordered;
+        }
     }
 
     void Update()
@@ -41,16 +72,27 @@ public class SnakeBrain : MonoBehaviour
         if ((transform.position - _agent.destination).magnitude < _distanceThreshold)
         {
             _stuckAvoidance = false;
-            SwitchTail(!_stuckAvoidance);
+            SwitchTail(!_stuckAvoidance); //Why !
             _agent.destination = GetNewPoint();
-            //SwitchTail(!_stuckAvoidance);
-            //What?
+            //This is doing something important
         }
 
         Vector3 bestDir = (_agent.steeringTarget - _agent.transform.position).normalized;
         _velocity = Vector3.Slerp(_velocity, bestDir, Time.deltaTime * _turn).normalized;
         _velocity *= _speed * 12 / (_head._aims.Count - _head._aimId);
         transform.position += _velocity * Time.deltaTime;
+
+        Vector2 p = new Vector2(transform.position.x, transform.position.z);
+        if (!IsPointInQuad(p, _corners2d))
+        {
+            Vector2 center = (_corners2d[0] + _corners2d[2]) / 2;
+            transform.position = new Vector3(center.x, transform.position.y, center.y);
+
+            _stuckAvoidance = false;
+            SwitchTail(!_stuckAvoidance);
+            _agent.destination = GetNewPoint();
+            //This should make snake impossible to leave her room
+        }
     }
 
     void CheckP()
@@ -84,19 +126,19 @@ public class SnakeBrain : MonoBehaviour
         {
             point = transform.position;
             while ((point - transform.position).magnitude < 8f)
-                point = GetRandomPointInQuad(_points[0], _points[1], _points[2], _points[3]);
+                point = GetRandomPointInQuad(_corners2d);
             
             bool reachable = false;
             Vector3 newDirection = GetDirectionAndWait(point, Vector3.zero, out reachable);
 
             if (reachable)
             {
-                Debug.Log("REACHABLE");
+                //Debug.Log("REACHABLE");
                 return point;
             }
         }
 
-        Debug.Log("I'M STUCK");
+        //Debug.Log("I'M STUCK");
         _stuckAvoidance = true;
         return point;
     }
@@ -106,9 +148,9 @@ public class SnakeBrain : MonoBehaviour
         NavMeshPath path = new NavMeshPath();
         _agent.CalculatePath(targetPosition, path);
 
-		for (int i = 0; i < 500000; i++)
-			if (!_agent.pathPending)
-				break;  //yield?
+        for (int i = 0; i < 500000; i++)
+            if (!_agent.pathPending)
+                break;  //yield? //Cannot add it here easely
 
         if (path.corners.Length >= 2)
         {
@@ -123,22 +165,62 @@ public class SnakeBrain : MonoBehaviour
         }
         else
             reachable = false;
-        
+
         if (path.corners.Length >= 2)
             return (path.corners[1] - path.corners[0]).normalized;
         else
             return -direction;
     }
-
-    Vector3 GetRandomPointInQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+    
+    void PreCalculateAreas(Vector2[] quad)
     {
-        float randomX = Random.Range(0f, 1f);
-        float randomY = Random.Range(0f, 1f);
+        //For optimisation
+        float area1 = TriangleArea(quad[0], quad[1], quad[2]);
+        float area2 = TriangleArea(quad[0], quad[2], quad[3]);
+        float total = area1 + area2;
+        _areaDivideTotalBuffered = area1 / total;
 
-        Vector3 pointAB = Vector3.Lerp(a, b, randomX);
-        Vector3 pointCD = Vector3.Lerp(c, d, randomX);
-        Vector3 randomPoint = Vector3.Lerp(pointAB, pointCD, randomY);
-
-        return randomPoint;
+        float TriangleArea(Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            return Mathf.Abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)) * 0.5f;
+        }
     }
+
+    Vector2 GetRandomPointInQuad(Vector2[] quad)
+    {
+        if ((float)S.RND.NextDouble() < _areaDivideTotalBuffered)
+            return RandomPointInTriangle(quad[0], quad[1], quad[2]);
+        else
+            return RandomPointInTriangle(quad[0], quad[2], quad[3]);
+
+        Vector2 RandomPointInTriangle(Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            float r1 = (float)S.RND.NextDouble();
+            float r2 = (float)S.RND.NextDouble();
+            if (r1 + r2 > 1f)
+            {
+                r1 = 1f - r1;
+                r2 = 1f - r2;
+            }
+            return p1 + r1 * (p2 - p1) + r2 * (p3 - p1);
+        }
+    }
+
+    bool IsPointInQuad(Vector2 point, Vector2[] quad)
+    {
+        return IsPointInTriangle(point, quad[0], quad[1], quad[2]) ||
+            IsPointInTriangle(point, quad[0], quad[2], quad[3]);
+
+        bool IsPointInTriangle(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
+        {
+            float Cross(Vector2 o, Vector2 p1, Vector2 p2) =>
+                (p1.x - o.x) * (p2.y - o.y) - (p1.y - o.y) * (p2.x - o.x);
+
+            bool sign1 = Cross(a, b, p) >= 0f;
+            bool sign2 = Cross(b, c, p) >= 0f;
+            bool sign3 = Cross(c, a, p) >= 0f;
+
+            return (sign1 == sign2) && (sign2 == sign3);
+        }
+    }   
 }

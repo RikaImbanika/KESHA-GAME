@@ -12,23 +12,27 @@ public class Portal : MonoBehaviour
     public string _sceneName;
     public string _secondSceneName;
     public List<ItemP> _objects;
-    public List<EnemyBullet> _enemyBullets;
+    public List<Fireball> _enemyBullets;
     public Camera _secondCamera;
     private Material _material;
     private RenderTexture _secondCameraRenTex;
-    public float _w = 3f;
-    public float _h = 6f;
+    public float _w = 4f;
+    public float _h = 7f;
+    public float _f = 0.15f;
     public MeshFilter _meshFilter;
     public MeshRenderer _meshRenderer;
     RenderTexture[] _rts;
     public Vector3[] _quad;
+    public Vector3[] _quadCentered;
     public ushort _resolutionIndex;
     Vector2 _sensorSize;
-    Mesh _mesh;
+    Mesh _meshForward;
+    Mesh _meshBackward;
+    Mesh _meshCentered;
     bool _initialised;
-    bool _isTeleporting;
     bool _fixerStarted;
     private int _layerMaskForPlayer;
+    bool _playerOnFirstSide;
 
     //All cameras has set gateFit to none
     //And Physical.
@@ -56,6 +60,7 @@ public class Portal : MonoBehaviour
             MeshInit();
             CreateQuadMesh();
             CreateMaterial();
+            CreateGates();
             _initialised = true;
         }
 
@@ -66,6 +71,14 @@ public class Portal : MonoBehaviour
                 1 << LayerMask.NameToLayer("Items") |
                 1 << LayerMask.NameToLayer("Default");
         }
+    }
+
+    private void CreateGates()
+    {
+        GameObject gates = Instantiate(S.PortalObj1, this.transform);
+        gates.transform.localPosition = Vector3.zero;
+        gates.transform.localRotation = Quaternion.identity;
+        gates.transform.localScale = Vector3.one;
     }
 
     private bool UpdateSecondPortalParams()
@@ -116,18 +129,41 @@ public class Portal : MonoBehaviour
 
     private void CreateQuadMesh()
     {
-        _mesh = new Mesh();
-        _mesh.name = "quad";
+        _meshForward = new Mesh();
+        _meshForward.name = "quadF";
 
-        Vector3[] vertices = new Vector3[4];
-        vertices[0] = new Vector3(-_w / 2, 0, 0);
-        vertices[1] = new Vector3(_w / 2, 0, 0);
-        vertices[2] = new Vector3(_w / 2, _h, 0);
-        vertices[3] = new Vector3(-_w / 2, _h, 0);
+        _meshBackward = new Mesh();
+        _meshBackward.name = "quadB";
 
+        _meshCentered = new Mesh();
+        _meshCentered.name = "quadC";
 
-        int[] triangles = new int[] { 0, 1, 2, 2, 0, 3 };
-        Vector2[] uv = new Vector2[4]
+        Vector3[] vertices0 = new Vector3[4];
+
+        vertices0[0] = new Vector3(-_w / 2, 0, _f);
+        vertices0[1] = new Vector3(_w / 2, 0, _f);
+        vertices0[2] = new Vector3(_w / 2, _h, _f);
+        vertices0[3] = new Vector3(-_w / 2, _h, _f);
+
+        Vector3[] vertices1 = new Vector3[4];
+
+        vertices1[0] = new Vector3(-_w / 2, 0, -_f);
+        vertices1[1] = new Vector3(_w / 2, 0, -_f);
+        vertices1[2] = new Vector3(_w / 2, _h, -_f);
+        vertices1[3] = new Vector3(-_w / 2, _h, -_f);
+
+        Vector3[] vertices2 = new Vector3[4];
+
+        vertices2[0] = new Vector3(-_w / 2, 0, 0);
+        vertices2[1] = new Vector3(_w / 2, 0, 0);
+        vertices2[2] = new Vector3(_w / 2, _h, 0);
+        vertices2[3] = new Vector3(-_w / 2, _h, 0);
+
+        int[] triangles0 = new int[] { 0, 1, 2, 2, 0, 3 };
+        int[] triangles1 = new int[] { 0, 1, 2, 2, 0, 3 };
+        int[] triangles2 = new int[] { 0, 1, 2, 2, 0, 3 };
+
+        Vector2[] uv0 = new Vector2[4]
         {
             new Vector2(0, 0),
             new Vector2(1, 0),
@@ -135,14 +171,42 @@ public class Portal : MonoBehaviour
             new Vector2(0, 1)
         };
 
-        _mesh.vertices = vertices;
-        _mesh.triangles = triangles;
-        _mesh.uv = uv;
-        _mesh.RecalculateNormals();
+        Vector2[] uv1 = new Vector2[4]
+        {
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(1, 1),
+            new Vector2(0, 1)
+        };
 
-        _meshFilter.mesh = _mesh;
+
+        Vector2[] uv2 = new Vector2[4]
+        {
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(1, 1),
+            new Vector2(0, 1)
+        };
+
+        _meshForward.vertices = vertices0;
+        _meshForward.triangles = triangles0;
+        _meshForward.uv = uv0;
+        _meshForward.RecalculateNormals();
+
+        _meshBackward.vertices = vertices1;
+        _meshBackward.triangles = triangles1;
+        _meshBackward.uv = uv1;
+        _meshBackward.RecalculateNormals();
+
+        _meshCentered.vertices = vertices2;
+        _meshCentered.triangles = triangles2;
+        _meshCentered.uv = uv2;
+        _meshCentered.RecalculateNormals();
+
+        _meshFilter.mesh = _meshBackward;
 
         _quad = new Vector3[4];
+        _quadCentered = new Vector3[4];
 
         UpdateQuad();
     }
@@ -224,14 +288,49 @@ public class Portal : MonoBehaviour
 
     private void UpdateQuad()
     {
-        _quad[0] = transform.TransformPoint(_mesh.vertices[0]);
-        _quad[1] = transform.TransformPoint(_mesh.vertices[1]);
-        _quad[2] = transform.TransformPoint(_mesh.vertices[2]);
-        _quad[3] = transform.TransformPoint(_mesh.vertices[3]);
+        Vector3 toPoint = S.Camera.transform.position - transform.position;
+        float dot = Vector3.Dot(transform.forward, toPoint);
+
+        if (dot > 0 && _playerOnFirstSide)
+        {
+            _playerOnFirstSide = false;
+            _meshFilter.mesh = _meshBackward;
+        }
+        else if (dot < 0 && !_playerOnFirstSide)
+        {
+            _playerOnFirstSide = true;
+            _meshFilter.mesh = _meshForward;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            _quad[i] = transform.TransformPoint(Mesh.vertices[i]);
+            _quadCentered[i] = transform.TransformPoint(_meshCentered.vertices[i]);
+        }
+    }
+
+    private Vector3[] Quad
+    {
+        get
+        {
+            return _quad;
+        }
+    }
+
+    private Mesh Mesh
+    {
+        get
+        {
+            if (_playerOnFirstSide)
+                return _meshForward;
+            else
+                return _meshBackward;
+        }
     }
 
     private void PutFakePlayer()
     {
+        //Fake player is to make everybody see him through portal
         //Player already in scene when we here
         S.PortalToPlayerDistance = Math.Clamp(S.PortalToPlayerDistance * 1.2f, 0.05f, 10000f);
 
@@ -267,28 +366,21 @@ public class Portal : MonoBehaviour
         if (S.PS._currentSceneName == _sceneName)
         {
             Vector3 a = S.PS._prevCamPos;
-            Vector3 b = S.PS._camPos;
+            Vector3 b = S.Camera.transform.position;
             Vector3 dir = b - a;
-            Vector3 c = b + dir;
+            Vector3 c;
 
-            if (SegmentIntersectingRectangle(a, c, _quad[0], _quad[1], _quad[2], _quad[3]))
+            if (S.PS._isTeleporting)
+                return;
+
+            if (SegmentIntersectingRectangle(a, b, _quadCentered[0], _quadCentered[1], _quadCentered[2], _quadCentered[3]))
             {
-                if (S.PortalsBase.Portals[_secondSceneName][_secondPortalId]._isTeleporting)
-                {
-                    return;
-                }
-                if (_isTeleporting)
-                {
-                    return;
-                }
-
-                _isTeleporting = true;
+                S.PS._isTeleporting = true;
 
                 S.PS._currentSceneName = _secondSceneName;
                 S.SaveManager.CurrentSave.SaveString("sceneName", _secondSceneName);
 
-                S.Ph.transform.position += dir;
-
+                //S.Ph.transform.position += dir;
                 Vector3 localPos = Quaternion.Inverse(transform.rotation) * (S.Ph.transform.position - transform.position);
                 Vector3 newWorldPos = SecondPortal.transform.position + SecondPortal.transform.rotation * localPos;
                 S.Ph.transform.position = newWorldPos;
@@ -302,26 +394,25 @@ public class Portal : MonoBehaviour
                 Quaternion rotation = Quaternion.FromToRotation(oldForward, newForward);
                 S.PM.rb.velocity = rotation * S.PM.rb.velocity;
 
-                S.PS._prevCamPos = S.Camera.transform.position;
-                S.PS._camPos = S.PS._prevCamPos;
-
-                //Debug.LogError($"Going To {_secondSceneName}... #1");
+                c = S.Camera.transform.position;
+                S.PS._prevCamPos = c;
+                S.PS._camPos = c;
 
                 S.Teleporter.ImportantStaticShitToDo(_secondSceneName);
 
-                //Debug.LogError($"Going To {_secondSceneName}... #2");
-
                 S.Loader.GoTo(_sceneName, _secondSceneName);
-
-                //Debug.LogError($"Going To {_secondSceneName}... #3");
 
                 S.SDC.RequestCleanup();
 
-                //Debug.LogError($"Gone To {_secondSceneName}!");
-
+                StartCoroutine(UnlockLater());
                 StartCoroutine(Fixer());
+
+                IEnumerator UnlockLater()
+                {
+                    yield return new WaitForSeconds(0.2f);
+                    S.PS._isTeleporting = false;
+                }
             }
-            _isTeleporting = false;
         }
 
         IEnumerator Fixer()
@@ -331,7 +422,7 @@ public class Portal : MonoBehaviour
 
             _fixerStarted = true;
 
-            while (_isTeleporting || SecondPortal._isTeleporting)
+            while (S.PS._isTeleporting)
                 yield return new WaitForSeconds(0.333f);
 
             yield return new WaitForSeconds(0.5f);
@@ -380,8 +471,6 @@ public class Portal : MonoBehaviour
             resId = 4;
         else
             resId = 5;
-
-            //
 
         if (resId != _resolutionIndex)
         {

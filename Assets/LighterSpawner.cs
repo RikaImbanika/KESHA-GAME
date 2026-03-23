@@ -246,7 +246,7 @@ public class LighterSpawner : MonoBehaviour
             if (_color != "Yellow")
             {
                 MeshRenderer renderer = lighter._vis.GetComponent<MeshRenderer>();
-                renderer.sharedMaterial = Materials.Get($"Sparkles/Sparkle{_color}");
+                renderer.sharedMaterial = Materials.Get($"Sparkles/Normal/Sparkle{_color}");
             }
         }
 

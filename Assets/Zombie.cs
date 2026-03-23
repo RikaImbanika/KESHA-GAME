@@ -298,10 +298,10 @@ public class Zombie : MonoBehaviour
         if (_nextFireTime <= 0)
         {
             _nextFireTime = _fireCooldown;
-            GameObject bullet = Instantiate(S.EnemyBullet, S.Loader.Roots[_sceneName]);
+            GameObject bullet = Instantiate(S.FireballRed, S.Loader.Roots[_sceneName]);
             bullet.transform.position = gameObject.transform.position + new Vector3(0, _heigh, 0);
             bullet.transform.LookAt(S.Camera.transform.position);
-            EnemyBullet eb = bullet.GetComponent<EnemyBullet>();
+            Fireball eb = bullet.GetComponent<Fireball>();
             eb._speed = 30;
 
             Destroy(bullet, 15);

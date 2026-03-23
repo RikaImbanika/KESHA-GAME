@@ -138,12 +138,14 @@ public class SnakeHead : MonoBehaviour
 
             string color = "";
 
-            if (_type == "Classic" || _type == "Silent")
+            if (_type == "Classic")
                 color = "red";
             else if (_type == "Nature")
                 color = "green";
             else if (_type == "Ice")
                 color = "blue";
+            else if (_type == "Silent")
+                color = "purple";
 
             body.Drone.Init(type, type2, color);
 
@@ -438,9 +440,13 @@ public class SnakeHead : MonoBehaviour
         Vector3 toPlayer = S.Camera.transform.position - transform.position;
         Ray ray = new Ray(transform.position, toPlayer);
         RaycastHit hit;
-        Physics.Raycast(ray, out hit, _layerMaskForPlayer);
-
-        return hit.collider.gameObject.tag == "Player";
+        
+        if (Physics.Raycast(ray, out hit, _layerMaskForPlayer))
+        {
+            return hit.collider.gameObject.tag == "Player";
+        }
+        else
+            return false;
     }
 
     public void SwitchTail(bool enabled)

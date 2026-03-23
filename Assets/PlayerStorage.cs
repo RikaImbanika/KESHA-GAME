@@ -12,6 +12,7 @@ public class PlayerStorage : MonoBehaviour
     public GameObject _onDiePanel;
     public Vector3 _camPos;
     public Vector3 _prevCamPos;
+    public bool _isTeleporting;
 
     void Start()
     {

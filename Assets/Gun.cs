@@ -146,7 +146,7 @@ public class Gun : MonoBehaviour
 
                 if (gg == 0)
                 {
-                    GameObject sparkle = Instantiate(S.BlueOldSparkle);
+                    GameObject sparkle = Instantiate(S.BlueHeavySparkle);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
                 }
