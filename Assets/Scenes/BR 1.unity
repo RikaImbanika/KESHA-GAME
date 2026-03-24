@@ -1270,7 +1270,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 3
-  _nextDoorId: -1
   col: {fileID: 238394910}
   audioName: Door
   _locked: 0
@@ -1278,7 +1277,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &238394909
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1709,7 +1707,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 1
-  _nextDoorId: -1
   col: {fileID: 421449152}
   audioName: Door
   _locked: 0
@@ -1717,7 +1714,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &421449151
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1766,7 +1762,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2088412107}
-  m_RootOrder: 6
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!1001 &433722512
 PrefabInstance:
@@ -5003,7 +4999,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2088412107}
-  m_RootOrder: 7
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &1645898911
 MonoBehaviour:
@@ -5018,7 +5014,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 2
-  _nextDoorId: -1
   col: {fileID: 1645898913}
   audioName: Door
   _locked: 0
@@ -5026,7 +5021,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &1645898912
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6308,12 +6302,12 @@ Transform:
   m_Children:
   - {fileID: 85050638}
   - {fileID: 188911789}
+  - {fileID: 421449154}
+  - {fileID: 1645898910}
   - {fileID: 200787366}
   - {fileID: 1342030966}
   - {fileID: 1343333668}
   - {fileID: 9940693}
-  - {fileID: 421449154}
-  - {fileID: 1645898910}
   - {fileID: 238394907}
   - {fileID: 2101094183}
   - {fileID: 1740928275753110073}
@@ -6866,5 +6860,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: SNAKIE
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2579091093076375454, guid: 1543b9fea0f0a114ca300f37fde68a81, type: 3}
+    - {fileID: 7495683228513563294, guid: 1543b9fea0f0a114ca300f37fde68a81, type: 3}
+    - {fileID: 8385611282579090046, guid: 1543b9fea0f0a114ca300f37fde68a81, type: 3}
+    - {fileID: 5729363113043451118, guid: 1543b9fea0f0a114ca300f37fde68a81, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 1543b9fea0f0a114ca300f37fde68a81, type: 3}

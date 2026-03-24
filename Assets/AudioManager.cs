@@ -47,6 +47,7 @@ public class AudioManager : MonoBehaviour
 	public AudioSource _fenomen;
 	public AudioSource _greatMix;
 	public AudioSource _riddik;
+	public AudioSource _goodTimes;
 
 	public AudioSource _maylo;
 	public AudioSource _theRoom;
@@ -233,6 +234,10 @@ public class AudioManager : MonoBehaviour
 			case "drawerc":
 				_drawerC.pitch = pitch;
 				_drawerC.Play();
+				break;
+			case "goodtimes":
+				_goodTimes.pitch = pitch;
+				_goodTimes.Play();
 				break;
 			default:
 				Debug.LogError($"No such audioSource {name} in code! Maybe you want to add it into AudioManager?");

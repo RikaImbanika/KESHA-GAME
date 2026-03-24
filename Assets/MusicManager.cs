@@ -62,39 +62,57 @@ public class MusicManager : MonoBehaviour
                 Debug.Log("MusicManager waiting for S.AudioManager");
             }
 
-            _backroomsVolumes = new float[5];
+            int count = 6;
+
+            _backroomsVolumes = new float[count];
             _backroomsVolumes[0] = 1;
-            _backroomsSources = new AudioSource[5];
-            _backroomsSources[0] = S.AM._adelaidaOST1;
-            _backroomsSources[1] = S.AM._fenomen;
-            _backroomsSources[2] = S.AM._labyrinth;
+            _backroomsSources = new AudioSource[count];
+            _backroomsSources[0] = S.AM._goodTimes;
+            _backroomsSources[1] = S.AM._adelaidaOST1;
+            _backroomsSources[2] = S.AM._fenomen;
             _backroomsSources[3] = S.AM._riddik;
-            _backroomsSources[4] = S.AM._greatMix;
+            _backroomsSources[4] = S.AM._labyrinth; 
+            _backroomsSources[5] = S.AM._greatMix; 
 
-            _backroomsLengthes = new float[5];
-            _backroomsLengthes[0] = 173;
-            _backroomsLengthes[1] = 674;
-            _backroomsLengthes[2] = 597;
+            _backroomsLengthes = new float[count];
+            _backroomsLengthes[0] = 310;
+            _backroomsLengthes[1] = 173;
+            _backroomsLengthes[2] = 674;
             _backroomsLengthes[3] = 1116;
-            _backroomsLengthes[4] = 2378;
+            _backroomsLengthes[4] = 597;
+            _backroomsLengthes[5] = 2378;
 
-            int[] randomised = new int[5];
-            bool[] remember = new bool[5];
-            
+            int[] randomised = new int[count];
+            bool[] remember = new bool[count];
+
             var rnd = new System.Random();
 
-            for (int i = 0; i < 5;)
+            for (int i = 0; i < count; i++)
+                randomised[i] = i;
+
+            remember[0] = true;
+            remember[4] = true;
+            remember[5] = true;
+
+            //Changing order of tracks where are they should be
+            for (int i = 0; i < count;)
             {
-                int x = rnd.Next(5);
+                if (remember[i])
+                {
+                    i++;
+                    continue;
+                }
+
+                int x = rnd.Next(count);
                 if (!remember[x])
                 {
-                    remember[x] = true;
                     randomised[i] = x;
                     i++;
                 }
             }
 
-            for (int i = 0; i < 5; i++)
+            //Applying new order
+            for (int i = 0; i < count; i++)
             {
                 int x = randomised[i];
 
@@ -106,6 +124,13 @@ public class MusicManager : MonoBehaviour
                 _backroomsLengthes[i] = _backroomsLengthes[x];
                 _backroomsLengthes[x] = buf2;
             }
+
+            // string str = "";
+
+            // for (int i = 0; i < count; i++)
+            //     str += $"{_backroomsLengthes[i]}\r\n";
+
+            // Debug.LogError(str);
 
             S.AM._incomeOST1.Play();
 

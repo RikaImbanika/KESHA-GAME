@@ -11,7 +11,6 @@ public class Backrooms : MonoBehaviour
     public Dictionary<string, byte> _snakes;
     public Dictionary<string, float> _lasersProbabilities;
     public Dictionary<string, float> _lightersProbabilities;
-    //public List<string> _roomsWithInitialisedPortals;
 
     //Room BR 5 should be at least 3 rooms from start
     //Room BR 8 should be maximally far
@@ -27,7 +26,6 @@ public class Backrooms : MonoBehaviour
         {
             _lasersProbabilities = new Dictionary<string, float>();
             _lightersProbabilities = new Dictionary<string, float>();
-            //_roomsWithInitialisedPortals = new List<string>();
 
             while (true)
             {

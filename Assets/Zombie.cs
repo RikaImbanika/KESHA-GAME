@@ -11,6 +11,7 @@ public class Zombie : MonoBehaviour
     public string _type;
     public float _fireCooldown;
     public float _health;
+    public float _maxHealth;
     public float _speed;
     public float _nextFireTime;
     public bool _followPlayer;

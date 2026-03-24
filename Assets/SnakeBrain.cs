@@ -19,8 +19,6 @@ public class SnakeBrain : MonoBehaviour
     private UnityEngine.AI.NavMeshAgent _agent;
     private bool _stuckAvoidance;
     private bool _tailEnabled;
-    public GameObject _BLUE;
-    public GameObject _GREEN;
     private Vector3 _velocity;
     private float _distanceThreshold = 3f;
     private float _areaDivideTotalBuffered;
@@ -62,6 +60,8 @@ public class SnakeBrain : MonoBehaviour
 
     void Update()
     {
+        Debug.DrawRay(transform.position - transform.up * 50f, transform.up * 100f, Color.red, 0.1f);
+
         if (_head._aims.Count == 0)
             _head._aims.Add(transform.position);
         else if ((_head._aims[_head._aims.Count - 1] - transform.position).magnitude > 0.5f)
@@ -72,15 +72,10 @@ public class SnakeBrain : MonoBehaviour
         if ((transform.position - _agent.destination).magnitude < _distanceThreshold)
         {
             _stuckAvoidance = false;
-            SwitchTail(!_stuckAvoidance); //Why !
+            SwitchTail(!_stuckAvoidance);
             _agent.destination = GetNewPoint();
             //This is doing something important
         }
-
-        Vector3 bestDir = (_agent.steeringTarget - _agent.transform.position).normalized;
-        _velocity = Vector3.Slerp(_velocity, bestDir, Time.deltaTime * _turn).normalized;
-        _velocity *= _speed * 12 / (_head._aims.Count - _head._aimId);
-        transform.position += _velocity * Time.deltaTime;
 
         Vector2 p = new Vector2(transform.position.x, transform.position.z);
         if (!IsPointInQuad(p, _corners2d))
@@ -88,11 +83,16 @@ public class SnakeBrain : MonoBehaviour
             Vector2 center = (_corners2d[0] + _corners2d[2]) / 2;
             transform.position = new Vector3(center.x, transform.position.y, center.y);
 
-            _stuckAvoidance = false;
+            _stuckAvoidance = true;
             SwitchTail(!_stuckAvoidance);
             _agent.destination = GetNewPoint();
-            //This should make snake impossible to leave her room
+            Debug.LogError($"Brain is out of quad");
         }
+
+        Vector3 bestDir = (_agent.steeringTarget - _agent.transform.position).normalized;
+        _velocity = Vector3.Slerp(_velocity, bestDir, Time.deltaTime * _turn).normalized;
+        _velocity *= _speed * 12 / (_head._aims.Count - _head._aimId);
+        transform.position += _velocity * Time.deltaTime;
     }
 
     void CheckP()
@@ -116,30 +116,38 @@ public class SnakeBrain : MonoBehaviour
 
     void SwitchTail(bool enabled)
     {
-        _head.SwitchTail(enabled);
+        _head.SwitchTail(enabled, Time.deltaTime);
     }
 
     Vector3 GetNewPoint()
     {
         Vector3 point = new Vector3();
+        Vector2 flatPoint = new Vector2();
         for (int i = 0; i < 60; i++)
         {
             point = transform.position;
+            flatPoint = new Vector2(point.x, point.z);
+
             while ((point - transform.position).magnitude < 8f)
-                point = GetRandomPointInQuad(_corners2d);
+            {
+                //Maybe dangerous in little scenes, but they should not exist
+                flatPoint = GetRandomPointInQuad(_corners2d);
+                point = new Vector3(flatPoint.x, point.y, flatPoint.y);
+            }
             
-            bool reachable = false;
+            bool reachable;
             Vector3 newDirection = GetDirectionAndWait(point, Vector3.zero, out reachable);
 
             if (reachable)
             {
-                //Debug.Log("REACHABLE");
+                Debug.LogError("REACHABLE");
                 return point;
             }
         }
 
-        //Debug.Log("I'M STUCK");
+        Debug.LogError("I'M STUCK");
         _stuckAvoidance = true;
+        SwitchTail(!_stuckAvoidance);
         return point;
     }
 
@@ -156,12 +164,13 @@ public class SnakeBrain : MonoBehaviour
         {
             Vector3 final = path.corners[path.corners.Length - 1];
             Vector3 target = new Vector3(targetPosition.x, final.y, targetPosition.z);
-            _BLUE.transform.position = target;
-            _GREEN.transform.position = final;
+
+            Debug.DrawRay(target - transform.up * 50f, transform.up * 100f, Color.blue, 0.1f);
+            Debug.DrawRay(final - transform.up * 50f, transform.up * 100f, Color.green, 0.1f);
 
             float dist = (final - target).magnitude;
-            Debug.Log($"Distance: {dist}");
-            reachable = dist < 3f;
+            Debug.LogError($"Distance: {dist}");
+            reachable = dist < _distanceThreshold;
         }
         else
             reachable = false;

@@ -45,6 +45,7 @@ public class SnakeHead : MonoBehaviour
     public GameObject _BLUE;
     public string _sceneName;
     public string _type;
+    public float _timeSinceTailSwitched;
 
     private Optimiser _opti;
 
@@ -84,6 +85,10 @@ public class SnakeHead : MonoBehaviour
 
         int randomIndex = UnityEngine.Random.Range(0, S.SnakeBallMaterials.Count);
 
+        int ballsTypesCount = S.SnakeBalls[_type].Count;
+
+        Debug.LogError($"Balls of \"{_type}\" count: {ballsTypesCount}");
+
         for (int i = 0; i < _ballsCount; i++)
         {
             GameObject clone = Instantiate(S.SnakeBody, transform.position, transform.rotation, transform.parent);
@@ -114,7 +119,7 @@ public class SnakeHead : MonoBehaviour
 
             if (GetPercent(4))
                 type = "6lasers";
-            else if (GetPercent(5)) 
+            else if (GetPercent(5))
                 type = "4lasers";
             else if (GetPercent(6))
                 type = "3lasers";
@@ -149,11 +154,9 @@ public class SnakeHead : MonoBehaviour
 
             body.Drone.Init(type, type2, color);
 
-            int count = S.SnakeBalls[_type].Count;
-
             int randomNumber = UnityEngine.Random.Range(0, 2);
             if (randomNumber == 0)
-                randomIndex = UnityEngine.Random.Range(0, count);
+                randomIndex = UnityEngine.Random.Range(0, ballsTypesCount);
 
             GameObject ballInBallInBallInBall = GameObject.Instantiate(S.SnakeBalls[_type][randomIndex], body.BallInBallInBall.transform);
             ballInBallInBallInBall.transform.position = body.BallInBallInBall.transform.position;
@@ -162,11 +165,11 @@ public class SnakeHead : MonoBehaviour
 
             IEnumerator IEKek()
             {
-                SwitchTail(false);
+                SwitchTail(false, 4f);
 
                 yield return new WaitForSeconds(3f);
 
-                SwitchTail(true);
+                SwitchTail(true, 4f);
             }
         }
 
@@ -449,15 +452,17 @@ public class SnakeHead : MonoBehaviour
             return false;
     }
 
-    public void SwitchTail(bool enabled)
+    public void SwitchTail(bool enabled, float deltaTime)
     {
-        if (!_tailEnabled && enabled)
+        if (_timeSinceTailSwitched > 3f && (!_tailEnabled && enabled || _tailEnabled && !enabled))
+        {
             for (int i = 3; i < _clonesNMOs.Count; i++)
-                _clonesNMOs[i].enabled = true;
+                _clonesNMOs[i].enabled = enabled;
 
-        if (_tailEnabled && !enabled)
-            for (int i = 3; i < _clonesNMOs.Count; i++)
-                _clonesNMOs[i].enabled = false;
+            _timeSinceTailSwitched = 0f;
+        }
+        else
+            _timeSinceTailSwitched += deltaTime;
 
         _tailEnabled = enabled;
     }

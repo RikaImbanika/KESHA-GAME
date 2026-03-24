@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsSparkle : MonoBehaviour
+public class HeavySparkle : MonoBehaviour
 {
     public float _speed;
     public float _moveNormal;
