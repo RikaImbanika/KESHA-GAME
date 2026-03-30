@@ -55,9 +55,9 @@ public class SnakeHead : MonoBehaviour
 
         _ballsCount = 30;
         _period = 7f;
-        _heigh = 5.5f;
+        _heigh = 7f;
         _dHeigh = 3.5f;
-        _rotationSpeed = 20f;
+        _rotationSpeed = 18f;
 
         _layerMaskForPlayer = 1 << LayerMask.NameToLayer("Player") |
                  1 << LayerMask.NameToLayer("Static") |
@@ -132,13 +132,15 @@ public class SnakeHead : MonoBehaviour
 
             string type2 = "";
 
-            if (GetPercent(10))
+            if (i == _ballsCount - 1 || i == 0)
+                type2 = "sniper";
+            else if (GetPercent(10))
                 type2 = "1";
-            else if (GetPercent(7))
-                type2 = "2";
-            else if (GetPercent(6))
-                type2 = "3";
             else if (GetPercent(5))
+                type2 = "2";
+            else if (GetPercent(4))
+                type2 = "3";
+            else if (GetPercent(15))
                 type2 = "sniper";
 
             string color = "";
@@ -152,7 +154,11 @@ public class SnakeHead : MonoBehaviour
             else if (_type == "Silent")
                 color = "purple";
 
-            body.Drone.Init(type, type2, color);
+            float damageMultiplier = 1f;
+            if (_type == "Silent")
+                damageMultiplier = 2f;
+
+            body.Drone.Init(type, type2, color, damageMultiplier);
 
             int randomNumber = UnityEngine.Random.Range(0, 2);
             if (randomNumber == 0)

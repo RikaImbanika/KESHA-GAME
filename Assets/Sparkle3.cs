@@ -81,6 +81,8 @@ public class Sparkle3 : MonoBehaviour
                 _visual[_index] = GameObject.Instantiate(S.BlueLaser); /////////////////
             else if (_color == "green")
                 _visual[_index] = GameObject.Instantiate(S.GreenLaser); /////////////////
+            else if (_color == "purple")
+                _visual[_index] = GameObject.Instantiate(S.PurpleLaser); /////////////////
         }
     }
 

@@ -19,9 +19,9 @@ public class Drone : MonoBehaviour
     public float _currentFireDelay;
     public SnakeHead _head;
     private string _color;
-    
     private int _layerMaskForLasers;
     private Optimiser _opti;
+    private float _damageMultiplier;
     
     public void Start()
     {
@@ -34,7 +34,7 @@ public class Drone : MonoBehaviour
                          1 << LayerMask.NameToLayer("Default");
     }
 
-    public void Init(string type, string type2, string color)
+    public void Init(string type, string type2, string color, float _damageMultiplier)
     {
         _type = type;
         _type2 = type2;
@@ -47,7 +47,7 @@ public class Drone : MonoBehaviour
         else if (color == "blue")
             _sparklePrefab = S.BlueSparkle;
         else if (color == "purple")
-            _sparklePrefab = S.BlueSparkle;
+            _sparklePrefab = S.PurpleSparkle;
 
         if (type == "6lasers")
         {
@@ -126,12 +126,12 @@ public class Drone : MonoBehaviour
         else if (type2 == "2")
         {
             _fireCount = 2;
-            _fireDelay = UnityEngine.Random.Range(0.6f, 5f);
+            _fireDelay = UnityEngine.Random.Range(0.7f, 6f);
         }
         else if (type2 == "3")
         {
-            _fireCount = 2;
-            _fireDelay = UnityEngine.Random.Range(0.6f, 5f);
+            _fireCount = 3;
+            _fireDelay = UnityEngine.Random.Range(0.8f, 7f);
         }
         else if (type2 == "sniper")
         {
@@ -251,6 +251,7 @@ public class Drone : MonoBehaviour
             Fireball eb = fireball.GetComponent<Fireball>();
             eb._active = true;
             eb._speed = 30;
+            eb._damage = 5 * _damageMultiplier;
             Destroy(fireball, 15);
 
             AudioSource shot = Instantiate(S.Shot);
@@ -302,7 +303,7 @@ public class Drone : MonoBehaviour
             GameObject go = hit.collider.gameObject;
             if (go.CompareTag("Player"))
             {
-                S.PS.Damage(0.7f);
+                S.PS.Damage(0.7f * _damageMultiplier);
             }
 
             if (S.Ps._currentSceneName == _head._sceneName || S.FakePlayerScene == _head._sceneName)

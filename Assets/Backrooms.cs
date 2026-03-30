@@ -56,6 +56,8 @@ public class Backrooms : MonoBehaviour
 
             AddArrows();
 
+            Debug.LogError("Arrows added");
+
             for (int i = 0; i < 15; i++)
                 yield return LockOneConnection();
 
@@ -77,10 +79,22 @@ public class Backrooms : MonoBehaviour
 
         List<string> visited = new List<string>();
 
-        Next(nextSceneName0, nid, 1);
-        
-        void Next(string sceneName, int doorId, int depth)
+        List<(string sceneName, int doorId, int depth)> queue;
+
+        queue = Next(nextSceneName0, nid, 1);
+
+        while(queue.Count > 0)
         {
+            var buf = Next(queue[0].sceneName, queue[0].doorId, queue[0].depth);
+            queue.RemoveAt(0);
+            
+            if (buf.Count > 0)
+                queue.AddRange(buf);
+        }
+        
+        List<(string sceneName, int doorId, int depth)> Next(string sceneName, int doorId, int depth)
+        {
+            List<(string sceneName, int doorId, int depth)> next = new List<(string sceneName, int doorId, int depth)>();
             if (!visited.Contains(sceneName))
             {
                 RoomModel scene = S.Loader._rooms[sceneName];
@@ -88,7 +102,7 @@ public class Backrooms : MonoBehaviour
                 door._needArrow = true;
                 visited.Add(sceneName);
 
-                if (depth < 2)
+                if (depth < 3)
                 {
                     int doorsCount = scene._doors.Count;
 
@@ -102,11 +116,13 @@ public class Backrooms : MonoBehaviour
                             DoorModel newDoor = scene._doors[i + 1];
                             int nextDoorId = newDoor._nextDoorId;
                             string nextSceneName = newDoor._nextSceneName;
-                            Next(nextSceneName, nextDoorId, depth);
+                            next.Add(new(nextSceneName, nextDoorId, depth));
                         }
                     }
                 }
             }
+
+            return next;
         }
     }
 

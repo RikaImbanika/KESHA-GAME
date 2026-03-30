@@ -182,6 +182,7 @@ public class Spider : MonoBehaviour
             Destroy(_points[i]);
         Destroy(_laserDown);
         Destroy(_collider);
+        Destroy(_agent);
     }
 
     void Update()

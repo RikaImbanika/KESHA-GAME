@@ -14,12 +14,16 @@ public class Fireball : MonoBehaviour
     public Transform[] _children;
     public string _color;
     private string _sceneName;
+    public float _damage;
     
     void Start()
     {
         _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
         _opti = new Optimiser(_sceneName);
         _opti.MaxPeriodForDistance = 1 / 12f;
+
+        if (_damage == 0)
+            _damage = 5f;
         
         _layerMask = 1 << LayerMask.NameToLayer("Player") |
                  1 << LayerMask.NameToLayer("Static") |
@@ -51,7 +55,7 @@ public class Fireball : MonoBehaviour
                     if (go.CompareTag("Player"))
                     {
                         PlayerStorage ps = go.transform.parent.gameObject.GetComponent<PlayerStorage>();
-                        ps.Damage(5);
+                        ps.Damage(_damage);
                     }
 
                     NoSpots ns = go.GetComponent<NoSpots>();
