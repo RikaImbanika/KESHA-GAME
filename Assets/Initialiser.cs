@@ -27,7 +27,7 @@ public class Initialiser : MonoBehaviour
             Materials.Get("Balls/WhiteBall")
         };
 
-        S.PortalObj1 = Prefabs.Get("Portal 1");
+        S.PortalObj1 = Prefabs.Get("Portals/Portal 1");
 
         S.SnakeBalls = new Dictionary<string, List<GameObject>>();
         S.SnakeBalls.Add("Classic", new List<GameObject>());

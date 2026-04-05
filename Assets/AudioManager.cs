@@ -48,6 +48,7 @@ public class AudioManager : MonoBehaviour
 	public AudioSource _greatMix;
 	public AudioSource _riddik;
 	public AudioSource _goodTimes;
+	public AudioSource _rainbow;
 
 	public AudioSource _maylo;
 	public AudioSource _theRoom;
@@ -238,6 +239,10 @@ public class AudioManager : MonoBehaviour
 			case "goodtimes":
 				_goodTimes.pitch = pitch;
 				_goodTimes.Play();
+				break;
+			case "rainbow":
+				_rainbow.pitch = pitch;
+				_rainbow.Play();
 				break;
 			default:
 				Debug.LogError($"No such audioSource {name} in code! Maybe you want to add it into AudioManager?");

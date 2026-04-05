@@ -88,6 +88,22 @@ public class AllFather : MonoBehaviour
 		return copy;
 	}
 
+	public string SelFromProb(List<(string Item, int Weight)> probabilities)
+	{
+		int total = probabilities.Sum(p => p.Weight);
+		int rand = S.RND.Next(total);
+		int cumulative = 0;
+
+		foreach (var (item, weight) in probabilities)
+		{
+			cumulative += weight;
+			if (rand < cumulative)
+				return item;
+		}
+
+		return null; // Should never reach here if input is valid
+	}
+
 	public EnemyParams GetEnemyParams(string name)
 	{
 		EnemyParams ep = new EnemyParams();

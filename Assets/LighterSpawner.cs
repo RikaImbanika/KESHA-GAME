@@ -156,50 +156,62 @@ public class LighterSpawner : MonoBehaviour
 
             byte colorN = 0;
 
+            List<(string, int)> probs = new List<(string, int)>();
+
             if (_sceneName.Contains("BR"))
             {
                 if (_sceneName != "BR 7" && _sceneName != "BR 7R" && _sceneName != "BR 6" && _sceneName != "BR 6R")
                 {
-                    if (n < 90)
-                        colorN = S.Lighters.ColorN["Yellow"];
-                    else if (n <= 95)
-                        colorN = S.Lighters.ColorN["Red"];
-                    else
-                        colorN = S.Lighters.ColorN["Blue"];
+                    probs.Add(new("Yellow", 82));
+                    probs.Add(new("Red", 2));
+                    probs.Add(new("Blue", 1));
+                    probs.Add(new("Purple", 1));
+                    probs.Add(new("Green", 2));
+                    probs.Add(new("Bakalavr", 6));
+                    probs.Add(new("Zombella", 6));
                 }
                 else
                 {
-                    if (n < 90)
-                        colorN = S.Lighters.ColorN["Blue"];
-                    else if (n <= 95)
-                        colorN = S.Lighters.ColorN["Red"];
-                    else
-                        colorN = S.Lighters.ColorN["Yellow"];
+                    probs.Add(new("Yellow", 1));
+                    probs.Add(new("Red", 2));
+                    probs.Add(new("Blue", 80));
+                    probs.Add(new("Purple", 2));
+                    probs.Add(new("Green", 1));
+                    probs.Add(new("Bakalavr", 7));
+                    probs.Add(new("Zombella", 7));
                 }
             }
             else if (_sceneName.Contains("MR"))
             {
-                if (n < 92)
-                    colorN = S.Lighters.ColorN["Blue"];
-                else if (n <= 97)
-                    colorN = S.Lighters.ColorN["Yellow"];
-                else
-                    colorN = S.Lighters.ColorN["Red"];
+                probs.Add(new("Yellow", 2));
+                probs.Add(new("Red", 1));
+                probs.Add(new("Blue", 77));
+                probs.Add(new("Purple", 5));
+                probs.Add(new("Green", 3));
+                probs.Add(new("Bakalavr", 6));
+                probs.Add(new("Zombella", 6));
             }
             else if (_sceneName.Contains("Income"))
             {
-                if (n < 98)
-                    colorN = S.Lighters.ColorN["Yellow"];
-                else
-                    colorN = S.Lighters.ColorN["Red"];
-            }
+                probs.Add(new("Yellow", 91));
+                probs.Add(new("Red", 1));
+                probs.Add(new("Blue", 0));
+                probs.Add(new("Purple", 0));
+                probs.Add(new("Green", 2));
+                probs.Add(new("Bakalavr", 3));
+                probs.Add(new("Zombella", 3));
+              }
             else if (_sceneName.Contains("TL"))
             {
-                if (n < 98)
-                    colorN = S.Lighters.ColorN["Blue"];
-                else
-                    colorN = S.Lighters.ColorN["Red"];
+                probs.Add(new("Yellow", 0));
+                probs.Add(new("Red", 1));
+                probs.Add(new("Blue", 82));
+                probs.Add(new("Purple", 4));
+                probs.Add(new("Green", 1));
+                probs.Add(new("Bakalavr", 6));
+                probs.Add(new("Zombella", 6));
             }
+            colorN = S.Lighters.ColorN[S.AllFather.SelFromProb(probs)];
 
             _color = S.Lighters._lightersColors[colorN];
             S.SM.Save(_idColor, colorN);
@@ -220,13 +232,33 @@ public class LighterSpawner : MonoBehaviour
         SetColor();
         SetPosition();
         SetId();
+        SetSway();
 
         var ren = GetComponent<MeshRenderer>();
 
         if (ren != null)
             Destroy(ren);
-            
+
         Destroy(this);
+        
+        void SetSway()
+        {
+            if (_color == "Zombella" || _color == "Bakalavr")
+            {
+                lighter._swayAmplitude = 35f;
+                lighter._swayFrequency = 1f;
+
+                if (S.RND.Next(3) == 0)
+                    lighter._swayFrequency = 2f;
+
+                int g = S.RND.Next(5);
+
+                if (g == 0)
+                    lighter._swayAmplitude = 45f;
+                else if (g == 1)
+                    lighter._swayAmplitude = 25f;
+            }
+        }
 
         void SetPosition()
         {
@@ -246,7 +278,8 @@ public class LighterSpawner : MonoBehaviour
             if (_color != "Yellow")
             {
                 MeshRenderer renderer = lighter._vis.GetComponent<MeshRenderer>();
-                renderer.sharedMaterial = Materials.Get($"Sparkles/Normal/Sparkle{_color}");
+
+                renderer.sharedMaterial = S.Lighters._materials[_color];
             }
         }
 

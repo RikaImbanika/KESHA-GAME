@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Lighters : MonoBehaviour
 {
     public float[] _lightersSizes;
     public string[] _lightersColors;
+    public Dictionary<string, Material> _materials;
     private Dictionary<string, byte> _colorN;
 
     public Dictionary<string, byte> ColorN
@@ -38,13 +40,27 @@ public class Lighters : MonoBehaviour
             {
                 "Yellow",
                 "Red",
-                "Blue"
+                "Blue",
+                "Purple",
+                "Green",
+                "Zombella",
+                "Bakalavr"
             };
 
             _colorN = new Dictionary<string, byte>();
-            _colorN.Add("Yellow", 0);
-            _colorN.Add("Red", 1);
-            _colorN.Add("Blue", 2);
+
+            _materials = new Dictionary<string, Material>();
+
+            for (byte a = 0; a < _lightersColors.Count(); a++)
+            {
+                string colName = _lightersColors[a];
+                _colorN.Add(colName, a);
+
+                if (colName != "Zombella" && colName != "Bakalavr")
+                    _materials.Add(colName, Materials.Get($"Sparkles/Normal/Sparkle{colName}"));
+                else
+                    _materials.Add(colName, Materials.Get($"FlyingEnemies/{colName}"));
+            }
 
             S.Lighters = this;
 

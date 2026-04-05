@@ -34,6 +34,8 @@ public class Lighter : MonoBehaviour
     private float _speedUp;
     public string _id;
     public string _idPos;
+    public float _swayAmplitude;
+    public float _swayFrequency; //For sway
     public Optimiser _opti;
 
     void Start()
@@ -81,7 +83,14 @@ public class Lighter : MonoBehaviour
             _vis.transform.localScale = _startScale * scale;
             Vector3 direction = S.PlayerTarget(_sceneName) - _vis.transform.position;
             Quaternion lookRotation = Quaternion.LookRotation(direction);
-            _vis.transform.rotation = lookRotation;
+
+            if (_swayAmplitude > 0)
+            {
+                float angle = Mathf.Sin(Time.time * _swayFrequency * Mathf.PI * 2f) * _swayAmplitude;
+                _vis.transform.rotation = lookRotation * Quaternion.Euler(0, 0, angle);
+            }
+            else
+                _vis.transform.rotation = lookRotation;
 
             float k = _opti.DeltaTime * 60f * 0.3f;
 

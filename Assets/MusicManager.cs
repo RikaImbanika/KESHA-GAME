@@ -62,25 +62,28 @@ public class MusicManager : MonoBehaviour
                 Debug.Log("MusicManager waiting for S.AudioManager");
             }
 
-            int count = 6;
+            int count = 7;
 
             _backroomsVolumes = new float[count];
             _backroomsVolumes[0] = 1;
+
             _backroomsSources = new AudioSource[count];
             _backroomsSources[0] = S.AM._goodTimes;
-            _backroomsSources[1] = S.AM._adelaidaOST1;
-            _backroomsSources[2] = S.AM._fenomen;
-            _backroomsSources[3] = S.AM._riddik;
-            _backroomsSources[4] = S.AM._labyrinth; 
-            _backroomsSources[5] = S.AM._greatMix; 
+            _backroomsSources[1] = S.AM._rainbow;
+            _backroomsSources[2] = S.AM._adelaidaOST1;
+            _backroomsSources[3] = S.AM._fenomen;
+            _backroomsSources[4] = S.AM._riddik;
+            _backroomsSources[5] = S.AM._labyrinth;
+            _backroomsSources[6] = S.AM._greatMix; 
 
             _backroomsLengthes = new float[count];
             _backroomsLengthes[0] = 310;
-            _backroomsLengthes[1] = 173;
-            _backroomsLengthes[2] = 674;
-            _backroomsLengthes[3] = 1116;
-            _backroomsLengthes[4] = 597;
-            _backroomsLengthes[5] = 2378;
+            _backroomsLengthes[1] = 300;
+            _backroomsLengthes[2] = 173;
+            _backroomsLengthes[3] = 674;
+            _backroomsLengthes[4] = 1116;
+            _backroomsLengthes[5] = 597;
+            _backroomsLengthes[6] = 2378;
 
             int[] randomised = new int[count];
             bool[] remember = new bool[count];
@@ -91,46 +94,45 @@ public class MusicManager : MonoBehaviour
                 randomised[i] = i;
 
             remember[0] = true;
-            remember[4] = true;
+            remember[1] = true;
             remember[5] = true;
+            remember[6] = true;
 
-            //Changing order of tracks where are they should be
-            for (int i = 0; i < count;)
+            RandomiseBackroomsMusic();
+
+            void RandomiseBackroomsMusic()
             {
-                if (remember[i])
+                //Changing order of tracks where are they should be
+                for (int i = 0; i < count;)
                 {
-                    i++;
-                    continue;
+                    if (remember[i])
+                    {
+                        i++;
+                        continue;
+                    }
+
+                    int x = rnd.Next(count);
+                    if (!remember[x])
+                    {
+                        randomised[i] = x;
+                        i++;
+                    }
                 }
 
-                int x = rnd.Next(count);
-                if (!remember[x])
+                //Applying new order
+                for (int i = 0; i < count; i++)
                 {
-                    randomised[i] = x;
-                    i++;
+                    int x = randomised[i];
+
+                    AudioSource buf = _backroomsSources[i];
+                    _backroomsSources[i] = _backroomsSources[x];
+                    _backroomsSources[x] = buf;
+
+                    float buf2 = _backroomsLengthes[i];
+                    _backroomsLengthes[i] = _backroomsLengthes[x];
+                    _backroomsLengthes[x] = buf2;
                 }
             }
-
-            //Applying new order
-            for (int i = 0; i < count; i++)
-            {
-                int x = randomised[i];
-
-                AudioSource buf = _backroomsSources[i];
-                _backroomsSources[i] = _backroomsSources[x];
-                _backroomsSources[x] = buf;
-
-                float buf2 = _backroomsLengthes[i];
-                _backroomsLengthes[i] = _backroomsLengthes[x];
-                _backroomsLengthes[x] = buf2;
-            }
-
-            // string str = "";
-
-            // for (int i = 0; i < count; i++)
-            //     str += $"{_backroomsLengthes[i]}\r\n";
-
-            // Debug.LogError(str);
 
             S.AM._incomeOST1.Play();
 
