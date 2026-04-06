@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MusicManager : MonoBehaviour
@@ -24,6 +25,7 @@ public class MusicManager : MonoBehaviour
     public AudioSource _backroomsOldTrack;
     public AudioSource _backroomsNewTrack;
     public AudioSource[] _backroomsSources;
+    public int[] _backroomsOrder;
     public float[] _backroomsLengthes;
     public float[] _backroomsVolumes;
     public float _backroomVolume;
@@ -40,7 +42,6 @@ public class MusicManager : MonoBehaviour
     public int _mushroomsPrevTrackId;
     public string _mushroomsPhase = "silence";
 
-
     void Start()
     {
         S.MM = this;
@@ -49,7 +50,7 @@ public class MusicManager : MonoBehaviour
         _playerOnIncome = true;
         _incomePhase = "1";
         _backroomsTrackId = 0;
-        _backroomsPrevTrackId = 4; //
+        _backroomsPrevTrackId = 11; //Track here should not be equals first one
         _mushroomsPrevTrackId = 1; //
 
         StartCoroutine(LateStart(0.3f));
@@ -63,76 +64,82 @@ public class MusicManager : MonoBehaviour
             }
 
             int count = 7;
+            int count2 = 12;
 
             _backroomsVolumes = new float[count];
             _backroomsVolumes[0] = 1;
 
             _backroomsSources = new AudioSource[count];
-            _backroomsSources[0] = S.AM._goodTimes;
-            _backroomsSources[1] = S.AM._rainbow;
-            _backroomsSources[2] = S.AM._adelaidaOST1;
-            _backroomsSources[3] = S.AM._fenomen;
-            _backroomsSources[4] = S.AM._riddik;
-            _backroomsSources[5] = S.AM._labyrinth;
-            _backroomsSources[6] = S.AM._greatMix; 
-
             _backroomsLengthes = new float[count];
+                        
+            _backroomsSources[0] = S.AM._goodTimes;
             _backroomsLengthes[0] = 310;
+
+            _backroomsSources[1] = S.AM._rainbow;
             _backroomsLengthes[1] = 300;
+                        
+            _backroomsSources[2] = S.AM._adelaidaOST1;
             _backroomsLengthes[2] = 173;
+                        
+            _backroomsSources[3] = S.AM._fenomen;
             _backroomsLengthes[3] = 674;
+                        
+            _backroomsSources[4] = S.AM._riddik;
             _backroomsLengthes[4] = 1116;
+
+            _backroomsSources[5] = S.AM._labyrinth;
             _backroomsLengthes[5] = 597;
+
+            _backroomsSources[6] = S.AM._greatMix;
             _backroomsLengthes[6] = 2378;
 
-            int[] randomised = new int[count];
-            bool[] remember = new bool[count];
+            bool[] remember = new bool[count2];
+            _backroomsOrder = new int[count2];
 
             var rnd = new System.Random();
 
-            for (int i = 0; i < count; i++)
-                randomised[i] = i;
+            //Ordering
 
-            remember[0] = true;
-            remember[1] = true;
-            remember[5] = true;
-            remember[6] = true;
+            //It's pretty complex but this
+            //Only my own logic of music
+            //I can't explain it
 
-            RandomiseBackroomsMusic();
+            _backroomsOrder[0] = 0;
+            _backroomsOrder[1] = 1;
 
-            void RandomiseBackroomsMusic()
+            if (rnd.Next(10) < 4)
             {
-                //Changing order of tracks where are they should be
-                for (int i = 0; i < count;)
-                {
-                    if (remember[i])
-                    {
-                        i++;
-                        continue;
-                    }
-
-                    int x = rnd.Next(count);
-                    if (!remember[x])
-                    {
-                        randomised[i] = x;
-                        i++;
-                    }
-                }
-
-                //Applying new order
-                for (int i = 0; i < count; i++)
-                {
-                    int x = randomised[i];
-
-                    AudioSource buf = _backroomsSources[i];
-                    _backroomsSources[i] = _backroomsSources[x];
-                    _backroomsSources[x] = buf;
-
-                    float buf2 = _backroomsLengthes[i];
-                    _backroomsLengthes[i] = _backroomsLengthes[x];
-                    _backroomsLengthes[x] = buf2;
-                }
+                _backroomsOrder[0] = 1;
+                _backroomsOrder[1] = 0;
             }
+
+            int[] localOrder = new int[3];
+            localOrder[0] = 2;
+            localOrder[1] = 3;
+            localOrder[2] = 4;
+
+            S.AllFather.Shuffle(localOrder);
+
+            _backroomsOrder[2] = localOrder[0];
+
+            _backroomsOrder[3] = _backroomsOrder[0];
+            _backroomsOrder[4] = _backroomsOrder[1];
+
+            _backroomsOrder[5] = localOrder[1];
+
+            _backroomsOrder[6] = _backroomsOrder[0];
+
+            _backroomsOrder[7] = localOrder[2];
+
+            _backroomsOrder[8] = _backroomsOrder[1];
+
+            _backroomsOrder[9] = 5;
+
+            _backroomsOrder[10] = rnd.Next(2);
+
+            _backroomsOrder[11] = 6;
+
+            //Play
 
             S.AM._incomeOST1.Play();
 
@@ -239,7 +246,10 @@ public class MusicManager : MonoBehaviour
     {
         if (_backroomsPhase == "silence")
             return;
-            
+
+        int trackIdShuffled = _backroomsOrder[_backroomsTrackId];
+        int prevTrackIdShuffled = _backroomsOrder[_backroomsPrevTrackId];
+
         if (_backroomsPhase == "leaving")
         {
             if (_backroomVolume > 0)
@@ -248,8 +258,8 @@ public class MusicManager : MonoBehaviour
             {
                 _backroomsPhase = "silence";
                 _backroomVolume = 0;
-                _backroomsSources[_backroomsTrackId].Pause();
-                _backroomsSources[_backroomsPrevTrackId].Pause();
+                _backroomsSources[trackIdShuffled].Pause();
+                _backroomsSources[prevTrackIdShuffled].Pause();
             }
         }
         else if (_backroomsPhase == "entering")
@@ -263,37 +273,47 @@ public class MusicManager : MonoBehaviour
             }
         }
 
-        if (_backroomsSources[_backroomsTrackId].time > _backroomsLengthes[_backroomsTrackId])
+        if (_backroomsSources[trackIdShuffled].time > _backroomsLengthes[trackIdShuffled])
         {
             _backroomsPrevTrackId = _backroomsTrackId;
 
             _backroomsTrackId += 1;
-            if (_backroomsTrackId >= 5)
+            if (_backroomsTrackId >= _backroomsOrder.Count())
                 _backroomsTrackId = 0;
 
-            _backroomsSources[_backroomsTrackId].time = 0;
-            _backroomsVolumes[_backroomsTrackId] = 1;
-            _backroomsSources[_backroomsTrackId].volume = 1 * _backroomVolume;
-            _backroomsSources[_backroomsTrackId].Play();
+            trackIdShuffled = _backroomsOrder[_backroomsTrackId];
+            prevTrackIdShuffled = _backroomsOrder[_backroomsPrevTrackId];
+
+            _backroomsSources[trackIdShuffled].time = 0;
+            _backroomsVolumes[trackIdShuffled] = 1;
+            _backroomsSources[trackIdShuffled].volume = 1 * _backroomVolume;
+            _backroomsSources[trackIdShuffled].Play();
         }
 
-        if (_backroomsVolumes[_backroomsPrevTrackId] > 0)
-            _backroomsVolumes[_backroomsPrevTrackId] -= 0.005f * d;
+        if (_backroomsVolumes[prevTrackIdShuffled] > 0)
+            _backroomsVolumes[prevTrackIdShuffled] -= 0.005f * d;
         else
         {
-            _backroomsVolumes[_backroomsPrevTrackId] = 0;
-            _backroomsSources[_backroomsPrevTrackId].volume = 0;
-            _backroomsSources[_backroomsPrevTrackId].Stop();
+            _backroomsVolumes[prevTrackIdShuffled] = 0;
+            _backroomsSources[prevTrackIdShuffled].volume = 0;
+            _backroomsSources[prevTrackIdShuffled].Stop();
         }
 
-        _backroomsSources[_backroomsTrackId].volume = _backroomsVolumes[_backroomsTrackId] * _backroomVolume;
-        _backroomsSources[_backroomsPrevTrackId].volume = _backroomsVolumes[_backroomsPrevTrackId] * _backroomVolume;
+        _backroomsSources[trackIdShuffled].volume = _backroomsVolumes[trackIdShuffled] * _backroomVolume;
+        _backroomsSources[prevTrackIdShuffled].volume = _backroomsVolumes[prevTrackIdShuffled] * _backroomVolume;
     }
 
     public void EnterBackrooms()
     {
+        int trackIdShuffled = _backroomsOrder[_backroomsTrackId];
+
         if (_backroomsPhase == "silence")
-            _backroomsSources[_backroomsTrackId].Play();
+        {
+            _backroomsVolumes[trackIdShuffled] = 1;
+            _backroomsSources[trackIdShuffled].volume = 1 * _backroomVolume;
+
+            _backroomsSources[trackIdShuffled].Play();
+        }
 
         _backroomsPhase = "entering";
     }

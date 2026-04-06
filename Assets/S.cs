@@ -86,8 +86,21 @@ public static class S : object
 	private static GameObject _spider;
 	private static GameObject _stamp;
 	private static GameObject _arrow;
+	private static GameObject _exit;
 	public static GameObject _portalObj1;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
+
+	public static GameObject Exit
+	{
+		get
+		{
+			return _exit;
+		}
+		set
+		{
+			_exit = value;
+		}
+	}
 
 	public static GameObject PortalObj1
 	{

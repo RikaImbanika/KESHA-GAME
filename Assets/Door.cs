@@ -18,6 +18,7 @@ public class Door : MonoBehaviour
 	public DoorModel _doorModel;
 	private string _sceneName;
 	private bool _needArrow;
+	private Vector3 _stampStartScale;
 
 	public void Start()
 	{
@@ -75,10 +76,12 @@ public class Door : MonoBehaviour
 
 					GameObject arrowObj = GameObject.Instantiate(S.Arrow, point0, rot, S.Loader.Roots[_sceneName]);
 
+					Vector3 point1 = point0;
+
 					RaycastHit hit;
 					if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
 					{
-						Vector3 point1 = hit.point;
+						point1 = hit.point;
 						arrowObj.transform.position = point1;
 					}
 
@@ -89,6 +92,26 @@ public class Door : MonoBehaviour
 						originalScale.x / parentScale.x,
 						originalScale.y / parentScale.y,
 						originalScale.z / parentScale.z
+					);
+
+					Vector3 point2 = point1 + new Vector3(0, 14, 0);
+
+					Vector3 point3 = point2;
+
+					GameObject exitObj = GameObject.Instantiate(S.Exit, point0, rot, S.Loader.Roots[_sceneName]);
+
+					if (Physics.Raycast(point2, -transform.right, out hit, 20f))
+					{
+						point3 = hit.point + new Vector3(0, -5, 0);
+						exitObj.transform.position = point3;
+					}
+
+					Vector3 originalScale2 = S.Exit.transform.localScale;
+
+					exitObj.transform.localScale = new Vector3(
+						originalScale2.x / parentScale.x,
+						originalScale2.y / parentScale.y,
+						originalScale2.z / parentScale.z
 					);
 				}
 			}
@@ -127,6 +150,7 @@ public class Door : MonoBehaviour
 
 					_stamp = stampObj.GetComponent<Stamp>();
 					_stamp._door = this;
+					_stampStartScale = stampObj.transform.localScale;
 				}
 			}			
 		}
@@ -177,7 +201,7 @@ public class Door : MonoBehaviour
 	{
 		if (_locked)
 		{
-			_stampAnimationTimeLeft = 1f;
+			_stampAnimationTimeLeft = 1.75f;
 			_stamp.Unlock();
 			_locked = false;
 			_doorModel._locked = false;
@@ -193,10 +217,18 @@ public class Door : MonoBehaviour
 		{
 			_stampAnimationTimeLeft -= Time.deltaTime;
 
+			float totalTime = 1.75f;
+			float progress = _stampAnimationTimeLeft / totalTime;
+
+			float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
+
+			float currentScale = Mathf.Lerp(0f, 1f, smoothProgress);
+
+			_stamp._go.transform.localScale = _stampStartScale * currentScale;
+
 			float randomX = UnityEngine.Random.Range(0f, 360f);
 			float randomY = UnityEngine.Random.Range(0f, 360f);
 			float randomZ = UnityEngine.Random.Range(0f, 360f);
-
 			_stamp._go.transform.rotation = Quaternion.Euler(randomX, randomY, randomZ);
 
 			if (_stampAnimationTimeLeft <= 0)

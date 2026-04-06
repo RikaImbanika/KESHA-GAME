@@ -128,6 +128,8 @@ public class Initialiser : MonoBehaviour
         S.FireballGreen = Prefabs.Get("Fireballs/FireballGreen");
         S.FireballPurple = Prefabs.Get("Fireballs/FireballPurple");
 
+        S.Exit = Prefabs.Get("Exit");
+
         S.Loot = Prefabs.Get("Loot");
 
         S.Shot = Prefabs.GetAudioSource("Shot");

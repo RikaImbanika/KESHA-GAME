@@ -88,6 +88,15 @@ public class AllFather : MonoBehaviour
 		return copy;
 	}
 
+	public void Shuffle(int[] array)
+	{
+		for (int i = array.Length - 1; i > 0; i--)
+		{
+			int j = S.RND.Next(i + 1);
+			(array[i], array[j]) = (array[j], array[i]);
+		}
+	}
+
 	public string SelFromProb(List<(string Item, int Weight)> probabilities)
 	{
 		int total = probabilities.Sum(p => p.Weight);

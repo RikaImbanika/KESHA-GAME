@@ -88,11 +88,15 @@ public class Teleporter : MonoBehaviour
         else
             S.MM.LeaveBackrooms();
 
-        if (!nextSceneName.Contains("TL"))
+        if (!nextSceneName.Contains("TL") || nextSceneName == "TL 0" || nextSceneName == "TL 1")
             S.MM.LeaveToilet();
+        else
+            S.MM.EnterToilet();
 
         if (!nextSceneName.Contains("MR"))
             S.MM.LeaveMushrooms();
+        else if (nextSceneName != "MR 1" && nextSceneName != "MR 2")
+            S.MM.EnterMushrooms();
     }
 
     public IEnumerator WaitLoad(string nextSceneName, int doorId, Vector3 dir)
