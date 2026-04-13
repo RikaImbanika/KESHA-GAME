@@ -74,12 +74,18 @@ public class Gun : MonoBehaviour
 
                 Zombie zombie = hit.collider.gameObject.GetComponent<Zombie>();
                 if (zombie != null)
+                {
                     zombie.Damage(15);
+                    S.LifeBars.Show(zombie._visibleName);
+                }
                 else
                 {
                     Spider spider = hit.collider.gameObject.GetComponent<Spider>();
                     if (spider != null)
+                    {
                         spider.Damage(15);
+                        S.LifeBars.Show("Spider");
+                    }
                     else
                     {
                         Door door = hit.collider.gameObject.GetComponent<Door>();

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class Zombie : MonoBehaviour
 {
     public string _type;
+    public string _visibleName;
     public float _fireCooldown;
     public float _health;
     public float _maxHealth;

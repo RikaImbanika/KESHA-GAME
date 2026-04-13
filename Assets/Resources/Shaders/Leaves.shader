@@ -18,7 +18,8 @@ Shader "Custom/Leaves"
             Name "DepthPass"
             ZWrite On
             ColorMask 0
-            
+            Cull Off
+    
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag_depth
@@ -69,7 +70,7 @@ Shader "Custom/Leaves"
         {
             ZWrite Off
             Blend SrcAlpha OneMinusSrcAlpha
-            Cull Back
+            Cull Off
             
             CGPROGRAM
             #pragma vertex vert
