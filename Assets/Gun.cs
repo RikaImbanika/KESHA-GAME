@@ -76,7 +76,8 @@ public class Gun : MonoBehaviour
                 if (zombie != null)
                 {
                     zombie.Damage(15);
-                    S.LifeBars.Show(zombie._visibleName);
+                    float healthPercent = MathF.Max(zombie._health / zombie._maxHealth, 0);
+                    S.LifeBars.Show(zombie._visibleName, healthPercent);
                 }
                 else
                 {
@@ -84,7 +85,8 @@ public class Gun : MonoBehaviour
                     if (spider != null)
                     {
                         spider.Damage(15);
-                        S.LifeBars.Show("Spider");
+                        float healthPercent = MathF.Max(spider._health / spider._maxHealth, 0);
+                        S.LifeBars.Show("The Spider", healthPercent);
                     }
                     else
                     {

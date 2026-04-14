@@ -21,6 +21,7 @@ public class Spider : MonoBehaviour
     public bool _dead;
 
     public float _health;
+    public float _maxHealth;
 
     private Vector3[] _directions;
     private GameObject[] _lasers;
@@ -79,7 +80,6 @@ public class Spider : MonoBehaviour
             _laserRotationDelta = -1f;
 
         _startPosition = transform.position;
-        _health = 300f;
 
         _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
         _key = _sceneName + transform.position.x + transform.position.y + transform.position.z;

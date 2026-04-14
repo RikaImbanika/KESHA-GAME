@@ -55,15 +55,14 @@ public class Stamp : MonoBehaviour
         }
     }
 
-	public void Unlock()
-	{
+    public void Unlock()
+    {
         if (!_alreadyUnlocked)
         {
             _alreadyUnlocked = true;
             S.AudioManager.Play("stampSound", 1);
             S.SM.Save(S.ID(_id, "destroyed"), true);
             Debug.Log($"STAMP UNLOCKED AND SAVED!!! id = {_id}");
-            _door.Unlock();
 
             float count = _blueFlames.transform.childCount;
 
@@ -72,6 +71,8 @@ public class Stamp : MonoBehaviour
                 GameObject child = _blueFlames.transform.GetChild(i).gameObject;
                 child.AddComponent<BlueFlame>();
             }
+
+            _door.Unlock();
         }
     }
 }

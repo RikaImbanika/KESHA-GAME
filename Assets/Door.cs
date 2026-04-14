@@ -202,12 +202,12 @@ public class Door : MonoBehaviour
 		if (_locked)
 		{
 			_stampAnimationTimeLeft = 1.75f;
-			_stamp.Unlock();
 			_locked = false;
 			_doorModel._locked = false;
 			Debug.LogError($"sc {_doorModel._nextSceneName} did {_doorModel._nextDoorId}");
 			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._locked = false;
 			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._door.Unlock();
+			_stamp.Unlock();
 		}
 	}
 
@@ -233,8 +233,6 @@ public class Door : MonoBehaviour
 
 			if (_stampAnimationTimeLeft <= 0)
 				Destroy(_stamp._go);
-
-			_locked = false;
 		}
 	}
 }

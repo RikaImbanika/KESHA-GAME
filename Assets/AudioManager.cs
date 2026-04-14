@@ -143,7 +143,6 @@ public class AudioManager : MonoBehaviour
 				break;
 			case "kill":
 				_kill.pitch = pitch;
-				_kill.volume = 0.3f; ///
 				_kill.Play();
 				break;
 			case "damage":

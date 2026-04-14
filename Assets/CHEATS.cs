@@ -137,7 +137,7 @@ public class CHEATS : MonoBehaviour
         yield return TakeItemWithDelay("Apple 1 Income");
         yield return TakeItemWithDelay("Apple 2 Income");
 
-        yield return TakeItemWithDelay2("PurpleBall", 3);
+        yield return TakeItemWithDelay2("PurpleBall", 300);
     }
 
     IEnumerator HallCheat()

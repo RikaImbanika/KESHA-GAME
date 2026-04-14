@@ -294,7 +294,9 @@ public class LasersSystem : MonoBehaviour
                 else if (number == 9)
                     _period = d * 2f;
 
-                float prob = S.Backrooms._lasersProbabilities[_sceneName];
+                float prob = 100f;
+                if (_sceneName.Contains("BR"))
+                    prob = S.Backrooms._lasersProbabilities[_sceneName];
 
                 if (Convert.ToByte(UnityEngine.Random.Range(0, 100)) > prob)
                     _actualType = "skipped";

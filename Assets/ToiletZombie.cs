@@ -2,14 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ToiletZombie : MonoBehaviour
 {
-    AllFather _allFather;
-    GameObject _theBullet;
+    private string _sceneName;
     private float _fireCooldown;
     public float _nextFireTime;
-    Camera _camera;
     public bool _active;
 
     // Start is called before the first frame update
@@ -17,9 +16,8 @@ public class ToiletZombie : MonoBehaviour
     {
         _active = true;
         _fireCooldown = 1.3f;
-        _allFather = GameObject.Find("AllFather").GetComponent<AllFather>();
-        _camera = Camera.main;
-        _theBullet = GameObject.Find("EnemyBullet");
+
+        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
     }
 
     // Update is called once per frame
@@ -27,7 +25,7 @@ public class ToiletZombie : MonoBehaviour
     {
         if (_active)
         {
-            Vector3 toPlayer = _camera.transform.position - transform.position;
+            Vector3 toPlayer = S.Camera.transform.position - transform.position;
             Ray ray = new Ray(transform.position, toPlayer);
             RaycastHit hit;
             Physics.Raycast(ray, out hit);
@@ -38,13 +36,13 @@ public class ToiletZombie : MonoBehaviour
                 if (_nextFireTime <= 0)
                 {
                     _nextFireTime = _fireCooldown;
-                    GameObject bullet = Instantiate(_theBullet);
+                    GameObject bullet = Instantiate(S.FireballRed, S.Loader.Roots[_sceneName]);
                     bullet.transform.position = gameObject.transform.position + new Vector3(0, 0, 0);
-                    bullet.transform.LookAt(_camera.transform.position);
+                    bullet.transform.LookAt(S.Camera.transform.position);
                     Fireball eb = bullet.GetComponent<Fireball>();
                     eb._active = true;
                     eb._speed = 30;
-                    Destroy(bullet, 15);
+                    Destroy(bullet, 10);
 
                     AudioSource shot = Instantiate(S.Shot);
                     shot.transform.position = transform.position;

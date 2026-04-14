@@ -719,8 +719,13 @@ public class Inventory : MonoBehaviour
 				Door door = hit.collider.gameObject.GetComponent<Door>();
 				if (door != null)
 				{
-					if (_playerObject.tag == "Player")
+					if (!door._locked)
 						door.Go();
+					else if (items[selectedId]._name == "Gun" && CountOfItem("Ammo") > 0)
+						S.Gun.Fire();
+					else
+						door.Go();
+						
 					return;
 				}
 
@@ -1065,6 +1070,12 @@ public class Inventory : MonoBehaviour
 			selectorPanel.transform.localScale = new Vector3(s, s, 0);
 
 			selId = id;
+
+			if (!items[id].IsUnityNull())
+			{
+				ItemInfo ii = S.II.Get(items[id]._name);
+				S.ItemNameShower.Show(ii._visibleName);
+			}
 		}
 
 		void SelectBig()

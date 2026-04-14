@@ -71,6 +71,14 @@ public class SystemOfLaserSystems : MonoBehaviour
             void PlaceLasersSystems()
             {
                 float length = transform.localScale.z;
+
+                if (_actualCount == 1)
+                {
+                    if (_mask[0])
+                        PlaceOneLaserSystem(transform.position);
+                    return;
+                }
+
                 Vector3 step = transform.forward * length / (_actualCount - 1);
                 Vector3 start = transform.position - transform.forward * length / 2;
 

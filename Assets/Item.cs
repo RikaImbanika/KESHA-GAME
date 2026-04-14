@@ -31,7 +31,8 @@ public class Item : MonoBehaviour
 
     public void Throw(Vector3 position, Vector3 direction, float power, Vector3 playerVelocity, Quaternion rotation)
     {
-        GameObject prefab = Resources.Load<GameObject>($"Prefabs/{_name}");
+        string prefabName = S.II.Get(_name)._prefabName;
+        GameObject prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
         GameObject obj = Instantiate(prefab, position + direction, new Quaternion(0, 0, 0, 0));
         ItemP itemP = obj.GetComponent<ItemP>();
         itemP._count = _count;

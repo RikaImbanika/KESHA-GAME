@@ -21,7 +21,7 @@ public class BlueFlame : MonoBehaviour
         _scale = transform.localScale;
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.up, out hit, 20f))
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.up, out hit, 20f))
         {
             _upLimit = hit.point.y - transform.position.y;
         }
@@ -32,7 +32,10 @@ public class BlueFlame : MonoBehaviour
         _timeLeft -= Time.deltaTime;
 
         if (_timeLeft < 0)
+        {
             Destroy(gameObject);
+            return;
+        }
 
         float c0 = (_duration - _timeLeft) / _duration; //0-1
         float c1 = 1 - c0; //1-0

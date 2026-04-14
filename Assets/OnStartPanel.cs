@@ -9,6 +9,8 @@ using TMPro;
 public class OnStartPanel : MonoBehaviour
 {
 	public TextMeshProUGUI _text;
+	public TextMeshProUGUI _text2;
+	public TextMeshProUGUI _text3;
 	public Image _p1;
 	public Image _p2;
 
@@ -71,8 +73,11 @@ public class OnStartPanel : MonoBehaviour
 			void UPD()
 			{
 				Color nc = new Color(tclr.r, tclr.g, tclr.b, alfa);
+				Color ncBlack = new Color(0, 0, 0, alfa);
 
 				_text.color = nc;
+				_text2.color = ncBlack;
+				_text3.color = ncBlack;
 				_p1.color = nc;
 				_p2.color = nc;
 			}

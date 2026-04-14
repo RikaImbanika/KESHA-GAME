@@ -30,8 +30,10 @@ public class Button1 : MonoBehaviour
 		//-10.63 too low
 		//-10.635 too low
 		//-10.6375 too much
-		_finalDeltaY = -10.63625f; //Hardcode but correct
+		_finalDeltaY = -10.63625f; //Hardcode but correct +-
 		_startY = _obj.transform.position.y;
+
+		_camera.depth = -100;
 
 		_sceneName = gameObject.scene.name;
 		_key = _sceneName + transform.position.x + transform.position.y + transform.position.z;
@@ -59,6 +61,7 @@ public class Button1 : MonoBehaviour
 			_playerCamera = playerCamera;
 
 			_camera.gameObject.SetActive(true);
+			_camera.depth = 100;
 			_playerCamera.gameObject.SetActive(false);
 
 			_startY = _obj.transform.position.y;
@@ -103,6 +106,7 @@ public class Button1 : MonoBehaviour
 				_finished = true;
 
 				_camera.gameObject.SetActive(false);
+				_camera.depth = -100;
 				_playerCamera.gameObject.SetActive(true);
 
 				Thread.Sleep(500);
