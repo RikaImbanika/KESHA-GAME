@@ -73,7 +73,7 @@ public class OnStartPanel : MonoBehaviour
 			void UPD()
 			{
 				Color nc = new Color(tclr.r, tclr.g, tclr.b, alfa);
-				Color ncBlack = new Color(0, 0, 0, alfa);
+				Color ncBlack = new Color(0, 0, 0, Mathf.Pow(alfa, 0.25f));
 
 				_text.color = nc;
 				_text2.color = ncBlack;

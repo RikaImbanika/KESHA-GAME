@@ -65,6 +65,7 @@ public class Inventory : MonoBehaviour
 	public GameObject showingOverlay;
 	public TextMeshProUGUI showingText;
 	public float showingStartTime;
+	public Vector3 _showingStartScale;
 	public float _negated;
 	private int _layerMask;
 
@@ -251,8 +252,14 @@ public class Inventory : MonoBehaviour
 		fps = MathF.Round(fps * 0.5f + 0.5f / Time.deltaTime);
 		S.FpsTMP.text = fps.ToString();
 
+		float k = Time.deltaTime * 60f;
+
 		if (_showingItem != null)
-			_showingItem.transform.Rotate(_showingRotation.x, _showingRotation.y, _showingRotation.z, Space.World);
+		{
+			_showingItem.transform.Rotate(_showingRotation.x * k, _showingRotation.y * k, _showingRotation.z * k, Space.World);
+			float scaleCoef = Mathf.SmoothStep(0, 1, Mathf.Clamp((Time.time - showingStartTime) * 1.25f, 0, 1));
+			_showingItem.transform.localScale = _showingStartScale * scaleCoef;
+		}
 
 		if (!_marketOpened && !opened)
 		{
@@ -939,6 +946,8 @@ public class Inventory : MonoBehaviour
 				//Debug.Log($"Prefab {prefab}, name {items[id]._name}, id {id}");
 
 				_showingItem = Instantiate(prefab, position + direction + offsetV, Quaternion.identity);
+				_showingStartScale = _showingItem.transform.localScale;
+				_showingItem.transform.localScale = Vector3.zero;
 
 				_showingItem.transform.eulerAngles = startRotation;
 

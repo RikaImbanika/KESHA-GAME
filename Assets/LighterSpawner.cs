@@ -85,8 +85,8 @@ public class LighterSpawner : MonoBehaviour
         else
         {
             DefinePos();
-            DefineSize();
-            DefineColor();            
+            DefineColor();
+            DefineSize();          
             Summon();
         }
 
@@ -98,52 +98,61 @@ public class LighterSpawner : MonoBehaviour
 
         void DefineSize()
         {
-            int n = S.RND.Next(100);
             byte sizeN = 0;
 
-            if (_sceneName.Contains("BR"))
+            while (true)
             {
-                if (n < 35)
-                    sizeN = 0;
-                else if (n < 60)
-                    sizeN = 1;
-                else if (n < 85)
-                    sizeN = 2;
+                int n = S.RND.Next(100);
+            
+                if (_sceneName.Contains("BR"))
+                {
+                    if (n < 35)
+                        sizeN = 0;
+                    else if (n < 60)
+                        sizeN = 1;
+                    else if (n < 85)
+                        sizeN = 2;
+                    else
+                        sizeN = 3;
+                }
+                else if (_sceneName.Contains("MR"))
+                {
+                    if (n < 10)
+                        sizeN = 0;
+                    else if (n < 25)
+                        sizeN = 1;
+                    else if (n < 50)
+                        sizeN = 2;
+                    else
+                        sizeN = 3;
+                }
+                else if (_sceneName.Contains("TL"))
+                {
+                    if (n < 8)
+                        sizeN = 0;
+                    else if (n < 28)
+                        sizeN = 1;
+                    else if (n < 55)
+                        sizeN = 2;
+                    else
+                        sizeN = 3;
+                }
+                else if (_sceneName.Contains("Income"))
+                {
+                    if (n < 12)
+                        sizeN = 0;
+                    else if (n < 25)
+                        sizeN = 1;
+                    else if (n < 55)
+                        sizeN = 2;
+                    else
+                        sizeN = 3;
+                }
+
+                if ((_color == "Zombella" || _color == "Bakalavr") && sizeN == 0)
+                    continue;
                 else
-                    sizeN = 3;
-            }
-            else if (_sceneName.Contains("MR"))
-            {
-                if (n < 10)
-                    sizeN = 0;
-                else if (n < 25)
-                    sizeN = 1;
-                else if (n < 50)
-                    sizeN = 2;
-                else
-                    sizeN = 3;
-            }
-            else if (_sceneName.Contains("TL"))
-            {
-                if (n < 8)
-                    sizeN = 0;
-                else if (n < 28)
-                    sizeN = 1;
-                else if (n < 55)
-                    sizeN = 2;
-                else
-                    sizeN = 3;
-            }
-            else if (_sceneName.Contains("Income"))
-            {
-                if (n < 12)
-                    sizeN = 0;
-                else if (n < 25)
-                    sizeN = 1;
-                else if (n < 55)
-                    sizeN = 2;
-                else
-                    sizeN = 3;
+                    break;
             }
 
             _size = S.Lighters._lightersSizes[sizeN];

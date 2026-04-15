@@ -125,6 +125,13 @@ public class II : MonoBehaviour
             visibleName: "Green key",
             throwable: false
             ));
+
+        _base.Add("RedCrystal", new ItemInfo(
+            spriteName: "RedCrystal",
+            prefabName: "RedCrystal",
+            visibleName: "Red crystal",
+            throwable: false
+            ));
     }
 
     public ItemInfo Get(string name)
