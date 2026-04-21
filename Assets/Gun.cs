@@ -77,7 +77,9 @@ public class Gun : MonoBehaviour
                 {
                     zombie.Damage(15);
                     float healthPercent = MathF.Max(zombie._health / zombie._maxHealth, 0);
-                    S.LifeBars.Show(zombie._visibleName, healthPercent);
+                    int hp = (int)MathF.Max(zombie._health, 0);
+                    int maxHp = (int)zombie._maxHealth;
+                    S.LifeBars.Show(zombie._visibleName, healthPercent, hp, maxHp);
                 }
                 else
                 {
@@ -86,7 +88,9 @@ public class Gun : MonoBehaviour
                     {
                         spider.Damage(15);
                         float healthPercent = MathF.Max(spider._health / spider._maxHealth, 0);
-                        S.LifeBars.Show("The Spider", healthPercent);
+                        int hp = (int)MathF.Max(spider._health, 0);
+                        int maxHp = (int)spider._maxHealth;
+                        S.LifeBars.Show("The Spider", healthPercent, hp, maxHp);
                     }
                     else
                     {
@@ -100,7 +104,22 @@ public class Gun : MonoBehaviour
                         {
                             Stamp stamp = hit.collider.gameObject.GetComponent<Stamp>();
                             if (stamp != null)
+                            {
                                 stamp.Unlock();
+                            }
+                            else
+                            {
+                                SnakeBall sb = hit.collider.gameObject.GetComponent<SnakeBall>();
+                                if (sb != null)
+                                {
+                                    SnakeBrain brain = sb._brain;
+                                    brain.Damage(15); //lmao
+                                    float healthPercent = MathF.Max(brain._health / brain._maxHealth, 0);
+                                    int hp = (int)MathF.Max(brain._health, 0);
+                                    int maxHp = (int)brain._maxHealth;
+                                    S.LifeBars.Show(brain._visibleName, healthPercent, hp, maxHp);
+                                }
+                            }
                         }
                     }
                 }

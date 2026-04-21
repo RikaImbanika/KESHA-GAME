@@ -118,7 +118,7 @@ public class Door : MonoBehaviour
 
 			if (_locked)
 			{
-				Vector3 point0 = transform.position + transform.right * 0.15f;
+				Vector3 point0 = transform.position + transform.right * 0.5f;
 
 				Quaternion rot = Quaternion.LookRotation(transform.right);
 
@@ -137,6 +137,16 @@ public class Door : MonoBehaviour
 						Vector3 point1 = hit.point;
 						point1 += Vector3.up * 3.75f;
 						stampObj.transform.position = point1;
+
+						RaycastHit hit2;
+						Vector3 point2 = point0 + Vector3.up * 10f;
+						if (Physics.Raycast(point2, -Vector3.right, out hit2, 5f))
+						{
+							Vector3 point3 = hit2.point;
+							point3.y = point1.y;
+							point3 += transform.right * 0.55f;
+							stampObj.transform.position = point3;
+						}
 					}
 
 					Vector3 originalScale = S.Stamp.transform.localScale;

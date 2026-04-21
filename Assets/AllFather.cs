@@ -11,6 +11,7 @@ using Unity.VisualScripting;
 
 public class AllFather : MonoBehaviour
 {
+	public OnStartPanel _osp;
 	public List<GameObject> _spots;
 	public int _enemyBulletSparklesCount;
 
@@ -18,6 +19,8 @@ public class AllFather : MonoBehaviour
 	{
 		S.AllFatherObj = gameObject;
 		S.AllFather = this;
+		_osp.enabled = true;
+		_osp.gameObject.SetActive(true);
 
 		StartCoroutine(LoggerOfTheSave());
 

@@ -46,6 +46,9 @@ public class EnemySpawner : MonoBehaviour
         while (S.SM == null || S.LighterObj == null)
             yield return new WaitForSeconds(0.2f);
 
+        while (!S.Loader.Roots.ContainsKey(_sceneName))
+            yield return new WaitForSeconds(0.1f);
+
         Load();
 
         if (_type.Equals("none"))
@@ -111,6 +114,12 @@ public class EnemySpawner : MonoBehaviour
 
     void NotExists()
     {
+        GameObject obj = Instantiate(S.UnworkedSpawner, transform.position, transform.rotation, S.Loader.Roots[_sceneName]);
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 20f))
+            obj.transform.position = hit.point;
+
         Destroy(gameObject);
     }
 

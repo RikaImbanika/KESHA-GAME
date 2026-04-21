@@ -113,6 +113,9 @@ public class SnakeHead : MonoBehaviour
             BIBIB.transform.Rotate(UnityEngine.Random.Range(0, 180), UnityEngine.Random.Range(0, 180), UnityEngine.Random.Range(0, 180));
 
             body.Drone._head = this;
+            SnakeBall bib = body.BallInBall.GetComponent<SnakeBall>();
+            bib._brain = _brain;
+            bib._head = this;
 
             percents = 100;
             string type = "";

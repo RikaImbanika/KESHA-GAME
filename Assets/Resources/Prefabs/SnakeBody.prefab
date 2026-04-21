@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4150153362338472123}
   - component: {fileID: 1749423065943964969}
+  - component: {fileID: 602194442271689178}
   m_Layer: 12
   m_Name: BallInBall
   m_TagString: Untagged
@@ -46,6 +47,20 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &602194442271689178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5164616913946641102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cef930772100234ab92cf4f9263eea7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _head: {fileID: 0}
+  _brain: {fileID: 0}
 --- !u!1 &5261486584774516805
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,6 +178,7 @@ MonoBehaviour:
   _type2: 
   _lasers: []
   _points: []
+  _sparklePrefab: {fileID: 0}
   _rotationSpeed: 0
   _yRot: 0
   _zRot: 0

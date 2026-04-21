@@ -11,20 +11,24 @@ public class LifeBars : MonoBehaviour
     public GameObject _healthObj;
     public GameObject _healthObjChild;
     public GameObject _healthObjBlack;
+    public GameObject _hpCountObj;
     private Transform _healthTransform;
     private Material _mat1;
     private Material _mat2;
     private Material _mat3;
     private Material _mat4;
     private TextMeshPro _tmp;
+    private TextMeshPro _tmpHp;
     private float _timeLeft;
 
     void Start()
     {
         _tmp = _textObj.GetComponent<TextMeshPro>();
+        _tmpHp = _hpCountObj.GetComponent<TextMeshPro>();
         Color color = Color.white;
         color.a = 0;
         _tmp.color = color;
+        _tmpHp.color = color;
         S.LifeBars = this;
         _healthTransform = _healthObj.transform;
         Renderer rend1 = _bar1.GetComponent<Renderer>();
@@ -57,6 +61,7 @@ public class LifeBars : MonoBehaviour
                 float alpha = Mathf.SmoothStep(0, 1, t);
                 color.a = alpha;
                 _tmp.color = color;
+                _tmpHp.color = color;
                 _mat1.SetFloat("_Alpha", alpha);
                 _mat2.SetFloat("_Alpha", alpha);
                 _mat3.SetFloat("_Alpha", alpha);
@@ -65,12 +70,14 @@ public class LifeBars : MonoBehaviour
         }
     }
 
-    public void Show(string text, float lifePercent)
+    public void Show(string text, float lifePercent, int hp, int hpMax)
     {
         _timeLeft = 3f;
         _tmp.text = text;
+        _tmpHp.text = $"{hp} / {hpMax}";
         Color color = Color.white;
         _tmp.color = color;
+        _tmpHp.color = color;
         _mat1.SetFloat("_Alpha", 1);
         _mat2.SetFloat("_Alpha", 1);
         _mat3.SetFloat("_Alpha", 1);

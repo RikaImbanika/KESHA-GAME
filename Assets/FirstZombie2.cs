@@ -87,8 +87,8 @@ public class FirstZombie2 : MonoBehaviour
     {
         GameObject zombie = GameObject.Instantiate(Prefabs.Get("FirstZombie"), transform.position, transform.rotation, transform);
         _zombie = zombie.GetComponent<Zombie>();
-        _zombie._health = 300f;
-        _zombie._maxHealth = 300f;
+        _zombie._health = 500f;
+        _zombie._maxHealth = 500f;
         _zombie._ani.Rebind();
         _actuallySummoned = true;
         Debug.LogError("Summoned in hall");

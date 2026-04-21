@@ -21,9 +21,10 @@ public class FrerardHolder : MonoBehaviour
         if (!string.IsNullOrEmpty(name))
         {
             GameObject prefab = Prefabs.Get(name);
-            GameObject obj = Instantiate(prefab, transform.position, transform.rotation, transform);
+            GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.SceneRoots["Hall"]);
             obj.transform.localScale = transform.localScale;
-
+            obj.transform.SetParent(transform, true);
+            
             _placedItem = obj.GetComponent<ItemP>();
 
             _fakeRotation = S.SM.LoadInt(S.ID(_id, "rot")) ?? 0;
@@ -50,8 +51,9 @@ public class FrerardHolder : MonoBehaviour
            
             if (_placedItem != null)
             {
-                bool ok = _placedItem.name == _waitItem && _realRotation == 0;
+                bool ok = _placedItem._name == _waitItem && _realRotation == 0;
                 _frerard.Set(_number, ok);
+                Debug.Log($"okay = {ok}, waitItem = {_waitItem} name = {_placedItem._name} rot = {_realRotation}");
             }
         }
 	}
@@ -71,8 +73,9 @@ public class FrerardHolder : MonoBehaviour
         _fakeRotation = 0; //ok
         
         GameObject prefab = Prefabs.Get(item._name);
-        GameObject obj = Instantiate(prefab, transform.position, transform.rotation, transform);
+        GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.SceneRoots["Hall"]);
         obj.transform.localScale = transform.localScale;
+        obj.transform.SetParent(transform, true);
         
         _placedItem = obj.GetComponent<ItemP>();
         
@@ -107,7 +110,7 @@ public class FrerardHolder : MonoBehaviour
     void Pick()
     {
         S.Inventory.Take(_placedItem._name, 1);
-        Destroy(_placedItem);
+        Destroy(_placedItem._obj);
         SaveName("");
         _placedItem = null;
     }

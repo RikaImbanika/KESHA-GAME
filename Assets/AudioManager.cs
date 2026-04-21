@@ -31,9 +31,21 @@ public class AudioManager : MonoBehaviour
 	public AudioSource _screamer7;
     public AudioSource _ohNo;
     public AudioSource _wrong;
-    public AudioSource _wrong2;
+	public AudioSource _wrong2;
 
-    public AudioSource _toiletMusic1;
+	public AudioSource _woodStep1;
+	public AudioSource _woodStep2;
+	public AudioSource _woodStep3;
+	public AudioSource _woodStep4;
+	public AudioSource _woodStep5;
+
+	public AudioSource _plankStep1;
+	public AudioSource _plankStep2;
+	public AudioSource _plankStep3;
+	public AudioSource _plankStep4;
+	public AudioSource _plankStep5;
+
+	public AudioSource _toiletMusic1;
 	public AudioSource _toiletMusic2;
 
     public AudioSource _fzt1;
@@ -202,8 +214,51 @@ public class AudioManager : MonoBehaviour
                 pitch = 1;
                 _wrong2.pitch = pitch;
                 _wrong2.Play();
-                break;
-            case "fzt1":
+				break;
+
+			case "woodstep1":
+				_woodStep1.pitch = pitch;
+				_woodStep1.Play();
+				break;
+			case "woodstep2":
+				_woodStep1.pitch = pitch;
+				_woodStep1.Play();
+				break;
+			case "woodstep3":
+				_woodStep3.pitch = pitch;
+				_woodStep3.Play();
+				break;
+			case "woodstep4":
+				_woodStep4.pitch = pitch;
+				_woodStep4.Play();
+				break;
+			case "woodstep5":
+				_woodStep5.pitch = pitch;
+				_woodStep5.Play();
+				break;
+
+			case "plankstep1":
+				_plankStep1.pitch = pitch;
+				_plankStep1.Play();
+				break;
+			case "plankstep2":
+				_plankStep2.pitch = pitch;
+				_plankStep2.Play();
+				break;
+			case "plankstep3":
+				_plankStep3.pitch = pitch;
+				_plankStep3.Play();
+				break;
+			case "plankstep4":
+				_plankStep4.pitch = pitch;
+				_plankStep4.Play();
+				break;
+			case "plankstep5":
+				_plankStep5.pitch = pitch;
+				_plankStep5.Play();
+				break;
+
+			case "fzt1":
                 pitch = 1;
                 _fzt1.pitch = pitch;
                 _fzt1.Play();

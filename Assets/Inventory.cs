@@ -87,6 +87,9 @@ public class Inventory : MonoBehaviour
 	public float _zoomed;
 	public int _zooming;
 	public float _zoomTime;
+	public TextMeshPro _objectBeforeTakenTMP;
+	private Color _transparentColor;
+	private string _objectNameShowen;
 
 	public int CountOfItem(string name)
 	{
@@ -137,6 +140,11 @@ public class Inventory : MonoBehaviour
 
 	public void Start()
 	{
+		_transparentColor = Color.white;
+		_transparentColor.a = 0;
+
+		_objectBeforeTakenTMP.text = "";
+
 		S.Inventory = this;
 		S.Negative = _negative;
 
@@ -257,13 +265,15 @@ public class Inventory : MonoBehaviour
 		if (_showingItem != null)
 		{
 			_showingItem.transform.Rotate(_showingRotation.x * k, _showingRotation.y * k, _showingRotation.z * k, Space.World);
-			float scaleCoef = Mathf.SmoothStep(0, 1, Mathf.Clamp((Time.time - showingStartTime) * 1.25f, 0, 1));
+			float scaleCoef = 1 - (1 / ((Time.time - showingStartTime) * 8f + 1f));
 			_showingItem.transform.localScale = _showingStartScale * scaleCoef;
 		}
 
 		if (!_marketOpened && !opened)
 		{
 			bool clickable = false;
+
+			bool showAnyName = false;
 
 			Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
@@ -280,6 +290,11 @@ public class Inventory : MonoBehaviour
 				if (fh != null)
 				{
 					clickable = true;
+
+					_objectNameShowen = "Something";
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					showAnyName = true;
+
 					goto render;
 				}
 
@@ -287,6 +302,11 @@ public class Inventory : MonoBehaviour
 				if (trader != null)
 				{
 					clickable = true;
+
+					_objectNameShowen = "Granny";
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					showAnyName = true;
+
 					goto render;
 				}
 
@@ -301,13 +321,43 @@ public class Inventory : MonoBehaviour
 				if (itemP != null)
 				{
 					clickable = true;
+
+					_objectNameShowen = S.II.Get(itemP._name)._visibleName;
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					showAnyName = true;
+
 					goto render;
-				}
+				}			
 
 				Button1 button1 = hit.collider.gameObject.GetComponent<Button1>();
 				if (button1 != null)
 				{
 					clickable = true;
+
+					_objectNameShowen = "Button";
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					showAnyName = true;
+
+					goto render;
+				}
+
+				Zombie zombie = hit.collider.gameObject.GetComponent<Zombie>();
+				if (zombie != null)
+				{
+					_objectNameShowen = zombie._visibleName;
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					showAnyName = true;
+
+					goto render;
+				}
+
+				Spider spider = hit.collider.gameObject.GetComponent<Spider>();
+				if (spider != null)
+				{
+					_objectNameShowen = "Spider";
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					showAnyName = true;
+
 					goto render;
 				}
 
@@ -315,6 +365,11 @@ public class Inventory : MonoBehaviour
 				if (saver != null)
 				{
 					clickable = true;
+
+					_objectNameShowen = "Save game";
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					showAnyName = true;
+
 					goto render;
 				}
 
@@ -340,7 +395,7 @@ public class Inventory : MonoBehaviour
 				}
 			}
 
-			render:
+		render:
 
 			if (clickable)
 			{
@@ -351,6 +406,12 @@ public class Inventory : MonoBehaviour
 			{
 				cursorPanel.SetActive(true);
 				_circleCursor.SetActive(false);
+			}
+
+			if (!showAnyName && _objectNameShowen != "")
+			{
+				_objectNameShowen = "";
+				_objectBeforeTakenTMP.text = _objectNameShowen;
 			}
 		}
 	}

@@ -10,6 +10,11 @@ public class SnakeBrain : MonoBehaviour
     public float _acceleration;
     public float _speed;
     public float _turn;
+    public float _health;
+    public float _maxHealth;
+    public string _visibleName;
+    public string _id;
+    public string _idHealth;
 
     public SnakeHead _head;
 
@@ -22,6 +27,7 @@ public class SnakeBrain : MonoBehaviour
     private Vector3 _velocity;
     private float _distanceThreshold = 3f;
     private float _areaDivideTotalBuffered;
+    private bool _dead;
 
     void Start()
     {
@@ -31,6 +37,44 @@ public class SnakeBrain : MonoBehaviour
 
         MakeCorners2d();
         PreCalculateAreas(_corners2d);
+    }
+
+    public void Damage(float amount)
+    {
+        if (!_dead)
+        {
+            _health = MathF.Max(_health - amount, 0);
+
+            if (_health <= 0)
+            {
+                _dead = true;
+                Die();
+                S.AudioManager.Play("Kill", 1.1f);
+
+                StartCoroutine(Loott());
+
+                IEnumerator Loott()
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    GameObject loot = Instantiate(S.Loot);
+                    loot.transform.position = transform.position;
+                }
+            }
+            else
+            {
+                S.AudioManager.Play("Kill", 0.9f);
+            }
+
+            S.SM.Save(_idHealth, _health);
+        }
+    }
+
+    void Die()
+    {
+        S.SM.Save(_idHealth, _health);
+        for (int i = 0; i < _head._ballsCount; i++)
+        {
+        }
     }
 
     void MakeCorners2d()

@@ -88,9 +88,23 @@ public static class S : object
 	private static GameObject _arrow;
 	private static GameObject _exit;
 	private static LifeBars _lifeBars;
+	private static GameObject _unworkedSpawner;
 	private static GameObject _portalObj1;
 	private static ItemNameShower _itemNameShower;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
+
+	public static GameObject UnworkedSpawner
+	{
+		get
+		{
+			return _unworkedSpawner;
+		}
+		set
+		{
+			_unworkedSpawner = value;
+		}
+	}
+
 
 	public static ItemNameShower ItemNameShower
 	{

@@ -72,6 +72,7 @@ MonoBehaviour:
   _BLUE: {fileID: 0}
   _sceneName: 
   _type: Nature
+  _timeSinceTailSwitched: 0
 --- !u!1 &242267439621252086
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,14 +158,15 @@ MonoBehaviour:
   _acceleration: 0.6
   _speed: 25
   _turn: 24
+  _health: 1000
+  _maxHealth: 1000
+  _visibleName: Snake of nature
   _head: {fileID: 242267438310680826}
   _points:
   - {x: -171.4, y: 0, z: -57.1}
   - {x: -171.4, y: 0, z: -193.3}
   - {x: -313, y: 0, z: -193.3}
   - {x: -313, y: 0, z: -57.1}
-  _BLUE: {fileID: 0}
-  _GREEN: {fileID: 0}
 --- !u!1 &3606166304352083315
 GameObject:
   m_ObjectHideFlags: 0

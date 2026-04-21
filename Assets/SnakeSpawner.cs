@@ -6,8 +6,10 @@ using UnityEngine.SceneManagement;
 public class SnakeSpawner : MonoBehaviour
 {
     private string _id;
+    private string _idHealth;
+    private string _idType;
     private string _sceneName;
-    private float _life;
+    private float _health;
     private byte _type;
     public GameObject[] _corners;
 
@@ -34,11 +36,14 @@ public class SnakeSpawner : MonoBehaviour
         while (S.SM == null)
             yield return new WaitForSeconds(0.2f);
 
-        _life = S.SM.LoadFloat(S.ID(_id, "snakieLife")) ?? -404f;
+        _idHealth = S.ID(_id, "snakeHp");
+        _idType = S.ID(_id, "snakeType");
 
-        if (_life == -404f)
+        _health = S.SM.LoadFloat(_idHealth) ?? -404f;
+
+        if (_health == -404f)
             DefineExistenz();
-        else if (_life <= 0f)
+        else if (_health <= 0f)
             Destroy(gameObject);
         else
             Summon();
@@ -49,13 +54,13 @@ public class SnakeSpawner : MonoBehaviour
         if (S.Backrooms._snakes.ContainsKey(_sceneName))
         {
             _type = S.Backrooms._snakes[_sceneName];
-            S.SM.Save(S.ID(_id, "snakieLife"), 300);
-            S.SM.Save(S.ID(_id, "snakieType"), _type);
+            S.SM.Save(_idType, _type);
             Summon();
         }
         else
         {
-            S.SM.Save(S.ID(_id, "snakieLife"), -404);
+            S.SM.Save(_idType, "skipped");
+            S.SM.Save(_idHealth, "0");
             Destroy(gameObject);
         }
     }
@@ -66,26 +71,23 @@ public class SnakeSpawner : MonoBehaviour
 
         obj = Instantiate(S.Snakes[_type - 1], transform.position, transform.rotation, transform);
 
-        //Debug.LogError("XXX 0");
-
         Transform snakeBrainObj = obj.transform.Find("SnakeBrain");
-        if (snakeBrainObj != null)
+
+        SnakeBrain snakeBrain = snakeBrainObj.GetComponent<SnakeBrain>();
+        snakeBrain._id = _id;
+        snakeBrain._idHealth = S.ID(_id, "health");
+
+        if (_health != -404)
+            snakeBrain._health = _health;
+
+        snakeBrain._points = new Vector3[4];
+
+        for (int i = 0; i < 4; i++)
         {
-            //Debug.LogError("XXX 1");
+            snakeBrain._points[i] = _corners[i].transform.position;
 
-            SnakeBrain snakeBrain = snakeBrainObj.GetComponent<SnakeBrain>();
-
-            snakeBrain._points = new Vector3[4];
-            //Debug.LogError("XXX 3");
-            for (int i = 0; i < 4; i++)
-            {
-                snakeBrain._points[i] = _corners[i].transform.position;
-                Destroy(_corners[i]);
-            }
-            //Debug.LogError("XXX 4");
+            Destroy(_corners[i]);
         }
-        else
-            //Debug.LogError("XXX 2");
 
         Destroy(this);
     }
