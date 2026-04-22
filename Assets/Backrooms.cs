@@ -136,20 +136,20 @@ public class Backrooms : MonoBehaviour
             25f,
             10f,
             5f,
-            1f,
+            2f,
             0f
         };
 
         List<float> counts = new List<float>
         {
-            8f,
-            7f,
-            3f,
+            11f,
             10f,
-            22f,
+            9f,
+            8f,
+            18f,
+            18f,
             20f,
-            20f,
-            10f
+            6f
         };
 
         float[] array = new float[100];

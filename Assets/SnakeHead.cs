@@ -27,7 +27,7 @@ public class SnakeHead : MonoBehaviour
     private float _saveInterval;
     public List<Vector3> _aims;
     private List<Vector3> _savedPositions;
-    private List<GameObject> _clones;
+    public List<GameObject> _clones;
     private List<SnakeBody> _bodies;
     private List<NavMeshObstacle> _clonesNMOs;
     private List<Vector3> _prevDirs;

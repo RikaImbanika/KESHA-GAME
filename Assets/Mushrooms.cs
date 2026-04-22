@@ -48,14 +48,14 @@ public class Mushrooms : MonoBehaviour
 
         List<float> counts = new List<float>
         {
-            5f,
-            6f,
-            7f,
-            5f,
+            10f,
+            20f,
+            10f,
             8f,
-            24f,
+            8f,
             30f,
-            15f
+            10f,
+            4f
         };
 
         float[] array = new float[100];
@@ -79,11 +79,11 @@ public class Mushrooms : MonoBehaviour
             _lightersProbabilities.Add(_allRoomsList[i], array[d]);
         }
 
-        //
+        /////////////////////////////
 
-        _lightersProbabilities["MR 2"] = 10f;
-        _lightersProbabilities["MR 3"] = 20f;
-        _lightersProbabilities["MR 4"] = 30f;
+        _lightersProbabilities["MR 2"] = 20f;
+        _lightersProbabilities["MR 3"] = 30f;
+        _lightersProbabilities["MR 4"] = 40f;
     }
 
     void FillAllRoomsList()

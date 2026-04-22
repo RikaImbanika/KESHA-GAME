@@ -13,6 +13,9 @@ public class PlayerCamScript : MonoBehaviour
     public float xRotation;
     public float yRotation;
 
+    private float smoothedSpeedX;
+    private float smoothedSpeedY;
+
     public Camera showingCamera;
 
     void Start()
@@ -31,8 +34,30 @@ public class PlayerCamScript : MonoBehaviour
                     float mouseX = Input.GetAxisRaw("Mouse X") * sensetivityX;
                     float mouseY = Input.GetAxisRaw("Mouse Y") * sensetivityY;
 
-                    xRotation += mouseX;
-                    yRotation -= mouseY;
+                    float t = S.Inventory._zoomed / S.Inventory._zoomTime;
+
+                    //1
+
+                    xRotation += mouseX * (1 - t);
+                    yRotation -= mouseY * (1 - t);
+
+                    //2
+
+                    float k = Mathf.Clamp(Time.deltaTime * 3f, 0, 1f);
+
+                    float x = Mathf.Pow(mouseX, 0.85f);
+                    if (mouseX < 0)
+                        x = -Mathf.Pow(-mouseX, 0.85f);
+
+                    float y = Mathf.Pow(mouseY, 0.85f);
+                    if (mouseY < 0)
+                        y = -Mathf.Pow(-mouseY, 0.85f);
+
+                    smoothedSpeedX = smoothedSpeedX * (1 - k) + x * k * 0.2f;
+                    smoothedSpeedY = smoothedSpeedY * (1 - k) + y * k * 0.2f;
+
+                    xRotation += smoothedSpeedX * t;
+                    yRotation -= smoothedSpeedY * t;
 
                     yRotation = Mathf.Clamp(yRotation, -90f, 90f);
 

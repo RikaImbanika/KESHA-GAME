@@ -43,8 +43,10 @@ public class Lighters : MonoBehaviour
                 "Blue",
                 "Purple",
                 "Green",
+                "RainbowSlow",
+                "RainbowFast",
                 "Zombella",
-                "Bakalavr"
+                "Bakalavrus"
             };
 
             _colorN = new Dictionary<string, byte>();
@@ -56,7 +58,7 @@ public class Lighters : MonoBehaviour
                 string colName = _lightersColors[a];
                 _colorN.Add(colName, a);
 
-                if (colName != "Zombella" && colName != "Bakalavr")
+                if (colName != "Zombella" && colName != "Bakalavrus")
                     _materials.Add(colName, Materials.Get($"Sparkles/Normal/Sparkle{colName}"));
                 else
                     _materials.Add(colName, Materials.Get($"FlyingEnemies/{colName}"));

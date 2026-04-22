@@ -45,7 +45,7 @@ public class CHEATS : MonoBehaviour
         if (S.SaveManager == null)
             return;
 
-        if (Input.GetKey(KeyCode.Y))
+        if (Input.GetKey(KeyCode.Y) && Input.GetKey(KeyCode.T))
             transform.position += new Vector3(0, 8, 0);
 
         if (Input.GetKey(KeyCode.U) && Input.GetKey(KeyCode.O) || Input.GetKey(KeyCode.O) && Input.GetKey(KeyCode.U))

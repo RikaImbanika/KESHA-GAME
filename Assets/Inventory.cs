@@ -77,7 +77,7 @@ public class Inventory : MonoBehaviour
 
 	public bool _somethingClicked;
 
-	public IsTrader _trader;
+	public Trader _trader;
 
 	public PlayerStorage _playerStorage;
 
@@ -298,7 +298,7 @@ public class Inventory : MonoBehaviour
 					goto render;
 				}
 
-				IsTrader trader = hit.collider.gameObject.GetComponent<IsTrader>();
+				Trader trader = hit.collider.gameObject.GetComponent<Trader>();
 				if (trader != null)
 				{
 					clickable = true;
@@ -322,7 +322,13 @@ public class Inventory : MonoBehaviour
 				{
 					clickable = true;
 
-					_objectNameShowen = S.II.Get(itemP._name)._visibleName;
+					int count = itemP._count;
+
+					if (count == 1)
+						_objectNameShowen = S.II.Get(itemP._name)._visibleName;
+					else
+						_objectNameShowen = $"{S.II.Get(itemP._name)._visibleName} ({count})";
+
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					showAnyName = true;
 
@@ -354,7 +360,7 @@ public class Inventory : MonoBehaviour
 				Spider spider = hit.collider.gameObject.GetComponent<Spider>();
 				if (spider != null)
 				{
-					_objectNameShowen = "Spider";
+					_objectNameShowen = "The Spider";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					showAnyName = true;
 
@@ -366,7 +372,20 @@ public class Inventory : MonoBehaviour
 				{
 					clickable = true;
 
-					_objectNameShowen = "Save game";
+					_objectNameShowen = "Save game (can be laggy yet)";
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					showAnyName = true;
+
+					goto render;
+				}
+
+
+				SnakeBall ball = hit.collider.gameObject.GetComponent<SnakeBall>();
+				if (ball != null)
+				{
+					clickable = true;
+
+					_objectNameShowen = ball._brain._visibleName;
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					showAnyName = true;
 
@@ -387,7 +406,7 @@ public class Inventory : MonoBehaviour
 					goto render;
 				}
 
-				IsSceneName isSceneName = hit.collider.gameObject.GetComponent<IsSceneName>();
+				SceneName isSceneName = hit.collider.gameObject.GetComponent<SceneName>();
 				if (isSceneName != null)
 				{
 					clickable = true;
@@ -736,7 +755,7 @@ public class Inventory : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 7f, _layerMask))
 			{
-				IsSceneName isSceneName = hit.collider.gameObject.GetComponent<IsSceneName>();
+				SceneName isSceneName = hit.collider.gameObject.GetComponent<SceneName>();
 				if (isSceneName != null)
 					S.Teleporter.SoLetsFuckingTeleportSomewhereRightNow(isSceneName._sceneName);
 
@@ -777,7 +796,7 @@ public class Inventory : MonoBehaviour
 					}
 				}
 
-				IsTrader trader = hit.collider.gameObject.GetComponent<IsTrader>();
+				Trader trader = hit.collider.gameObject.GetComponent<Trader>();
 				if (trader != null)
 				{
 					trader.OpenMarket();
@@ -966,13 +985,13 @@ public class Inventory : MonoBehaviour
 			if (items[id]._name == "Cucumber")
 			{
 				S.SM.Save("Cucumber showed", true);
-				ShowItem(id, "You obtain a cucumber!!!", "gong", 0.5f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 7));
+				ShowItem(id, "You obtain a cucumber!!!", "gong", 0.7f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 7));
 			}
 		if (!(S.SM.LoadBool("Gun showed") ?? false))
 			if (items[id]._name == "Gun")
 			{
                 S.SM.Save("Gun showed", true);
-                ShowItem(id, "You obtain a gun!!!", "gong", 0.5f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 7));
+                ShowItem(id, "You obtain a gun!!!", "gong", 1.6f, 0.35f, new Vector3(90, 0, 0), new Vector3(0, 0, 7));
 			}
 	}
 
@@ -1140,12 +1159,6 @@ public class Inventory : MonoBehaviour
 			selectorPanel.transform.localScale = new Vector3(s, s, 0);
 
 			selId = id;
-
-			if (!items[id].IsUnityNull())
-			{
-				ItemInfo ii = S.II.Get(items[id]._name);
-				S.ItemNameShower.Show(ii._visibleName);
-			}
 		}
 
 		void SelectBig()
@@ -1238,11 +1251,26 @@ public class Inventory : MonoBehaviour
 					Debug.Log($"SO, ULTRA-SELECTED ON {id}!");
 				}
 			}
+
+			if (!items[id].IsUnityNull())
+			{
+				ItemInfo ii = S.II.Get(items[id]._name);
+				S.ItemNameShower.Show(ii._visibleName);
+			}
 		}
 
 		void Cut(int count)
 		{
 			id = (count + id) % count;
+		}
+	}
+
+	public void ForcedShowName()
+	{
+		if (!items[selectedId].IsUnityNull())
+		{
+			ItemInfo ii = S.II.Get(items[selectedId]._name);
+			S.ItemNameShower.Show(ii._visibleName);
 		}
 	}
 

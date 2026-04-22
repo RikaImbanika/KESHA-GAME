@@ -9,7 +9,7 @@ public class TradeClick : MonoBehaviour, IPointerClickHandler
     public Trade _trade;
     public int _tradeNumber;
     public Inventory _inventory;
-    public IsTrader _trader;
+    public Trader _trader;
     private AudioManager _audioManager;
     AllFather _allFather;
 

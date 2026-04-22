@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 public class Lighter : MonoBehaviour
 {
     public GameObject _vis;
+    public GameObject _wingLeft;
+    public GameObject _wingRight;
     NavMeshAgent _nma;
     public string _sceneName;
 
@@ -36,6 +38,8 @@ public class Lighter : MonoBehaviour
     public string _idPos;
     public float _swayAmplitude;
     public float _swayFrequency; //For sway
+    public float _wingAmplitude;
+    public float _wingFrequency; //For wings
     public Optimiser _opti;
 
     void Start()
@@ -49,6 +53,7 @@ public class Lighter : MonoBehaviour
         _opti = new Optimiser(_sceneName);
 
         _prevPos = transform.position;
+
         InvokeRepeating("SavingMethod", 0f, 6.5f);
     }
 
@@ -88,6 +93,8 @@ public class Lighter : MonoBehaviour
             {
                 float angle = Mathf.Sin(Time.time * _swayFrequency * Mathf.PI * 2f) * _swayAmplitude;
                 _vis.transform.rotation = lookRotation * Quaternion.Euler(0, 0, angle);
+
+                Wings();
             }
             else
                 _vis.transform.rotation = lookRotation;
@@ -146,6 +153,16 @@ public class Lighter : MonoBehaviour
             _targetSpeed = _newVelocity.magnitude;
 
             transform.position += _newVelocity;
+        }
+    }
+
+    void Wings()
+    {
+        if (_wingLeft != null)
+        {
+            float angle = Mathf.Sin(Time.time * _wingFrequency * Mathf.PI * 2f) * _wingAmplitude;
+            _wingLeft.transform.localRotation = Quaternion.Euler(angle, 90, 0);
+            _wingRight.transform.localRotation = Quaternion.Euler(-angle, 90, 0);
         }
     }
 

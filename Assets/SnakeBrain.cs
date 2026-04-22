@@ -56,8 +56,33 @@ public class SnakeBrain : MonoBehaviour
                 IEnumerator Loott()
                 {
                     yield return new WaitForSeconds(0.5f);
-                    GameObject loot = Instantiate(S.Loot);
-                    loot.transform.position = transform.position;
+
+                    for (int i = 0; i < _head._ballsCount; i++)
+                    {
+                        int a = S.RND.Next(3);
+                        if (a == 0)
+                            SetLoot(1);
+                        if (a == 1)
+                        {
+                            SetLoot(2);
+                        }
+
+                        void SetLoot(int count)
+                        {
+                            Vector3 point1 = _head._clones[i].transform.position;
+
+                            GameObject loot = Instantiate(S.Loot, point1, Quaternion.identity, S.Loader.SceneRoots[_head._sceneName]);
+                            ItemP itemP = loot.GetComponent<ItemP>();
+                            itemP._count = count;
+
+                            RaycastHit hit;
+                            if (Physics.Raycast(point1, Vector3.down, out hit, 10f))
+                            {
+                                Vector3 point2 = hit.point;
+                                loot.transform.position = point2;
+                            }
+                        }
+                    }
                 }
             }
             else

@@ -62,9 +62,11 @@ public class FrerardHolder : MonoBehaviour
     {
         Debug.Log("Frerard swap");
         string name = _placedItem._name;
-        Destroy(_placedItem);
+        Destroy(_placedItem.gameObject);
+        _placedItem = null;
         Put(item);
         S.Inventory.Take(name, 1);
+        ForcedShowName();
     }
 
     void Put(Item item)
@@ -110,9 +112,15 @@ public class FrerardHolder : MonoBehaviour
     void Pick()
     {
         S.Inventory.Take(_placedItem._name, 1);
-        Destroy(_placedItem._obj);
+        ForcedShowName();
+        Destroy(_placedItem.gameObject);
         SaveName("");
         _placedItem = null;
+    }
+
+    void ForcedShowName()
+    {
+        S.Inventory.ForcedShowName();
     }
     
     void RotateReal(GameObject obj)

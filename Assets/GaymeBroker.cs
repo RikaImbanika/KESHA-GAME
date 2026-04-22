@@ -28,7 +28,9 @@ public class GaymeBroker : MonoBehaviour
         GameObject label = goTransform.gameObject;
         label.SetActive(true);
 
-        S.AudioManager.Play(GetAudio());
+        float pitch = 1.25f + (float)S.RND.NextDouble() * 0.1f;
+
+        S.AudioManager.Play(GetAudio(), pitch);
         S.SceneSelector.OkayBroIAmStartingDoingThisFuckingShitBro();
 
         StartCoroutine(HideAfterDelay(label, 3f));

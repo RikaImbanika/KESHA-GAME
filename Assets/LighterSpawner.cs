@@ -10,10 +10,16 @@ public class LighterSpawner : MonoBehaviour
     private string _idPos;
     private string _idScale;
     private string _idColor;
+    private string _idWingsType;
+    private string _idWingsFrequency;
+    private string _idWingsAmplitude;
     private string _sceneName;
     private Vector3 _pos;
     private string _color;
     private float _size;
+    private string _wingsType;
+    private float _wingsAmplitude;
+    private float _wingsFrequency;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
 
@@ -36,6 +42,9 @@ public class LighterSpawner : MonoBehaviour
         _idPos = S.ID(_id, "pos");
         _idColor = S.ID(_id, "clr");
         _idScale = S.ID(_id, "scl");
+        _idWingsType = S.ID(_id, "wing");
+        _idWingsFrequency = S.ID(_id, "wfrq");
+        _idWingsAmplitude = S.ID(_id, "wamp");
     }
 
     IEnumerator Birn()
@@ -62,6 +71,9 @@ public class LighterSpawner : MonoBehaviour
         _size = S.Lighters._lightersSizes[sizeN];
         byte colorN = S.SM.LoadByte(_idColor) ?? 104;
         _color = S.Lighters._lightersColors[colorN];
+        _wingsType = S.SM.LoadString(_idWingsType) ?? "";
+        _wingsFrequency = S.SM.LoadFloat(_idWingsFrequency) ?? 0;
+        _wingsAmplitude = S.SM.LoadFloat(_idWingsAmplitude) ?? 0;
     }
 
     void DefineExistenz()
@@ -86,8 +98,46 @@ public class LighterSpawner : MonoBehaviour
         {
             DefinePos();
             DefineColor();
-            DefineSize();          
+            DefineSize();
+            DefineWings();
             Summon();
+        }
+        
+        void DefineWings()
+        {
+            //Defining doesn't mean summoning
+
+            if (_color == "Bakalavrus" || _color == "Zombella")
+            {
+                int n = S.RND.Next(2);
+
+                if (n == 0)
+                    _wingsType = "crow";
+                else
+                    _wingsType = "angel";
+
+                S.SM.Save(_idWingsType, _wingsType);
+
+                _wingsAmplitude = 45f;
+                _wingsFrequency = 1.79f;
+
+                int g0 = S.RND.Next(3);
+
+                if (g0 == 1)
+                    _wingsFrequency = 2.42f;
+                else if (g0 == 2)
+                    _wingsFrequency = 3.12f;
+
+                int g = S.RND.Next(3);
+
+                if (g == 0)
+                    _wingsAmplitude = 55f;
+                else if (g == 1)
+                    _wingsAmplitude = 35f;
+
+                S.SM.Save(_idWingsAmplitude, _wingsAmplitude);
+                S.SM.Save(_idWingsFrequency, _wingsFrequency);
+            }
         }
 
         void DefinePos()
@@ -149,7 +199,7 @@ public class LighterSpawner : MonoBehaviour
                         sizeN = 3;
                 }
 
-                if ((_color == "Zombella" || _color == "Bakalavr") && sizeN == 0)
+                if ((_color == "Zombella" || _color == "Bakalavrus") && sizeN == 0 || sizeN == 1)
                     continue;
                 else
                     break;
@@ -169,56 +219,66 @@ public class LighterSpawner : MonoBehaviour
 
             if (_sceneName.Contains("BR"))
             {
-                if (_sceneName != "BR 7" && _sceneName != "BR 7R" && _sceneName != "BR 6" && _sceneName != "BR 6R")
+                if (_sceneName != "BR 5" && _sceneName != "BR 7" && _sceneName != "BR 7R" && _sceneName != "BR 6" && _sceneName != "BR 6R")
                 {
-                    probs.Add(new("Yellow", 82));
+                    probs.Add(new("Yellow", 75));
                     probs.Add(new("Red", 2));
                     probs.Add(new("Blue", 1));
                     probs.Add(new("Purple", 1));
                     probs.Add(new("Green", 2));
-                    probs.Add(new("Bakalavr", 6));
-                    probs.Add(new("Zombella", 6));
+                    probs.Add(new("RainbowSlow", 2));
+                    probs.Add(new("RainbowFast", 1));
+                    probs.Add(new("Bakalavrus", 8));
+                    probs.Add(new("Zombella", 8));
                 }
                 else
                 {
                     probs.Add(new("Yellow", 1));
                     probs.Add(new("Red", 2));
-                    probs.Add(new("Blue", 80));
+                    probs.Add(new("Blue", 69));
                     probs.Add(new("Purple", 2));
                     probs.Add(new("Green", 1));
-                    probs.Add(new("Bakalavr", 7));
-                    probs.Add(new("Zombella", 7));
+                    probs.Add(new("RainbowSlow", 5));
+                    probs.Add(new("RainbowFast", 4));
+                    probs.Add(new("Bakalavrus", 8));
+                    probs.Add(new("Zombella", 8));
                 }
             }
             else if (_sceneName.Contains("MR"))
             {
                 probs.Add(new("Yellow", 2));
                 probs.Add(new("Red", 1));
-                probs.Add(new("Blue", 77));
-                probs.Add(new("Purple", 5));
+                probs.Add(new("Blue", 70));
+                probs.Add(new("Purple", 4));
                 probs.Add(new("Green", 3));
-                probs.Add(new("Bakalavr", 6));
-                probs.Add(new("Zombella", 6));
+                probs.Add(new("RainbowSlow", 4));
+                probs.Add(new("RainbowFast", 3));
+                probs.Add(new("Bakalavrus", 6));
+                probs.Add(new("Zombella", 7));
             }
             else if (_sceneName.Contains("Income"))
             {
-                probs.Add(new("Yellow", 91));
+                probs.Add(new("Yellow", 87));
                 probs.Add(new("Red", 1));
                 probs.Add(new("Blue", 0));
                 probs.Add(new("Purple", 0));
                 probs.Add(new("Green", 2));
-                probs.Add(new("Bakalavr", 3));
-                probs.Add(new("Zombella", 3));
+                probs.Add(new("RainbowSlow", 2));
+                probs.Add(new("RainbowFast", 1));
+                probs.Add(new("Bakalavrus", 3));
+                probs.Add(new("Zombella", 4));
               }
             else if (_sceneName.Contains("TL"))
             {
                 probs.Add(new("Yellow", 0));
                 probs.Add(new("Red", 1));
-                probs.Add(new("Blue", 82));
+                probs.Add(new("Blue", 70));
                 probs.Add(new("Purple", 4));
                 probs.Add(new("Green", 1));
-                probs.Add(new("Bakalavr", 6));
-                probs.Add(new("Zombella", 6));
+                probs.Add(new("RainbowSlow", 5));
+                probs.Add(new("RainbowFast", 4));
+                probs.Add(new("Bakalavrus", 7));
+                probs.Add(new("Zombella", 8));
             }
             colorN = S.Lighters.ColorN[S.AllFather.SelFromProb(probs)];
 
@@ -242,6 +302,7 @@ public class LighterSpawner : MonoBehaviour
         SetPosition();
         SetId();
         SetSway();
+        SetWings();
 
         var ren = GetComponent<MeshRenderer>();
 
@@ -249,10 +310,48 @@ public class LighterSpawner : MonoBehaviour
             Destroy(ren);
 
         Destroy(this);
+
+        void SetWings()
+        {
+            if (!string.IsNullOrEmpty(_wingsType))
+            {
+                GameObject _leftWing;
+                GameObject _rightWing;
+
+                if (_wingsType == "crow")
+                {
+                    _leftWing = GameObject.Instantiate(S.CrowWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.CrowWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                }
+                else
+                {
+                    _leftWing = GameObject.Instantiate(S.AngelWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.AngelWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                }
+
+                _leftWing.transform.localScale = 0.0008f * lighter._vis.transform.localScale;
+                _rightWing.transform.localScale = 0.0008f * new Vector3(lighter._vis.transform.localScale.x, lighter._vis.transform.localScale.y, -lighter._vis.transform.localScale.z);
+
+                _leftWing.transform.position -= 0.5f * lighter._vis.transform.right * _size;
+                _rightWing.transform.position += 0.5f * lighter._vis.transform.right * _size;
+
+                _leftWing.transform.position += 0.25f * lighter._vis.transform.up * _size;
+                _rightWing.transform.position += 0.25f * lighter._vis.transform.up * _size;
+
+                _leftWing.transform.SetParent(lighter._vis.transform, true);
+                _rightWing.transform.SetParent(lighter._vis.transform, true);
+
+                lighter._wingLeft = _leftWing;
+                lighter._wingRight = _rightWing;
+
+                lighter._wingAmplitude = _wingsAmplitude;
+                lighter._wingFrequency = _wingsFrequency;
+            }
+        }
         
         void SetSway()
         {
-            if (_color == "Zombella" || _color == "Bakalavr")
+            if (_color == "Zombella" || _color == "Bakalavrus")
             {
                 lighter._swayAmplitude = 35f;
                 lighter._swayFrequency = 1f;

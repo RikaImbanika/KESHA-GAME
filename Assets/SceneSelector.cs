@@ -80,8 +80,8 @@ public class SceneSelector : MonoBehaviour
                         GameObject obj = Instantiate(prefab, new Vector3(x, y, z), Quaternion.Euler(0, 180, 0));
                         obj.transform.SetParent(S.AllFatherObj.transform, true);
                         obj.GetComponent<Renderer>().material = material;
-                        obj.AddComponent(typeof(IsSceneName));
-                        IsSceneName isSceneName = obj.GetComponent<IsSceneName>();
+                        obj.AddComponent(typeof(SceneName));
+                        SceneName isSceneName = obj.GetComponent<SceneName>();
                         isSceneName._sceneName = _literallyScenes[i];
 
                         x += 1;

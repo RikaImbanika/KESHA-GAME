@@ -61,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
 	int _plankStepsSoundsCount;
 	string[] _woodStepSoundsNames;
 	string[] _plankStepSoundsNames;
+	bool _stopped;
 
 	[Header("Other")]
 	public Transform orientation;
@@ -193,10 +194,12 @@ public class PlayerMovement : MonoBehaviour
 		_distBeforeStep -= moved / 60f * 2.5f;
 		_timeBeforeStep -= Time.deltaTime;
 
-		if (grounded && _distBeforeStep <= 0 && _timeBeforeStep <= 0 && (horizontalInput != 0 || verticalInput != 0))
+		if (grounded && ((_distBeforeStep <= 0 && _timeBeforeStep <= 0) || (_stopped && moved > 0.01f)) && (horizontalInput != 0 || verticalInput != 0))
 		{
 			DoStep();
 		}
+		
+		_stopped = moved < 0.01f;
 	}
 
 	private void DoStep()

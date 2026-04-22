@@ -200,20 +200,17 @@ public class AudioManager : MonoBehaviour
 				_screamer7.pitch = pitch;
 				_screamer7.Play();
 				break;
-            case "ohno":
-                pitch = 1;
-                _ohNo.pitch = pitch;
-                _ohNo.Play();
+			case "ohno":
+				_ohNo.pitch = pitch;
+				_ohNo.Play();
                 break;
-            case "wrong":
-                pitch = 1f;
-                _wrong.pitch = pitch;
-                _wrong.Play();
+			case "wrong":
+				_wrong.pitch = pitch;
+				_wrong.Play();
                 break;
-            case "wrong2":
-                pitch = 1;
-                _wrong2.pitch = pitch;
-                _wrong2.Play();
+			case "wrong2":
+				_wrong2.pitch = pitch;
+				_wrong2.Play();
 				break;
 
 			case "woodstep1":

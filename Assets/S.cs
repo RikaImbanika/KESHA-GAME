@@ -91,7 +91,33 @@ public static class S : object
 	private static GameObject _unworkedSpawner;
 	private static GameObject _portalObj1;
 	private static ItemNameShower _itemNameShower;
+	private static GameObject _angelWing;
+	private static GameObject _crowWing;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
+
+	public static GameObject CrowWing
+	{
+		get
+		{
+			return _crowWing;
+		}
+		set
+		{
+			_crowWing = value;
+		}
+	}
+
+	public static GameObject AngelWing
+	{
+		get
+		{
+			return _angelWing;
+		}
+		set
+		{
+			_angelWing = value;
+		}
+	}
 
 	public static GameObject UnworkedSpawner
 	{

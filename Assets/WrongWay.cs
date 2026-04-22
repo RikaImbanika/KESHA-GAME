@@ -25,7 +25,9 @@ public class WrongWay : MonoBehaviour
             GameObject label = goTransform.gameObject;
             label.SetActive(true);
             string audioName = GetAudio();
-            S.AudioManager.Play(audioName);
+
+            float pitch = 1.25f + (float)S.RND.NextDouble() * 0.1f;
+            S.AudioManager.Play(audioName, pitch);
 
             StartCoroutine(HideAfterDelay(label, 1f));
         }        
