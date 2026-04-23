@@ -93,6 +93,11 @@ public class Teleporter : MonoBehaviour
         else
             S.MM.EnterToilet();
 
+        if (nextSceneName.Contains("TL") && nextSceneName != "TL 0")
+            S.AmbienceManager.EnterToilet();
+        else
+            S.AmbienceManager.LeaveToilet();
+
         if (!nextSceneName.Contains("MR"))
             S.MM.LeaveMushrooms();
         else if (nextSceneName != "MR 1" && nextSceneName != "MR 2")

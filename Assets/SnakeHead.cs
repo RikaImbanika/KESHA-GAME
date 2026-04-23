@@ -244,6 +244,14 @@ public class SnakeHead : MonoBehaviour
         }
     }
 
+    public void Die()
+    {
+        for (int i = 0; i < _ballsCount; i++)
+            Destroy(_bodies[i].gameObject);
+
+        Destroy(gameObject);
+    }
+
     Vector3 Check(Vector3 dir)
     {
         float radius = 8f;

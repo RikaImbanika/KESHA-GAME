@@ -90,7 +90,7 @@ public class Gun : MonoBehaviour
                         float healthPercent = MathF.Max(spider._health / spider._maxHealth, 0);
                         int hp = (int)MathF.Max(spider._health, 0);
                         int maxHp = (int)spider._maxHealth;
-                        S.LifeBars.Show("The Spider", healthPercent, hp, maxHp);
+                        S.LifeBars.Show("Laser Spider", healthPercent, hp, maxHp);
                     }
                     else
                     {

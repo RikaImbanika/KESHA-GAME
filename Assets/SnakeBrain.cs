@@ -44,61 +44,62 @@ public class SnakeBrain : MonoBehaviour
         if (!_dead)
         {
             _health = MathF.Max(_health - amount, 0);
+            S.SM.Save(_idHealth, _health);
 
             if (_health <= 0)
             {
                 _dead = true;
                 Die();
-                S.AudioManager.Play("Kill", 1.1f);
-
-                StartCoroutine(Loott());
-
-                IEnumerator Loott()
-                {
-                    yield return new WaitForSeconds(0.5f);
-
-                    for (int i = 0; i < _head._ballsCount; i++)
-                    {
-                        int a = S.RND.Next(3);
-                        if (a == 0)
-                            SetLoot(1);
-                        if (a == 1)
-                        {
-                            SetLoot(2);
-                        }
-
-                        void SetLoot(int count)
-                        {
-                            Vector3 point1 = _head._clones[i].transform.position;
-
-                            GameObject loot = Instantiate(S.Loot, point1, Quaternion.identity, S.Loader.SceneRoots[_head._sceneName]);
-                            ItemP itemP = loot.GetComponent<ItemP>();
-                            itemP._count = count;
-
-                            RaycastHit hit;
-                            if (Physics.Raycast(point1, Vector3.down, out hit, 10f))
-                            {
-                                Vector3 point2 = hit.point;
-                                loot.transform.position = point2;
-                            }
-                        }
-                    }
-                }
             }
             else
             {
                 S.AudioManager.Play("Kill", 0.9f);
             }
-
-            S.SM.Save(_idHealth, _health);
         }
     }
 
     void Die()
     {
         S.SM.Save(_idHealth, _health);
-        for (int i = 0; i < _head._ballsCount; i++)
+
+        S.AudioManager.Play("Kill", 1.1f);
+
+        StartCoroutine(Later());
+
+        IEnumerator Later()
         {
+            for (int i = 0; i < _head._ballsCount; i++)
+            {
+                int a = S.RND.Next(3);
+                if (a == 0)
+                    SetLoot(1);
+                if (a == 1)
+                {
+                    SetLoot(2);
+                }
+
+                void SetLoot(int count)
+                {
+                    Vector3 point1 = _head._clones[i].transform.position;
+
+                    GameObject loot = Instantiate(S.Loot, point1, Quaternion.identity, S.Loader.SceneRoots[_head._sceneName]);
+                    ItemP itemP = loot.GetComponent<ItemP>();
+                    itemP._count = count;
+
+                    RaycastHit hit;
+                    if (Physics.Raycast(point1, Vector3.down, out hit, 10f))
+                    {
+                        Vector3 point2 = hit.point;
+                        loot.transform.position = point2;
+                    }
+                    else
+                        Destroy(loot);
+                }
+            }
+
+            _head.Die();
+            Destroy(gameObject);
+            yield return null;
         }
     }
 

@@ -360,7 +360,7 @@ public class Inventory : MonoBehaviour
 				Spider spider = hit.collider.gameObject.GetComponent<Spider>();
 				if (spider != null)
 				{
-					_objectNameShowen = "The Spider";
+					_objectNameShowen = "Laser Spider";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					showAnyName = true;
 

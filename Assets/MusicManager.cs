@@ -18,8 +18,8 @@ public class MusicManager : MonoBehaviour
     public bool _fztFadeOut;
     public bool _fztKilled;
     public bool _playerOnIncome;
+    public string _incomeSwapPhase;
     public string _incomePhase;
-    public string _incomePhase2;
     public string _backroomsPhase = "silence";
     public float _incomeTime;
     public AudioSource _backroomsOldTrack;
@@ -48,7 +48,7 @@ public class MusicManager : MonoBehaviour
 
         _fztVolume = 0;
         _playerOnIncome = true;
-        _incomePhase = "1";
+        _incomeSwapPhase = "1";
         _backroomsTrackId = 0;
         _backroomsPrevTrackId = 11; //Track here should not be equals first one
         _mushroomsPrevTrackId = 1; //
@@ -325,9 +325,9 @@ public class MusicManager : MonoBehaviour
 
     public void EnterIncome()
     {
-        _incomePhase2 = "entering";
+        _incomePhase = "entering";
 
-        if (_incomePhase == "1" || _incomePhase == "2to1")
+        if (_incomeSwapPhase == "1" || _incomeSwapPhase == "2to1")
         {
             if (!S.AM._incomeOST1.isPlaying)
             {
@@ -335,7 +335,7 @@ public class MusicManager : MonoBehaviour
                 S.AM._incomeOST1.time = _incomeTime;
             }
         }
-        else if (_incomePhase == "2" || _incomePhase == "1to2")
+        else if (_incomeSwapPhase == "2" || _incomeSwapPhase == "1to2")
         {
             if (!S.AM._incomeOST2.isPlaying)
             {
@@ -347,12 +347,12 @@ public class MusicManager : MonoBehaviour
 
     public void LeaveIncome()
     {
-        _incomePhase2 = "leaving";
+        _incomePhase = "leaving";
     }
 
     public void Income(float d)
     {
-        if (_incomePhase2 == "leaving")
+        if (_incomePhase == "leaving")
         {
             if (S.AM._incomeOST1.volume > 0)
                 S.AM._incomeOST1.volume -= 0.005f * d;
@@ -361,9 +361,9 @@ public class MusicManager : MonoBehaviour
 
             if (S.AM._incomeOST2.volume <= 0 && S.AM._incomeOST1.volume <= 0)
             {
-                _incomePhase2 = "leaved";
+                _incomePhase = "leaved";
 
-                if (_incomePhase == "1" || _incomePhase == "2to1")
+                if (_incomeSwapPhase == "1" || _incomeSwapPhase == "2to1")
                     _incomeTime = S.AM._incomeOST1.time;
                 else
                     _incomeTime = S.AM._incomeOST2.time;
@@ -372,60 +372,60 @@ public class MusicManager : MonoBehaviour
                 S.AM._incomeOST2.Pause();
             }
         }
-        else if (_incomePhase2 == "entering")
+        else if (_incomePhase == "entering")
         {
-            if (_incomePhase == "1" || _incomePhase == "2to1")
+            if (_incomeSwapPhase == "1" || _incomeSwapPhase == "2to1")
             {
                 S.AM._incomeOST1.volume += 0.005f * d;
 
                 if (S.AM._incomeOST1.volume >= 1)
-                    _incomePhase2 = "entered";
+                    _incomePhase = "entered";
             }
-            else if (_incomePhase == "2" || _incomePhase == "1to2")
+            else if (_incomeSwapPhase == "2" || _incomeSwapPhase == "1to2")
             {
                 S.AM._incomeOST2.volume += 0.005f * d;
 
                 if (S.AM._incomeOST2.volume >= 1)
-                    _incomePhase2 = "entered";
+                    _incomePhase = "entered";
             }
         }
         else
         {
-            if (_incomePhase == "1")
+            if (_incomeSwapPhase == "1")
                 if (S.AM._incomeOST1.time > 197)
                 {
-                    _incomePhase = "1to2";
+                    _incomeSwapPhase = "1to2";
                     S.AM._incomeOST2.time = 0;
                     S.AM._incomeOST2.volume = 1;
                     S.AM._incomeOST2.Play();
                 }
 
-            if (_incomePhase == "2")
+            if (_incomeSwapPhase == "2")
                 if (S.AM._incomeOST2.time > 197)
                 {
-                    _incomePhase = "2to1";
+                    _incomeSwapPhase = "2to1";
                     S.AM._incomeOST1.time = 0;
                     S.AM._incomeOST1.volume = 1;
                     S.AM._incomeOST1.Play();
                 }
 
-            if (_incomePhase == "1to2")
+            if (_incomeSwapPhase == "1to2")
             {
                 S.AM._incomeOST1.volume -= 0.003f * d;
                 if (S.AM._incomeOST1.volume <= 0)
                 {
                     S.AM._incomeOST1.Stop();
-                    _incomePhase = "2";
+                    _incomeSwapPhase = "2";
                 }
             }
 
-            if (_incomePhase == "2to1")
+            if (_incomeSwapPhase == "2to1")
             {
                 S.AM._incomeOST2.volume -= 0.003f * d;
                 if (S.AM._incomeOST2.volume <= 0)
                 {
                     S.AM._incomeOST2.Stop();
-                    _incomePhase = "1";
+                    _incomeSwapPhase = "1";
                 }
             }
         }

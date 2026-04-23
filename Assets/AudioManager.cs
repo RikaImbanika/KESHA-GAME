@@ -33,11 +33,11 @@ public class AudioManager : MonoBehaviour
     public AudioSource _wrong;
 	public AudioSource _wrong2;
 
-	public AudioSource _woodStep1;
-	public AudioSource _woodStep2;
-	public AudioSource _woodStep3;
-	public AudioSource _woodStep4;
-	public AudioSource _woodStep5;
+	public AudioSource _dirtStep1;
+	public AudioSource _dirtStep2;
+	public AudioSource _dirtStep3;
+	public AudioSource _dirtStep4;
+	public AudioSource _dirtStep5;
 
 	public AudioSource _plankStep1;
 	public AudioSource _plankStep2;
@@ -45,8 +45,17 @@ public class AudioManager : MonoBehaviour
 	public AudioSource _plankStep4;
 	public AudioSource _plankStep5;
 
+	public AudioSource _tilesStep1;
+	public AudioSource _tilesStep2;
+	public AudioSource _tilesStep3;
+	public AudioSource _tilesStep4;
+	public AudioSource _tilesStep5;
+
 	public AudioSource _toiletMusic1;
 	public AudioSource _toiletMusic2;
+
+	public AudioSource _toiletAmbience1;
+	public AudioSource _toiletAmbience2;
 
     public AudioSource _fzt1;
     public AudioSource _fzt2;
@@ -213,25 +222,25 @@ public class AudioManager : MonoBehaviour
 				_wrong2.Play();
 				break;
 
-			case "woodstep1":
-				_woodStep1.pitch = pitch;
-				_woodStep1.Play();
+			case "dirtstep1":
+				_dirtStep1.pitch = pitch;
+				_dirtStep1.Play();
 				break;
-			case "woodstep2":
-				_woodStep1.pitch = pitch;
-				_woodStep1.Play();
+			case "dirtstep2":
+				_dirtStep1.pitch = pitch;
+				_dirtStep1.Play();
 				break;
-			case "woodstep3":
-				_woodStep3.pitch = pitch;
-				_woodStep3.Play();
+			case "dirtstep3":
+				_dirtStep3.pitch = pitch;
+				_dirtStep3.Play();
 				break;
-			case "woodstep4":
-				_woodStep4.pitch = pitch;
-				_woodStep4.Play();
+			case "dirtstep4":
+				_dirtStep4.pitch = pitch;
+				_dirtStep4.Play();
 				break;
-			case "woodstep5":
-				_woodStep5.pitch = pitch;
-				_woodStep5.Play();
+			case "dirtstep5":
+				_dirtStep5.pitch = pitch;
+				_dirtStep5.Play();
 				break;
 
 			case "plankstep1":
@@ -253,6 +262,27 @@ public class AudioManager : MonoBehaviour
 			case "plankstep5":
 				_plankStep5.pitch = pitch;
 				_plankStep5.Play();
+				break;
+
+			case "tilesstep1":
+				_tilesStep1.pitch = pitch;
+				_tilesStep1.Play();
+				break;
+			case "tilesstep2":
+				_tilesStep2.pitch = pitch;
+				_tilesStep2.Play();
+				break;
+			case "tilesstep3":
+				_tilesStep3.pitch = pitch;
+				_tilesStep3.Play();
+				break;
+			case "tilesstep4":
+				_tilesStep4.pitch = pitch;
+				_tilesStep4.Play();
+				break;
+			case "tilesstep5":
+				_tilesStep5.pitch = pitch;
+				_tilesStep5.Play();
 				break;
 
 			case "fzt1":

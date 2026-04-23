@@ -57,10 +57,12 @@ public class PlayerMovement : MonoBehaviour
 	private float _distBeforeStep;
 	private float _timeBeforeStep;
 	private int _lastStepSoundId;
-	int _woodStepsSoundsCount;
+	int _dirtStepsSoundsCount;
 	int _plankStepsSoundsCount;
-	string[] _woodStepSoundsNames;
+	int _tilesStepsSoundsCount;
+	string[] _dirtStepSoundsNames;
 	string[] _plankStepSoundsNames;
+	string[] _tilesStepSoundsNames;
 	bool _stopped;
 
 	[Header("Other")]
@@ -94,15 +96,20 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Start()
 	{
-		_woodStepsSoundsCount = 3;
-		_woodStepSoundsNames = new string[_woodStepsSoundsCount];
-		for (int i = 0; i < _woodStepsSoundsCount; i++)
-			_woodStepSoundsNames[i] = $"woodStep{i + 1}";
+		_dirtStepsSoundsCount = 3;
+		_dirtStepSoundsNames = new string[_dirtStepsSoundsCount];
+		for (int i = 0; i < _dirtStepsSoundsCount; i++)
+			_dirtStepSoundsNames[i] = $"dirtStep{i + 1}";
 
 		_plankStepsSoundsCount = 5;
 		_plankStepSoundsNames = new string[_plankStepsSoundsCount];
 		for (int i = 0; i < _plankStepsSoundsCount; i++)
 			_plankStepSoundsNames[i] = $"plankStep{i + 1}";
+
+		_tilesStepsSoundsCount = 5;
+		_tilesStepSoundsNames = new string[_tilesStepsSoundsCount];
+		for (int i = 0; i < _tilesStepsSoundsCount; i++)
+			_tilesStepSoundsNames[i] = $"tilesStep{i + 1}";
 
 		StartCoroutine(LateStart());
 
@@ -173,18 +180,22 @@ public class PlayerMovement : MonoBehaviour
 
 	private void StepsSounds()
 	{
-		_stepType = "plank";
+		_stepType = "planks";
 
 		string sn = S.PS._currentSceneName;
 
 		if (sn.Contains("MR"))
 		{
 			if (sn != "MR 1" && sn != "MR 3")
-				_stepType = "grass";
+				_stepType = "dirt";
 		}
-
 		else if (sn == "Income")
-			_stepType = "grass";
+			_stepType = "dirt";
+		else if (sn.Contains("TL") || sn == "Start")
+		{
+			if (sn != "TL 0")
+				_stepType = "tiles";
+		}
 
 		Vector2 p1 = new Vector2(S.PS._prevCamPos.x, S.PS._prevCamPos.z);
 		Vector2 p2 = new Vector2(S.PS._camPos.x, S.PS._camPos.z);
@@ -206,20 +217,27 @@ public class PlayerMovement : MonoBehaviour
 	{
 		_distBeforeStep = 0.2f;
 
-		int id = S.RND.Next(_woodStepsSoundsCount);
+		int count = _dirtStepsSoundsCount;
+		if (_stepType == "planks")
+			count = _plankStepsSoundsCount;
+		else if (_stepType == "tiles")
+			count = _tilesStepsSoundsCount;
+
+		int id = S.RND.Next(count);
 
 		while (id == _lastStepSoundId)
-			id = S.RND.Next(_woodStepsSoundsCount);
+			id = S.RND.Next(count);
 
 		_lastStepSoundId = id;
 
 		float pitch = 1f + (float)S.RND.NextDouble() * 0.25f;
 
-		if (_stepType == "grass")
-			S.AudioManager.Play(_woodStepSoundsNames[id], pitch);
-		else if (_stepType == "plank")
+		if (_stepType == "dirt")
+			S.AudioManager.Play(_dirtStepSoundsNames[id], pitch);
+		else if (_stepType == "planks")
 			S.AudioManager.Play(_plankStepSoundsNames[id], pitch);
-		//Debug.LogError($"WS {id}");
+		else if (_stepType == "tiles")
+			S.AudioManager.Play(_tilesStepSoundsNames[id], pitch);
 	}
 
 	private void Gravity(float k)

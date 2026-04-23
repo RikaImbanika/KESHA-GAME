@@ -75,7 +75,7 @@ public class SnakeSpawner : MonoBehaviour
 
         SnakeBrain snakeBrain = snakeBrainObj.GetComponent<SnakeBrain>();
         snakeBrain._id = _id;
-        snakeBrain._idHealth = S.ID(_id, "health");
+        snakeBrain._idHealth = _idHealth;
 
         if (_health != -404)
             snakeBrain._health = _health;

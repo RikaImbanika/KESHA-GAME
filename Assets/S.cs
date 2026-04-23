@@ -39,6 +39,7 @@ public static class S : object
 	private static FirstZombie2 _firstZombie2;
 	private static SceneDuplicateCleaner _sceneDuplicateCleaner;
 	private static MusicManager _musicManager;
+	private static AmbienceManager _ambienceManager;
 	private static GameObject _loot;
 	private static SceneSelector _sceneSelector;
 	private static Teleporter _teleporter;
@@ -94,6 +95,18 @@ public static class S : object
 	private static GameObject _angelWing;
 	private static GameObject _crowWing;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
+
+	public static AmbienceManager AmbienceManager
+	{
+		get
+		{
+			return _ambienceManager;
+		}
+		set
+		{
+			_ambienceManager = value;
+		}
+	}
 
 	public static GameObject CrowWing
 	{

@@ -43,7 +43,7 @@ public class PlayerCamScript : MonoBehaviour
 
                     //2
 
-                    float k = Mathf.Clamp(Time.deltaTime * 3f, 0, 1f);
+                    float k = Mathf.Clamp(Time.deltaTime * 2.75f, 0, 1f);
 
                     float x = Mathf.Pow(mouseX, 0.85f);
                     if (mouseX < 0)
@@ -53,8 +53,8 @@ public class PlayerCamScript : MonoBehaviour
                     if (mouseY < 0)
                         y = -Mathf.Pow(-mouseY, 0.85f);
 
-                    smoothedSpeedX = smoothedSpeedX * (1 - k) + x * k * 0.2f;
-                    smoothedSpeedY = smoothedSpeedY * (1 - k) + y * k * 0.2f;
+                    smoothedSpeedX = smoothedSpeedX * (1 - k) + x * k * 0.25f;
+                    smoothedSpeedY = smoothedSpeedY * (1 - k) + y * k * 0.25f;
 
                     xRotation += smoothedSpeedX * t;
                     yRotation -= smoothedSpeedY * t;
