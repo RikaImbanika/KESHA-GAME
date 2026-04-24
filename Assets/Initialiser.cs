@@ -134,6 +134,8 @@ public class Initialiser : MonoBehaviour
 
         S.Loot = Prefabs.Get("Loot");
 
+        S.SquarePainting = Prefabs.Get("SquarePainting");
+
         S.CrowWing = Prefabs.Get("Wings/CrowWing");
         S.AngelWing = Prefabs.Get("Wings/AngelWing");
 

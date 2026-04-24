@@ -614,7 +614,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 6fd76502b23f8ff46acd71963177b2a9, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.7
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5824,7 +5824,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'v 1.11.6
+  m_text: 'v 1.11.7
 
 '
   m_isRightToLeft: 0
@@ -11227,6 +11227,7 @@ GameObject:
   - component: {fileID: 895244297}
   - component: {fileID: 895244298}
   - component: {fileID: 895244299}
+  - component: {fileID: 895244300}
   m_Layer: 0
   m_Name: AllFather
   m_TagString: AllFather
@@ -11635,6 +11636,19 @@ MonoBehaviour:
   _toiletSwapPhase: 
   _toiletTime: 0
   _toiletAmbienceDuration: 0
+--- !u!114 &895244300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895244273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76312b5d83f2c82418499affc9d26c0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _names: []
 --- !u!1 &916329583
 GameObject:
   m_ObjectHideFlags: 0
@@ -14200,7 +14214,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Kesha Game, v1.11.6, Made by Rika Imbanika  '
+  m_text: Kesha Game, v1.11.7, Made by Rika Imbanika
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ac28d4880a3fb444e861a8be93987e17, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: ac28d4880a3fb444e861a8be93987e17, type: 2}
@@ -16498,6 +16512,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
+    - target: {fileID: 6462182873130981066, guid: 9823a6cf710724441bf7c552ca472f11, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 34320f83183b7ff45b562bdbe6886f58, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9823a6cf710724441bf7c552ca472f11, type: 3}
 --- !u!1 &1460184851
@@ -19942,7 +19960,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 6fd76502b23f8ff46acd71963177b2a9, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.7
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0

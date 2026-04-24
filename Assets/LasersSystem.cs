@@ -313,8 +313,8 @@ public class LasersSystem : MonoBehaviour
 
             void GetId()
             {
-                _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-                _id = _sceneName + transform.position.x + transform.position.y + transform.position.z;
+                _sceneName = gameObject.scene.name; //Should work
+                _id = S.ID(_sceneName, S.ID(gameObject));
             }
         }
     }

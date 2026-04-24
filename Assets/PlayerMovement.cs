@@ -344,9 +344,9 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	public void Push(Vector3 force)
+	public void Push(Vector3 force, bool forced = false)
 	{
-		if (readyToPush)
+		if (readyToPush || forced)
 		{
 			readyToPush = false;
 			rb.velocity += force;

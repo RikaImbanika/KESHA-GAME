@@ -59,42 +59,42 @@ public class II : MonoBehaviour
         _base.Add("Frerard1", new ItemInfo(
             spriteName: "Frerard1",
             prefabName: "Frerard1",
-            visibleName: "Picture part 1",
+            visibleName: "Picture part",
             throwable: false
             ));
 
         _base.Add("Frerard2", new ItemInfo(
             spriteName: "Frerard2",
             prefabName: "Frerard2",
-            visibleName: "Picture part 2",
+            visibleName: "Picture part",
             throwable: false
             ));
 
         _base.Add("Frerard3", new ItemInfo(
             spriteName: "Frerard3",
             prefabName: "Frerard3",
-            visibleName: "Picture part 3",
+            visibleName: "Picture part",
             throwable: false
             ));
 
         _base.Add("Frerard4", new ItemInfo(
             spriteName: "Frerard4",
             prefabName: "Frerard4",
-            visibleName: "Picture part 4",
+            visibleName: "Picture part",
             throwable: false
             ));
 
         _base.Add("Frerard5", new ItemInfo(
             spriteName: "Frerard5",
             prefabName: "Frerard5",
-            visibleName: "Picture part 5",
+            visibleName: "Picture part",
             throwable: false
             ));
 
         _base.Add("Frerard6", new ItemInfo(
             spriteName: "Frerard6",
             prefabName: "Frerard6",
-            visibleName: "Picture part 6",
+            visibleName: "Picture part",
             throwable: false
             ));
 

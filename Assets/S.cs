@@ -94,7 +94,33 @@ public static class S : object
 	private static ItemNameShower _itemNameShower;
 	private static GameObject _angelWing;
 	private static GameObject _crowWing;
+	private static Paintings _paintings;
+	private static GameObject _squarePainting;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
+
+	public static GameObject SquarePainting
+	{
+		get
+		{
+			return _squarePainting;
+		}
+		set
+		{
+			_squarePainting = value;
+		}
+	}
+
+	public static Paintings Paintings
+	{
+		get
+		{
+			return _paintings;
+		}
+		set
+		{
+			_paintings = value;
+		}
+	}
 
 	public static AmbienceManager AmbienceManager
 	{

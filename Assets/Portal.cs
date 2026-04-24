@@ -230,7 +230,7 @@ public class Portal : MonoBehaviour
         _rts[4] = new RenderTexture(180, 180, 24); // 25%
         _rts[4].Create();
 
-        _rts[5] = new RenderTexture(135, 135, 24); // 18.75%
+        _rts[5] = new RenderTexture(1_35, 135, 24); // 18.75%
         _rts[5].Create();
 
         _resolutionIndex = 5;
