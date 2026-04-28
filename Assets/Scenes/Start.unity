@@ -5778,7 +5778,7 @@ GameObject:
   - component: {fileID: 404712817}
   - component: {fileID: 404712816}
   m_Layer: 5
-  m_Name: Text 3
+  m_Name: V
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5824,7 +5824,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'v 1.11.7
+  m_text: 'v 1.11.8
 
 '
   m_isRightToLeft: 0
@@ -11474,6 +11474,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a09849aef4497de428d7d68716ae1df3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rememberedScene: 
+  _rememberedPosition: {x: 0, y: 0, z: 0}
+  _rememberedXRotation: 0
+  _rememberedYRotation: 0
 --- !u!114 &895244288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14168,7 +14172,7 @@ GameObject:
   - component: {fileID: 1186545225}
   - component: {fileID: 1186545224}
   m_Layer: 5
-  m_Name: Text 2
+  m_Name: VERSION
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14214,7 +14218,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Kesha Game, v1.11.7, Made by Rika Imbanika
+  m_text: Kesha Game, v1.11.8, Made by Rika Imbanika
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ac28d4880a3fb444e861a8be93987e17, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: ac28d4880a3fb444e861a8be93987e17, type: 2}

@@ -9,7 +9,12 @@ public class SceneSelector : MonoBehaviour
     List<string> _literallyScenes;
     Vector3 _p1;
     Vector3 _p2;
-    bool _done;
+    bool _buttonsArePlaced;
+    public string _rememberedScene;
+    public Vector3 _rememberedPosition;
+    public float _rememberedXRotation;
+    public float _rememberedYRotation;
+    bool _toStart;
 
     void Start()
     {
@@ -18,25 +23,43 @@ public class SceneSelector : MonoBehaviour
 
     public void OkayBroIAmStartingDoingThisFuckingShitBro()
     {
-        S.Ph.transform.position = new Vector3(3.22f, -165.3f, -2.87f);
+        _toStart = S.PS._currentSceneName != "Start";
 
         StartCoroutine(IEshit());
 
         IEnumerator IEshit()
         {
+            if (_toStart)
+            {
+                _rememberedScene = S.PS._currentSceneName;
+                _rememberedPosition = S.Ph.transform.position;
+                _rememberedXRotation = S.PlayerCamScript.xRotation;
+                _rememberedYRotation = S.PlayerCamScript.yRotation;
+
+                S.Ph.transform.position = new Vector3(3.22f, -165.3f, -2.87f);
+                S.PlayerCamScript.xRotation = 0;
+                S.PlayerCamScript.yRotation = 0;
+            }
+            else
+            {
+                S.Ph.transform.position = _rememberedPosition;
+                S.PlayerCamScript.xRotation = _rememberedXRotation;
+                S.PlayerCamScript.yRotation = _rememberedYRotation;
+            }
+
             while (S.Teleporter == null)
             {
                 Debug.Log("Oh no, sorre bro, I am waiting for S.Teleporter.");
                 yield return new WaitForSeconds(0.05f);
             }
 
-            S.Teleporter.ImportantStaticShitToDo("Start");
+            if (_toStart)
+                S.Teleporter.ImportantStaticShitToDo("Start");
+            else
+                S.Teleporter.ImportantStaticShitToDo(_rememberedScene);
 
-            if (_done)
-            {
-                Debug.Log("Oh no bro, I will not. I already done this shit. Sorry, goodbye, good luck bro.");
-                yield return null;
-            }
+            if (_buttonsArePlaced || !_toStart)
+                yield break;
             else
                 PlaceButtons();
 
@@ -96,7 +119,7 @@ public class SceneSelector : MonoBehaviour
                     }
                 }
 
-                _done = true;
+                _buttonsArePlaced = true;
             }
         }
     }

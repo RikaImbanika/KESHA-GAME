@@ -105,6 +105,9 @@ public class Loader : MonoBehaviour
 
     public void GoTo(string sceneName, string nextSceneName)
     {
+        if (nextSceneName == "Start")
+            return;
+
         List<string> loadScenesNames = new List<string>();
         loadScenesNames.AddRange(S.Loader._map[nextSceneName]);
         loadScenesNames.Add(nextSceneName); //

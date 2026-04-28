@@ -33,9 +33,9 @@ public class CHEATS : MonoBehaviour
             }
 
             Transform canvasTransform = S.Canvas.transform;
-            Transform e = canvasTransform.Find("Cheats enabled");
+            Transform e = canvasTransform.Find("Cheats enabled 😳");
             _e = e.gameObject;
-            Transform d = canvasTransform.Find("Cheats disabled");
+            Transform d = canvasTransform.Find("Cheats disabled 😱");
             _d = d.gameObject;
         }
     }
@@ -48,7 +48,7 @@ public class CHEATS : MonoBehaviour
         if (Input.GetKey(KeyCode.Y) && Input.GetKey(KeyCode.T))
             transform.position += new Vector3(0, 8, 0);
 
-        if (Input.GetKey(KeyCode.U) && Input.GetKey(KeyCode.O) || Input.GetKey(KeyCode.O) && Input.GetKey(KeyCode.U))
+        if (Input.GetKeyDown(KeyCode.U) && Input.GetKey(KeyCode.O) || Input.GetKeyDown(KeyCode.O) && Input.GetKey(KeyCode.U))
         {
             S.SceneSelector.OkayBroIAmStartingDoingThisFuckingShitBro();
         }

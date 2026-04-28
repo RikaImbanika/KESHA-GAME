@@ -113,11 +113,28 @@ public class PaintingPlacer : MonoBehaviour
 
         transform.localScale = new Vector3(3, 3, 0.1f);
 
+        Vector3 c = transform.position;
+        Vector3 u = transform.up;
+        Vector3 r = transform.right;
+
+        Vector3 u2 = u * 2;
+        Vector3 r2 = r * 2;
+
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(transform.position, new Vector3(0.1f, 3, 0.1f));
-        Gizmos.DrawLine(transform.position, transform.position - transform.forward);
-        Gizmos.DrawLine(transform.position + transform.up + transform.right, transform.position - transform.up - transform.right);
-        Gizmos.DrawLine(transform.position + transform.up - transform.right, transform.position - transform.up + transform.right);
+        Gizmos.DrawLine(c, c - transform.forward);
+
+        Gizmos.DrawLine(c + u2 + r2, c - u2 - r2);
+        Gizmos.DrawLine(c + u2 - r2, c - u2 + r2);
+
+        Gizmos.DrawLine(c + u - r, c - u - r);
+        Gizmos.DrawLine(c + u + r, c - u + r);
+        Gizmos.DrawLine(c + u - r, c + u + r);
+        Gizmos.DrawLine(c - u - r, c - u + r);
+
+        Gizmos.DrawLine(c + u2 - r2, c - u2 - r2);
+        Gizmos.DrawLine(c + u2 + r2, c - u2 + r2);
+        Gizmos.DrawLine(c + u2 - r2, c + u2 + r2);
+        Gizmos.DrawLine(c - u2 - r2, c - u2 + r2);
     }
 #endif
 }
