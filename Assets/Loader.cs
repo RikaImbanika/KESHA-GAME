@@ -113,8 +113,11 @@ public class Loader : MonoBehaviour
         loadScenesNames.Add(nextSceneName); //
 
         List<string> unloadScenesNames = new List<string>();
-        unloadScenesNames.AddRange(S.Loader._map[sceneName]);
-        unloadScenesNames.Add(sceneName); //?
+        if (sceneName != "Start")
+        {
+            unloadScenesNames.AddRange(S.Loader._map[sceneName]);
+            unloadScenesNames.Add(sceneName); //?
+        }
 
         foreach (string name in loadScenesNames)
             if (!unloadScenesNames.Contains(name))

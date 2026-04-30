@@ -33,9 +33,9 @@ public class CHEATS : MonoBehaviour
             }
 
             Transform canvasTransform = S.Canvas.transform;
-            Transform e = canvasTransform.Find("Cheats enabled 😳");
+            Transform e = canvasTransform.Find("Cheats enabled 0.0");
             _e = e.gameObject;
-            Transform d = canvasTransform.Find("Cheats disabled 😱");
+            Transform d = canvasTransform.Find("Cheats disabled 0.0");
             _d = d.gameObject;
         }
     }

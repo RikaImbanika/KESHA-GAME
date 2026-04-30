@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AmbienceManager : MonoBehaviour
@@ -14,7 +15,7 @@ public class AmbienceManager : MonoBehaviour
     {
         _toiletPhase = "silence";
         _toiletSwapPhase = "1";
-        _toiletAmbienceDuration = 112f; //Do not forget
+        _toiletAmbienceDuration = 113.5f; //Do not forget
 
         S.AmbienceManager = this;
     }
@@ -89,7 +90,7 @@ public class AmbienceManager : MonoBehaviour
 
             if (_toiletSwapPhase == "1to2")
             {
-                S.AM._toiletAmbience1.volume -= 0.01f * d;
+                S.AM._toiletAmbience1.volume -= 0.02f * d;
                 if (S.AM._toiletAmbience1.volume <= 0)
                 {
                     S.AM._toiletAmbience1.Stop();
@@ -99,7 +100,7 @@ public class AmbienceManager : MonoBehaviour
 
             if (_toiletSwapPhase == "2to1")
             {
-                S.AM._toiletAmbience2.volume -= 0.01f * d;
+                S.AM._toiletAmbience2.volume -= 0.02f * d;
                 if (S.AM._toiletAmbience2.volume <= 0)
                 {
                     S.AM._toiletAmbience2.Stop();

@@ -109,31 +109,37 @@ public class LighterSpawner : MonoBehaviour
 
             if (_color == "Bakalavrus" || _color == "Zombella")
             {
-                int n = S.RND.Next(2);
+                int n = S.RND.Next(5);
 
                 if (n == 0)
                     _wingsType = "crow";
-                else
+                else if (n == 1)
                     _wingsType = "angel";
+                else if (n == 2)
+                    _wingsType = "bat";
+                else if (n == 3)
+                    _wingsType = "rainbow1";
+                else if (n == 4)
+                    _wingsType = "rainbow2";
 
                 S.SM.Save(_idWingsType, _wingsType);
 
-                _wingsAmplitude = 45f;
-                _wingsFrequency = 1.79f;
+                _wingsAmplitude = 48f;
+                _wingsFrequency = 2.62f;
 
                 int g0 = S.RND.Next(3);
 
                 if (g0 == 1)
-                    _wingsFrequency = 2.42f;
+                    _wingsFrequency = 2.94f;
                 else if (g0 == 2)
-                    _wingsFrequency = 3.12f;
+                    _wingsFrequency = 3.23f;
 
                 int g = S.RND.Next(3);
 
                 if (g == 0)
-                    _wingsAmplitude = 55f;
+                    _wingsAmplitude = 57f;
                 else if (g == 1)
-                    _wingsAmplitude = 35f;
+                    _wingsAmplitude = 40f;
 
                 S.SM.Save(_idWingsAmplitude, _wingsAmplitude);
                 S.SM.Save(_idWingsFrequency, _wingsFrequency);
@@ -323,10 +329,25 @@ public class LighterSpawner : MonoBehaviour
                     _leftWing = GameObject.Instantiate(S.CrowWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
                     _rightWing = GameObject.Instantiate(S.CrowWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
                 }
-                else
+                else if (_wingsType == "angel")
                 {
                     _leftWing = GameObject.Instantiate(S.AngelWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
                     _rightWing = GameObject.Instantiate(S.AngelWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                }
+                else if (_wingsType == "bat")
+                {
+                    _leftWing = GameObject.Instantiate(S.BatWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.BatWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                }
+                else if (_wingsType == "rainbow1")
+                {
+                    _leftWing = GameObject.Instantiate(S.RainbowWing1, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.RainbowWing1, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                }
+                else
+                {
+                    _leftWing = GameObject.Instantiate(S.RainbowWing2, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.RainbowWing2, lighter._vis.transform.position, lighter._vis.transform.rotation);
                 }
 
                 _leftWing.transform.localScale = 0.0008f * lighter._vis.transform.localScale;

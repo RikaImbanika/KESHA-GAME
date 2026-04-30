@@ -94,6 +94,9 @@ public static class S : object
 	private static ItemNameShower _itemNameShower;
 	private static GameObject _angelWing;
 	private static GameObject _crowWing;
+	private static GameObject _batWing;
+	private static GameObject _rainbowWing1;
+	private static GameObject _rainbowWing2;
 	private static Paintings _paintings;
 	private static GameObject _squarePainting;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
@@ -133,6 +136,43 @@ public static class S : object
 			_ambienceManager = value;
 		}
 	}
+
+	public static GameObject BatWing
+	{
+		get
+		{
+			return _batWing;
+		}
+		set
+		{
+			_batWing = value;
+		}
+	}
+
+	public static GameObject RainbowWing1
+	{
+		get
+		{
+			return _rainbowWing1;
+		}
+		set
+		{
+			_rainbowWing1 = value;
+		}
+	}
+
+	public static GameObject RainbowWing2
+	{
+		get
+		{
+			return _rainbowWing2;
+		}
+		set
+		{
+			_rainbowWing2 = value;
+		}
+	}
+
 
 	public static GameObject CrowWing
 	{

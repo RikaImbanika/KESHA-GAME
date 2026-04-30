@@ -67,7 +67,7 @@ public class SceneSelector : MonoBehaviour
             {
                 _literallyScenes = new List<string>();
 
-                _p1 = new Vector3(-61.2000008f, -169.089996f, 61.7400017f);
+                _p1 = new Vector3(-61.2000008f, -168.089996f, 61.7400017f);
                 _p2 = new Vector3(67.9000015f, -150.399994f, 61.7400017f);
 
                 var shit = S.Loader._map.Keys;
