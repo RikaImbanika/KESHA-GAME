@@ -9,6 +9,8 @@ public class SystemOfLaserSystems : MonoBehaviour
 {
     public int _count;
     public string _typeFamily;
+    public bool _dontNeedPaintingPlacer1;
+    public bool _dontNeedPaintingPlacer2;
     private int _actualCount;
     private string _id;
     private string _sceneName;
@@ -35,14 +37,21 @@ public class SystemOfLaserSystems : MonoBehaviour
                 while (S.SM == null)
                     yield return new WaitForSeconds(0.201f);
 
+                while (!S.Loader.Roots.ContainsKey(_sceneName))
+                    yield return new WaitForSeconds(0.11f);
+
                 var a = S.SM.LoadInt(S.ID(_id, "actualCount"));
                 if (a != null)
                 {
                     _actualCount = a.Value;
                     _mask = S.SM.LoadListBool(S.ID(_id, "mask"));
+                    CheckExistenZ();
                 }
                 else
+                {
                     Initiate();
+                    CheckExistenZ();
+                }
             }
 
             void Initiate()
@@ -66,6 +75,56 @@ public class SystemOfLaserSystems : MonoBehaviour
                         _mask[i] = false;
 
                 S.SM.Save(S.ID(_id, "mask"), _mask);
+            }
+
+            void CheckExistenZ()
+            {
+                bool exists = false;
+
+                for (int i = 0; i < _mask.Count; i++)
+                    if (_mask[i])
+                    {
+                        exists = true;
+                        break;
+                    }
+
+                if (!exists)
+                    PlacePaintingsPlacers();
+            }
+
+            void PlacePaintingsPlacers()
+            {
+                Vector3 r = transform.right;
+
+                if (!_dontNeedPaintingPlacer1)
+                    PlaceOnePaintingPlacer(r, "a");
+                if (!_dontNeedPaintingPlacer2)
+                    PlaceOnePaintingPlacer(-r, "b");
+
+                void PlaceOnePaintingPlacer(Vector3 dir, string str)
+                {
+                    Vector3 p = GetHitPoint(transform.position, dir) - dir * 0.1f;
+                    GameObject paintingPlacerObj = new GameObject("The Painting Placer");
+                    paintingPlacerObj.transform.position = p;
+                    paintingPlacerObj.transform.rotation = Quaternion.LookRotation(-dir);
+                    paintingPlacerObj.transform.SetParent(S.Loader.Roots[_sceneName], true);
+                    PaintingPlacer paintingPlacer = paintingPlacerObj.AddComponent<PaintingPlacer>();
+                    paintingPlacer._id = S.ID(_id, $"PP {str}");
+                    paintingPlacer.Instantiate();
+                    //Debug.LogError("PLACED.");
+                }
+            }
+
+            Vector3 GetHitPoint(Vector3 from, Vector3 direction)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(from, direction, out hit))
+                {
+                    float len = (hit.point - from).magnitude;
+                    return hit.point;
+                }
+                else
+                 return transform.position + direction;
             }
 
             void PlaceLasersSystems()
@@ -142,9 +201,14 @@ public class SystemOfLaserSystems : MonoBehaviour
         transform.localScale = new Vector3(1, 1, transform.localScale.z);
 
         Gizmos.color = Color.red;
-        Quaternion rotation = Quaternion.LookRotation(transform.forward);
-        Vector3 right = rotation * Vector3.right * 9f;
-        Vector3 up = rotation * Vector3.up * 6f;
+
+        Vector3 r = transform.right;
+        Vector3 r9 = r * 9f;
+        Vector3 r2 = r * 2f;
+        Vector3 r4 = r2 * 2f;
+        Vector3 u = transform.up;
+        Vector3 u6 = u * 6f;
+        Vector3 f = transform.forward;
 
         if (_count < 2)
             _count = 2;
@@ -155,9 +219,20 @@ public class SystemOfLaserSystems : MonoBehaviour
         for (int i = 0; i < _count; i++)
         {
             Vector3 d = start + step * i;
-            Gizmos.DrawLine(d + up, d - up);
-            Gizmos.DrawLine(d + right, d - right);
+            Gizmos.DrawLine(d + u6, d - u6);
+            Gizmos.DrawLine(d + r9, d - r9);
             Gizmos.DrawWireSphere(transform.position, 1f);
+        }
+
+        if (!_dontNeedPaintingPlacer1)
+        {
+            Gizmos.DrawLine(transform.position + r4, transform.position + r2 - f);
+            Gizmos.DrawLine(transform.position + r4, transform.position + r2 + f);
+        }
+        if (!_dontNeedPaintingPlacer2)
+        {
+            Gizmos.DrawLine(transform.position - r4, transform.position - r2 - f);
+            Gizmos.DrawLine(transform.position - r4, transform.position - r2 + f);
         }
     }
 #endif

@@ -11,11 +11,20 @@ public class AmbienceManager : MonoBehaviour
     public float _toiletAmbienceDuration;
 
 
+    public string _cricketsPhase;
+    public string _cricketsSwapPhase;
+    public float _cricketsTime;
+    public float _cricketsAmbienceDuration;
+
     void Start()
     {
         _toiletPhase = "silence";
         _toiletSwapPhase = "1";
         _toiletAmbienceDuration = 113.5f; //Do not forget
+
+        _cricketsPhase = "silence";
+        _cricketsSwapPhase = "1";
+        _cricketsAmbienceDuration = 50f; //Do not forget
 
         S.AmbienceManager = this;
     }

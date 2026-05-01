@@ -17,7 +17,7 @@ public class Portal : MonoBehaviour
     private Material _material;
     private RenderTexture _secondCameraRenTex;
     public float _w = 4f;
-    public float _h = 7f;
+    public float _h = 8f;
     public float _f = 0.15f;
     public MeshFilter _meshFilter;
     public MeshRenderer _meshRenderer;

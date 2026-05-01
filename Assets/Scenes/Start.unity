@@ -5824,7 +5824,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'v 1.11.9
+  m_text: 'v 0.0.0
 
 '
   m_isRightToLeft: 0
@@ -11232,6 +11232,7 @@ GameObject:
   - component: {fileID: 895244298}
   - component: {fileID: 895244299}
   - component: {fileID: 895244300}
+  - component: {fileID: 895244301}
   m_Layer: 0
   m_Name: AllFather
   m_TagString: AllFather
@@ -11657,6 +11658,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _names: []
+--- !u!114 &895244301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895244273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c26ef0893f954604a91624bbf6fe354f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _version: 1.11.10
+  _tmpOnStartPanel: {fileID: 404712816}
+  _tmpInInventory: {fileID: 1186545224}
 --- !u!1 &916329583
 GameObject:
   m_ObjectHideFlags: 0
@@ -14222,7 +14238,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Kesha Game, v1.11.9, Made by Rika Imbanika
+  m_text: Kesha Game, v0.0.0, Made by Rika Imbanika
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ac28d4880a3fb444e861a8be93987e17, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: ac28d4880a3fb444e861a8be93987e17, type: 2}

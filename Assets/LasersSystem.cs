@@ -9,7 +9,9 @@ public class LasersSystem : MonoBehaviour
 {
     public string _typeFamily;
     private Vector3 _forward;
-    private string _actualType;
+    public string _actualType;
+    public bool _needPaintingPlacer1;
+    public bool _needPaintingPlacer2;
     private float _period;
     private Vector3 _leftDir;
     private Vector3 _downDir;
@@ -55,6 +57,7 @@ public class LasersSystem : MonoBehaviour
 
                     if (_actualType == "skipped")
                     {
+                        PlacePaintingsPlacers();
                         Destroy(gameObject);
                     }
                     else if (_actualType == "singleVertical")
@@ -213,6 +216,41 @@ public class LasersSystem : MonoBehaviour
                 }
             }
 
+            void PlacePaintingsPlacers()
+            {
+                Vector3 r = transform.right;
+
+                if (_needPaintingPlacer1)
+                    PlaceOnePaintingPlacer(r, "a");
+                else if (_needPaintingPlacer2)
+                    PlaceOnePaintingPlacer(-r, "b");
+
+                void PlaceOnePaintingPlacer(Vector3 dir, string str)
+                {
+                    Vector3 p = GetHitPoint(transform.position, dir) - dir * 0.1f;
+                    GameObject paintingPlacerObj = new GameObject("The Painting Placer");
+                    paintingPlacerObj.transform.position = p;
+                    paintingPlacerObj.transform.rotation = Quaternion.LookRotation(-dir);
+                    paintingPlacerObj.transform.SetParent(S.Loader.Roots[_sceneName], true);
+                    PaintingPlacer paintingPlacer = paintingPlacerObj.AddComponent<PaintingPlacer>();
+                    paintingPlacer._id = S.ID(_id, $"PP {str}");
+                    paintingPlacer.Instantiate();
+                    //Debug.LogError("PLACED.");
+                }
+            }
+
+            Vector3 GetHitPoint(Vector3 from, Vector3 direction)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(from, direction, out hit))
+                {
+                    float len = (hit.point - from).magnitude;
+                    return hit.point;
+                }
+                else
+                    return transform.position + direction;
+            }
+
             IEnumerator GetActualType()
             {
                 while (S.SM == null)
@@ -342,13 +380,30 @@ public class LasersSystem : MonoBehaviour
         transform.localScale = Vector3.one * 1f;
 
         Gizmos.color = Color.red;
-        Quaternion rotation = Quaternion.LookRotation(transform.forward);
-        Vector3 right = rotation * Vector3.right * 9f;
-        Vector3 up = rotation * Vector3.up * 6f;
+      
+        Vector3 r = transform.right;
+        Vector3 r9 = r * 9f;
+        Vector3 r2 = r * 2f;
+        Vector3 r4 = r2 * 2f;
+        Vector3 u = transform.up;
+        Vector3 u6 = u * 6f;
+        Vector3 u2 = u * 2f;
+        Vector3 f = transform.forward;
 
-        Gizmos.DrawLine(transform.position + up, transform.position - up);
-        Gizmos.DrawLine(transform.position + right, transform.position - right);
+        Gizmos.DrawLine(transform.position + u6, transform.position - u6);
+        Gizmos.DrawLine(transform.position + r9, transform.position - r9);
         Gizmos.DrawWireSphere(transform.position, 1f);
+
+        if (_needPaintingPlacer1)
+        {
+            Gizmos.DrawLine(transform.position + r4, transform.position + r2 - f);
+            Gizmos.DrawLine(transform.position + r4, transform.position + r2 + f);
+        }
+        if (_needPaintingPlacer2)
+        {
+            Gizmos.DrawLine(transform.position - r4 ,transform.position - r2 - f);
+            Gizmos.DrawLine(transform.position - r4, transform.position - r2 + f);
+        }
     }
     #endif
 }

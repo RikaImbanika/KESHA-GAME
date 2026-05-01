@@ -7,16 +7,23 @@ using UnityEngine.SceneManagement;
 public class PaintingPlacer : MonoBehaviour
 {
     private string _sceneName;
-    private string _id;
+    public string _id;
     private string _pidid;
     private int _paintingId;
     private int _layerMask;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
 
-
     void Start()
     {
+        Instantiate();
+    }
+
+    public void Instantiate()
+    {
+        if (_layerMask != 0)
+            return;
+
         _layerMask = 1 << LayerMask.NameToLayer("Static") |
                      1 << LayerMask.NameToLayer("Default");
 
@@ -36,16 +43,16 @@ public class PaintingPlacer : MonoBehaviour
             _paintingId = S.SM.LoadInt(_pidid) ?? -1;
 
             if (_paintingId == -1)
-                DefineActualId();
+                DefineAndPlace();
             else if (_paintingId == -2)
                 Destroy(gameObject);
             else
                 Place();
         }
 
-        void DefineActualId()
+        void DefineAndPlace()
         {
-            int number = S.RND.Next(5);
+            int number = S.RND.Next(1);
             if (number > 0)
             {
                 S.SM.Save(_pidid, -2);
@@ -65,20 +72,26 @@ public class PaintingPlacer : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.forward, out hit, 5f, _layerMask))
         {
-            GameObject painting = GameObject.Instantiate(S.SquarePainting, hit.point, transform.rotation, S.Loader.Roots[_sceneName]);
-            GameObject child = painting.transform.GetChild(0).gameObject;
+            Vector3 point1 = hit.point + transform.forward * 0.1f;
 
-            Material mat = new Material(Shader.Find("Unlit/Texture"));
-            mat.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+            RaycastHit hit2;
+            if (Physics.Raycast(point1, -transform.up, out hit2, 25f, _layerMask))
+            {
+                Vector3 point2 = new Vector3(hit.point.x, hit2.point.y + 7f, hit.point.z);
 
-            string name = S.Paintings._names[_paintingId];
+                GameObject painting = GameObject.Instantiate(S.SquarePainting, point2, transform.rotation, S.Loader.Roots[_sceneName]);
+                GameObject child = painting.transform.GetChild(0).gameObject;
 
-            Debug.LogError($"Texture name = {name}");
-            mat.mainTexture = Resources.Load<Texture2D>($"Textures/Paintings/{name}");
+                Material mat = new Material(Shader.Find("Unlit/Texture"));
+                mat.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
 
-            child.GetComponent<MeshRenderer>().material = mat;
+                string name = S.Paintings._names[_paintingId];
 
-            Debug.LogError($"Texture done");
+                Debug.LogError($"Texture name = {name}");
+                mat.mainTexture = Resources.Load<Texture2D>($"Textures/Paintings/{name}");
+
+                child.GetComponent<MeshRenderer>().material = mat;
+            }
         }
 
         Destroy(gameObject);
@@ -87,7 +100,9 @@ public class PaintingPlacer : MonoBehaviour
     void GetId()
     {
         _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-        _id = S.ID(_sceneName, S.ID(gameObject));
+        
+        if (string.IsNullOrEmpty(_id))
+            _id = S.ID(_sceneName, S.ID(gameObject));
     }
 
 #if UNITY_EDITOR
@@ -111,7 +126,7 @@ public class PaintingPlacer : MonoBehaviour
     {
         EnsureMeshFilter();
 
-        transform.localScale = new Vector3(3, 3, 0.1f);
+        transform.localScale = new Vector3(4, 4, 0.1f);
 
         Vector3 c = transform.position;
         Vector3 u = transform.up;
@@ -121,7 +136,10 @@ public class PaintingPlacer : MonoBehaviour
         Vector3 r2 = r * 2;
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(c, c - transform.forward);
+
+        Gizmos.DrawLine(c + transform.forward, c + transform.forward * 6);
+        Gizmos.DrawLine(c + transform.forward, c + transform.forward * 3 + transform.right);
+        Gizmos.DrawLine(c + transform.forward, c + transform.forward * 3 - transform.right);
 
         Gizmos.DrawLine(c + u2 + r2, c - u2 - r2);
         Gizmos.DrawLine(c + u2 - r2, c - u2 + r2);
