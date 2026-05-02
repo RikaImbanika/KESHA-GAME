@@ -31,12 +31,20 @@ public class Item : MonoBehaviour
 
     public void Throw(Vector3 position, Vector3 direction, float power, Vector3 playerVelocity, Quaternion rotation)
     {
-        string prefabName = S.II.Get(_name)._prefabName;
-        GameObject prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
-        GameObject obj = Instantiate(prefab, position + direction, new Quaternion(0, 0, 0, 0));
+        ItemInfo ii = S.II.Get(_name);
+        string prefabName = ii._prefabName;
+        GameObject prefab = Prefabs.Get(prefabName);
+        Quaternion rot = Quaternion.identity * Quaternion.Euler(ii._throwRotX, ii._throwRotY, ii._throwRotZ);
+
+        if (!S.Loader.Roots.ContainsKey(S.PS._currentSceneName))
+            return;
+
+        Transform root = S.Loader.Roots[S.PS._currentSceneName];
+        GameObject obj = Instantiate(prefab, position + direction, rot, root);
         ItemP itemP = obj.GetComponent<ItemP>();
         itemP._count = _count;
-        obj.transform.rotation = rotation * Quaternion.Euler(S.II.Get(itemP._name)._throwRotX, S.II.Get(itemP._name)._throwRotY, S.II.Get(itemP._name)._throwRotZ);
+        itemP._forLoader = true; //Seriously, why there wasn't this stroke for SO LONG???
+        //And there wasn't setting of scene... Just all to start...
         Rigidbody rb = obj.GetComponent<Rigidbody>();
         rb.velocity = playerVelocity;
         rb.AddForce(direction * power);

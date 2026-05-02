@@ -238,6 +238,9 @@ public class Loader : MonoBehaviour
 
     public void PleaseLoadScene(string sceneName)
     {
+        if (sceneName == "Start")
+            return;
+
         if (!_scenesToLoad.Contains(sceneName))
             _scenesToLoad.Add(sceneName);
         else
@@ -272,33 +275,9 @@ public class Loader : MonoBehaviour
 
         IEnumerator ALA()
         {
-            string scene = _scenesToLoad[0];
+            string _sceneName = _scenesToLoad[0];
 
             float elapsed = 0;
-
-            while (!SceneRoots.ContainsKey(scene))
-            {
-                elapsed += 0.1f;
-
-                if (elapsed > 20f)
-                    yield break;
-
-                yield return new WaitForSeconds(0.1f);
-            }
-
-            Transform root = SceneRoots[scene];
-
-            elapsed = 0;
-
-            while (root == null)
-            {
-                elapsed += 0.1f;
-
-                if (elapsed > 20f)
-                    yield break;
-
-                yield return new WaitForSeconds(0.1f);
-            }
 
             while (S.AllFather == null)
             {
@@ -306,27 +285,55 @@ public class Loader : MonoBehaviour
                 Debug.Log("Loader waiting for S.AllFater");
             }
 
-            while (!S.AllFather.SceneCurrentlyLoaded(scene))
-                yield return new WaitForSeconds(0.05f);
+            while (!SceneRoots.ContainsKey(_sceneName))
+            {
+                elapsed += 0.1f;
 
-            List<string> ids = S.SM.LoadListString(S.ID(scene, "ids"));
+                if (elapsed > 20f)
+                    yield break;
+
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            while (SceneRoots[_sceneName] == null)
+            {
+                //Null left from previous unloaded root
+
+                elapsed += 0.1f;
+
+                if (elapsed > 20f)
+                    yield break;
+
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            Transform root = SceneRoots[_sceneName];
+
+            while (!S.AllFather.SceneCurrentlyLoaded(_sceneName))
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            List<string> ids = S.SM.LoadListString(S.ID(_sceneName, "ids"));
             if (ids != null)
                 for (int i = 0; i < ids.Count; i++)
                 {
-                    if (S.SM.LoadBool(S.ID(ids[i], "unnatural")) ?? false)
+                    string name = S.SM.LoadString(S.ID(ids[i], "name"));
+                    try
                     {
-                        string name = S.SM.LoadString(S.ID(ids[i], "name"));
-                        try
-                        {
-                            GameObject prefab = Prefabs.Get(name);
-                            GameObject obj = Instantiate(prefab, S.SM.LoadVector3(S.ID(ids[i], "position")) ?? Vector3.zero, S.SM.LoadQuaternion(S.ID(ids[i], "rotation")) ?? Quaternion.identity, root);
-                            ItemP itemP = obj.GetComponent<ItemP>();
-                            itemP._unnatural = true;
-                        }
-                        catch (NullReferenceException ex)
-                        {
-                            Debug.LogError($"NULL IS HERE! ({name}) ({ex.Message})");
-                        }
+                        GameObject prefab = Prefabs.Get(S.II.Get(name)._prefabName);
+                        Vector3 pos = S.SM.LoadVector3(S.ID(ids[i], "position")) ?? Vector3.zero;
+                        Quaternion rot = S.SM.LoadQuaternion(S.ID(ids[i], "rotation")) ?? Quaternion.identity;
+                        GameObject obj = Instantiate(prefab, root);                        
+                        ItemP itemP = obj.GetComponent<ItemP>();
+                        itemP._id = ids[i];
+                        obj.transform.position = pos;
+                        obj.transform.rotation = rot;
+                        itemP._forLoader = true;
+                    }
+                    catch (NullReferenceException ex)
+                    {
+                        Debug.LogError($"NULL IS HERE! ({name}) ({ex.Message})");
                     }
                 }
 

@@ -80,8 +80,8 @@ public static class S : object
 	private static float _portalToPlayerDistance;
 	private static float _fakePlayerLastUpdated;
 	private static Enemies _enemies;
-	private static GameObject _zombie;
-	private static GameObject _bakalavr;
+	private static GameObject _zombella;
+	private static GameObject _bakalavrus;
 	private static GameObject _musculus;
 	private static GameObject _ghost;
 	private static GameObject _spider;
@@ -100,6 +100,19 @@ public static class S : object
 	private static Paintings _paintings;
 	private static GameObject _squarePainting;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
+	public static Granny _granny;
+
+	public static Granny Granny
+	{
+		get
+		{
+			return _granny;
+		}
+		set
+		{
+			_granny = value;
+		}
+	}
 
 	public static GameObject SquarePainting
 	{
@@ -318,27 +331,27 @@ public static class S : object
 		}
 	}
 
-	public static GameObject Zombie
+	public static GameObject Zombella
 	{
 		get
 		{
-			return _zombie;
+			return _zombella;
 		}
 		set
 		{
-			_zombie = value;
+			_zombella = value;
 		}
 	}
 
-	public static GameObject Bakalavr
+	public static GameObject Bakalavrus
 	{
 		get
 		{
-			return _bakalavr;
+			return _bakalavrus;
 		}
 		set
 		{
-			_bakalavr = value;
+			_bakalavrus = value;
 		}
 	}
 

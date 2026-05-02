@@ -12,7 +12,7 @@ public class FirstZombie : MonoBehaviour
             Destroy(this.gameObject);
         else
         {
-            GameObject zombie = GameObject.Instantiate(Prefabs.Get("FirstZombie"), transform.position, transform.rotation, transform);
+            GameObject zombie = GameObject.Instantiate(S.Zombella, transform.position, transform.rotation, transform);
             Zombie zomb = zombie.GetComponent<Zombie>();
             zomb._health = 500f;
             zomb._maxHealth = 500f;

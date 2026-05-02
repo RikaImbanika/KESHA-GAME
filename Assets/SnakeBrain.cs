@@ -250,22 +250,8 @@ public class SnakeBrain : MonoBehaviour
         else
             return -direction;
     }
-    
-    void PreCalculateAreas(Vector2[] quad)
-    {
-        //For optimisation
-        float area1 = TriangleArea(quad[0], quad[1], quad[2]);
-        float area2 = TriangleArea(quad[0], quad[2], quad[3]);
-        float total = area1 + area2;
-        _areaDivideTotalBuffered = area1 / total;
 
-        float TriangleArea(Vector2 p1, Vector2 p2, Vector2 p3)
-        {
-            return Mathf.Abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)) * 0.5f;
-        }
-    }
-
-    Vector2 GetRandomPointInQuad(Vector2[] quad)
+    public Vector2 GetRandomPointInQuad(Vector2[] quad)
     {
         if ((float)S.RND.NextDouble() < _areaDivideTotalBuffered)
             return RandomPointInTriangle(quad[0], quad[1], quad[2]);
@@ -282,6 +268,20 @@ public class SnakeBrain : MonoBehaviour
                 r2 = 1f - r2;
             }
             return p1 + r1 * (p2 - p1) + r2 * (p3 - p1);
+        }
+    }
+
+    void PreCalculateAreas(Vector2[] quad)
+    {
+        //For optimisation
+        float area1 = TriangleArea(quad[0], quad[1], quad[2]);
+        float area2 = TriangleArea(quad[0], quad[2], quad[3]);
+        float total = area1 + area2;
+        _areaDivideTotalBuffered = area1 / total;
+
+        float TriangleArea(Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            return Mathf.Abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)) * 0.5f;
         }
     }
 

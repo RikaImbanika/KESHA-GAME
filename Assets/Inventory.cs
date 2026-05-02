@@ -303,7 +303,18 @@ public class Inventory : MonoBehaviour
 				{
 					clickable = true;
 
-					_objectNameShowen = "Granny";
+					_objectNameShowen = "Trader";
+
+					Granny granny = hit.collider.gameObject.GetComponent<Granny>();
+
+					if (granny != null)
+					{
+						if (granny._phase != "Fleeing")
+							_objectNameShowen = "Granny";
+						else
+							_objectNameShowen = "Granny is fleeing";
+					}
+
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					showAnyName = true;
 
@@ -799,7 +810,20 @@ public class Inventory : MonoBehaviour
 				Trader trader = hit.collider.gameObject.GetComponent<Trader>();
 				if (trader != null)
 				{
-					trader.OpenMarket();
+					Granny granny = hit.collider.gameObject.GetComponent<Granny>();
+
+					if (granny != null)
+					{
+						if (granny._phase != "Fleeing")
+							trader.OpenMarket();
+						else
+							S.AudioManager.Play("Wrong");
+					}
+					else
+					{
+						trader.OpenMarket();
+					}
+
 					return;
 				}
 

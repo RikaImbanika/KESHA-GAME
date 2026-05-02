@@ -43,6 +43,7 @@ public class FirstZombie2 : MonoBehaviour
                 _zombie._followPlayer = false;
                 S.MM.PlayerKillsFirstZombie();
                 S.SM.Save("firstZombieIsDead", true);
+                S.Granny.Calming();
                 Debug.Log("Dead in hall");
             }
             
@@ -52,6 +53,7 @@ public class FirstZombie2 : MonoBehaviour
                 _zombie._followPlayer = true;
                 S.MM.PlayerMeetFirstZombie();
                 Debug.Log("Meet");
+                //Not ideal but work so okay
             }
             else if (_playerInHall && !playerInHall)
             {
@@ -80,12 +82,14 @@ public class FirstZombie2 : MonoBehaviour
             S.MM.FirstZombieEntersHall(); //Yes.
             Summon();
             _zombie._followPlayer = true;
+
+            S.Granny.StartFleeing();
         }
     }
 
     public void Summon()
     {
-        GameObject zombie = GameObject.Instantiate(Prefabs.Get("FirstZombie"), transform.position, transform.rotation, transform);
+        GameObject zombie = GameObject.Instantiate(Prefabs.Get("Zombella"), transform.position, transform.rotation, transform);
         _zombie = zombie.GetComponent<Zombie>();
         _zombie._health = 500f;
         _zombie._maxHealth = 500f;

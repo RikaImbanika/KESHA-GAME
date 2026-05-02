@@ -7,10 +7,22 @@ public class SceneRoot : MonoBehaviour
 {
     void Start()
     {
-        string sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-        if (!S.Loader.SceneRoots.ContainsKey(sceneName))
-            S.Loader.SceneRoots.Add(sceneName, transform);
-        else
-            S.Loader.SceneRoots[sceneName] = transform;
+        string sceneName = gameObject.scene.name;
+
+        StartCoroutine(LateStart());
+
+        IEnumerator LateStart()
+        {
+            while (S.Loader == null)
+                yield return new WaitForSeconds(0.1f);
+
+            while (S.Loader.SceneRoots == null)
+                yield return new WaitForSeconds(0.1f);
+
+            if (!S.Loader.SceneRoots.ContainsKey(sceneName))
+                S.Loader.SceneRoots.Add(sceneName, transform);
+            else
+                S.Loader.SceneRoots[sceneName] = transform;
+        }
     }
 }

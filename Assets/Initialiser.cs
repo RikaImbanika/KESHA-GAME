@@ -151,8 +151,8 @@ public class Initialiser : MonoBehaviour
         for (int i = 1; i <= 4; i++)
             S.Snakes.Add(Prefabs.Get($"SNAKIE {i}"));
 
-        S.Zombie = Prefabs.Get("FirstZombie");
-        S.Bakalavr = Prefabs.Get("Bakalavr");
+        S.Zombella = Prefabs.Get("Zombella");
+        S.Bakalavrus = Prefabs.Get("Bakalavrus");
         S.Musculus = Prefabs.Get("Musculus");
         S.Ghost = Prefabs.Get("Ghost");
         S.Spider = Prefabs.Get("Spider");

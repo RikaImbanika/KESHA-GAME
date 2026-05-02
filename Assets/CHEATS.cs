@@ -4,8 +4,8 @@ using UnityEngine;
 public class CHEATS : MonoBehaviour
 {
     bool _cheats;
-    GameObject _e;
-    GameObject _d;
+    public GameObject _e;
+    public GameObject _d;
     public float _message;
 
     public void Remember(string sceneName)
@@ -26,17 +26,7 @@ public class CHEATS : MonoBehaviour
 
         IEnumerator Start0()
         {
-            while (S.Canvas == null)
-            {
-                Debug.Log("CHEATS waiting for S.Canvas");
-                yield return new WaitForSeconds(0.1f);
-            }
-
-            Transform canvasTransform = S.Canvas.transform;
-            Transform e = canvasTransform.Find("Cheats enabled 0.0");
-            _e = e.gameObject;
-            Transform d = canvasTransform.Find("Cheats disabled 0.0");
-            _d = d.gameObject;
+            yield return null;
         }
     }
 
@@ -46,7 +36,7 @@ public class CHEATS : MonoBehaviour
             return;
 
         if (Input.GetKey(KeyCode.Y) && Input.GetKey(KeyCode.T))
-            transform.position += new Vector3(0, 8, 0);
+            S.Ph.transform.position += new Vector3(0, 8, 0);
 
         if (Input.GetKeyDown(KeyCode.U) && Input.GetKey(KeyCode.O) || Input.GetKeyDown(KeyCode.O) && Input.GetKey(KeyCode.U))
         {
@@ -157,13 +147,17 @@ public class CHEATS : MonoBehaviour
 
     private IEnumerator TakeItemWithDelay(string itemName)
     {
-        S.Inventory.Hack(GameObject.Find(itemName));
-        yield return new WaitForSeconds(0.15f);
+        GameObject go = GameObject.Find(itemName);
+        if (go != null)
+        {
+            S.Inventory.Hack(go);
+            yield return new WaitForSeconds(0.10f);
+        }
     }
 
     private IEnumerator TakeItemWithDelay2(string itemName, int count)
     {
         S.Inventory.Take(itemName, count);
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.10f);
     }
 }

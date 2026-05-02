@@ -78,7 +78,6 @@ public class Trader : MonoBehaviour
 				rectTransformSell.sizeDelta = new Vector2(screenWidth * 0.05f, screenHeight * 0.09f);
 				rectTransformSell.anchoredPosition = new Vector2(-screenWidth * 0.06f, 0);
 
-
 				GameObject buyObject = new GameObject("Buy");
 				Image buyImage = buyObject.AddComponent<Image>();
 				var bsn = S.II.Get(_trades[i]._buyedItemName)._spriteName;
@@ -89,10 +88,6 @@ public class Trader : MonoBehaviour
 				RectTransform rectTransformBuy = buyObject.GetComponent<RectTransform>();
 				rectTransformBuy.sizeDelta = new Vector2(screenWidth * 0.05f, screenHeight * 0.09f);
 				rectTransformBuy.anchoredPosition = new Vector2(screenWidth * 0.06f, 0);
-
-
-
-
 
 				GameObject TOBuy = new GameObject("TextMeshProObject");
 				TextMeshProUGUI TMPBuy = TOBuy.AddComponent<TextMeshProUGUI>();
@@ -176,14 +171,17 @@ public class Trader : MonoBehaviour
 
 	public void CloseMarket()
 	{
-		_inventory._marketOpened = false;
-		Cursor.lockState = CursorLockMode.Locked;
-		Cursor.visible = false;
-
-		while (_panels.Count > 0)
+		if (_inventory._marketOpened)
 		{
-			Destroy(_panels[0]);
-			_panels.RemoveAt(0);
+			_inventory._marketOpened = false;
+			Cursor.lockState = CursorLockMode.Locked;
+			Cursor.visible = false;
+
+			while (_panels.Count > 0)
+			{
+				Destroy(_panels[0]);
+				_panels.RemoveAt(0);
+			}
 		}
 	}
 }

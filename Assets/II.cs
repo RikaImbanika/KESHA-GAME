@@ -16,14 +16,14 @@ public class II : MonoBehaviour
 
         _base.Add("PurpleBall", new ItemInfo(
             spriteName: "CoinTex",
-            prefabName: "Balls/PurpleBall 0",
+            prefabName: "Balls/ItemBalls/PurpleBall",
             visibleName: "Purple ball",
             throwable: true
             ));
 
         _base.Add("BlueBall", new ItemInfo(
             spriteName: "CoinTex",
-            prefabName: "BlueBall",
+            prefabName: "Balls/ItemBalls/BlueBall",
             visibleName: "Blue ball",
             throwable: true
             ));

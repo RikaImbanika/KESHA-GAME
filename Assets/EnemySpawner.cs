@@ -128,9 +128,9 @@ public class EnemySpawner : MonoBehaviour
         GameObject obj;
 
         if (_type == "Zombie")
-            obj = Instantiate(S.Zombie, transform.position, transform.rotation, transform);
+            obj = Instantiate(S.Zombella, transform.position, transform.rotation, transform);
         else if (_type == "Bakalavr")
-            obj = Instantiate(S.Bakalavr, transform.position, transform.rotation, transform);
+            obj = Instantiate(S.Bakalavrus, transform.position, transform.rotation, transform);
         else if (_type == "Musculus")
             obj = Instantiate(S.Musculus, transform.position, transform.rotation, transform);
         else if (_type == "Ghost")

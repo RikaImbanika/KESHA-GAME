@@ -387,7 +387,6 @@ public class LasersSystem : MonoBehaviour
         Vector3 r4 = r2 * 2f;
         Vector3 u = transform.up;
         Vector3 u6 = u * 6f;
-        Vector3 u2 = u * 2f;
         Vector3 f = transform.forward;
 
         Gizmos.DrawLine(transform.position + u6, transform.position - u6);

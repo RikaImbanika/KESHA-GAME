@@ -24,14 +24,20 @@ public class FrerardHolder : MonoBehaviour
             GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.SceneRoots["Hall"]);
             obj.transform.localScale = transform.localScale;
             obj.transform.SetParent(transform, true);
-            
-            _placedItem = obj.GetComponent<ItemP>();
 
-            _fakeRotation = S.SM.LoadInt(S.ID(_id, "rot")) ?? 0;
-            int currentRotation = S.SM.LoadInt(S.ID(_id, "curRot")) ?? 0;
+            _placedItem = obj.GetComponent<ItemP>();
+            _placedItem._forLoader = false;
+
+            int currentRotation = S.SM.LoadInt(S.ID(_id, "realRot")) ?? 0;
 
             for (int i = 0; i < currentRotation; i++)
                 RotateReal(obj);
+
+            _fakeRotation = S.SM.LoadInt(S.ID(_id, "fakeRot")) ?? 0;
+
+            bool ok = _placedItem._name == _waitItem && _realRotation == 0;
+            _frerard.Set(_number, ok);
+            //SaveRotations();
         }
     }
 
@@ -93,6 +99,8 @@ public class FrerardHolder : MonoBehaviour
         S.Inventory.Remove(item._name, 1);
 
         S.AudioManager.Play("kill", 0.7f);
+
+        Debug.Log($"Frerard put, realRot: {_realRotation}, fakeRot: {_fakeRotation}");
     }
 
     void Interact()
@@ -116,6 +124,8 @@ public class FrerardHolder : MonoBehaviour
         Destroy(_placedItem.gameObject);
         SaveName("");
         _placedItem = null;
+
+        Debug.Log($"Frerard pick");
     }
 
     void ForcedShowName()
@@ -152,8 +162,8 @@ public class FrerardHolder : MonoBehaviour
     
     void SaveRotations()
     {
-        S.SM.Save(S.ID(_id, "rot"), _fakeRotation);
+        S.SM.Save(S.ID(_id, "fakeRot"), _fakeRotation);
         
-        S.SM.Save(S.ID(_id, "curRot"), _realRotation);
+        S.SM.Save(S.ID(_id, "realRot"), _realRotation);
     }
 }

@@ -7,9 +7,10 @@ public class ItemP : MonoBehaviour
     public string _id;
     public string _name;
     public int _count = 1;
-    public bool _unnatural;
-    public bool _locked;
-
+    public bool _forLoader;
+    //If item was in scene, scene will load it
+    //If item wasn't in scene it should be loaded by Loader
+    public bool _locked; //Means untakeable
     string _sceneName;
     public GameObject _obj;
 
@@ -28,29 +29,19 @@ public class ItemP : MonoBehaviour
             }
 
             bool hasNoId = string.IsNullOrWhiteSpace(_id);
-            Vector3 position = transform.position;
-
-            if (!hasNoId)
-            {
-                position = S.SM.LoadVector3(S.ID(_id, "position")) ?? transform.position;
-                hasNoId = position == transform.position;
-            }
 
             if (hasNoId)
                 _id = $"{transform.position.x}{transform.position.y}{transform.position.z}";
 
-            _name = S.SM.LoadString(S.ID(_id, "name")) ?? _name;
-
+            Vector3 position = S.SM.LoadVector3(S.ID(_id, "position")) ?? transform.position;
             Quaternion rotation = S.SM.LoadQuaternion(S.ID(_id, "rotation")) ?? transform.rotation;
 
-            _unnatural = S.SM.LoadBool(S.ID(_id, "unnatural")) ?? _unnatural;
-            ////Need or not?
-
-            if (_unnatural)
+            if (_forLoader)
             {
-                transform.position = position;
-                transform.rotation = rotation;
+                //transform.position = position;
+                //transform.rotation = rotation;
                 _count = S.SM.LoadInt(S.ID(_id, "count")) ?? _count;
+                _name = S.SM.LoadString(S.ID(_id, "name")) ?? _name;
             }
             else
             {
@@ -62,18 +53,20 @@ public class ItemP : MonoBehaviour
                     transform.rotation = rotation;
                 }
             }
-            StartCoroutine(Saver(UnityEngine.Random.Range(9f, 11f)));
+            StartCoroutine(Saver(UnityEngine.Random.Range(5f, 6f)));
         }
     }
 
     IEnumerator Saver(float t)
     {
+        yield return new WaitForSeconds(2f);
+
         while (true)
         {
-            yield return new WaitForSeconds(t);
             if (transform.position.y < -700)
                 Destroy();
             Save();
+            yield return new WaitForSeconds(t);
         }
     }
 
@@ -89,23 +82,22 @@ public class ItemP : MonoBehaviour
         S.SM.Save(S.ID(_id, "position"), transform.position);
         S.SM.Save(S.ID(_id, "rotation"), transform.rotation);
         S.SM.Save(S.ID(_id, "scene"), _sceneName);
-        S.SM.Save(S.ID(_id, "unnatural"), _unnatural);
         S.SM.Save(S.ID(_id, "locked"), _locked);
 
-        S.SM.AddToList(S.ID(_sceneName, "ids"), _id);
+        if (_forLoader)
+            S.SM.AddToList(S.ID(_sceneName, "ids"), _id); //Seriously...
     }
 
     public void Destroy()
     {
         Debug.Log($"Destroyed {_name}");
-        if (_unnatural)
+        if (_forLoader)
         {
             S.SM.RemoveString(S.ID(_id, "name"));
             S.SM.RemoveInt(S.ID(_id, "count"));
             S.SM.RemoveVector3(S.ID(_id, "position"));
             S.SM.RemoveQuaternion(S.ID(_id, "rotation"));
             S.SM.RemoveString(S.ID(_id, "scene"));
-            S.SM.RemoveBool(S.ID(_id, "unnatural"));
             S.SM.RemoveBool(S.ID(_id, "locked"));
 
             S.SM.RemoveFromList(S.ID(_sceneName, "ids"), _id);
@@ -117,7 +109,6 @@ public class ItemP : MonoBehaviour
             S.SM.RemoveVector3(S.ID(_id, "position"));
             S.SM.RemoveQuaternion(S.ID(_id, "rotation"));
             S.SM.RemoveString(S.ID(_id, "scene"));
-            S.SM.RemoveBool(S.ID(_id, "unnatural"));
             S.SM.RemoveBool(S.ID(_id, "locked"));
 
             S.SM.Save(S.ID(_id, "destroyed"), true);
