@@ -398,9 +398,7 @@ public class Portal : MonoBehaviour
                 S.PS._prevCamPos = c;
                 S.PS._camPos = c;
 
-                S.Teleporter.ImportantStaticShitToDo(_secondSceneName);
-
-                S.Loader.GoTo(_sceneName, _secondSceneName);
+                S.Loader.GoTo(_secondSceneName, -1, Vector3.zero);
 
                 S.SDC.RequestCleanup();
 

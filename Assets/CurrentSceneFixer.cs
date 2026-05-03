@@ -17,7 +17,7 @@ public class CurrentSceneFixer : MonoBehaviour
     {
         _time += Time.deltaTime;
 
-        if (_time > 3f)
+        if (_time > 1f) //I will change to 0.5f later
         {
             _time = 0;
 
@@ -30,8 +30,7 @@ public class CurrentSceneFixer : MonoBehaviour
 
                 if (savedSceneName != sceneName)
                 {
-                    S.Teleporter.ImportantStaticShitToDo(sceneName);
-                    S.Loader.GoTo(savedSceneName, sceneName);
+                    S.Loader.GoTo(sceneName, -1, Vector3.zero);
                 }
             }
         }

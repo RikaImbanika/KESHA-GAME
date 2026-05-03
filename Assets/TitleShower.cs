@@ -94,6 +94,8 @@ public class TitleShower : MonoBehaviour
         {
             if (sn != "TL 0" && sn != "TL 1")
                 Show("Bathrooms");
+            else if (sn == "TL 1" && S.Camera.transform.position.x < -162)
+                Show("Bathrooms");
         }
 
         if (_timeLeft > 0)

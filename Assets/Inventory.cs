@@ -291,7 +291,7 @@ public class Inventory : MonoBehaviour
 				{
 					clickable = true;
 
-					_objectNameShowen = "Something";
+					_objectNameShowen = "Something strange";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					showAnyName = true;
 
@@ -417,8 +417,8 @@ public class Inventory : MonoBehaviour
 					goto render;
 				}
 
-				SceneName isSceneName = hit.collider.gameObject.GetComponent<SceneName>();
-				if (isSceneName != null)
+				SceneName sceneName = hit.collider.gameObject.GetComponent<SceneName>();
+				if (sceneName != null)
 				{
 					clickable = true;
 					goto render;
@@ -766,9 +766,12 @@ public class Inventory : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 7f, _layerMask))
 			{
-				SceneName isSceneName = hit.collider.gameObject.GetComponent<SceneName>();
-				if (isSceneName != null)
-					S.Teleporter.SoLetsFuckingTeleportSomewhereRightNow(isSceneName._sceneName);
+				SceneName sceneName = hit.collider.gameObject.GetComponent<SceneName>();
+				if (sceneName != null)
+				{
+					S.Loader.GoTo(sceneName._sceneName, 1, sceneName.transform.forward);
+					return;
+				}
 
 				Locker locker = hit.collider.gameObject.GetComponent<Locker>();
 				if (locker != null)
@@ -777,6 +780,8 @@ public class Inventory : MonoBehaviour
 						locker.Unlock(items[selectedId]._name);
 					else
 						S.AudioManager.Play("notEnoughCash", 1);
+
+					return;
 				}
 
 				FrerardHolder fh = hit.collider.gameObject.GetComponent<FrerardHolder>();
@@ -794,7 +799,7 @@ public class Inventory : MonoBehaviour
 						Debug.Log($"itemName = {items[selectedId]._name}");
 						if (items[selectedId]._name.Contains("Frerard"))
 						{
-							fh.Do(items[selectedId]);							
+							fh.Do(items[selectedId]);
 							Visualise(selectedId);
 							return;
 						}
@@ -805,6 +810,8 @@ public class Inventory : MonoBehaviour
 					{
 						fh.Do(null);
 					}
+
+					return;
 				}
 
 				Trader trader = hit.collider.gameObject.GetComponent<Trader>();

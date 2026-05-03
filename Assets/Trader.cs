@@ -11,7 +11,6 @@ public class Trader : MonoBehaviour
 	private Canvas _canvas;
 	private Inventory _inventory;
 	private List<GameObject> _panels;
-	private AudioManager _audioManager;
 
 	void Start()
 	{
@@ -37,12 +36,7 @@ public class Trader : MonoBehaviour
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 
-			if (_audioManager == null)
-			{
-				GameObject go = GameObject.FindGameObjectWithTag("AudioManager");
-				_audioManager = go.GetComponent<AudioManager>();
-			}
-			_audioManager.Play("inventory", 1);
+			S.AM.Play("inventory", 1);
 
 			float spacing = 0.09f;
 			int screenWidth = Screen.currentResolution.width;
@@ -179,9 +173,12 @@ public class Trader : MonoBehaviour
 
 			while (_panels.Count > 0)
 			{
-				Destroy(_panels[0]);
+				if (_panels[0] != null)
+					Destroy(_panels[0]);
 				_panels.RemoveAt(0);
 			}
+
+			S.AM.Play("inventory", 1);
 		}
 	}
 }

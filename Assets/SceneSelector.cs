@@ -47,16 +47,16 @@ public class SceneSelector : MonoBehaviour
                 S.PlayerCamScript.yRotation = _rememberedYRotation;
             }
 
-            while (S.Teleporter == null)
+            while (S.Loader == null)
             {
-                Debug.Log("Oh no, sorre bro, I am waiting for S.Teleporter.");
+                Debug.Log("Oh no, sorre bro, SceneSelector waiting for S.Loader.");
                 yield return new WaitForSeconds(0.05f);
             }
 
             if (_toStart)
-                S.Teleporter.ImportantStaticShitToDo("Start");
+                S.Loader.ImportantStaticShitToDo("Start");
             else
-                S.Teleporter.ImportantStaticShitToDo(_rememberedScene);
+                S.Loader.ImportantStaticShitToDo(_rememberedScene);
 
             if (_buttonsArePlaced || !_toStart)
                 yield break;

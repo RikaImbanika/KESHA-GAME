@@ -24,12 +24,20 @@ public class Fireball : MonoBehaviour
 
         if (_damage == 0)
             _damage = 5f;
-        
+
         _layerMask = 1 << LayerMask.NameToLayer("Player") |
                  1 << LayerMask.NameToLayer("Static") |
                  1 << LayerMask.NameToLayer("Enemies") |
                  1 << LayerMask.NameToLayer("Items") |
                  1 << LayerMask.NameToLayer("Default");
+
+        AudioSource shot = Instantiate(S.Shot);
+        shot.transform.position = transform.position;
+        shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+        float distance = (transform.position - S.Camera.transform.position).magnitude;
+        shot.volume = MathF.Min(0.2f, 50 / (distance * distance));
+        shot.Play();
+        Destroy(shot, 5);
     }
 
     void Update()
@@ -58,17 +66,17 @@ public class Fireball : MonoBehaviour
                         ps.Damage(_damage);
                     }
 
+                    AudioSource caboom = Instantiate(S.Caboom);
+                    caboom.transform.position = gameObject.transform.position;
+                    caboom.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+                    float distance = (transform.position - S.Camera.transform.position).magnitude;
+                    caboom.volume = MathF.Min(0.20f, 50 / (distance * distance));
+                    caboom.Play();
+                    Destroy(caboom, 5);
+
                     NoSpots ns = go.GetComponent<NoSpots>();
                     if (ns == null)
                     {
-                        AudioSource caboom = Instantiate(S.Caboom);
-                        caboom.transform.position = gameObject.transform.position;
-                        caboom.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-                        float distance = (transform.position - S.Camera.transform.position).magnitude;
-                        caboom.volume = MathF.Min(0.5f, 60 / (distance * distance));
-                        caboom.Play();
-                        Destroy(caboom, 5);
-
                         GameObject spot = Instantiate(S.Spot);
                         spot.transform.position = hit.point;
                         spot.transform.rotation = Quaternion.LookRotation(hit.normal);

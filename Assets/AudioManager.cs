@@ -167,7 +167,7 @@ public class AudioManager : MonoBehaviour
 				_kill.Play();
 				break;
 			case "damage":
-				pitch = 1.1f;
+				pitch = UnityEngine.Random.Range(1.1f, 1.175f);
 				_damage.pitch = pitch;
 				_damage.Play();
 				break;

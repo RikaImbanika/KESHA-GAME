@@ -11,11 +11,20 @@ public class PaintingPlacer : MonoBehaviour
     private string _pidid;
     private int _paintingId;
     private int _layerMask;
+    private Color _tint;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
 
     void Start()
     {
+        MeshRenderer mr = GetComponent<MeshRenderer>();
+        if (mr != null)
+            Destroy(mr);
+
+        MeshFilter mf = GetComponent<MeshFilter>();
+        if (mf != null)
+            Destroy(mf);
+
         Instantiate();
     }
 
@@ -39,20 +48,19 @@ public class PaintingPlacer : MonoBehaviour
                 yield return new WaitForSeconds(0.2f);
 
             _pidid = S.ID(_id, "pid");
-
             _paintingId = S.SM.LoadInt(_pidid) ?? -1;
 
             if (_paintingId == -1)
-                DefineAndPlace();
+                yield return DefineAndPlace();
             else if (_paintingId == -2)
                 Destroy(gameObject);
             else
-                Place();
+                yield return Place();
         }
 
-        void DefineAndPlace()
+        IEnumerator DefineAndPlace()
         {
-            int number = S.RND.Next(1);
+            int number = S.RND.Next(3);
             if (number > 0)
             {
                 S.SM.Save(_pidid, -2);
@@ -62,12 +70,12 @@ public class PaintingPlacer : MonoBehaviour
             {
                 _paintingId = S.RND.Next(S.Paintings._names.Count());
                 S.SM.Save(_pidid, _paintingId);
-                Place();
+                yield return Place();
             }
         }
     }
 
-    void Place()
+    IEnumerator Place()
     {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.forward, out hit, 5f, _layerMask))
@@ -77,16 +85,39 @@ public class PaintingPlacer : MonoBehaviour
             RaycastHit hit2;
             if (Physics.Raycast(point1, -transform.up, out hit2, 25f, _layerMask))
             {
+                Material mat;
+
+                if (_sceneName == "BR 7" || _sceneName == "BR 7R")
+                {
+                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
+                    mat.SetFloat("_Speed", 0.1667f);
+                }
+                else if (_sceneName == "BR 6" || _sceneName == "BR 6R")
+                {
+                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
+                    mat.SetFloat("_Speed", 0.08f);
+                }
+                else
+                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSide"));
+
+                yield return GetWallColor();
+
+                if (_tint == Color.magenta)
+                {
+                    ////////////////////////
+                    // This is bad but we just skip
+                    Destroy(gameObject);
+                    yield break;
+                }
+
+                mat.color = _tint;
+
                 Vector3 point2 = new Vector3(hit.point.x, hit2.point.y + 7f, hit.point.z);
 
                 GameObject painting = GameObject.Instantiate(S.SquarePainting, point2, transform.rotation, S.Loader.Roots[_sceneName]);
                 GameObject child = painting.transform.GetChild(0).gameObject;
 
-                Material mat = new Material(Shader.Find("Unlit/Texture"));
-                mat.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-
                 string name = S.Paintings._names[_paintingId];
-
                 Debug.LogError($"Texture name = {name}");
                 mat.mainTexture = Resources.Load<Texture2D>($"Textures/Paintings/{name}");
 
@@ -95,6 +126,92 @@ public class PaintingPlacer : MonoBehaviour
         }
 
         Destroy(gameObject);
+        yield return null;
+    }
+
+    IEnumerator GetWallColor()
+    {
+        Color[] colors = new Color[9];
+        Vector3 u = transform.up;
+        Vector3 r = transform.right;
+
+        Vector3[] points = new Vector3[]
+        {
+            transform.position,
+            transform.position + u + r,
+            transform.position + u - r,
+            transform.position - u + r,
+            transform.position - u - r,
+            transform.position + u,
+            transform.position - u,
+            transform.position + r,
+            transform.position - r
+        };
+
+        for (int i = 0; i < points.Length; i++)
+        {
+            yield return StartCoroutine(GetColorAtPointCoroutine(points[i], result => colors[i] = result));
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        IEnumerator GetColorAtPointCoroutine(Vector3 point, System.Action<Color> onDone)
+        {
+            Color captured = Color.cyan;
+            RaycastHit hit;
+            if (Physics.Raycast(point, -transform.forward, out hit, 25f, _layerMask))
+            {
+                int limit = 0;
+                while (limit < 4f)
+                {
+                    Color clr = S.AllFather.GetPixelColorAtHit(hit);
+                    if (clr != Color.magenta)
+                    {
+                        captured = clr;
+                        break;
+                    }
+                    yield return new WaitForSeconds(0.25f);
+                    limit++;
+                }
+            }
+            onDone(captured);
+        }
+
+        //_tint = AverageColor(colors);
+
+        // float luminance = _tint.grayscale;
+        // float targetLuminance = Mathf.Lerp(0.6f, 0.9f, luminance);
+        // Color brightTint = _tint * (targetLuminance / (luminance + 0.001f));
+        // _tint = brightTint;
+
+        _tint = colors[0];
+        for (int i = 1; i < colors.Length; i++)
+            if (colors[i].grayscale > _tint.grayscale)
+                _tint = colors[i];
+
+        _tint = BrightenAndDesaturateColor(_tint, 0.3f, 0.2f);
+    }
+
+    Color AverageColor(Color[] colors)
+    {
+        if (colors == null || colors.Length == 0) return Color.black;
+        float r = 0, g = 0, b = 0, a = 0;
+        foreach (var c in colors) { r += c.r; g += c.g; b += c.b; a += c.a; }
+        int count = colors.Length;
+        return new Color(r / count, g / count, b / count, a / count);
+    }
+
+    public static Color BrightenAndDesaturateColor(Color baseColor, float b = 0.2f, float st = 0.2f)
+    {
+        Color.RGBToHSV(baseColor, out float h, out float s, out float v);
+
+        //v = Mathf.Max(v, b);
+        //v = Mathf.Clamp01(v * b);
+        //v = v + (1 - v) * b;
+        v = Mathf.Pow(v, 1 - b);
+
+        s = Mathf.Pow(s, 1 + st);
+
+        return Color.HSVToRGB(h, s, v);
     }
 
     void GetId()

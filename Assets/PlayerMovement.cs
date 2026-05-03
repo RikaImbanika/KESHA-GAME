@@ -205,7 +205,7 @@ public class PlayerMovement : MonoBehaviour
 		_distBeforeStep -= moved / 60f * 2.5f;
 		_timeBeforeStep -= Time.deltaTime;
 
-		if (grounded && ((_distBeforeStep <= 0 && _timeBeforeStep <= 0) || (_stopped && moved > 0.01f)) && (horizontalInput != 0 || verticalInput != 0))
+		if (grounded && ((_distBeforeStep <= 0 && _timeBeforeStep <= 0) || (_stopped && moved > 0.01f)) && ((horizontalInput != 0 || verticalInput != 0) || _distBeforeStep <= 0))
 		{
 			DoStep();
 		}
@@ -312,15 +312,20 @@ public class PlayerMovement : MonoBehaviour
 				if (verticalInput != 0 && horizontalInput != 0)
 					multiplier = k * 0.7071f;
 
-				moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-				moveDirection = new Vector3(moveDirection.x, 0f, moveDirection.z);
+				Vector3 fwd = orientation.forward;
+
+				if (Mathf.Abs(orientation.forward.y) > 0.999f)
+					fwd = Quaternion.Euler(0, orientation.eulerAngles.y, 0) * Vector3.forward;
+
+				moveDirection = fwd * verticalInput + orientation.right * horizontalInput;
+				moveDirection = new Vector3(moveDirection.x, 0f, moveDirection.z).normalized;
 
 				if (_pushed)
-					rb.AddForce(moveDirection.normalized * walkSpeed * 60f * pushingMultiplier * multiplier, ForceMode.Force);
+					rb.AddForce(moveDirection * walkSpeed * 60f * pushingMultiplier * multiplier, ForceMode.Force);
 				else if (grounded)
-					rb.AddForce(moveDirection.normalized * moveSpeed * 60f * multiplier, ForceMode.Force);
+					rb.AddForce(moveDirection * moveSpeed * 60f * multiplier, ForceMode.Force);
 				else
-					rb.AddForce(moveDirection.normalized * walkSpeed * 60f * airMultiplier * multiplier, ForceMode.Force);
+					rb.AddForce(moveDirection * walkSpeed * 60f * airMultiplier * multiplier, ForceMode.Force);
 
 				if (isCrouching && !grounded)
 					rb.velocity = new Vector3(rb.velocity.x * 0.9f, rb.velocity.y, rb.velocity.z * 0.9f);

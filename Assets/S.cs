@@ -42,7 +42,6 @@ public static class S : object
 	private static AmbienceManager _ambienceManager;
 	private static GameObject _loot;
 	private static SceneSelector _sceneSelector;
-	private static Teleporter _teleporter;
 	private static CHEATS _cheats;
 	private static GaymeBroker _gaymeBroker;
 	private static GameObject _redPoint;
@@ -846,19 +845,6 @@ public static class S : object
 			_cheats = value;
 		}
 	}
-
-	public static Teleporter Teleporter
-	{
-		get
-		{
-			return _teleporter;
-		}
-		set
-		{
-			_teleporter = value;
-		}
-	}
-
 
 	public static SceneSelector SceneSelector
 	{

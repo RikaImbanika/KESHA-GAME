@@ -140,7 +140,7 @@ public class Door : MonoBehaviour
 
 						RaycastHit hit2;
 						Vector3 point2 = point0 + Vector3.up * 10f;
-						if (Physics.Raycast(point2, -Vector3.right, out hit2, 5f))
+						if (Physics.Raycast(point2, -transform.right, out hit2, 5f))
 						{
 							Vector3 point3 = hit2.point;
 							point3.y = point1.y;
@@ -180,10 +180,7 @@ public class Door : MonoBehaviour
 
 			_doorModel = S.Loader._rooms[_sceneName]._doors[_number];
 
-			S.Teleporter.ImportantStaticShitToDo(_doorModel._nextSceneName);
-			S.Loader.GoTo(_sceneName, _doorModel._nextSceneName);
-
-			StartCoroutine(S.Teleporter.WaitLoad(_doorModel._nextSceneName, _doorModel._nextDoorId, transform.right));
+			S.Loader.GoTo(_doorModel._nextSceneName, _doorModel._nextDoorId, transform.right);
 		}
 		else
 		{

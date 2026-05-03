@@ -13,12 +13,13 @@ public class Loader : MonoBehaviour
     private List<string> _scenesToLoad;
     private bool _workingOnIt;
     private Dictionary<string, Transform> _sceneRoots;
+    public bool _teleporting;
 
     public void Start()
     {
         _sceneRoots = new Dictionary<string, Transform>();
         _scenesToLoad = new List<string>();
-        WaitLoad();
+        FirstWaitLoad();
     }
 
     public Dictionary<string, Transform> Roots
@@ -45,7 +46,7 @@ public class Loader : MonoBehaviour
         }
     }
 
-    void WaitLoad()
+    void FirstWaitLoad()
     {
         StartCoroutine(MT());
 
@@ -103,39 +104,110 @@ public class Loader : MonoBehaviour
         }
     }
 
-    public void GoTo(string sceneName, string nextSceneName)
+    public IEnumerator WaitLoad(string nextSceneName, int doorId, Vector3 dir)
     {
-        if (nextSceneName == "Start")
-            return;
+        while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
+            yield return new WaitForSeconds(0.05f);
 
-        List<string> loadScenesNames = new List<string>();
-        loadScenesNames.AddRange(S.Loader._map[nextSceneName]);
-        loadScenesNames.Add(nextSceneName); //
+        Vector3 v = new Vector3(0, -1.7f, 0);
+        if (S.Pm.isCrouching)
+            v = new Vector3(0, -3.9f, 0);
 
-        List<string> unloadScenesNames = new List<string>();
-        if (sceneName != "Start")
+        var nextDoorModel = S.Loader._rooms[nextSceneName]._doors[doorId];
+        float dRotation = -Vector3.SignedAngle(dir, -nextDoorModel._right, new Vector3(0, -1, 0));
+        Vector3 offset = nextDoorModel._right * 2;
+
+        Debug.Log($"Forward is {offset.x} {offset.y} {offset.z}.");
+
+        S.Ph.transform.position = nextDoorModel._coordinates + v + offset;
+        S.PlayerCamScript.Rotate(dRotation);
+
+        Debug.Log($"GONE TO SCENE {nextSceneName} (through door)");
+
+        S.SDC.RequestCleanup();
+
+        _teleporting = false;
+    }
+
+    public IEnumerator WaitLoadPortal(string nextSceneName)
+    {
+        while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
+            yield return new WaitForSeconds(0.2f);
+
+        Debug.Log($"GONE TO SCENE {nextSceneName} (through portal)");
+
+        _teleporting = false; //But it never set to true yet
+    }
+
+    public void GoTo(string nextSceneName, int doorId, Vector3 dir)
+    {
+        StartCoroutine(GoToAsync());
+
+        IEnumerator GoToAsync()
         {
-            unloadScenesNames.AddRange(S.Loader._map[sceneName]);
-            unloadScenesNames.Add(sceneName); //?
-        }
+            while (_teleporting)
+                yield return new WaitForSeconds(0.1f);
 
-        foreach (string name in loadScenesNames)
-            if (!unloadScenesNames.Contains(name))
+            _teleporting = true;
+
+            ImportantStaticShitToDo(nextSceneName);
+
+            if (nextSceneName == "Start")
             {
-                SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
-                S.Loader.PleaseLoadScene(name);
+                //We should not be here
+                _teleporting = false;
+                yield break;
             }
 
-        foreach (string name in unloadScenesNames)
-            if (!loadScenesNames.Contains(name))
-                try
+            List<string> newScenesNames = new List<string>();
+            newScenesNames.AddRange(S.Loader._map[nextSceneName]);
+            newScenesNames.Add(nextSceneName);
+
+            List<string> oldScenesNames = new List<string>();
+
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+                if (SceneManager.GetSceneAt(i).name != "Start")
+                    oldScenesNames.Add(SceneManager.GetSceneAt(i).name);
+
+            foreach (string name in newScenesNames)
+                if (!oldScenesNames.Contains(name))
                 {
-                    SceneManager.UnloadSceneAsync(name);
+                    SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
+                    S.Loader.PleaseLoadScene(name);
                 }
-                catch (System.Exception ex)
-                {
-                    Debug.LogError($"Error unloading scene {name}: {ex.Message}");
-                }
+
+            foreach (string name in oldScenesNames)
+                if (!newScenesNames.Contains(name))
+                    try
+                    {
+                        SceneManager.UnloadSceneAsync(name);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Debug.LogError($"Error unloading scene {name}: {ex.Message}");
+                    }
+
+            if (doorId > 0)
+            {
+                StartCoroutine(WaitLoad(nextSceneName, doorId, dir));
+            }
+            else
+            {
+                StartCoroutine(WaitLoadPortal(nextSceneName));
+            }
+        }
+    }
+
+    IEnumerator UnloadSceneAsync(Scene scene)
+    {
+        //Why it exists?
+
+        if (scene.isLoaded)
+        {
+            AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(scene);
+            while (!asyncUnload.isDone) yield return null;
+            Debug.Log($"Unloaded scene: {scene.name}!");
+        }
     }
 
     public void InitMap()
@@ -263,6 +335,39 @@ public class Loader : MonoBehaviour
 
         _rooms[sceneName]._doors[doorId1]._nextDoorId = doorId2;
         _rooms[sceneName]._doors[doorId1]._nextSceneName = nextSceneName;
+    }
+
+    public void ImportantStaticShitToDo(string nextSceneName)
+    {
+        S.PS._currentSceneName = nextSceneName;
+        S.SaveManager.CurrentSave.SaveString("sceneName", nextSceneName);
+
+        S.MM._playerOnIncome = (nextSceneName == "Income");
+
+        if (S.MM._playerOnIncome)
+            S.MM.EnterIncome();
+        else
+            S.MM.LeaveIncome(); //What do u want from me? .. IDK BRO
+
+        if (nextSceneName.Contains("BR"))
+            S.MM.EnterBackrooms();
+        else
+            S.MM.LeaveBackrooms();
+
+        if (!nextSceneName.Contains("TL") || nextSceneName == "TL 0" || nextSceneName == "TL 1")
+            S.MM.LeaveToilet();
+        else
+            S.MM.EnterToilet();
+
+        if (nextSceneName.Contains("TL") && nextSceneName != "TL 0")
+            S.AmbienceManager.EnterToilet();
+        else
+            S.AmbienceManager.LeaveToilet();
+
+        if (!nextSceneName.Contains("MR"))
+            S.MM.LeaveMushrooms();
+        else if (nextSceneName != "MR 1" && nextSceneName != "MR 2")
+            S.MM.EnterMushrooms();
     }
 
     private void AddictiveLoadAsync()

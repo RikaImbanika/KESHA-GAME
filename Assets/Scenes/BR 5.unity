@@ -212,7 +212,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2088412107}
-  m_RootOrder: 10
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &50930927
 MonoBehaviour:
@@ -227,7 +227,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 4
-  _nextDoorId: -1
   col: {fileID: 50930929}
   audioName: Door
   _locked: 0
@@ -235,7 +234,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &50930928
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -719,7 +717,7 @@ MonoBehaviour:
   _id: 
   _name: Crystal
   _count: 1
-  _unnatural: 0
+  _forLoader: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1001 &130272025
@@ -1048,7 +1046,7 @@ MonoBehaviour:
   _id: 
   _name: Crystal
   _count: 1
-  _unnatural: 0
+  _forLoader: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1001 &163212099
@@ -2020,7 +2018,7 @@ Transform:
   m_Children:
   - {fileID: 386563870}
   m_Father: {fileID: 2088412107}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 214.324}
 --- !u!65 &393360605
 BoxCollider:
@@ -2050,7 +2048,7 @@ MonoBehaviour:
   _id: 
   _name: FirstAidKit
   _count: 1
-  _unnatural: 0
+  _forLoader: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!114 &410479781
@@ -2918,7 +2916,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2088412107}
-  m_RootOrder: 8
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &684571859
 MonoBehaviour:
@@ -2933,7 +2931,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 2
-  _nextDoorId: -1
   col: {fileID: 684571861}
   audioName: Door
   _locked: 0
@@ -2941,7 +2938,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &684571860
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2987,6 +2983,14 @@ PrefabInstance:
     - target: {fileID: 1740928274857249673, guid: 48555e9247a18984bb60afe3d7f1ba31, type: 3}
       propertyPath: _count
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1740928274857249673, guid: 48555e9247a18984bb60afe3d7f1ba31, type: 3}
+      propertyPath: _dontNeedPaintingPlacer1
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1740928274857249673, guid: 48555e9247a18984bb60afe3d7f1ba31, type: 3}
+      propertyPath: _dontNeedPaintingPlacer2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7373090316620238960, guid: 48555e9247a18984bb60afe3d7f1ba31, type: 3}
       propertyPath: m_RootOrder
@@ -4927,7 +4931,7 @@ MonoBehaviour:
   _id: 
   _name: Ammo
   _count: 120
-  _unnatural: 0
+  _forLoader: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1001 &1230201600
@@ -5367,7 +5371,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2088412107}
-  m_RootOrder: 7
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1381326920
 MonoBehaviour:
@@ -5382,7 +5386,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 1
-  _nextDoorId: -1
   col: {fileID: 1381326922}
   audioName: Door
   _locked: 0
@@ -5390,7 +5393,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &1381326921
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6445,7 +6447,7 @@ MonoBehaviour:
   _id: 
   _name: Crystal
   _count: 1
-  _unnatural: 0
+  _forLoader: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1001 &1780393535
@@ -7374,16 +7376,16 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 85050638}
-  - {fileID: 1040897802}
   - {fileID: 393360604}
+  - {fileID: 1381326919}
+  - {fileID: 1040897802}
+  - {fileID: 684571858}
+  - {fileID: 2100707701}
+  - {fileID: 50930926}
   - {fileID: 120844497}
   - {fileID: 163124838}
   - {fileID: 1706764009}
   - {fileID: 1224978453}
-  - {fileID: 1381326919}
-  - {fileID: 684571858}
-  - {fileID: 2100707701}
-  - {fileID: 50930926}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7420,7 +7422,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2088412107}
-  m_RootOrder: 9
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &2100707702
 MonoBehaviour:
@@ -7435,7 +7437,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _number: 3
-  _nextDoorId: -1
   col: {fileID: 2100707704}
   audioName: Door
   _locked: 0
@@ -7443,7 +7444,6 @@ MonoBehaviour:
   _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
-  __nextDoorModel: {fileID: 0}
 --- !u!64 &2100707703
 MeshCollider:
   m_ObjectHideFlags: 0

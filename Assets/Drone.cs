@@ -252,15 +252,7 @@ public class Drone : MonoBehaviour
             eb._active = true;
             eb._speed = 30;
             eb._damage = 5 * _damageMultiplier;
-            Destroy(fireball, 15);
-
-            AudioSource shot = Instantiate(S.Shot);
-            shot.transform.position = transform.position;
-            shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-            float distance = (transform.position - S.Camera.transform.position).magnitude;
-            shot.volume = MathF.Min(0.5f, 60 / (distance * distance));
-            shot.Play();
-            Destroy(shot, 5);
+            Destroy(fireball, 15);            
         }
     }
 
