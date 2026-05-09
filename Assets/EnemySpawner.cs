@@ -95,9 +95,9 @@ public class EnemySpawner : MonoBehaviour
                 if (true)
                 {
                     if (n < 25)
-                        typeN = S.Enemies.TypeN("Zombie");
+                        typeN = S.Enemies.TypeN("Zombella");
                     else if (n <= 50)
-                        typeN = S.Enemies.TypeN("Bakalavr");
+                        typeN = S.Enemies.TypeN("Bakalavrus");
                     else if (n <= 68)
                         typeN = S.Enemies.TypeN("Musculus");
                     else if (n <= 90)
@@ -127,9 +127,9 @@ public class EnemySpawner : MonoBehaviour
     {
         GameObject obj;
 
-        if (_type == "Zombie")
+        if (_type == "Zombella")
             obj = Instantiate(S.Zombella, transform.position, transform.rotation, transform);
-        else if (_type == "Bakalavr")
+        else if (_type == "Bakalavrus")
             obj = Instantiate(S.Bakalavrus, transform.position, transform.rotation, transform);
         else if (_type == "Musculus")
             obj = Instantiate(S.Musculus, transform.position, transform.rotation, transform);

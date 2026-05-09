@@ -20,6 +20,7 @@ public class LifeBars : MonoBehaviour
     private TextMeshPro _tmp;
     private TextMeshPro _tmpHp;
     private float _timeLeft;
+    private Color _normalColor;
 
     void Start()
     {
@@ -43,6 +44,8 @@ public class LifeBars : MonoBehaviour
         _mat2.SetFloat("_Alpha", 0);
         _mat3.SetFloat("_Alpha", 0);
         _mat4.SetFloat("_Alpha", 0);
+
+        _normalColor = new Color(1f, 0.505f, 0);
     }
 
     void Update()
@@ -55,13 +58,15 @@ public class LifeBars : MonoBehaviour
 
             if (_timeLeft < 2.5f)
             {
-                Color color = Color.white;
+                Color white = Color.white;
+                Color color = _tmp.color;
 
                 float t = _timeLeft / 2.5f;
                 float alpha = Mathf.SmoothStep(0, 1, t);
                 color.a = alpha;
+                white.a = alpha;
                 _tmp.color = color;
-                _tmpHp.color = color;
+                _tmpHp.color = white;
                 _mat1.SetFloat("_Alpha", alpha);
                 _mat2.SetFloat("_Alpha", alpha);
                 _mat3.SetFloat("_Alpha", alpha);
@@ -70,18 +75,22 @@ public class LifeBars : MonoBehaviour
         }
     }
 
-    public void Show(string text, float lifePercent, int hp, int hpMax)
+    public void Show(string text, float lifePercent, int hp, int hpMax, Color nameColor, Color lifeColor)
     {
         _timeLeft = 3f;
         _tmp.text = text;
         _tmpHp.text = $"{hp} / {hpMax}";
-        Color color = Color.white;
-        _tmp.color = color;
-        _tmpHp.color = color;
+        _tmp.color = nameColor;
+        _tmpHp.color = Color.white;
         _mat1.SetFloat("_Alpha", 1);
         _mat2.SetFloat("_Alpha", 1);
         _mat3.SetFloat("_Alpha", 1);
         _mat4.SetFloat("_Alpha", 1);
         _healthTransform.localScale = new Vector3(lifePercent, 1, 1);
+
+        if (lifeColor != Color.black)
+            _mat3.color = lifeColor;
+        else
+            _mat3.color = _normalColor;
     }
 }

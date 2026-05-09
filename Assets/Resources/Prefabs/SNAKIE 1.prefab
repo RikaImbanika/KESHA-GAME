@@ -68,6 +68,7 @@ MonoBehaviour:
   _headVis: {fileID: 8746648133497631515}
   _aimId: 0
   _aims: []
+  _clones: []
   _seePlayer: 0
   _BLUE: {fileID: 0}
   _sceneName: 
@@ -161,6 +162,8 @@ MonoBehaviour:
   _health: 1000
   _maxHealth: 1000
   _visibleName: Snake of Sun
+  _nameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lifeColor: {r: 0, g: 0, b: 0, a: 0}
   _id: 
   _idHealth: 
   _head: {fileID: 242267438310680826}
@@ -260,6 +263,25 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f4b74fe14b1faa499f5bfc8da74db02, type: 3}
+--- !u!1 &5661056103788177027 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6286340987589892264, guid: 6f4b74fe14b1faa499f5bfc8da74db02, type: 3}
+  m_PrefabInstance: {fileID: 1850290440572501547}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1224915690581172765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5661056103788177027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cef930772100234ab92cf4f9263eea7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _head: {fileID: 242267438310680826}
+  _brain: {fileID: 242267439621252092}
 --- !u!4 &8226254139462904225 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7747330264671065994, guid: 6f4b74fe14b1faa499f5bfc8da74db02, type: 3}

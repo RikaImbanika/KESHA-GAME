@@ -79,7 +79,7 @@ public class Gun : MonoBehaviour
                     float healthPercent = MathF.Max(zombie._health / zombie._maxHealth, 0);
                     int hp = (int)MathF.Max(zombie._health, 0);
                     int maxHp = (int)zombie._maxHealth;
-                    S.LifeBars.Show(zombie._visibleName, healthPercent, hp, maxHp);
+                    S.LifeBars.Show(zombie._visibleName, healthPercent, hp, maxHp, Color.white, Color.black);
                 }
                 else
                 {
@@ -90,7 +90,7 @@ public class Gun : MonoBehaviour
                         float healthPercent = MathF.Max(spider._health / spider._maxHealth, 0);
                         int hp = (int)MathF.Max(spider._health, 0);
                         int maxHp = (int)spider._maxHealth;
-                        S.LifeBars.Show("Laser Spider", healthPercent, hp, maxHp);
+                        S.LifeBars.Show("Laser Spider", healthPercent, hp, maxHp, Color.white, Color.black);
                     }
                     else
                     {
@@ -117,7 +117,7 @@ public class Gun : MonoBehaviour
                                     float healthPercent = MathF.Max(brain._health / brain._maxHealth, 0);
                                     int hp = (int)MathF.Max(brain._health, 0);
                                     int maxHp = (int)brain._maxHealth;
-                                    S.LifeBars.Show(brain._visibleName, healthPercent, hp, maxHp);
+                                    S.LifeBars.Show(brain._visibleName, healthPercent, hp, maxHp, brain._nameColor, brain._lifeColor);
                                 }
                             }
                         }

@@ -15,6 +15,7 @@ public class II : MonoBehaviour
         _base = new Dictionary<string, ItemInfo>();
 
         _base.Add("PurpleBall", new ItemInfo(
+            nameColor: Color.white,
             spriteName: "CoinTex",
             prefabName: "Balls/ItemBalls/PurpleBall",
             visibleName: "Purple ball",
@@ -22,6 +23,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("BlueBall", new ItemInfo(
+            nameColor: Color.white,
             spriteName: "CoinTex",
             prefabName: "Balls/ItemBalls/BlueBall",
             visibleName: "Blue ball",
@@ -29,6 +31,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("FirstAidKit", new ItemInfo(
+            nameColor: new Color(0.099f, 1f, 0.18f),
             spriteName: "FirstAidKit",
             prefabName: "FirstAidKit",
             visibleName: "First aid kit",
@@ -36,6 +39,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Gun", new ItemInfo(
+            nameColor: Color.white,
             spriteName: "Gun",
             prefabName: "Gun",
             visibleName: "Gun",
@@ -43,6 +47,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Apple", new ItemInfo(
+            nameColor: Color.white,
             spriteName: "Apple",
             prefabName: "Apple",
             visibleName: "Apple",
@@ -50,6 +55,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Cucumber", new ItemInfo(
+            nameColor:  Color.white,
             spriteName: "Cucumber",
             prefabName: "Cucumber",
             visibleName: "Cucumber",
@@ -57,6 +63,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Frerard1", new ItemInfo(
+            nameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard1",
             prefabName: "Frerard1",
             visibleName: "Picture part",
@@ -64,6 +71,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Frerard2", new ItemInfo(
+            nameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard2",
             prefabName: "Frerard2",
             visibleName: "Picture part",
@@ -71,6 +79,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Frerard3", new ItemInfo(
+            nameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard3",
             prefabName: "Frerard3",
             visibleName: "Picture part",
@@ -78,6 +87,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Frerard4", new ItemInfo(
+            nameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard4",
             prefabName: "Frerard4",
             visibleName: "Picture part",
@@ -85,6 +95,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Frerard5", new ItemInfo(
+            nameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard5",
             prefabName: "Frerard5",
             visibleName: "Picture part",
@@ -92,6 +103,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("Frerard6", new ItemInfo(
+            nameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard6",
             prefabName: "Frerard6",
             visibleName: "Picture part",
@@ -99,6 +111,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("BlueKey", new ItemInfo(
+            nameColor: Color.white,
             spriteName: "BlueKey",
             prefabName: "BlueKey",
             visibleName: "Blue key",
@@ -106,6 +119,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("PurpleKey", new ItemInfo(
+            nameColor: Color.white,
             spriteName: "PurpleKey",
             prefabName: "PurpleKey",
             visibleName: "Purple key",
@@ -113,6 +127,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("RedKey", new ItemInfo(
+            nameColor: Color.white,
             spriteName: "RedKey",
             prefabName: "RedKey",
             visibleName: "Red key",
@@ -120,6 +135,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("GreenKey", new ItemInfo(
+            nameColor: new Color(0.2118f, 1f, 0.4f),
             spriteName: "GreenKey",
             prefabName: "GreenKey",
             visibleName: "Green key",
@@ -127,6 +143,7 @@ public class II : MonoBehaviour
             ));
 
         _base.Add("RedCrystal", new ItemInfo(
+            nameColor: Color.white,
             spriteName: "RedCrystal",
             prefabName: "RedCrystal",
             visibleName: "Red crystal",
@@ -138,6 +155,7 @@ public class II : MonoBehaviour
 	{
         if (!_base.ContainsKey(name))
             _base.Add(name, new ItemInfo(
+            nameColor: Color.white,
             spriteName: name,
             prefabName: name,
             visibleName: name,

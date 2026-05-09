@@ -13,6 +13,8 @@ public class SnakeBrain : MonoBehaviour
     public float _health;
     public float _maxHealth;
     public string _visibleName;
+    public Color _nameColor;
+    public Color _lifeColor;
     public string _id;
     public string _idHealth;
 

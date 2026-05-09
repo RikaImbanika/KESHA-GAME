@@ -68,6 +68,7 @@ MonoBehaviour:
   _headVis: {fileID: 2195245742864334211}
   _aimId: 0
   _aims: []
+  _clones: []
   _seePlayer: 0
   _BLUE: {fileID: 0}
   _sceneName: 
@@ -161,6 +162,10 @@ MonoBehaviour:
   _health: 1000
   _maxHealth: 1000
   _visibleName: Snake of Ice
+  _nameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lifeColor: {r: 0, g: 0, b: 0, a: 0}
+  _id: 
+  _idHealth: 
   _head: {fileID: 242267438310680826}
   _points:
   - {x: -171.4, y: 0, z: -57.1}
@@ -268,3 +273,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6976035658509471024, guid: 351c6c03090931148801179da48256b3, type: 3}
   m_PrefabInstance: {fileID: 9131276014393471155}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2991901936261900315 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6286340987589892264, guid: 351c6c03090931148801179da48256b3, type: 3}
+  m_PrefabInstance: {fileID: 9131276014393471155}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8230561943185741190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2991901936261900315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cef930772100234ab92cf4f9263eea7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _head: {fileID: 242267438310680826}
+  _brain: {fileID: 242267439621252092}

@@ -100,6 +100,20 @@ public static class S : object
 	private static GameObject _squarePainting;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
 	public static Granny _granny;
+	public static WallColorCapturer _wallColorCapturer;
+	
+
+	public static WallColorCapturer WallColorCapturer
+	{
+		get
+		{
+			return _wallColorCapturer;
+		}
+		set
+		{
+			_wallColorCapturer = value;
+		}
+	}
 
 	public static Granny Granny
 	{

@@ -68,6 +68,7 @@ MonoBehaviour:
   _headVis: {fileID: 2095098374633680419}
   _aimId: 0
   _aims: []
+  _clones: []
   _seePlayer: 0
   _BLUE: {fileID: 0}
   _sceneName: 
@@ -161,6 +162,8 @@ MonoBehaviour:
   _health: 1500
   _maxHealth: 1500
   _visibleName: Snake of Silence
+  _nameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lifeColor: {r: 0, g: 0, b: 0, a: 0}
   _id: 
   _idHealth: 
   _head: {fileID: 242267438310680826}
@@ -306,3 +309,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 686096567651366915, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
   m_PrefabInstance: {fileID: 1483595152947713568}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4455159154362446777 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2973834029082273177, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+  m_PrefabInstance: {fileID: 1483595152947713568}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &944661699820831465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4455159154362446777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cef930772100234ab92cf4f9263eea7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _head: {fileID: 242267438310680826}
+  _brain: {fileID: 242267439621252092}

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemies : MonoBehaviour
 {
     private List<string> _types;
+    
     public List<string> Types
     {
         get
@@ -29,8 +30,8 @@ public class Enemies : MonoBehaviour
         IEnumerator Yep()
         {
             _types = new List<string>();
-            _types.Add("Zombie");
-            _types.Add("Bakalavr");
+            _types.Add("Zombella");
+            _types.Add("Bakalavrus");
             _types.Add("Musculus");
             _types.Add("Ghost");
             _types.Add("Spider");

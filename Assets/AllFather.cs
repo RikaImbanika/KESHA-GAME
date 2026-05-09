@@ -100,28 +100,21 @@ public class AllFather : MonoBehaviour
 		}
 	}
 
-	public Color GetPixelColorAtHit(RaycastHit hit)
-	{
-		Renderer rend = hit.collider.GetComponent<Renderer>();
-		if (rend == null)
-			return Color.magenta;
+	// public Color GetPixelColorAtHit(RaycastHit hit)
+	// {
+	// 	Renderer rend = hit.collider.GetComponent<Renderer>();
+	// 	if (rend == null) return Color.magenta;
 
-		Material mat = rend.material;
+	// 	Texture tex = rend.material.mainTexture;
+	// 	Texture2D tex2D = tex as Texture2D;
+	// 	if (tex2D == null || !tex2D.isReadable)
+	// 		return Color.magenta;
 
-		var propertyNames = mat.GetTexturePropertyNames();
-		foreach (var name in propertyNames)
-		{
-			Texture tex = mat.GetTexture(name);
-			Texture2D tex2D = tex as Texture2D;
-			if (tex2D != null && tex2D.isReadable)
-			{
-				Vector2 uv = hit.textureCoord;
-				return tex2D.GetPixelBilinear(uv.x, uv.y);
-			}
-		}
+	// 	int x = Mathf.FloorToInt(hit.textureCoord.x * tex2D.width);
+	// 	int y = Mathf.FloorToInt(hit.textureCoord.y * tex2D.height);
 
-		return Color.magenta;
-	}
+	// 	return tex2D.GetPixel(x, y);
+	// }
 
 	public string SelFromProb(List<(string Item, int Weight)> probabilities)
 	{

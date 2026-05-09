@@ -1601,7 +1601,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2807702450268258476, guid: 29bf31418397d1e409e2a2f8aff14bb8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.23
+      value: -2.22
       objectReference: {fileID: 0}
     - target: {fileID: 2807702450268258476, guid: 29bf31418397d1e409e2a2f8aff14bb8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1609,7 +1609,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2807702450268258476, guid: 29bf31418397d1e409e2a2f8aff14bb8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 82.33
+      value: 81.77
       objectReference: {fileID: 0}
     - target: {fileID: 2807702450268258476, guid: 29bf31418397d1e409e2a2f8aff14bb8, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1641,7 +1641,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2932307077087573615, guid: 29bf31418397d1e409e2a2f8aff14bb8, type: 3}
       propertyPath: _count
-      value: 500
+      value: 999
       objectReference: {fileID: 0}
     - target: {fileID: 3295832473623829014, guid: 29bf31418397d1e409e2a2f8aff14bb8, type: 3}
       propertyPath: m_Name
@@ -6212,7 +6212,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2807702450268258476, guid: 37d1a61ddd004224f9afa91519f83305, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.48
+      value: 1.98
       objectReference: {fileID: 0}
     - target: {fileID: 2807702450268258476, guid: 37d1a61ddd004224f9afa91519f83305, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6220,7 +6220,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2807702450268258476, guid: 37d1a61ddd004224f9afa91519f83305, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 83.12
+      value: 81.63
       objectReference: {fileID: 0}
     - target: {fileID: 2807702450268258476, guid: 37d1a61ddd004224f9afa91519f83305, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6265,24 +6265,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3295832473623829014, guid: 37d1a61ddd004224f9afa91519f83305, type: 3}
   m_PrefabInstance: {fileID: 1919439053}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1919439055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1919439054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e5da98e245748849985a44d2e34f5e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _id: 
-  _name: PurpleBall
-  _count: 50
-  _forLoader: 0
-  _locked: 0
-  _obj: {fileID: 0}
 --- !u!135 &1919439056
 SphereCollider:
   m_ObjectHideFlags: 0

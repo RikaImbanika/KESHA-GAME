@@ -68,6 +68,7 @@ MonoBehaviour:
   _headVis: {fileID: 3786256975740747}
   _aimId: 0
   _aims: []
+  _clones: []
   _seePlayer: 0
   _BLUE: {fileID: 0}
   _sceneName: 
@@ -161,6 +162,8 @@ MonoBehaviour:
   _health: 1000
   _maxHealth: 1000
   _visibleName: Snake of Nature
+  _nameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lifeColor: {r: 0, g: 0, b: 0, a: 0}
   _id: 
   _idHealth: 
   _head: {fileID: 242267438310680826}
@@ -270,3 +273,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7747330264671065994, guid: f2f0d1bca57ffce48b8f4c8fac2b4a47, type: 3}
   m_PrefabInstance: {fileID: 6972320905292378747}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4035006731707574995 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6286340987589892264, guid: f2f0d1bca57ffce48b8f4c8fac2b4a47, type: 3}
+  m_PrefabInstance: {fileID: 6972320905292378747}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4714559408101250491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4035006731707574995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cef930772100234ab92cf4f9263eea7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _head: {fileID: 242267438310680826}
+  _brain: {fileID: 242267439621252092}

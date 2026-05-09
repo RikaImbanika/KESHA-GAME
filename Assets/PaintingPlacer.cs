@@ -14,6 +14,7 @@ public class PaintingPlacer : MonoBehaviour
     private Color _tint;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
+    private float _wallHueShiftSpeed;
 
     void Start()
     {
@@ -91,14 +92,19 @@ public class PaintingPlacer : MonoBehaviour
                 {
                     mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
                     mat.SetFloat("_Speed", 0.1667f);
+                    _wallHueShiftSpeed = 0.1667f;
                 }
                 else if (_sceneName == "BR 6" || _sceneName == "BR 6R")
                 {
                     mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
                     mat.SetFloat("_Speed", 0.08f);
+                    _wallHueShiftSpeed = 0.08f;
                 }
                 else
+                {
                     mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSide"));
+                    _wallHueShiftSpeed = 0f;
+                }
 
                 yield return GetWallColor();
 
@@ -131,10 +137,8 @@ public class PaintingPlacer : MonoBehaviour
 
     IEnumerator GetWallColor()
     {
-        Color[] colors = new Color[9];
         Vector3 u = transform.up;
         Vector3 r = transform.right;
-
         Vector3[] points = new Vector3[]
         {
             transform.position,
@@ -148,60 +152,31 @@ public class PaintingPlacer : MonoBehaviour
             transform.position - r
         };
 
-        for (int i = 0; i < points.Length; i++)
-        {
-            yield return StartCoroutine(GetColorAtPointCoroutine(points[i], result => colors[i] = result));
-            yield return new WaitForSeconds(0.05f);
-        }
+        Color[] colors = S.WallColorCapturer.CaptureAtPoints(points, transform.forward, _layerMask);
 
-        IEnumerator GetColorAtPointCoroutine(Vector3 point, System.Action<Color> onDone)
-        {
-            Color captured = Color.cyan;
-            RaycastHit hit;
-            if (Physics.Raycast(point, -transform.forward, out hit, 25f, _layerMask))
-            {
-                int limit = 0;
-                while (limit < 4f)
-                {
-                    Color clr = S.AllFather.GetPixelColorAtHit(hit);
-                    if (clr != Color.magenta)
-                    {
-                        captured = clr;
-                        break;
-                    }
-                    yield return new WaitForSeconds(0.25f);
-                    limit++;
-                }
-            }
-            onDone(captured);
-        }
-
-        //_tint = AverageColor(colors);
-
-        // float luminance = _tint.grayscale;
-        // float targetLuminance = Mathf.Lerp(0.6f, 0.9f, luminance);
-        // Color brightTint = _tint * (targetLuminance / (luminance + 0.001f));
-        // _tint = brightTint;
-
-        _tint = colors[0];
+        Color brightest = colors[0];
         for (int i = 1; i < colors.Length; i++)
-            if (colors[i].grayscale > _tint.grayscale)
-                _tint = colors[i];
+            if (colors[i].grayscale > brightest.grayscale)
+                brightest = colors[i];
 
-        _tint = BrightenAndDesaturateColor(_tint, 0.3f, 0.2f);
+        if (_wallHueShiftSpeed > 0f)
+        {
+            //This is just for synchronisation of hue shift with wall
+            float timeShift = Mathf.Repeat(Time.timeSinceLevelLoad * _wallHueShiftSpeed, 1f);
+            Color.RGBToHSV(brightest, out float h, out float s, out float v);
+            h = (h - timeShift + 1f) % 1f;
+            brightest = Color.HSVToRGB(h, s, v);
+        }
+
+        _tint = BrightenAndDesaturateColor(brightest, 0.3f, 0.2f);
+
+        yield return null;
     }
 
-    Color AverageColor(Color[] colors)
+    public Color BrightenAndDesaturateColor(Color baseColor, float b = 0.2f, float st = 0.2f)
     {
-        if (colors == null || colors.Length == 0) return Color.black;
-        float r = 0, g = 0, b = 0, a = 0;
-        foreach (var c in colors) { r += c.r; g += c.g; b += c.b; a += c.a; }
-        int count = colors.Length;
-        return new Color(r / count, g / count, b / count, a / count);
-    }
+        //Here are no any problems
 
-    public static Color BrightenAndDesaturateColor(Color baseColor, float b = 0.2f, float st = 0.2f)
-    {
         Color.RGBToHSV(baseColor, out float h, out float s, out float v);
 
         //v = Mathf.Max(v, b);

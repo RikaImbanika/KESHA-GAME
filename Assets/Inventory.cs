@@ -144,8 +144,9 @@ public class Inventory : MonoBehaviour
 		_transparentColor.a = 0;
 
 		_objectBeforeTakenTMP.text = "";
+		_objectBeforeTakenTMP.color = Color.white;
 
-		S.Inventory = this;
+	S.Inventory = this;
 		S.Negative = _negative;
 
 		_zoomTime = 0.1f;
@@ -293,7 +294,8 @@ public class Inventory : MonoBehaviour
 
 					_objectNameShowen = "Something strange";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
-					showAnyName = true;
+					_objectBeforeTakenTMP.color = Color.white;
+				showAnyName = true;
 
 					goto render;
 				}
@@ -316,7 +318,8 @@ public class Inventory : MonoBehaviour
 					}
 
 					_objectBeforeTakenTMP.text = _objectNameShowen;
-					showAnyName = true;
+					_objectBeforeTakenTMP.color = Color.white;
+				showAnyName = true;
 
 					goto render;
 				}
@@ -335,12 +338,15 @@ public class Inventory : MonoBehaviour
 
 					int count = itemP._count;
 
+					ItemInfo info = S.II.Get(itemP._name);
+
 					if (count == 1)
-						_objectNameShowen = S.II.Get(itemP._name)._visibleName;
+						_objectNameShowen = info._visibleName;
 					else
-						_objectNameShowen = $"{S.II.Get(itemP._name)._visibleName} ({count})";
+						_objectNameShowen = $"{info._visibleName} ({count})";
 
 					_objectBeforeTakenTMP.text = _objectNameShowen;
+					_objectBeforeTakenTMP.color = info._nameColor;
 					showAnyName = true;
 
 					goto render;
@@ -353,7 +359,8 @@ public class Inventory : MonoBehaviour
 
 					_objectNameShowen = "Button";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
-					showAnyName = true;
+					_objectBeforeTakenTMP.color = Color.white;
+				showAnyName = true;
 
 					goto render;
 				}
@@ -363,7 +370,8 @@ public class Inventory : MonoBehaviour
 				{
 					_objectNameShowen = zombie._visibleName;
 					_objectBeforeTakenTMP.text = _objectNameShowen;
-					showAnyName = true;
+					_objectBeforeTakenTMP.color = Color.white;
+				showAnyName = true;
 
 					goto render;
 				}
@@ -373,7 +381,8 @@ public class Inventory : MonoBehaviour
 				{
 					_objectNameShowen = "Laser Spider";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
-					showAnyName = true;
+					_objectBeforeTakenTMP.color = Color.white;
+				showAnyName = true;
 
 					goto render;
 				}
@@ -385,7 +394,8 @@ public class Inventory : MonoBehaviour
 
 					_objectNameShowen = "Save game (can be laggy yet)";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
-					showAnyName = true;
+					_objectBeforeTakenTMP.color = Color.white;
+				showAnyName = true;
 
 					goto render;
 				}
@@ -398,6 +408,7 @@ public class Inventory : MonoBehaviour
 
 					_objectNameShowen = ball._brain._visibleName;
 					_objectBeforeTakenTMP.text = _objectNameShowen;
+					_objectBeforeTakenTMP.color = ball._brain._nameColor;
 					showAnyName = true;
 
 					goto render;
@@ -442,6 +453,7 @@ public class Inventory : MonoBehaviour
 			{
 				_objectNameShowen = "";
 				_objectBeforeTakenTMP.text = _objectNameShowen;
+				_objectBeforeTakenTMP.color = Color.white;
 			}
 		}
 	}
@@ -956,7 +968,8 @@ public class Inventory : MonoBehaviour
 			CheckShowing(selId);
             SaveOneItem(selId);
 			CheckQuests(name);
-            Debug.Log($"Taked {name} to {selId} *1");
+			Debug.Log($"Taked {name} to {selId} *1");
+			ForcedShowName();
 			return;
 		}
 
@@ -968,7 +981,7 @@ public class Inventory : MonoBehaviour
 			CheckShowing(selId);
             SaveOneItem(selId);
             CheckQuests(name);
-            Debug.Log($"Taked {name} to {selId} *2");
+			Debug.Log($"Taked {name} to {selId} *2");
 			return;
 		}
 
@@ -1283,11 +1296,7 @@ public class Inventory : MonoBehaviour
 				}
 			}
 
-			if (!items[id].IsUnityNull())
-			{
-				ItemInfo ii = S.II.Get(items[id]._name);
-				S.ItemNameShower.Show(ii._visibleName);
-			}
+			ForcedShowName();
 		}
 
 		void Cut(int count)
@@ -1301,7 +1310,7 @@ public class Inventory : MonoBehaviour
 		if (!items[selectedId].IsUnityNull())
 		{
 			ItemInfo ii = S.II.Get(items[selectedId]._name);
-			S.ItemNameShower.Show(ii._visibleName);
+			S.ItemNameShower.Show(ii._visibleName, ii._nameColor);
 		}
 	}
 

@@ -77,6 +77,27 @@ public class SnakeSpawner : MonoBehaviour
         snakeBrain._id = _id;
         snakeBrain._idHealth = _idHealth;
 
+        if (snakeBrain._head._type == "Silent")
+        {
+            snakeBrain._nameColor = new Color(0.4f, 0.063f, 1f);
+            snakeBrain._lifeColor = Color.black;
+        }
+        else if (snakeBrain._head._type == "Nature")
+        {
+            snakeBrain._nameColor = new Color(0.2f, 1f, 0.1f);
+            snakeBrain._lifeColor = Color.black;
+        }
+        else if (snakeBrain._head._type == "Ice")
+        {
+            snakeBrain._nameColor = new Color(0.07f, 0.847f, 1f);
+            snakeBrain._lifeColor = Color.black;
+        }
+        else
+        {
+            snakeBrain._nameColor = new Color(1f, 0.92f, 0.152f);
+            snakeBrain._lifeColor = Color.black;
+        }
+
         if (_health != -404)
             snakeBrain._health = _health;
 
