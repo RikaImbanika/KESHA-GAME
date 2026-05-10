@@ -1548,7 +1548,6 @@ MonoBehaviour:
   inventoryPanelParentBig: {fileID: 949534334}
   inventoryPanelParentSmall: {fileID: 1388985354}
   _camera: {fileID: 963194227}
-  showingCamera: {fileID: 969224516}
   prb: {fileID: 1980043998}
   numberLabelExample: {fileID: 981319449}
   throwTime: 0
@@ -1557,19 +1556,12 @@ MonoBehaviour:
   throwCombo: 0
   canvas: {fileID: 93810933}
   lastKeyTime: 0
-  state: 
+  scrollState: 
   fps: 0
   allFather: {fileID: 0}
   throwPanel: {fileID: 365478077}
   throwPanelBlack: {fileID: 927941775}
   throwPanelRed: {fileID: 198671737}
-  _showingItem: {fileID: 0}
-  _showingRotation: {x: 0, y: 0, z: 0}
-  showingPanel: {fileID: 1811558817}
-  showingOverlay: {fileID: 1922553750}
-  showingText: {fileID: 773444493}
-  showingStartTime: 0
-  _showingStartScale: {x: 0, y: 0, z: 0}
   _negated: 0
   _playerObject: {fileID: 302432930}
   _marketOpened: 0
@@ -11378,6 +11370,7 @@ GameObject:
   - component: {fileID: 895244301}
   - component: {fileID: 895244302}
   - component: {fileID: 895244303}
+  - component: {fileID: 895244304}
   m_Layer: 0
   m_Name: AllFather
   m_TagString: AllFather
@@ -11808,7 +11801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c26ef0893f954604a91624bbf6fe354f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _version: 1.11.13
+  _version: 1.11.14
   _tmpOnStartPanel: {fileID: 404712816}
   _tmpInInventory: {fileID: 1186545224}
 --- !u!114 &895244302
@@ -11838,6 +11831,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64e1c04b3a39a1140a2a8892403ad065, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &895244304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895244273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cb74911d740ce84088ddec82007c526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _showingCamera: {fileID: 969224516}
+  _showingItem: {fileID: 0}
+  _showingRotation: {x: 0, y: 0, z: 0}
+  _showingPanel: {fileID: 1811558817}
+  _showingOverlay: {fileID: 1922553750}
+  _showingText: {fileID: 773444493}
+  _showingStartTime: 0
+  _showingStartScale: {x: 0, y: 0, z: 0}
 --- !u!1 &916329583
 GameObject:
   m_ObjectHideFlags: 0
@@ -13954,7 +13967,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 923c540527a2a534f8a1df5ba31a5fa6, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -16251,6 +16264,134 @@ AudioSource:
     - serializedVersion: 3
       time: 0
       value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!1 &1353319247
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1353319248}
+  - component: {fileID: 1353319249}
+  m_Layer: 0
+  m_Name: Crowd Is Happy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1353319248
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1353319247}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.6364, y: 1.6364, z: 1.6364}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1987671374}
+  m_RootOrder: 61
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1353319249
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1353319247}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 15567001b93a0cb44863f67187293113, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 4.59
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.8833333
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -22327,6 +22468,7 @@ Transform:
   - {fileID: 1222746098}
   - {fileID: 1842983797}
   - {fileID: 60590819}
+  - {fileID: 1353319248}
   m_Father: {fileID: 1315469548}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -22368,6 +22510,7 @@ MonoBehaviour:
   _ohNo: {fileID: 1298200397}
   _wrong: {fileID: 1350318930}
   _wrong2: {fileID: 257179982}
+  _crowdIsHappy: {fileID: 1353319249}
   _dirtStep1: {fileID: 696663791}
   _dirtStep2: {fileID: 90994135}
   _dirtStep3: {fileID: 2020743931}

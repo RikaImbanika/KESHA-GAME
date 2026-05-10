@@ -10,6 +10,9 @@ using System.Linq;
 
 public class Inventory : MonoBehaviour
 {
+	//I know, it's too big
+	//Maybe sometime I will divide it completely
+
 	[Header("Keybinds")]
 
 	public GameObject inventoryPanel;
@@ -36,7 +39,6 @@ public class Inventory : MonoBehaviour
 	public GameObject inventoryPanelParentSmall;
 
 	public Camera _camera;
-	public Camera showingCamera;
 	public Rigidbody prb;
 
 	public GameObject numberLabelExample;
@@ -49,7 +51,7 @@ public class Inventory : MonoBehaviour
 	public Canvas canvas;
 
 	public long lastKeyTime;
-	public string state;
+	public string scrollState;
 
 	public float fps;
 
@@ -59,13 +61,7 @@ public class Inventory : MonoBehaviour
 	public GameObject throwPanelBlack;
 	public GameObject throwPanelRed;
 
-	public GameObject _showingItem;
-	public Vector3 _showingRotation;
-	public RawImage showingPanel;
-	public GameObject showingOverlay;
-	public TextMeshProUGUI showingText;
-	public float showingStartTime;
-	public Vector3 _showingStartScale;
+
 	public float _negated;
 	private int _layerMask;
 
@@ -173,13 +169,7 @@ public class Inventory : MonoBehaviour
             numberLabels = new TextMeshProUGUI[36];
             smallNumberLabels = new TextMeshProUGUI[9];
             opened = true;
-            state = "not started";
-
-            _showingItem = null;
-            showingCamera.enabled = false;
-            showingCamera.gameObject.SetActive(false);
-            showingPanel.gameObject.SetActive(false);
-            showingOverlay.SetActive(false);
+            scrollState = "not started";
 
             yield return new WaitForSeconds(waitTime);
 
@@ -203,7 +193,6 @@ public class Inventory : MonoBehaviour
 				items[i] = S.AllFather.gameObject.AddComponent<Item>();
 				items[i]._name = "";
 				items[i]._count = 0;
-				//Debug.Log($"i {i} item {items[i]}");
 			}
 
 			_buffer = S.AllFather.gameObject.AddComponent<Item>();
@@ -260,15 +249,6 @@ public class Inventory : MonoBehaviour
 
 		fps = MathF.Round(fps * 0.5f + 0.5f / Time.deltaTime);
 		S.FpsTMP.text = fps.ToString();
-
-		float k = Time.deltaTime * 60f;
-
-		if (_showingItem != null)
-		{
-			_showingItem.transform.Rotate(_showingRotation.x * k, _showingRotation.y * k, _showingRotation.z * k, Space.World);
-			float scaleCoef = 1 - (1 / ((Time.time - showingStartTime) * 8f + 1f));
-			_showingItem.transform.localScale = _showingStartScale * scaleCoef;
-		}
 
 		if (!_marketOpened && !opened)
 		{
@@ -521,11 +501,11 @@ public class Inventory : MonoBehaviour
 
 	private void MyInput()
 	{
-		if (_showingItem != null)
+		if (S.ItemShower._showingItem != null)
 		{
-			if (showingStartTime < Time.time - 1)
+			if (S.ItemShower._showingStartTime < Time.time - 1)
 				if (Input.anyKey)
-					HideShowingItem();
+					S.ItemShower.HideShowingItem();
 		}
 		else
 		{
@@ -544,7 +524,7 @@ public class Inventory : MonoBehaviour
 				if (Input.GetKeyDown(KeyCode.Return))
 				{
 					SelectItem(selectedId, true);
-					state = "not started";
+					scrollState = "not started";
 				}
 				else
 				{
@@ -563,23 +543,23 @@ public class Inventory : MonoBehaviour
 						Method(9, KeyCode.S);
 
 					if (!atLeastOne)
-						state = "not started";
+						scrollState = "not started";
 
 					void Method(int idDelta, KeyCode keyCode)
 					{
-						if (state == "not started")
+						if (scrollState == "not started")
 						{
-							state = "starting";
+							scrollState = "starting";
 							SelectItem(selectedId + idDelta, false);
 							lastKeyTime = time;
 						}
-						else if (state == "starting" && deltaTime > 250)
+						else if (scrollState == "starting" && deltaTime > 250)
 						{
-							state = "started";
+							scrollState = "started";
 							SelectItem(selectedId + idDelta, false);
 							lastKeyTime = time;
 						}
-						else if (state == "started" && deltaTime > 45)
+						else if (scrollState == "started" && deltaTime > 45)
 						{
 							lastKeyTime = time;
 							SelectItem(selectedId + idDelta, false);
@@ -665,7 +645,7 @@ public class Inventory : MonoBehaviour
 					{
 						throwable = S.II.Get(items[selectedId]._name)._throwable;
 
-						if (!opened) //So, why the hell it is throwing??
+						if (!opened) //So, why the hell it is throwing?? //What?
 						{
 							if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Q) ||
 							(Input.GetMouseButtonDown(0) && !_somethingClicked))
@@ -965,7 +945,7 @@ public class Inventory : MonoBehaviour
 			items[selId]._count = count;
 			Visualise(selId);
 			S.AudioManager.Play(an, 1);
-			CheckShowing(selId);
+			S.ItemShower.TryShow(name);
             SaveOneItem(selId);
 			CheckQuests(name);
 			Debug.Log($"Taked {name} to {selId} *1");
@@ -978,7 +958,7 @@ public class Inventory : MonoBehaviour
 			items[selId]._count += count;
 			Visualise(selId);
 			S.AudioManager.Play(an, 1);
-			CheckShowing(selId);
+			S.ItemShower.TryShow(name);
             SaveOneItem(selId);
             CheckQuests(name);
 			Debug.Log($"Taked {name} to {selId} *2");
@@ -993,7 +973,7 @@ public class Inventory : MonoBehaviour
 					items[id]._count += count;
 					Visualise(id);
 					S.AudioManager.Play(an, 1);
-					CheckShowing(id);
+					S.ItemShower.TryShow(name);
                     SaveOneItem(id);
                     CheckQuests(name);
                     Debug.Log($"Taked {name} to {id} *3");
@@ -1009,7 +989,7 @@ public class Inventory : MonoBehaviour
 					items[id]._count = count;
 					Visualise(id);
 					S.AudioManager.Play(an, 1);
-					CheckShowing(id);
+					S.ItemShower.TryShow(name);
                     SaveOneItem(id);
                     CheckQuests(name);
                     Debug.Log($"Taked {name} to {id} *4");
@@ -1022,85 +1002,6 @@ public class Inventory : MonoBehaviour
 		if (name == "GreenKey")
 			S.SM.Save("greenKeyTaken", true);
     }
-
-	public void CheckShowing(int id)
-	{
-		if (!(S.SM.LoadBool("Cucumber showed") ?? false))
-			if (items[id]._name == "Cucumber")
-			{
-				S.SM.Save("Cucumber showed", true);
-				ShowItem(id, "You obtain a cucumber!!!", "gong", 0.7f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 7));
-			}
-		if (!(S.SM.LoadBool("Gun showed") ?? false))
-			if (items[id]._name == "Gun")
-			{
-                S.SM.Save("Gun showed", true);
-                ShowItem(id, "You obtain a gun!!!", "gong", 1.6f, 0.35f, new Vector3(90, 0, 0), new Vector3(0, 0, 7));
-			}
-	}
-
-	public void ShowItem(int id, string text, string audioName, float offset, float delay, Vector3 startRotation, Vector3 rotation)
-	{
-		if (!string.IsNullOrEmpty(items[id]._name))
-		{
-			if (opened)
-				SwitchInventory();
-			if (_marketOpened)
-				_trader.CloseMarket();
-
-			//Debug.Log($"Name {items[id]._name} id {id}");
-
-			StartCoroutine(LateShow());
-
-			IEnumerator LateShow()
-			{
-				showingCamera.enabled = true;
-
-				yield return new WaitForSeconds(delay);
-
-				smallInventoryPanel.SetActive(false);
-
-				showingStartTime = Time.time;
-
-				Vector3 position = showingCamera.transform.position;
-				Vector3 direction = showingCamera.transform.forward * 3;
-				Vector3 offsetV = new Vector3(0, offset, 0);
-
-				var prefab = Prefabs.Get(items[id]._name);
-				//Debug.Log($"Prefab {prefab}, name {items[id]._name}, id {id}");
-
-				_showingItem = Instantiate(prefab, position + direction + offsetV, Quaternion.identity);
-				_showingStartScale = _showingItem.transform.localScale;
-				_showingItem.transform.localScale = Vector3.zero;
-
-				_showingItem.transform.eulerAngles = startRotation;
-
-				S.AudioManager.Play(audioName, 1);
-
-				showingCamera.enabled = true;
-				showingCamera.gameObject.SetActive(true);
-				showingPanel.gameObject.SetActive(true);
-				showingOverlay.SetActive(true);
-				showingText.text = text;
-				_showingRotation = rotation;
-			}
-		}
-	}
-
-	public void HideShowingItem()
-	{
-		if (_showingItem != null)
-		{
-			Destroy(_showingItem);
-			_showingItem = null;
-			showingCamera.enabled = false;
-			showingCamera.gameObject.SetActive(false);
-			showingPanel.gameObject.SetActive(false);
-			showingOverlay.SetActive(false);
-			smallInventoryPanel.SetActive(true);
-			S.AudioManager.Play("pickUp", 1.3f);
-		}
-	}
 
 	public void Throw(int id, float power)
 	{

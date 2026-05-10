@@ -101,8 +101,21 @@ public static class S : object
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
 	public static Granny _granny;
 	public static WallColorCapturer _wallColorCapturer;
-	
+	public static ItemShower _itemShower;
 
+
+	public static ItemShower ItemShower
+	{
+		get
+		{
+			return _itemShower;
+		}
+		set
+		{
+			_itemShower = value;
+		}
+	}
+	
 	public static WallColorCapturer WallColorCapturer
 	{
 		get

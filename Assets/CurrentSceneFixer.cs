@@ -17,7 +17,7 @@ public class CurrentSceneFixer : MonoBehaviour
     {
         _time += Time.deltaTime;
 
-        if (_time > 1f) //I will change to 0.5f later
+        if (_time > 0.5f)
         {
             _time = 0;
 

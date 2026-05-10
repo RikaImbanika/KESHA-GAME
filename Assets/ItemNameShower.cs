@@ -34,7 +34,6 @@ public class ItemNameShower : MonoBehaviour
                 float alpha = Mathf.SmoothStep(0, 1, t);
                 color.a = alpha;
                 _tmp.color = color;
-                Debug.LogError($"Color: {_tmp.color.r}, {_tmp.color.g}, {_tmp.color.b}");
             }
         }
     }
@@ -44,6 +43,5 @@ public class ItemNameShower : MonoBehaviour
         _timeLeft = 3f;
         _tmp.text = text;
         _tmp.color = color;
-        Debug.LogError($"Color: {_tmp.color.r}, {_tmp.color.g}, {_tmp.color.b}");
     }
 }

@@ -32,6 +32,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource _ohNo;
     public AudioSource _wrong;
 	public AudioSource _wrong2;
+	public AudioSource _crowdIsHappy;
 
 	public AudioSource _dirtStep1;
 	public AudioSource _dirtStep2;
@@ -220,6 +221,10 @@ public class AudioManager : MonoBehaviour
 			case "wrong2":
 				_wrong2.pitch = pitch;
 				_wrong2.Play();
+				break;
+			case "crowdishappy":
+				_crowdIsHappy.pitch = pitch;
+				_crowdIsHappy.Play();
 				break;
 
 			case "dirtstep1":
