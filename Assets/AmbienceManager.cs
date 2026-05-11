@@ -42,77 +42,77 @@ public class AmbienceManager : MonoBehaviour
     {
         if (_toiletPhase == "leaving")
         {
-            if (S.AM._toiletAmbience1.volume > 0)
-                S.AM._toiletAmbience1.volume -= 0.08f * d;
-            if (S.AM._toiletAmbience2.volume > 0)
-                S.AM._toiletAmbience2.volume -= 0.08f * d;
+            if (S.AM.A["Toilet Ambience 1"].volume > 0)
+                S.AM.A["Toilet Ambience 1"].volume -= 0.08f * d;
+            if (S.AM.A["Toilet Ambience 2"].volume > 0)
+                S.AM.A["Toilet Ambience 2"].volume -= 0.08f * d;
 
-            if (S.AM._toiletAmbience2.volume <= 0 && S.AM._toiletAmbience1.volume <= 0)
+            if (S.AM.A["Toilet Ambience 2"].volume <= 0 && S.AM.A["Toilet Ambience 1"].volume <= 0)
             {
                 _toiletPhase = "silence";
 
                 if (_toiletSwapPhase == "1" || _toiletSwapPhase == "2to1")
-                    _toiletTime = S.AM._toiletAmbience1.time;
+                    _toiletTime = S.AM.A["Toilet Ambience 1"].time;
                 else
-                    _toiletTime = S.AM._toiletAmbience2.time;
+                    _toiletTime = S.AM.A["Toilet Ambience 2"].time;
 
-                S.AM._toiletAmbience1.Pause();
-                S.AM._toiletAmbience2.Pause();
+                S.AM.A["Toilet Ambience 1"].Pause();
+                S.AM.A["Toilet Ambience 2"].Pause();
             }
         }
         else if (_toiletPhase == "entering")
         {
             if (_toiletSwapPhase == "1" || _toiletSwapPhase == "2to1")
             {
-                S.AM._toiletAmbience1.volume += 0.08f * d;
+                S.AM.A["Toilet Ambience 1"].volume += 0.08f * d;
 
-                if (S.AM._toiletAmbience1.volume >= 1)
+                if (S.AM.A["Toilet Ambience 1"].volume >= 1)
                     _toiletPhase = "entered";
             }
             else if (_toiletSwapPhase == "2" || _toiletSwapPhase == "1to2")
             {
-                S.AM._toiletAmbience2.volume += 0.08f * d;
+                S.AM.A["Toilet Ambience 2"].volume += 0.08f * d;
 
-                if (S.AM._toiletAmbience2.volume >= 1)
+                if (S.AM.A["Toilet Ambience 2"].volume >= 1)
                     _toiletPhase = "entered";
             }
         }
         else
         {
             if (_toiletSwapPhase == "1")
-                if (S.AM._toiletAmbience1.time > _toiletAmbienceDuration)
+                if (S.AM.A["Toilet Ambience 1"].time > _toiletAmbienceDuration)
                 {
                     _toiletSwapPhase = "1to2";
-                    S.AM._toiletAmbience2.time = 0;
-                    S.AM._toiletAmbience2.volume = 1;
-                    S.AM._toiletAmbience2.Play();
+                    S.AM.A["Toilet Ambience 2"].time = 0;
+                    S.AM.A["Toilet Ambience 2"].volume = 1;
+                    S.AM.A["Toilet Ambience 2"].Play();
                 }
 
             if (_toiletSwapPhase == "2")
-                if (S.AM._toiletAmbience2.time > _toiletAmbienceDuration)
+                if (S.AM.A["Toilet Ambience 2"].time > _toiletAmbienceDuration)
                 {
                     _toiletSwapPhase = "2to1";
-                    S.AM._toiletAmbience1.time = 0;
-                    S.AM._toiletAmbience1.volume = 1;
-                    S.AM._toiletAmbience1.Play();
+                    S.AM.A["Toilet Ambience 1"].time = 0;
+                    S.AM.A["Toilet Ambience 1"].volume = 1;
+                    S.AM.A["Toilet Ambience 1"].Play();
                 }
 
             if (_toiletSwapPhase == "1to2")
             {
-                S.AM._toiletAmbience1.volume -= 0.02f * d;
-                if (S.AM._toiletAmbience1.volume <= 0)
+                S.AM.A["Toilet Ambience 1"].volume -= 0.02f * d;
+                if (S.AM.A["Toilet Ambience 1"].volume <= 0)
                 {
-                    S.AM._toiletAmbience1.Stop();
+                    S.AM.A["Toilet Ambience 1"].Stop();
                     _toiletSwapPhase = "2";
                 }
             }
 
             if (_toiletSwapPhase == "2to1")
             {
-                S.AM._toiletAmbience2.volume -= 0.02f * d;
-                if (S.AM._toiletAmbience2.volume <= 0)
+                S.AM.A["Toilet Ambience 2"].volume -= 0.02f * d;
+                if (S.AM.A["Toilet Ambience 2"].volume <= 0)
                 {
-                    S.AM._toiletAmbience2.Stop();
+                    S.AM.A["Toilet Ambience 2"].Stop();
                     _toiletSwapPhase = "1";
                 }
             }
@@ -125,18 +125,18 @@ public class AmbienceManager : MonoBehaviour
 
         if (_toiletSwapPhase == "1" || _toiletSwapPhase == "2to1")
         {
-            if (!S.AM._toiletAmbience1.isPlaying)
+            if (!S.AM.A["Toilet Ambience 1"].isPlaying)
             {
-                S.AM._toiletAmbience1.Play();
-                S.AM._toiletAmbience1.time = _toiletTime;
+                S.AM.A["Toilet Ambience 1"].Play();
+                S.AM.A["Toilet Ambience 1"].time = _toiletTime;
             }
         }
         else if (_toiletSwapPhase == "2" || _toiletSwapPhase == "1to2")
         {
-            if (!S.AM._toiletAmbience2.isPlaying)
+            if (!S.AM.A["Toilet Ambience 2"].isPlaying)
             {
-                S.AM._toiletAmbience2.Play();
-                S.AM._toiletAmbience2.time = _toiletTime;
+                S.AM.A["Toilet Ambience 2"].Play();
+                S.AM.A["Toilet Ambience 2"].time = _toiletTime;
             }
         }
     }

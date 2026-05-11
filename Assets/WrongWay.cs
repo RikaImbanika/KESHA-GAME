@@ -5,9 +5,10 @@ using UnityEngine;
 public class WrongWay : MonoBehaviour
 {
     string[] _wrongWays = { 
-        "ohNo", 
-        "wrong", 
-        "wrong2" };
+        "Oh No", 
+        "Wrong",
+        "Wrong 2"
+         };
 
     int[] _order = new int[]
     {
@@ -27,7 +28,7 @@ public class WrongWay : MonoBehaviour
             string audioName = GetAudio();
 
             float pitch = 1.25f + (float)S.RND.NextDouble() * 0.1f;
-            S.AudioManager.Play(audioName, pitch);
+            S.AM.Play(audioName, pitch);
 
             StartCoroutine(HideAfterDelay(label, 1f));
         }        

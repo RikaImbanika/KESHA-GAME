@@ -67,9 +67,9 @@ public class HoleFall : MonoBehaviour
         float pitch = 1.25f + (float)S.RND.NextDouble() * 0.1f;
 
         if (_secondTime)
-            S.AM.Play("wrong2", pitch);
+            S.AM.Play("Wrong 2", pitch);
         else
-            S.AM.Play("ohNo", pitch);
+            S.AM.Play("Oh No", pitch);
 
         _secondTime = !_secondTime;
         _sayed = true;
@@ -78,7 +78,7 @@ public class HoleFall : MonoBehaviour
     void Push()
     {
         S.PlayerMovement.Push(transform.up * 100f);
-        S.AM.Play("throw");
+        S.AM.Play("Throw");
         _inside = false;
         _sayed = false;
 
@@ -89,7 +89,7 @@ public class HoleFall : MonoBehaviour
     {
         yield return new WaitForSeconds(0.15f);
 
-        S.AM.Play("throw");
+        S.AM.Play("Throw");
         S.PlayerMovement.Push(transform.forward * 200f, true);
     }
 

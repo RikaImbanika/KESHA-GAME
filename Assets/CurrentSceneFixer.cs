@@ -21,6 +21,9 @@ public class CurrentSceneFixer : MonoBehaviour
         {
             _time = 0;
 
+            if (S.Loader._teleporting)
+                return;
+
             RaycastHit hit;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, 20f, _layerMask))
             {

@@ -100,22 +100,6 @@ public class AllFather : MonoBehaviour
 		}
 	}
 
-	// public Color GetPixelColorAtHit(RaycastHit hit)
-	// {
-	// 	Renderer rend = hit.collider.GetComponent<Renderer>();
-	// 	if (rend == null) return Color.magenta;
-
-	// 	Texture tex = rend.material.mainTexture;
-	// 	Texture2D tex2D = tex as Texture2D;
-	// 	if (tex2D == null || !tex2D.isReadable)
-	// 		return Color.magenta;
-
-	// 	int x = Mathf.FloorToInt(hit.textureCoord.x * tex2D.width);
-	// 	int y = Mathf.FloorToInt(hit.textureCoord.y * tex2D.height);
-
-	// 	return tex2D.GetPixel(x, y);
-	// }
-
 	public string SelFromProb(List<(string Item, int Weight)> probabilities)
 	{
 		int total = probabilities.Sum(p => p.Weight);
@@ -141,28 +125,28 @@ public class AllFather : MonoBehaviour
 			ep._screamerX = 0;
 			ep._screamerY = -3.9f;
 			ep._screamerZ = 0.60f;
-			ep._screamerSounds = new string[] { "screamer1", "screamer2", "screamer3", "screamer4", "screamer5", "screamer6", "screamer7" };
+			ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
 		}
 		else if (name == "bakalavr")
 		{
 			ep._screamerX = 0;
 			ep._screamerY = -4.2f;
 			ep._screamerZ = 0.65f;
-			ep._screamerSounds = new string[] { "screamer1", "screamer2", "screamer3", "screamer4", "screamer5", "screamer6", "screamer7" };
+			ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
 		}
 		else if (name == "musculus")
 		{
 			ep._screamerX = 0;
 			ep._screamerY = -4.6f;
 			ep._screamerZ = 2.7f;
-			ep._screamerSounds = new string[] { "screamer1", "screamer2", "screamer3", "screamer4", "screamer5", "screamer6", "screamer7" };
+			ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
 		}
 		else if (name == "ghost")
 		{
 			ep._screamerX = 0;
 			ep._screamerY = -3;
 			ep._screamerZ = 1.5f;
-			ep._screamerSounds = new string[] { "screamer1", "screamer2", "screamer3", "screamer4", "screamer5", "screamer6", "screamer7" };
+			ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
 		}
 
 		return ep;

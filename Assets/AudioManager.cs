@@ -4,335 +4,137 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    private AudioSource _shot;
-    
-	public AudioSource _gong;
-	public AudioSource _arfa;
-	public AudioSource _door;
-	public AudioSource _pickUp;
-	public AudioSource _throw;
-	public AudioSource _inventory;
-	public AudioSource _plasma;
-	public AudioSource _money;
-	public AudioSource _notEnoughCash;
-	public AudioSource _toiletDoor;
-	public AudioSource _noAmmo;
-	public AudioSource _reload;
-	public AudioSource _toilet;
-	public AudioSource _kill;
-	public AudioSource _damage;
-	public AudioSource _heal;
-	public AudioSource _screamer1;
-	public AudioSource _screamer2;
-	public AudioSource _screamer3;
-	public AudioSource _screamer4;
-	public AudioSource _screamer5;
-	public AudioSource _screamer6;
-	public AudioSource _screamer7;
-    public AudioSource _ohNo;
-    public AudioSource _wrong;
-	public AudioSource _wrong2;
-	public AudioSource _crowdIsHappy;
+	private Dictionary<string, AudioSource> _audioSources;
 
-	public AudioSource _dirtStep1;
-	public AudioSource _dirtStep2;
-	public AudioSource _dirtStep3;
-	public AudioSource _dirtStep4;
-	public AudioSource _dirtStep5;
-
-	public AudioSource _plankStep1;
-	public AudioSource _plankStep2;
-	public AudioSource _plankStep3;
-	public AudioSource _plankStep4;
-	public AudioSource _plankStep5;
-
-	public AudioSource _tilesStep1;
-	public AudioSource _tilesStep2;
-	public AudioSource _tilesStep3;
-	public AudioSource _tilesStep4;
-	public AudioSource _tilesStep5;
-
-	public AudioSource _toiletMusic1;
-	public AudioSource _toiletMusic2;
-
-	public AudioSource _toiletAmbience1;
-	public AudioSource _toiletAmbience2;
-
-    public AudioSource _fzt1;
-    public AudioSource _fzt2;
-
-	public AudioSource _incomeOST1;
-	public AudioSource _incomeOST2;
-
-	public AudioSource _adelaidaOST1;
-	public AudioSource _labyrinth;
-	public AudioSource _fenomen;
-	public AudioSource _greatMix;
-	public AudioSource _riddik;
-	public AudioSource _goodTimes;
-	public AudioSource _rainbow;
-
-	public AudioSource _maylo;
-	public AudioSource _theRoom;
-
-	public AudioSource _stampSound;
-	public AudioSource _drawerO;
-	public AudioSource _drawerC;
-
-	public bool muted;
+	public bool _muted;
 
 	public void Start()
 	{
+		_audioSources = new Dictionary<string, AudioSource>();
+
+		foreach (Transform child in transform)
+		{
+			var source = child.GetComponent<AudioSource>();
+			if (source == null) continue;
+
+			string key = child.name;
+
+			_audioSources[key] = source;
+		}
+
 		S.AudioManager = this;
 	}
 
 	public void Play(string name)
 	{
-		Play(name, 1);
+		if (!CanPlay(name))
+			return;
+
+		float pitch = DefinePitch(name);
+		SetPitch(name, pitch);
+		_audioSources[name].Play();
 	}
 
 	public void Play(string name, float pitch)
 	{
-		name = name.ToLower();
-		if (muted)
+		if (!CanPlay(name))
 			return;
 
-		System.Random rnd = new System.Random();
+		SetPitch(name, pitch);
+		_audioSources[name].Play();
+	}
 
+	public void Play(string name, float minPitch, float maxPitch)
+	{
+		if (!CanPlay(name))
+			return;
+
+		SetPitch(name, Random.Range(minPitch, maxPitch));
+		_audioSources[name].Play();
+	}
+	
+	void SetPitch(string name, float pitch)
+	{
+		_audioSources[name].pitch = pitch;
+	}
+
+	bool CanPlay(string name)
+	{
+		if (_muted)
+			return false;
+
+		if (!_audioSources.ContainsKey(name))
+		{
+			Debug.LogError($"No such audioSource {name} in code!");
+			return false;
+		}
+
+		return true;
+	}
+
+	float DefinePitch(string name)
+	{
 		switch (name)
-		{		
-			case "gong":
-				_gong.pitch = pitch;
-				_gong.Play();
-				break;
-			case "arfa":
-				_arfa.pitch = pitch;
-				_arfa.Play();
-				break;
-			case "door":
-				pitch = 0.9f + (float)rnd.NextDouble() * 0.2f;
-				_door.pitch = pitch;
-				_door.Play();
-				break;
-			case "pickup":
-				pitch += -0.1f + (float)rnd.NextDouble() * 0.2f;
-				_pickUp.pitch = pitch;
-				_pickUp.Play();
-				break;
-			case "throw":
-				pitch += 0.2f + (float)rnd.NextDouble() * 0.2f;
-				_throw.pitch = pitch;
-				_throw.Play();
-				break;
-			case "inventory":
-				_inventory.pitch = pitch;
-				_inventory.Play();
-				break;
-			case "plasma":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_plasma.pitch = pitch;
-				_plasma.Play();
-				break;
-			case "money":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_money.pitch = pitch;
-				_money.Play();
-				break;
-			case "notenoughcash":
-				pitch = 0.9f;
-				_notEnoughCash.pitch = pitch;
-				_notEnoughCash.Play();
-				break;
-			case "noammo":
-				pitch = 0.9f;
-				_noAmmo.pitch = pitch;
-				_noAmmo.Play();
-				break;
-			case "toiletdoor":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_toiletDoor.pitch = pitch;
-				_toiletDoor.Play();
-				break;
-			case "reload":
-				pitch = 1f;
-				_reload.pitch = pitch;
-				_reload.Play();
-				break;
-			case "toilet":
-				pitch = 1f;
-				_toilet.pitch = pitch;
-				_toilet.Play();
-				break;
-			case "kill":
-				_kill.pitch = pitch;
-				_kill.Play();
-				break;
+		{
+			case "Door":
+				return Random.Range(0.9f, 1.1f);
+			case "Pick Up":
+				return Random.Range(0.9f, 1.1f);
+			case "Throw":
+				return Random.Range(0.2f, 0.4f);
+			case "Plasma":
+				return Random.Range(0.9f, 1.1f);
+			case "Money":
+				return Random.Range(0.9f, 1.1f);
+			case "Not Enough Cash":
+				return 0.9f;
+			case "No Ammo":
+				return 0.9f;
+			case "Toilet Door":
+				return Random.Range(0.9f, 1.1f);
+			case "Reload": //This is literally take ammo.
+				return 1f;
+			case "Toilet":
+				return 1f;
 			case "damage":
-				pitch = UnityEngine.Random.Range(1.1f, 1.175f);
-				_damage.pitch = pitch;
-				_damage.Play();
-				break;
-			case "heal":
-				_heal.Play();
-				break;
-			case "screamer1":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_screamer1.pitch = pitch;
-				_screamer1.Play();
-				break;
-			case "screamer2":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_screamer2.pitch = pitch;
-				_screamer2.Play();
-				break;
-			case "screamer3":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_screamer3.pitch = pitch;
-				_screamer3.Play();
-				break;
-			case "screamer4":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_screamer4.pitch = pitch;
-				_screamer4.Play();
-				break;
-			case "screamer5":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_screamer5.pitch = pitch;
-				_screamer5.Play();
-				break;
-			case "screamer6":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_screamer6.pitch = pitch;
-				_screamer6.Play();
-				break;
-			case "screamer7":
-				pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-				_screamer7.pitch = pitch;
-				_screamer7.Play();
-				break;
-			case "ohno":
-				_ohNo.pitch = pitch;
-				_ohNo.Play();
-                break;
-			case "wrong":
-				_wrong.pitch = pitch;
-				_wrong.Play();
-                break;
-			case "wrong2":
-				_wrong2.pitch = pitch;
-				_wrong2.Play();
-				break;
-			case "crowdishappy":
-				_crowdIsHappy.pitch = pitch;
-				_crowdIsHappy.Play();
-				break;
+				return Random.Range(1.1f, 1.175f); //TO DO: Optimise
+			case "Screamer 1":
+				return Random.Range(0.9f, 1.1f);
+			case "Screamer 2":
+				return Random.Range(0.9f, 1.1f);
+			case "Screamer 3":
+				return Random.Range(0.9f, 1.1f);
+			case "Screamer 4":
+				return Random.Range(0.9f, 1.1f);
+			case "Screamer 5":
+				return Random.Range(0.9f, 1.1f);
+			case "Screamer 6":
+				return Random.Range(0.9f, 1.1f);
+			case "Screamer 7":
+				return Random.Range(0.9f, 1.1f);
 
-			case "dirtstep1":
-				_dirtStep1.pitch = pitch;
-				_dirtStep1.Play();
-				break;
-			case "dirtstep2":
-				_dirtStep1.pitch = pitch;
-				_dirtStep1.Play();
-				break;
-			case "dirtstep3":
-				_dirtStep3.pitch = pitch;
-				_dirtStep3.Play();
-				break;
-			case "dirtstep4":
-				_dirtStep4.pitch = pitch;
-				_dirtStep4.Play();
-				break;
-			case "dirtstep5":
-				_dirtStep5.pitch = pitch;
-				_dirtStep5.Play();
-				break;
+			case "First Zombella Theme 1":
+				return 1f;
+			case "First Zombella Theme 2":
+				return 1f;
+			case "Income 1":
+				return 1f;
+			case "Income 2":
+				return 1f;
 
-			case "plankstep1":
-				_plankStep1.pitch = pitch;
-				_plankStep1.Play();
-				break;
-			case "plankstep2":
-				_plankStep2.pitch = pitch;
-				_plankStep2.Play();
-				break;
-			case "plankstep3":
-				_plankStep3.pitch = pitch;
-				_plankStep3.Play();
-				break;
-			case "plankstep4":
-				_plankStep4.pitch = pitch;
-				_plankStep4.Play();
-				break;
-			case "plankstep5":
-				_plankStep5.pitch = pitch;
-				_plankStep5.Play();
-				break;
-
-			case "tilesstep1":
-				_tilesStep1.pitch = pitch;
-				_tilesStep1.Play();
-				break;
-			case "tilesstep2":
-				_tilesStep2.pitch = pitch;
-				_tilesStep2.Play();
-				break;
-			case "tilesstep3":
-				_tilesStep3.pitch = pitch;
-				_tilesStep3.Play();
-				break;
-			case "tilesstep4":
-				_tilesStep4.pitch = pitch;
-				_tilesStep4.Play();
-				break;
-			case "tilesstep5":
-				_tilesStep5.pitch = pitch;
-				_tilesStep5.Play();
-				break;
-
-			case "fzt1":
-                pitch = 1;
-                _fzt1.pitch = pitch;
-                _fzt1.Play();
-                break;
-            case "fzt2":
-                pitch = 1;
-                _fzt2.pitch = pitch;
-                _fzt2.Play();
-                break;
-			case "incomeOST1":
-				pitch = 1;
-				_incomeOST1.pitch = pitch;
-				_incomeOST1.Play();
-				break;
-			case "incomeOST2":
-				pitch = 1;
-				_incomeOST2.pitch = pitch;
-				_incomeOST2.Play();
-				break;
-			case "stampsound":
-				_stampSound.pitch = pitch;
-				_stampSound.Play();
-				break;
-			case "drawero":
-				_drawerO.pitch = pitch;
-				_drawerO.Play();
-				break;
-			case "drawerc":
-				_drawerC.pitch = pitch;
-				_drawerC.Play();
-				break;
-			case "goodtimes":
-				_goodTimes.pitch = pitch;
-				_goodTimes.Play();
-				break;
-			case "rainbow":
-				_rainbow.pitch = pitch;
-				_rainbow.Play();
-				break;
 			default:
-				Debug.LogError($"No such audioSource {name} in code! Maybe you want to add it into AudioManager?");
-				break;
+				return A[name].pitch;
+		}
+	}
+
+	/// <summary>
+	/// Audio
+	/// </summary>
+	public Dictionary<string, AudioSource> A
+	{
+		get
+		{
+			return _audioSources;
 		}
 	}
 }

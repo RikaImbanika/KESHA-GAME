@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FirstZombie : MonoBehaviour
+public class FirstZombella : MonoBehaviour
 {
     void Start()
     {

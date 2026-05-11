@@ -26,7 +26,7 @@ public class PlayerStorage : MonoBehaviour
         if (_health > 0)
         {
             _health -= amount;
-            S.AudioManager.Play("damage", 1);
+            S.AM.Play("Damage", 1);
             S.SM.Save("health", _health);
 
             if (_health <= 0f)

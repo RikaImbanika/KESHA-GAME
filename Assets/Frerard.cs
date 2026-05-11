@@ -48,8 +48,9 @@ public class Frerard : MonoBehaviour
         {
             S.SM.Save("FreardFinished", true);
 
-            S.AM.Play(_audioName, 1);
+            S.AM.Play("Gong");
             yield return new WaitForSeconds(3);
+            S.AM.Play("Crowd Is Happy");
             _startY = transform.position.y;
             _activated = true;
             yield return null;

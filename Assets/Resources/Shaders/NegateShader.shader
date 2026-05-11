@@ -1,6 +1,6 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "ddShaders/dd_Invert" {
+Shader "Custom/NegateShader" {
 Properties
     {
         _Color ("Tint Color", Color) = (1,1,1,1)

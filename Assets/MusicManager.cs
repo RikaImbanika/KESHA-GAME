@@ -12,7 +12,7 @@ public class MusicManager : MonoBehaviour
     static Vector3 _toiletStart = new Vector3(-174f, -2.5f, 109f);
     float _maxToiletDistance = Vector3.Distance(_toiletCenter, _toiletStart);
 
-    public bool _firstZombieBattle;
+    public bool _firstZombellaBattle;
     public float _fztVolume;
     public bool _fztFadeIn;
     public bool _fztFadeOut;
@@ -72,25 +72,25 @@ public class MusicManager : MonoBehaviour
             _backroomsSources = new AudioSource[count];
             _backroomsLengthes = new float[count];
                         
-            _backroomsSources[0] = S.AM._goodTimes;
+            _backroomsSources[0] = S.AM.A["Good Times"];
             _backroomsLengthes[0] = 310;
 
-            _backroomsSources[1] = S.AM._rainbow;
+            _backroomsSources[1] = S.AM.A["Rainbow"];
             _backroomsLengthes[1] = 300;
                         
-            _backroomsSources[2] = S.AM._adelaidaOST1;
+            _backroomsSources[2] = S.AM.A["Adelaida"];
             _backroomsLengthes[2] = 173;
                         
-            _backroomsSources[3] = S.AM._fenomen;
+            _backroomsSources[3] = S.AM.A["Fenomen"];
             _backroomsLengthes[3] = 674;
                         
-            _backroomsSources[4] = S.AM._riddik;
+            _backroomsSources[4] = S.AM.A["Riddik"];
             _backroomsLengthes[4] = 1116;
 
-            _backroomsSources[5] = S.AM._labyrinth;
+            _backroomsSources[5] = S.AM.A["Labyrinth"];
             _backroomsLengthes[5] = 597;
 
-            _backroomsSources[6] = S.AM._greatMix;
+            _backroomsSources[6] = S.AM.A["Great Mix"];
             _backroomsLengthes[6] = 2378;
 
             bool[] remember = new bool[count2];
@@ -141,7 +141,7 @@ public class MusicManager : MonoBehaviour
 
             //Play
 
-            S.AM._incomeOST1.Play();
+            S.AM.A["Income 1"].Play();
 
             //MR
 
@@ -149,8 +149,8 @@ public class MusicManager : MonoBehaviour
             _mushroomsVolumes[0] = 1;
 
             _mushroomsSources = new AudioSource[2];
-            _mushroomsSources[0] = S.AM._maylo;
-            _mushroomsSources[1] = S.AM._theRoom;
+            _mushroomsSources[0] = S.AM.A["Maylo"];
+            _mushroomsSources[1] = S.AM.A["The Room"];
 
             _mushroomsLengthes = new float[2];
             _mushroomsLengthes[0] = 282;
@@ -166,8 +166,8 @@ public class MusicManager : MonoBehaviour
 
         if (_playerInToilet)
             IfPlayerInToilet(d);
-        else if (_firstZombieBattle)
-            FirstZombieBattle(d);
+        else if (_firstZombellaBattle)
+            FirstZombellaBattle(d);
 
         Income(d);
         Backrooms(d);
@@ -329,18 +329,18 @@ public class MusicManager : MonoBehaviour
 
         if (_incomeSwapPhase == "1" || _incomeSwapPhase == "2to1")
         {
-            if (!S.AM._incomeOST1.isPlaying)
+            if (!S.AM.A["Income 1"].isPlaying)
             {
-                S.AM._incomeOST1.Play();
-                S.AM._incomeOST1.time = _incomeTime;
+                S.AM.A["Income 1"].Play();
+                S.AM.A["Income 1"].time = _incomeTime;
             }
         }
         else if (_incomeSwapPhase == "2" || _incomeSwapPhase == "1to2")
         {
-            if (!S.AM._incomeOST2.isPlaying)
+            if (!S.AM.A["Income 2"].isPlaying)
             {
-                S.AM._incomeOST2.Play();
-                S.AM._incomeOST2.time = _incomeTime;
+                S.AM.A["Income 2"].Play();
+                S.AM.A["Income 2"].time = _incomeTime;
             }
         }
     }
@@ -354,77 +354,77 @@ public class MusicManager : MonoBehaviour
     {
         if (_incomePhase == "leaving")
         {
-            if (S.AM._incomeOST1.volume > 0)
-                S.AM._incomeOST1.volume -= 0.005f * d;
-            if (S.AM._incomeOST2.volume > 0)
-                S.AM._incomeOST2.volume -= 0.005f * d;
+            if (S.AM.A["Income 1"].volume > 0)
+                S.AM.A["Income 1"].volume -= 0.005f * d;
+            if (S.AM.A["Income 2"].volume > 0)
+                S.AM.A["Income 2"].volume -= 0.005f * d;
 
-            if (S.AM._incomeOST2.volume <= 0 && S.AM._incomeOST1.volume <= 0)
+            if (S.AM.A["Income 2"].volume <= 0 && S.AM.A["Income 1"].volume <= 0)
             {
                 _incomePhase = "leaved";
 
                 if (_incomeSwapPhase == "1" || _incomeSwapPhase == "2to1")
-                    _incomeTime = S.AM._incomeOST1.time;
+                    _incomeTime = S.AM.A["Income 1"].time;
                 else
-                    _incomeTime = S.AM._incomeOST2.time;
+                    _incomeTime = S.AM.A["Income 2"].time;
 
-                S.AM._incomeOST1.Pause();
-                S.AM._incomeOST2.Pause();
+                S.AM.A["Income 1"].Pause();
+                S.AM.A["Income 2"].Pause();
             }
         }
         else if (_incomePhase == "entering")
         {
             if (_incomeSwapPhase == "1" || _incomeSwapPhase == "2to1")
             {
-                S.AM._incomeOST1.volume += 0.005f * d;
+                S.AM.A["Income 1"].volume += 0.005f * d;
 
-                if (S.AM._incomeOST1.volume >= 1)
+                if (S.AM.A["Income 1"].volume >= 1)
                     _incomePhase = "entered";
             }
             else if (_incomeSwapPhase == "2" || _incomeSwapPhase == "1to2")
             {
-                S.AM._incomeOST2.volume += 0.005f * d;
+                S.AM.A["Income 2"].volume += 0.005f * d;
 
-                if (S.AM._incomeOST2.volume >= 1)
+                if (S.AM.A["Income 2"].volume >= 1)
                     _incomePhase = "entered";
             }
         }
         else
         {
             if (_incomeSwapPhase == "1")
-                if (S.AM._incomeOST1.time > 197)
+                if (S.AM.A["Income 1"].time > 197)
                 {
                     _incomeSwapPhase = "1to2";
-                    S.AM._incomeOST2.time = 0;
-                    S.AM._incomeOST2.volume = 1;
-                    S.AM._incomeOST2.Play();
+                    S.AM.A["Income 2"].time = 0;
+                    S.AM.A["Income 2"].volume = 1;
+                    S.AM.A["Income 2"].Play();
                 }
 
             if (_incomeSwapPhase == "2")
-                if (S.AM._incomeOST2.time > 197)
+                if (S.AM.A["Income 2"].time > 197)
                 {
                     _incomeSwapPhase = "2to1";
-                    S.AM._incomeOST1.time = 0;
-                    S.AM._incomeOST1.volume = 1;
-                    S.AM._incomeOST1.Play();
+                    S.AM.A["Income 1"].time = 0;
+                    S.AM.A["Income 1"].volume = 1;
+                    S.AM.A["Income 1"].Play();
                 }
 
             if (_incomeSwapPhase == "1to2")
             {
-                S.AM._incomeOST1.volume -= 0.003f * d;
-                if (S.AM._incomeOST1.volume <= 0)
+                S.AM.A["Income 1"].volume -= 0.003f * d;
+                if (S.AM.A["Income 1"].volume <= 0)
                 {
-                    S.AM._incomeOST1.Stop();
+                    S.AM.A["Income 1"].Stop();
                     _incomeSwapPhase = "2";
                 }
             }
 
             if (_incomeSwapPhase == "2to1")
             {
-                S.AM._incomeOST2.volume -= 0.003f * d;
-                if (S.AM._incomeOST2.volume <= 0)
+                S.AM.A["Income 2"].volume -= 0.003f * d;
+                if (S.AM.A["Income 2"].volume <= 0)
                 {
-                    S.AM._incomeOST2.Stop();
+                    S.AM.A["Income 2"].Stop();
                     _incomeSwapPhase = "1";
                 }
             }
@@ -433,30 +433,30 @@ public class MusicManager : MonoBehaviour
 
     public void IfPlayerInToilet(float d)
     {
-        if (S.AM._toiletMusic1.time > 80)
+        if (S.AM.A["Toilet Music 1"].time > 80)
         {
-            S.AM._toiletMusic1.Stop();
-            S.AM._toiletMusic2.time = 0;
-            S.AM._toiletMusic2.Play();
+            S.AM.A["Toilet Music 1"].Stop();
+            S.AM.A["Toilet Music 2"].time = 0;
+            S.AM.A["Toilet Music 2"].Play();
         }
-        if (S.AM._toiletMusic2.time > 80)
+        if (S.AM.A["Toilet Music 2"].time > 80)
         {
-            S.AM._toiletMusic2.Stop();
-            S.AM._toiletMusic1.time = 0;
-            S.AM._toiletMusic1.Play();
+            S.AM.A["Toilet Music 2"].Stop();
+            S.AM.A["Toilet Music 1"].time = 0;
+            S.AM.A["Toilet Music 1"].Play();
         }
 
         if (_toiletPhase == "leaving")
         {
-            if (S.AM._toiletMusic1.volume >= 0.003f * d)
-                S.AM._toiletMusic1.volume -= 0.003f * d;
-            if (S.AM._toiletMusic2.volume >= 0.003f * d)
-                S.AM._toiletMusic2.volume -= 0.003f * d;
+            if (S.AM.A["Toilet Music 1"].volume >= 0.003f * d)
+                S.AM.A["Toilet Music 1"].volume -= 0.003f * d;
+            if (S.AM.A["Toilet Music 2"].volume >= 0.003f * d)
+                S.AM.A["Toilet Music 2"].volume -= 0.003f * d;
 
-            if (S.AM._toiletMusic1.volume < 0.003f && S.AM._toiletMusic2.volume < 0.003f)
+            if (S.AM.A["Toilet Music 1"].volume < 0.003f && S.AM.A["Toilet Music 2"].volume < 0.003f)
             {
-                S.AM._toiletMusic1.Stop();
-                S.AM._toiletMusic2.Stop();
+                S.AM.A["Toilet Music 1"].Stop();
+                S.AM.A["Toilet Music 2"].Stop();
                 _toiletPhase = "silence";
                 _playerInToilet = false; //?
             }
@@ -468,22 +468,22 @@ public class MusicManager : MonoBehaviour
             if (volume < 0)
                 volume = 0;
 
-            S.AM._toiletMusic1.volume = volume;
-            S.AM._toiletMusic2.volume = volume;
+            S.AM.A["Toilet Music 1"].volume = volume;
+            S.AM.A["Toilet Music 2"].volume = volume;
         }
     }
 
-    public void FirstZombieBattle(float d)
+    public void FirstZombellaBattle(float d)
     {
-        if (S.AM._fzt1.time > 80)
+        if (S.AM.A["First Zombella Theme 1"].time > 80)
         {
-            S.AM._fzt2.time = 0;
-            S.AM._fzt2.Play();
+            S.AM.A["First Zombella Theme 2"].time = 0;
+            S.AM.A["First Zombella Theme 2"].Play();
         }
-        else if (S.AM._fzt1.time > 80)
+        else if (S.AM.A["First Zombella Theme 1"].time > 80)
         {
-            S.AM._fzt1.time = 0;
-            S.AM._fzt1.Play();
+            S.AM.A["First Zombella Theme 1"].time = 0;
+            S.AM.A["First Zombella Theme 1"].Play();
         }
 
         if (_fztFadeIn)
@@ -491,15 +491,15 @@ public class MusicManager : MonoBehaviour
             if (_fztVolume < 1)
             {
                 _fztVolume += 0.03f * d;
-                S.AM._fzt1.volume = _fztVolume;
-                S.AM._fzt2.volume = _fztVolume;
+                S.AM.A["First Zombella Theme 1"].volume = _fztVolume;
+                S.AM.A["First Zombella Theme 2"].volume = _fztVolume;
             }
             else
             {
                 _fztVolume = 1f;
                 _fztFadeIn = false;
-                S.AM._fzt1.volume = _fztVolume;
-                S.AM._fzt2.volume = _fztVolume;
+                S.AM.A["First Zombella Theme 1"].volume = _fztVolume;
+                S.AM.A["First Zombella Theme 2"].volume = _fztVolume;
             }
         }
         else if (_fztFadeOut)
@@ -507,60 +507,60 @@ public class MusicManager : MonoBehaviour
             if (_fztVolume > 0.03f)
             {
                 _fztVolume -= 0.01f * d;
-                S.AM._fzt1.volume = _fztVolume;
-                S.AM._fzt2.volume = _fztVolume;
+                S.AM.A["First Zombella Theme 1"].volume = _fztVolume;
+                S.AM.A["First Zombella Theme 2"].volume = _fztVolume;
             }
             else
             {
                 _fztVolume = 0;
                 _fztFadeOut = false;
-                S.AM._fzt1.volume = _fztVolume;
-                S.AM._fzt2.volume = _fztVolume;
+                S.AM.A["First Zombella Theme 1"].volume = _fztVolume;
+                S.AM.A["First Zombella Theme 2"].volume = _fztVolume;
 
                 if (_fztKilled)
-                    _firstZombieBattle = false;
+                    _firstZombellaBattle = false;
             }
         }
     }
 
-    public void FirstZombieEntersHall()
+    public void FirstZombellaEntersHall()
     {
-        _firstZombieBattle = true;
+        _firstZombellaBattle = true;
         _fztFadeIn = false;
         _fztFadeOut = false;
         _fztVolume = 1;
-        S.AM._fzt1.volume = _fztVolume;
-        S.AM._fzt2.volume = _fztVolume;
-        S.AM._fzt1.time = 0;
-        S.AM._fzt2.time = 0;
-        S.AM.Play("FZT1");
+        S.AM.A["First Zombella Theme 1"].volume = _fztVolume;
+        S.AM.A["First Zombella Theme 2"].volume = _fztVolume;
+        S.AM.A["First Zombella Theme 1"].time = 0;
+        S.AM.A["First Zombella Theme 2"].time = 0;
+        S.AM.Play("First Zombella Theme 1");
     }
 
-    public void PlayerMeetFirstZombie()
+    public void PlayerMeetFirstZombella()
     {
         _fztFadeIn = true;
         _fztFadeOut = false;
 
-        S.AM._fzt1.volume = _fztVolume;
-        S.AM._fzt2.volume = _fztVolume;
+        S.AM.A["First Zombella Theme 1"].volume = _fztVolume;
+        S.AM.A["First Zombella Theme 2"].volume = _fztVolume;
 
-        if (!_firstZombieBattle)
+        if (!_firstZombellaBattle)
         {
-            _firstZombieBattle = true;
-            if (!S.AM._fzt1.isPlaying && !S.AM._fzt2.isPlaying)
+            _firstZombellaBattle = true;
+            if (!S.AM.A["First Zombella Theme 1"].isPlaying && !S.AM.A["First Zombella Theme 2"].isPlaying)
             {
-                S.AM.Play("FZT1"); /////////////////
+                S.AM.Play("First Zombella Theme 1"); /////////////////
             }
         }
     }
 
-    public void PlayerLeavesFirstZombie()
+    public void PlayerLeavesFirstZombella()
     {
         _fztFadeOut = true;
         _fztFadeIn = false;
     }
 
-    public void PlayerKillsFirstZombie()
+    public void PlayerKillsFirstZombella()
     {
         _fztFadeOut = true;
         _fztFadeIn = false;
@@ -573,11 +573,11 @@ public class MusicManager : MonoBehaviour
         {
             _toiletPhase = "entering";
             _playerInToilet = true;
-            S.AM._toiletMusic1.volume = 0;
-            S.AM._toiletMusic2.volume = 0;
-            S.AM._toiletMusic1.time = 0;
-            S.AM._toiletMusic2.time = 0;
-            S.AM._toiletMusic1.Play();
+            S.AM.A["Toilet Music 1"].volume = 0;
+            S.AM.A["Toilet Music 2"].volume = 0;
+            S.AM.A["Toilet Music 1"].time = 0;
+            S.AM.A["Toilet Music 2"].time = 0;
+            S.AM.A["Toilet Music 1"].Play();
         }
         else if (_toiletPhase == "leaving")
         {
@@ -588,8 +588,8 @@ public class MusicManager : MonoBehaviour
     public void DeepEnterToilet()
     {
         _toiletPhase = "inside";
-        S.AM._toiletMusic1.volume = 1;
-        S.AM._toiletMusic2.volume = 1;
+        S.AM.A["Toilet Music 1"].volume = 1;
+        S.AM.A["Toilet Music 2"].volume = 1;
     }
 
     public void LeaveToilet()

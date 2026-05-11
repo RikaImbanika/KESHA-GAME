@@ -45,11 +45,11 @@ public class Locker : MonoBehaviour
 
 			S.SM.Save(S.ID(_id, "destroyed"), true);
 
-			S.AudioManager.Play("kill", 1);
+			S.AM.Play("Kill", 1);
 
 			Destroy(gameObject);
 		}
 		else
-			S.AudioManager.Play("notEnoughCash", 1);
+			S.AM.Play("Not Enough Cash", 1);
 	}
 }

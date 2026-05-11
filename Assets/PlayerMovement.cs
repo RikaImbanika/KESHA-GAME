@@ -99,17 +99,17 @@ public class PlayerMovement : MonoBehaviour
 		_dirtStepsSoundsCount = 3;
 		_dirtStepSoundsNames = new string[_dirtStepsSoundsCount];
 		for (int i = 0; i < _dirtStepsSoundsCount; i++)
-			_dirtStepSoundsNames[i] = $"dirtStep{i + 1}";
+			_dirtStepSoundsNames[i] = $"Dirt Step {i + 1}";
 
 		_plankStepsSoundsCount = 5;
 		_plankStepSoundsNames = new string[_plankStepsSoundsCount];
 		for (int i = 0; i < _plankStepsSoundsCount; i++)
-			_plankStepSoundsNames[i] = $"plankStep{i + 1}";
+			_plankStepSoundsNames[i] = $"Planks Step {i + 1}";
 
 		_tilesStepsSoundsCount = 5;
 		_tilesStepSoundsNames = new string[_tilesStepsSoundsCount];
 		for (int i = 0; i < _tilesStepsSoundsCount; i++)
-			_tilesStepSoundsNames[i] = $"tilesStep{i + 1}";
+			_tilesStepSoundsNames[i] = $"Tiles Step {i + 1}";
 
 		StartCoroutine(LateStart());
 
@@ -233,11 +233,11 @@ public class PlayerMovement : MonoBehaviour
 		float pitch = 1f + (float)S.RND.NextDouble() * 0.25f;
 
 		if (_stepType == "dirt")
-			S.AudioManager.Play(_dirtStepSoundsNames[id], pitch);
+			S.AM.Play(_dirtStepSoundsNames[id], pitch);
 		else if (_stepType == "planks")
-			S.AudioManager.Play(_plankStepSoundsNames[id], pitch);
+			S.AM.Play(_plankStepSoundsNames[id], pitch);
 		else if (_stepType == "tiles")
-			S.AudioManager.Play(_tilesStepSoundsNames[id], pitch);
+			S.AM.Play(_tilesStepSoundsNames[id], pitch);
 	}
 
 	private void Gravity(float k)
@@ -261,21 +261,28 @@ public class PlayerMovement : MonoBehaviour
 		if (!showingCamera.enabled)
 			if (!inventory.opened)
 				if (!inventory._marketOpened)
-				{
-					horizontalInput = Input.GetAxisRaw("Horizontal");
-					verticalInput = Input.GetAxisRaw("Vertical");
-
-					if (Input.GetKey(jumpKey) && readyToJump && grounded)
+					if (!S.Console._opened)
 					{
-						Jump();						
+						horizontalInput = Input.GetAxisRaw("Horizontal");
+						verticalInput = Input.GetAxisRaw("Vertical");
+
+						if (Input.GetKey(jumpKey) && readyToJump && grounded)
+						{
+							Jump();
+						}
+
+						if (Input.GetKeyDown(crouchKey))
+							isCrouching = true;
+
+						if (Input.GetKeyUp(crouchKey))
+							isCrouching = false;
+
+						return;
 					}
 
-					if (Input.GetKeyDown(crouchKey))
-						isCrouching = true;
-
-					if (Input.GetKeyUp(crouchKey))
-						isCrouching = false;
-				}
+		horizontalInput = 0;
+		verticalInput = 0;
+		isCrouching = false;
 	}
 
 	private void Crouch(float k)

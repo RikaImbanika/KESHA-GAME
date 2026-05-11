@@ -20,7 +20,6 @@ public class DoorLocal : MonoBehaviour
 
 	private string _id;
 
-	// Переменные для синусоидального движения
 	private bool _isMoving;
 	private float _moveStartTime;
 	private float _moveDuration;
@@ -58,8 +57,9 @@ public class DoorLocal : MonoBehaviour
 
 			_locked = S.SM.LoadBool(S.ID(_id, "locked")) ?? _locked;
 
-			if (string.IsNullOrEmpty(_audioName))
-				_audioName = "toiletDoor";
+			// if (string.IsNullOrEmpty(_audioName))
+			// 	_audioName = "toiletDoor";
+			_audioName = "Toilet Door"; //TO DO: More sounds.
 		}
 	}
 
@@ -81,22 +81,19 @@ public class DoorLocal : MonoBehaviour
 			if (_item != null)
 				_item.ToggleLock(false);
 
-			_audioManager.Play(_audioName, 1);
+			_audioManager.Play("Toilet Door");
 
-			// Определяем целевой угол и состояние opened
 			float targetAngle;
 			bool opened;
 			if (!_direction)
 			{
 				if (cr < -(_maxAngle / 2))
 				{
-					// нужно закрыть
 					targetAngle = 0;
 					opened = false;
 				}
 				else
 				{
-					// нужно открыть
 					targetAngle = -_maxAngle;
 					opened = true;
 				}
@@ -105,13 +102,11 @@ public class DoorLocal : MonoBehaviour
 			{
 				if (cr > (_maxAngle / 2))
 				{
-					// нужно закрыть
 					targetAngle = 0;
 					opened = false;
 				}
 				else
 				{
-					// нужно открыть
 					targetAngle = _maxAngle;
 					opened = true;
 				}
@@ -123,7 +118,7 @@ public class DoorLocal : MonoBehaviour
 			S.SM.Save(S.ID(_id, "opened"), opened);
 		}
 		else
-			_audioManager.Play("notEnoughCash", 1);
+			_audioManager.Play("Not Enough Cash");
 	}
 
 	public void Close()
@@ -138,10 +133,10 @@ public class DoorLocal : MonoBehaviour
 		_targetAngle = targetAngle;
 		_moveStartTime = Time.time;
 		float distance = Mathf.Abs(targetAngle - cr);
-		// Сохраняем среднюю скорость 90 градусов/сек (как было при линейном движении)
+
 		_moveDuration = distance / 90f;
 
-		if (_moveDuration < 0.01f) // Если угол уже близок к целевому – устанавливаем мгновенно
+		if (_moveDuration < 0.01f)
 		{
 			cr = targetAngle;
 			transform.rotation = Quaternion.Euler(zrx, zry, zrz + cr);
@@ -175,11 +170,11 @@ public class DoorLocal : MonoBehaviour
 			{
 				t = 1f;
 				_isMoving = false;
-				// При завершении движения к нулю (закрытие) – блокируем предмет
+
 				if (_targetAngle == 0 && _item != null)
 					_item.ToggleLock(true);
 			}
-			// Синусоидальная интерполяция: плавный старт и останов
+
 			float smoothT = (1f - Mathf.Cos(t * Mathf.PI)) / 2f;
 			cr = Mathf.Lerp(_startAngle, _targetAngle, smoothT);
 			transform.rotation = Quaternion.Euler(zrx, zry, zrz + cr);

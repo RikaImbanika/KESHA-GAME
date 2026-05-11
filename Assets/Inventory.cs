@@ -163,7 +163,7 @@ public class Inventory : MonoBehaviour
                 Debug.Log("Inventory waiting for S.AudioManager");
             }
 
-            S.AudioManager.muted = true;
+            S.AudioManager._muted = true;
 
             items = new Item[36]; //Kinda hardcode
             numberLabels = new TextMeshProUGUI[36];
@@ -222,7 +222,7 @@ public class Inventory : MonoBehaviour
 
 			Visualize();
 
-			S.AudioManager.muted = false;
+			S.AudioManager._muted = false;
 		}
 	}
 
@@ -501,6 +501,10 @@ public class Inventory : MonoBehaviour
 
 	private void MyInput()
 	{
+		if (S.Console._opened)
+		{
+			return;
+		}
 		if (S.ItemShower._showingItem != null)
 		{
 			if (S.ItemShower._showingStartTime < Time.time - 1)
@@ -771,7 +775,7 @@ public class Inventory : MonoBehaviour
 					if (!string.IsNullOrEmpty(items[selectedId]._name))
 						locker.Unlock(items[selectedId]._name);
 					else
-						S.AudioManager.Play("notEnoughCash", 1);
+						S.AM.Play("Not Enough Cash", 1);
 
 					return;
 				}
@@ -816,7 +820,7 @@ public class Inventory : MonoBehaviour
 						if (granny._phase != "Fleeing")
 							trader.OpenMarket();
 						else
-							S.AudioManager.Play("Wrong");
+							S.AM.Play("Wrong");
 					}
 					else
 					{
@@ -876,7 +880,7 @@ public class Inventory : MonoBehaviour
 					{
 						_playerStorage.Heal(100);
 						Remove("FirstAidKit", 1);
-						S.AudioManager.Play("heal", 1);
+						S.AM.Play("Heal", 1);
 						return;
 					}
 				}
@@ -944,7 +948,7 @@ public class Inventory : MonoBehaviour
 			items[selId]._name = name;
 			items[selId]._count = count;
 			Visualise(selId);
-			S.AudioManager.Play(an, 1);
+			S.AM.Play(an, 1);
 			S.ItemShower.TryShow(name);
             SaveOneItem(selId);
 			CheckQuests(name);
@@ -1025,7 +1029,7 @@ public class Inventory : MonoBehaviour
 			}
 
 			Visualise(id);
-			S.AudioManager.Play("throw", MathF.Min(MathF.Max(MathF.Pow(throwCombo, 0.1f), 1), 5));
+			S.AudioManager.Play("Throw", MathF.Min(MathF.Max(MathF.Pow(throwCombo, 0.1f), 1), 5));
 
 			SaveOneItem(id);
 		}
@@ -1073,9 +1077,7 @@ public class Inventory : MonoBehaviour
 		throwPanelBlack.transform.localScale = new Vector3(0, 0, 0);
 		throwPanelRed.SetActive(false);
 
-		//Vector2 canvasScale = new Vector2(canvas.transform.lossyScale.x, canvas.transform.lossyScale.y);
-
-		S.AudioManager.Play("inventory", 1.3f);
+		S.AM.Play("Inventory", 1.3f);
 
 		if (opened)
 		{

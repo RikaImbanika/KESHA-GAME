@@ -59,8 +59,8 @@ public class ItemShower : MonoBehaviour
 
                 _showingItem.transform.eulerAngles = startRotation;
 
-                S.AudioManager.Play("gong", 1);
-                S.AudioManager.Play("crowdishappy", 1); //TO DO more sounds in future
+                S.AM.Play("Gong");
+                S.AM.Play("Crowd Is Happy"); //TO DO more sounds in future
 
                 _showingCamera.enabled = true;
                 _showingCamera.gameObject.SetActive(true);
@@ -83,7 +83,7 @@ public class ItemShower : MonoBehaviour
             _showingPanel.gameObject.SetActive(false);
             _showingOverlay.SetActive(false);
             S.Inventory.smallInventoryPanel.SetActive(true);
-            S.AudioManager.Play("pickUp", 1.3f);
+            S.AM.Play("Pick Up", 1.3f);
         }
     }
 

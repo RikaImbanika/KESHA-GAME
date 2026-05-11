@@ -47,7 +47,7 @@ public class Gun : MonoBehaviour
             {
                 S.Inventory.Remove("Ammo", 1);
 
-                S.AudioManager.Play("plasma", 1);
+                S.AM.Play("Plasma");
 
                 NoSpots noSpots = hit.collider.gameObject.GetComponent<NoSpots>();
                 if (noSpots == null)

@@ -8,16 +8,12 @@ public class Trader : MonoBehaviour
 {
 	public List<Trade> _trades;
 	public Texture2D _tradeTexture;
-	private Canvas _canvas;
-	private Inventory _inventory;
 	private List<GameObject> _panels;
 
 	void Start()
 	{
-		_canvas = GameObject.FindObjectOfType<Canvas>();
-		_inventory = _canvas.GetComponent<Inventory>();
 		_panels = new List<GameObject>();
-		_inventory._trader = this;
+		S.Inventory._trader = this;
 	}
 
 	public void OpenMarket()
@@ -26,17 +22,17 @@ public class Trader : MonoBehaviour
 			if (_trades[i]._tradeCount <= 0)
                 _trades.RemoveAt(i);
 
-        if (_inventory._marketOpened == false && _trades.Count > 0)
+        if (S.Inventory._marketOpened == false && _trades.Count > 0)
 		{
 			for (int i = _trades.Count - 1; i >= 0; i--)
 				if (_trades[i]._tradeCount <= 0)
 					_trades.RemoveAt(i);					
 
-			_inventory._marketOpened = true;
+			S.Inventory._marketOpened = true;
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
 
-			S.AM.Play("inventory", 1);
+			S.AM.Play("Inventory", 1);
 
 			float spacing = 0.09f;
 			int screenWidth = Screen.currentResolution.width;
@@ -50,10 +46,9 @@ public class Trader : MonoBehaviour
 				_panels.Add(panelObject);
 				Image panelImage = panelObject.AddComponent<Image>();
 				panelImage.sprite = Sprite.Create(_tradeTexture, new Rect(0, 0, _tradeTexture.width, _tradeTexture.height), new Vector2(0.5f, 0.5f));
-				panelObject.transform.SetParent(_canvas.transform);
+				panelObject.transform.SetParent(S.Canvas.transform);
 				TradeClick tradeClick = panelObject.AddComponent<TradeClick>();
 				tradeClick._trade = _trades[i];
-				tradeClick._inventory = _inventory;
 				tradeClick._tradeNumber = i;
 				tradeClick._trader = this;
 
@@ -65,7 +60,6 @@ public class Trader : MonoBehaviour
 				Image sellImage = sellObject.AddComponent<Image>();
 				var ssn = S.II.Get(_trades[i]._selledItemName)._spriteName;
 				sellImage.sprite = Resources.Load<Sprite>($"Sprites/Items/{ssn}");
-				//Sprite.Create(ssn, new Rect(0, 0, _trades[i]._selledTexture.width, _trades[i]._selledTexture.height), new Vector2(0.5f, 0.5f));
 				sellObject.transform.SetParent(panelObject.transform);
 
 				RectTransform rectTransformSell = sellObject.GetComponent<RectTransform>();
@@ -76,7 +70,6 @@ public class Trader : MonoBehaviour
 				Image buyImage = buyObject.AddComponent<Image>();
 				var bsn = S.II.Get(_trades[i]._buyedItemName)._spriteName;
 				buyImage.sprite = Resources.Load<Sprite>($"Sprites/Items/{bsn}");
-				//Sprite.Create(_trades[i]._buyedTexture, new Rect(0, 0, _trades[i]._buyedTexture.width, _trades[i]._buyedTexture.height), new Vector2(0.5f, 0.5f));
 				buyObject.transform.SetParent(panelObject.transform);
 
 				RectTransform rectTransformBuy = buyObject.GetComponent<RectTransform>();
@@ -101,7 +94,6 @@ public class Trader : MonoBehaviour
 				Material matBuy = TMPBuy.fontSharedMaterial;
 				matBuy.shaderKeywords = new string[] { "OUTLINE_ON" };
 
-
 				GameObject TOSell = new GameObject("TextMeshProObject");
 				TextMeshProUGUI TMPSell = TOSell.AddComponent<TextMeshProUGUI>();
 				TMPSell.text = $"{GetText(_trades[i]._selledCount)}";
@@ -119,8 +111,6 @@ public class Trader : MonoBehaviour
 				TMPSell.outlineWidth = 0.5f;
 				Material matSell = TMPSell.fontSharedMaterial;
 				matSell.shaderKeywords = new string[] { "OUTLINE_ON" };
-
-
 
 				string GetText(int count)
 				{
@@ -142,7 +132,7 @@ public class Trader : MonoBehaviour
 		{
 			_trades.RemoveAt(i);
 
-			if (_inventory._marketOpened)
+			if (S.Inventory._marketOpened)
 			{
 				CloseMarket();
 				OpenMarket();
@@ -152,7 +142,7 @@ public class Trader : MonoBehaviour
 
 	void Update()
 	{
-		if (_inventory._marketOpened)
+		if (S.Inventory._marketOpened)
 		{
 			if (Input.GetKeyDown(KeyCode.Escape))
 				CloseMarket();
@@ -165,9 +155,9 @@ public class Trader : MonoBehaviour
 
 	public void CloseMarket()
 	{
-		if (_inventory._marketOpened)
+		if (S.Inventory._marketOpened)
 		{
-			_inventory._marketOpened = false;
+			S.Inventory._marketOpened = false;
 			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
 
@@ -178,7 +168,7 @@ public class Trader : MonoBehaviour
 				_panels.RemoveAt(0);
 			}
 
-			S.AM.Play("inventory", 1);
+			S.AM.Play("Inventory", 1);
 		}
 	}
 }

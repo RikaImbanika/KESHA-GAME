@@ -55,7 +55,7 @@ public class SnakeBrain : MonoBehaviour
             }
             else
             {
-                S.AudioManager.Play("Kill", 0.9f);
+                S.AM.Play("Kill", 0.9f);
             }
         }
     }
@@ -64,7 +64,7 @@ public class SnakeBrain : MonoBehaviour
     {
         S.SM.Save(_idHealth, _health);
 
-        S.AudioManager.Play("Kill", 1.1f);
+        S.AM.Play("Kill", 1.1f);
 
         StartCoroutine(Later());
 

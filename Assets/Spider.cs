@@ -163,11 +163,11 @@ public class Spider : MonoBehaviour
                     loot.transform.position = transform.position;
                 }
 
-                S.AudioManager.Play("Kill", 1.1f);
+                S.AM.Play("Kill", 1.1f);
             }
         }
         else
-            S.AudioManager.Play("Kill", 0.9f);
+            S.AM.Play("Kill", 0.9f);
     }
 
     public void Die()

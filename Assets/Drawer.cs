@@ -70,19 +70,19 @@ public class Drawer : MonoBehaviour
 			{
 				direction = _speed;
 				opened = true;
-				S.AudioManager.Play("drawerO", 1);
+				S.AudioManager.Play("Drawer Open");
 			}
 			else
 			{
 				direction = -_speed;
 				opened = false;
-				S.AudioManager.Play("drawerC", 1);
+				S.AudioManager.Play("Drawer Close");
 			}
 
 			S.SM.Save(S.ID(_id, "opened"), opened);
 		}
 		else
-			S.AudioManager.Play("notEnoughCash", 1);
+			S.AudioManager.Play("Not Enough Cash");
 	}
 
 	public void Close()
@@ -119,9 +119,8 @@ public class Drawer : MonoBehaviour
 
 			cp += direction * Time.deltaTime * 60;
 
-			// Синусоидальное движение с замедлением в начале и конце для обоих направлений
-			float t = cp / _maxMove; // Нормализованное положение (0-1)
-			float sinT = Mathf.Sin(t * Mathf.PI - Mathf.PI / 2) / 2 + 0.5f; // Полная синусоида от 0 до 1
+			float t = cp / _maxMove;
+			float sinT = Mathf.Sin(t * Mathf.PI - Mathf.PI / 2) / 2 + 0.5f;
 			transform.position = zp + _3dDirection * (_maxMove * sinT);
 		}
 	}

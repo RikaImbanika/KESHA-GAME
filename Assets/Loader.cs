@@ -106,8 +106,13 @@ public class Loader : MonoBehaviour
 
     public IEnumerator WaitLoad(string nextSceneName, int doorId, Vector3 dir)
     {
-        while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
+        float deadline = 0f;
+
+        while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName) && deadline < 5f)
+        {
             yield return new WaitForSeconds(0.05f);
+            deadline += 0.05f;
+        }
 
         Vector3 v = new Vector3(0, -1.7f, 0);
         if (S.Pm.isCrouching)
@@ -131,12 +136,17 @@ public class Loader : MonoBehaviour
 
     public IEnumerator WaitLoadPortal(string nextSceneName)
     {
-        while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName))
+        float deadline = 0f;
+
+        while (!S.AllFather.SceneCurrentlyLoaded(nextSceneName) && deadline < 5f)
+        {
             yield return new WaitForSeconds(0.2f);
+            deadline += 0.2f;
+        }
 
         Debug.Log($"GONE TO SCENE {nextSceneName} (through portal)");
 
-        _teleporting = false; //But it never set to true yet
+        _teleporting = false;
     }
 
     public void GoTo(string nextSceneName, int doorId, Vector3 dir)

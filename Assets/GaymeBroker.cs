@@ -5,9 +5,9 @@ using UnityEngine;
 public class GaymeBroker : MonoBehaviour
 {
     string[] _sounds = {
-        "ohNo",
-        "wrong",
-        "wrong2" };
+        "Oh No",
+        "Wrong",
+        "Wrong 2" };
 
     int[] _order = new int[]
     {

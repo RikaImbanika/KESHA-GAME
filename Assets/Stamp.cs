@@ -60,7 +60,7 @@ public class Stamp : MonoBehaviour
         if (!_alreadyUnlocked)
         {
             _alreadyUnlocked = true;
-            S.AudioManager.Play("stampSound", 1);
+            S.AM.Play("Stamp Sound", 1);
             S.SM.Save(S.ID(_id, "destroyed"), true);
             Debug.Log($"STAMP UNLOCKED AND SAVED!!! id = {_id}");
 

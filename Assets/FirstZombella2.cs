@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FirstZombie2 : MonoBehaviour
+public class FirstZombella2 : MonoBehaviour
 {
-    public Zombie _zombie;
+    public Zombie _zombella;
     bool _playerInHall;
     bool _actuallySummoned;
     bool _dead;
 
     void Start()
     {
-        S.FirstZombie2 = this;
+        S.FirstZombella2 = this;
 
         StartCoroutine(DelayCoroutine());
 
@@ -22,7 +22,7 @@ public class FirstZombie2 : MonoBehaviour
             if ((S.SM.LoadBool("gunWasBuyed") ?? false) && (S.SM.LoadBool("ammoWasBuyed") ?? false))
             {
                 Summon();
-                if (S.SM.LoadBool("firstZombieIsDead") ?? false)
+                if (S.SM.LoadBool("firstZombellaIsDead") ?? false)
                 {
                     _dead = true;
                     S.MM._fztKilled = true;
@@ -37,12 +37,12 @@ public class FirstZombie2 : MonoBehaviour
 
         if (_actuallySummoned)
         {
-            if (_zombie._health <= 0 && !_dead)
+            if (_zombella._health <= 0 && !_dead)
             {
                 _dead = true;
-                _zombie._followPlayer = false;
-                S.MM.PlayerKillsFirstZombie();
-                S.SM.Save("firstZombieIsDead", true);
+                _zombella._followPlayer = false;
+                S.MM.PlayerKillsFirstZombella();
+                S.SM.Save("firstZombellaIsDead", true);
                 S.Granny.Calming();
                 Debug.Log("Dead in hall");
             }
@@ -50,16 +50,16 @@ public class FirstZombie2 : MonoBehaviour
             if (!_playerInHall && playerInHall && !_dead)
             {
                 _playerInHall = true;
-                _zombie._followPlayer = true;
-                S.MM.PlayerMeetFirstZombie();
+                _zombella._followPlayer = true;
+                S.MM.PlayerMeetFirstZombella();
                 Debug.Log("Meet");
                 //Not ideal but work so okay
             }
             else if (_playerInHall && !playerInHall)
             {
-                _zombie._followPlayer = false;
+                _zombella._followPlayer = false;
                 _playerInHall = false;
-                S.MM.PlayerLeavesFirstZombie();
+                S.MM.PlayerLeavesFirstZombella();
                 Debug.Log("Leave");
             }
         }
@@ -79,9 +79,9 @@ public class FirstZombie2 : MonoBehaviour
 
             yield return new WaitForSeconds(0.3f);
 
-            S.MM.FirstZombieEntersHall(); //Yes.
+            S.MM.FirstZombellaEntersHall(); //Yes.
             Summon();
-            _zombie._followPlayer = true;
+            _zombella._followPlayer = true;
 
             S.Granny.StartFleeing();
         }
@@ -89,11 +89,11 @@ public class FirstZombie2 : MonoBehaviour
 
     public void Summon()
     {
-        GameObject zombie = GameObject.Instantiate(Prefabs.Get("Zombella"), transform.position, transform.rotation, transform);
-        _zombie = zombie.GetComponent<Zombie>();
-        _zombie._health = 500f;
-        _zombie._maxHealth = 500f;
-        _zombie._ani.Rebind();
+        GameObject zombella = GameObject.Instantiate(Prefabs.Get("Zombella"), transform.position, transform.rotation, transform);
+        _zombella = zombella.GetComponent<Zombie>();
+        _zombella._health = 500f;
+        _zombella._maxHealth = 500f;
+        _zombella._ani.Rebind();
         _actuallySummoned = true;
         Debug.LogError("Summoned in hall");
     }

@@ -121,7 +121,7 @@ public class Zombie : MonoBehaviour
             {
                 _dead = true;
                 Die();
-                S.AudioManager.Play("Kill", 1.1f);
+                S.AM.Play("Kill", 1.1f);
 
                 StartCoroutine(Loott());
 
@@ -134,7 +134,7 @@ public class Zombie : MonoBehaviour
             }
             else
             {
-                S.AudioManager.Play("Kill", 0.9f);
+                S.AM.Play("Kill", 0.9f);
             }
         }
     }

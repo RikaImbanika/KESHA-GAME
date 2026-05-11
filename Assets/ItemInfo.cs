@@ -14,7 +14,7 @@ public class ItemInfo : MonoBehaviour
 	public float _throwRotZ;
 	public bool _throwable;
 
-	public ItemInfo(Color nameColor, string spriteName = "Error", string prefabName = "PurpleBall", string visibleName = "Item of cringe", string pickUpA = "pickUp",
+	public ItemInfo(Color nameColor, string spriteName = "Error", string prefabName = "PurpleBall", string visibleName = "Item of cringe", string pickUpA = "Pick Up",
 		float throwRotX = 0, float throwRotY = 0, float throwRotZ = 0, bool throwable = true)
 	{
 		_nameColor = nameColor;

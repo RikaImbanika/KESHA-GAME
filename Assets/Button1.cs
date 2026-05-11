@@ -10,7 +10,6 @@ public class Button1 : MonoBehaviour
 	string _sceneName;
 	string _key;
 
-	public string _audioName;
 	private bool _pressed;
 	private bool _finished;
 	public GameObject _obj;
@@ -66,7 +65,8 @@ public class Button1 : MonoBehaviour
 
 			_startY = _obj.transform.position.y;
 
-			S.AM.Play(_audioName, 1);
+			S.AM.Play("Gong");
+			S.AM.Play("Toilet");
 
 			_doorLocal.Close();
 

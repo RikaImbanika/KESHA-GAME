@@ -36,7 +36,7 @@ public static class S : object
 	private static GameObject _redHeavySparkle;
 	private static GameObject _greenHeavySparkle;
 	private static GameObject _purpleHeavySparkle;
-	private static FirstZombie2 _firstZombie2;
+	private static FirstZombella2 _firstZombie2;
 	private static SceneDuplicateCleaner _sceneDuplicateCleaner;
 	private static MusicManager _musicManager;
 	private static AmbienceManager _ambienceManager;
@@ -102,7 +102,19 @@ public static class S : object
 	public static Granny _granny;
 	public static WallColorCapturer _wallColorCapturer;
 	public static ItemShower _itemShower;
+	public static Console _console;
 
+	public static Console Console
+	{
+		get
+		{
+			return _console;
+		}
+		set
+		{
+			_console = value;
+		}
+	}
 
 	public static ItemShower ItemShower
 	{
@@ -958,7 +970,7 @@ public static class S : object
 	}
 
 
-	public static FirstZombie2 FirstZombie2
+	public static FirstZombella2 FirstZombella2
 	{
 		get
 		{

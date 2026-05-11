@@ -10,7 +10,7 @@ public class Door : MonoBehaviour
 {
 	public int _number;
 	public Collider col;
-	public string audioName;
+	public string _audioName;
 	public bool _locked;
 	public Stamp _stamp;
 	public float _stampAnimationTimeLeft;
@@ -23,6 +23,11 @@ public class Door : MonoBehaviour
 	public void Start()
 	{
 		_sparklesCount = 100;
+
+		// if (string.IsNullOrEmpty(_audioName))
+		// 	_audioName = "Door";
+		_audioName = "Door"; //TO DO: More sounds.
+
 		StartCoroutine(Wait());
 
 		IEnumerator Wait()
@@ -176,7 +181,7 @@ public class Door : MonoBehaviour
 	{
 		if (!_locked)
 		{
-			S.AudioManager.Play(audioName, 0);
+			S.AudioManager.Play(_audioName); //Was set before
 
 			_doorModel = S.Loader._rooms[_sceneName]._doors[_number];
 

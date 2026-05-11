@@ -98,7 +98,7 @@ public class FrerardHolder : MonoBehaviour
 
         S.Inventory.Remove(item._name, 1);
 
-        S.AudioManager.Play("kill", 0.7f);
+        S.AM.Play("Kill", 0.7f);
 
         Debug.Log($"Frerard put, realRot: {_realRotation}, fakeRot: {_fakeRotation}");
     }
@@ -113,7 +113,7 @@ public class FrerardHolder : MonoBehaviour
             RotateFake(_placedItem._obj);
             SaveRotations();
             Debug.Log($"I rotated frerard!");
-            S.AudioManager.Play("kill", 0.85f);
+            S.AM.Play("Kill", 0.85f);
         }
     }
 
