@@ -15,7 +15,8 @@ public class Paintings : MonoBehaviour
             "Tokyo",
             "Paris",
             "SoManyVases",
-            "Palms"
+            "Palms",
+            "BeDiffrent"
         };
 
         S.Paintings = this;
