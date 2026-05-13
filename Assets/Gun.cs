@@ -179,10 +179,10 @@ public class Gun : MonoBehaviour
                 }
             }
             else
-                S.AudioManager.Play("noAmmo", 2);
+                S.AudioManager.Play("No Ammo", 2); //Strange but okay
         }
         else
-            S.AudioManager.Play("noAmmo", 1);
+            S.AudioManager.Play("No Ammo", 1);
     }
 
     public float Length(Vector3 v)

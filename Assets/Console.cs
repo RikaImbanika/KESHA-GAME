@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -224,6 +225,77 @@ public class Console : MonoBehaviour
             _words[0] == "goscene" ||
             _words[0] == "goroom")
             GoToScene();
+        else if (_words[0] == "summon" ||
+            _words[0] == "smmn" ||
+            _words[0] == "sumon" ||
+            _words[0] == "summn" ||
+            _words[0] == "smmon" ||
+            _words[0] == "smn")
+            Summon();
+        else
+            ToggleConsole("Error");
+    }
+
+    void Summon()
+    {
+        string who;
+
+        if (_words.Length > 1)
+        {
+            who = _words[1];
+            int count = 1;
+
+            if (_words.Length > 2)
+            {
+                int number;
+                bool numberNext = int.TryParse(_words[2], out number);
+
+                if (numberNext && number > 1)
+                    count = number;
+            }
+
+            who = who.ToLower();
+            Transform root = S.Loader.Roots[S.Ps._currentSceneName];
+
+            for (int i = 0; i < count; i++)
+            {
+                float dx = Random.Range(-0.2f, 0.2f);
+                float dy = Random.Range(-0.2f, 0.2f);
+                float dz = Random.Range(-0.2f, 0.2f);
+                Vector3 position = S.Camera.transform.position + new Vector3(dx, dy, dz);
+
+                if (who == "zombella")
+                    Instantiate(S.Zombella, position, Quaternion.identity, root);
+                else if (who == "bakalavrus" ||
+                    who == "bakalavr" ||
+                    who == "bakalavrian" ||
+                    who == "bakalavrium" ||
+                    who == "baka")
+                    Instantiate(S.Bakalavrus, position, Quaternion.identity, root);
+                else if (who == "ghost" ||
+                    who == "ghast" ||
+                    who == "gost" ||
+                    who == "gast")
+                    Instantiate(S.Ghost, position, Quaternion.identity, root);
+                else if (who == "musculus" ||
+                    who == "musculum" ||
+                    who == "muskulus" ||
+                    who == "muskulum")
+                    Instantiate(S.Musculus, position, Quaternion.identity, root);
+                else if (who == "spider" ||
+                    who == "laserspider" ||
+                    who == "laser_spider" ||
+                    who == "spiderus")
+                    Instantiate(S.Spider, position, Quaternion.identity, root);
+                else
+                {
+                    Instantiate(S.Zombella, position, Quaternion.identity, root);
+                    ToggleConsole("Error");
+                    return;
+                }
+            }
+            ToggleConsole("Success");
+        }
         else
             ToggleConsole("Error");
     }
@@ -465,9 +537,9 @@ public class Console : MonoBehaviour
 
         bool numberNext = float.TryParse(_words[1], out amount);
 
-        if (numberNext)
+        if (numberNext && amount > 0)
         {
-            ToggleConsole("Success", false);
+            ToggleConsole("Success");
             S.PS.Damage(amount);
             return;
         }
@@ -536,17 +608,22 @@ public class Console : MonoBehaviour
     {
         if (_words.Length <= 1)
         {
-            ToggleConsole("Error");
-            return;
+            S.PS.Heal(100f);
+            ToggleConsole("Success");
         }
 
         float amount = 10f;
 
         bool numberNext = float.TryParse(_words[1], out amount);
 
-        if (numberNext)
+        if (numberNext && amount > 0)
         {
             S.PS.Heal(amount);
+            ToggleConsole("Success");
+        }
+        else if (numberNext && amount < 0)
+        {
+            S.Ps.Damage(-amount);
             ToggleConsole("Success");
         }
         else
@@ -559,6 +636,8 @@ public class Console : MonoBehaviour
 
     void Speed()
     {
+        ToggleConsole("Success");
+
         // if (_words.Length > 1)
         // {
         //     float n1 = 1;

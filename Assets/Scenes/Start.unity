@@ -7056,8 +7056,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 544288600}
   m_LocalRotation: {x: -0, y: 0.92374, z: -0, w: 0.38302022}
-  m_LocalPosition: {x: -30.84, y: -161.74, z: -60.03}
-  m_LocalScale: {x: -2.1601653, y: -15.00052, z: -20.959038}
+  m_LocalPosition: {x: -30.84, y: -159.66, z: -60.03}
+  m_LocalScale: {x: -2.1601653, y: 18.912655, z: -20.959038}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 888405743}
@@ -11086,8 +11086,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 888405742}
   m_LocalRotation: {x: -0, y: 0.71282864, z: -0, w: 0.7013383}
-  m_LocalPosition: {x: 0, y: 0, z: -0.39105698}
-  m_LocalScale: {x: -0.006764424, y: -0.009449161, z: -0.06546597}
+  m_LocalPosition: {x: 0, y: 0, z: -0.417}
+  m_LocalScale: {x: -0.0068054227, y: 0.00868959, z: -0.06199431}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 544288604}
@@ -11095,7 +11095,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 225.889, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.5111656, y: 0.284}
+  m_AnchoredPosition: {x: 0.536, y: -0.268}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &888405744
@@ -11991,7 +11991,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c26ef0893f954604a91624bbf6fe354f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _version: 1.11.16
+  _version: 1.11.17
   _tmpOnStartPanel: {fileID: 404712816}
   _tmpInInventory: {fileID: 1186545224}
 --- !u!114 &895244302
@@ -23899,8 +23899,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2139621187}
   m_LocalRotation: {x: -0, y: 0.70900095, z: -0, w: 0.7052076}
-  m_LocalPosition: {x: 0, y: 0, z: 0.05900254}
-  m_LocalScale: {x: -0.0067934208, y: -0.009491669, z: -0.065895066}
+  m_LocalPosition: {x: 0, y: 0, z: 0.025}
+  m_LocalScale: {x: -0.007215971, y: 0.008793933, z: -0.065895066}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 544288604}
@@ -23908,7 +23908,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 225.266, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.5078068, y: 0.2813263}
+  m_AnchoredPosition: {x: 0.51, y: -0.241}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2139621189
@@ -23938,7 +23938,10 @@ MonoBehaviour:
     /tp <sceneName>
     (Hall, BR  1R, MR 1, TL 1...)
 
-    /push, /jump, /damage, /heal, /save,  /killme'
+    /summon <who> <count> (zombella, baka...)
+
+    /push,
+    /jump, /damage, /heal, /save,  /killme'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
