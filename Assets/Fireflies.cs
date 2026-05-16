@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Lighters : MonoBehaviour
+public class Fireflies : MonoBehaviour
 {
-    public float[] _lightersSizes;
-    public string[] _lightersColors;
+    public float[] _firefliesSizes;
+    public string[] _firefliesColors;
     public Dictionary<string, Material> _materials;
     private Dictionary<string, byte> _colorN;
 
@@ -28,7 +28,7 @@ public class Lighters : MonoBehaviour
 
         IEnumerator Yep()
         {
-            _lightersSizes = new float[]
+            _firefliesSizes = new float[]
             {
                 1f,
                 0.7f,
@@ -36,7 +36,7 @@ public class Lighters : MonoBehaviour
                 0.35f
             };
 
-            _lightersColors = new string[]
+            _firefliesColors = new string[]
             {
                 "Yellow",
                 "Red",
@@ -53,9 +53,9 @@ public class Lighters : MonoBehaviour
 
             _materials = new Dictionary<string, Material>();
 
-            for (byte a = 0; a < _lightersColors.Count(); a++)
+            for (byte a = 0; a < _firefliesColors.Count(); a++)
             {
-                string colName = _lightersColors[a];
+                string colName = _firefliesColors[a];
                 _colorN.Add(colName, a);
 
                 if (colName != "Zombella" && colName != "Bakalavrus")
@@ -64,7 +64,7 @@ public class Lighters : MonoBehaviour
                     _materials.Add(colName, Materials.Get($"FlyingEnemies/{colName}"));
             }
 
-            S.Lighters = this;
+            S.Fireflies = this;
 
             yield return null;
         }

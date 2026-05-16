@@ -63,6 +63,8 @@ public class Button1 : MonoBehaviour
 			_camera.depth = 100;
 			_playerCamera.gameObject.SetActive(false);
 
+			S.Camera = _camera;
+
 			_startY = _obj.transform.position.y;
 
 			S.AM.Play("Gong");
@@ -108,6 +110,8 @@ public class Button1 : MonoBehaviour
 				_camera.gameObject.SetActive(false);
 				_camera.depth = -100;
 				_playerCamera.gameObject.SetActive(true);
+
+				S.Camera = _playerCamera;
 
 				Thread.Sleep(500);
 			}

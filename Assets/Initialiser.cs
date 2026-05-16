@@ -145,7 +145,8 @@ public class Initialiser : MonoBehaviour
         S.Shot = Prefabs.GetAudioSource("Shot");
         S.Caboom = Prefabs.GetAudioSource("Caboom");
         S.SnakeBody = Prefabs.Get("SnakeBody");
-        S.LighterObj = Prefabs.Get("Lighter");
+        S.FireflyObj = Prefabs.Get("Firefly");
+        S.FireflySpawner = Prefabs.Get("FireflySpawner");
 
         S.Snakes = new List<GameObject>();
         for (int i = 1; i <= 4; i++)

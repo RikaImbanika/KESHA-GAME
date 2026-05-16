@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System;
 using Unity.VisualScripting;
+using System.Text;
 
 public class AllFather : MonoBehaviour
 {
@@ -98,6 +99,36 @@ public class AllFather : MonoBehaviour
 			int j = S.RND.Next(i + 1);
 			(array[i], array[j]) = (array[j], array[i]);
 		}
+	}
+
+	// "ThatString" to "that_string"
+	public string ToSnakeCase(string input)
+	{
+		if (string.IsNullOrEmpty(input)) return input;
+		var sb = new StringBuilder();
+		for (int i = 0; i < input.Length; i++)
+		{
+			char c = input[i];
+			if (char.IsUpper(c) && i > 0 && char.IsLower(input[i - 1]))
+				sb.Append('_');
+			sb.Append(char.ToLower(c));
+		}
+		return sb.ToString();
+	}
+
+	// "ThatString" to "That_String"
+	public string ToPascalSnakeCase(string input)
+	{
+		if (string.IsNullOrEmpty(input)) return input;
+		var sb = new StringBuilder();
+		for (int i = 0; i < input.Length; i++)
+		{
+			char c = input[i];
+			if (char.IsUpper(c) && i > 0 && char.IsLower(input[i - 1]))
+				sb.Append('_');
+			sb.Append(c);
+		}
+		return sb.ToString();
 	}
 
 	public string SelFromProb(List<(string Item, int Weight)> probabilities)

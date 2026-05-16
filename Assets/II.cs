@@ -7,6 +7,7 @@ public class II : MonoBehaviour
     //* Item Info
 
     Dictionary<string, ItemInfo> _base;
+    Dictionary<string, string> _aliases;
 
     public void Start()
     {
@@ -43,6 +44,14 @@ public class II : MonoBehaviour
             spriteName: "Gun",
             prefabName: "Gun",
             visibleName: "Gun",
+            throwable: false
+            ));
+
+        _base.Add("Ammo", new ItemInfo(
+            nameColor: Color.white,
+            spriteName: "Ammo",
+            prefabName: "Ammo",
+            visibleName: "Ammo",
             throwable: false
             ));
 
@@ -149,18 +158,70 @@ public class II : MonoBehaviour
             visibleName: "Red crystal",
             throwable: false
             ));
+
+        _base.Add("Earth", new ItemInfo(
+            nameColor: Color.white,
+            spriteName: "Earth",
+            prefabName: "Earth",
+            visibleName: "Earth",
+            throwable: true
+            ));
+
+        _base.Add("Moon", new ItemInfo(
+            nameColor: Color.white,
+            spriteName: "Moon",
+            prefabName: "Moon",
+            visibleName: "Moon",
+            throwable: true
+            ));
+
+        _base.Add("Mars", new ItemInfo(
+            nameColor: Color.white,
+            spriteName: "Mars",
+            prefabName: "Mars",
+            visibleName: "Mars",
+            throwable: true
+            ));
+
+        _aliases = new Dictionary<string, string>();
+
+        foreach (string name in _base.Keys)
+        {
+            _base[name]._name = name;
+
+            string a1 = name.ToLower();
+            string a2 = S.AllFather.ToSnakeCase(name);
+            string a3 = S.AllFather.ToSnakeCase(name);
+
+            if (!_aliases.ContainsKey(a1))
+                _aliases.Add(a1, name);
+
+            if (!_aliases.ContainsKey(a2))
+                _aliases.Add(a2, name);
+
+            if (!_aliases.ContainsKey(a3))
+                _aliases.Add(a3, name);
+        }
     }
 
     public ItemInfo Get(string name)
 	{
         if (!_base.ContainsKey(name))
-            _base.Add(name, new ItemInfo(
-            nameColor: Color.white,
-            spriteName: name,
-            prefabName: name,
-            visibleName: name,
-            throwable: false
-            ));
+        {
+            if (!_aliases.ContainsKey(name))
+            {
+                _base.Add(name, new ItemInfo(
+                nameColor: Color.white,
+                spriteName: name,
+                prefabName: name,
+                visibleName: name,
+                throwable: false
+                ));
+                _base[name]._name = name;
+            }
+            else
+                return _base[_aliases[name]];
+        }
 
         return _base[name];
 	}

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Mushrooms : MonoBehaviour
 {
     public List<string> _allRoomsList;
-    public Dictionary<string, float> _lightersProbabilities;
+    public Dictionary<string, float> _firefliesProbabilities;
 
     void Start()
     {
@@ -13,7 +13,7 @@ public class Mushrooms : MonoBehaviour
 
         IEnumerator Yep()
         {
-            _lightersProbabilities = new Dictionary<string, float>();
+            _firefliesProbabilities = new Dictionary<string, float>();
 
             S.Mushrooms = this;
 
@@ -21,7 +21,7 @@ public class Mushrooms : MonoBehaviour
 
             yield return new WaitForSeconds(1);
 
-            SummonLighters();
+            SummonFireflies();
 
             yield return null;
         }
@@ -32,7 +32,7 @@ public class Mushrooms : MonoBehaviour
 
     }
 
-    void SummonLighters()
+    void SummonFireflies()
     {
         List<float> probs = new List<float>
         {
@@ -76,14 +76,14 @@ public class Mushrooms : MonoBehaviour
         for (int i = 0; i < _allRoomsList.Count; i++)
         {
             int d = S.RND.Next(100);
-            _lightersProbabilities.Add(_allRoomsList[i], array[d]);
+            _firefliesProbabilities.Add(_allRoomsList[i], array[d]);
         }
 
         /////////////////////////////
 
-        _lightersProbabilities["MR 2"] = 20f;
-        _lightersProbabilities["MR 3"] = 30f;
-        _lightersProbabilities["MR 4"] = 40f;
+        _firefliesProbabilities["MR 2"] = 20f;
+        _firefliesProbabilities["MR 3"] = 30f;
+        _firefliesProbabilities["MR 4"] = 40f;
     }
 
     void FillAllRoomsList()

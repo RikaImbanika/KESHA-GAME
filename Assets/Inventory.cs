@@ -942,7 +942,10 @@ public class Inventory : MonoBehaviour
 
 	public void Take(string name, int count)
 	{
-		string an = S.II.Get(name)._pickUpA;
+		ItemInfo ii = S.II.Get(name);
+		name = ii._name;
+
+		string an = ii._pickUpA;
 		if (IsEmptySlot(selId))
 		{
 			items[selId]._name = name;

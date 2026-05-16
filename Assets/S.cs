@@ -62,10 +62,11 @@ public static class S : object
 	private static GameObject _snakeBody;
 	private static AudioSource _caboom;
 	private static Backrooms _backrooms;
-	private static GameObject _lighterObj;
+	private static GameObject _fireflyObj;
+	private static GameObject _fireflySpawner;
 	private static List<GameObject> _snakes;
 	private static Mushrooms _mushrooms;
-	private static Lighters _lighters;
+	private static Fireflies _fireflies;
 	private static RandomRotation _randomRotations;
 	private static GameObject _blueHitPoint;
 	private static GameObject _redHitPoint;
@@ -103,6 +104,20 @@ public static class S : object
 	public static WallColorCapturer _wallColorCapturer;
 	public static ItemShower _itemShower;
 	public static Console _console;
+	public static Screamers _screamers;
+
+
+	public static Screamers Screamers
+	{
+		get
+		{
+			return _screamers;
+		}
+		set
+		{
+			_screamers = value;
+		}
+	}
 
 	public static Console Console
 	{
@@ -597,15 +612,15 @@ public static class S : object
 		}
 	}
 
-	public static Lighters Lighters
+	public static Fireflies Fireflies
 	{
 		get
 		{
-			return _lighters;
+			return _fireflies;
 		}
 		set
 		{
-			_lighters = value;
+			_fireflies = value;
 		}
 	}
 
@@ -645,18 +660,30 @@ public static class S : object
 		}
 	}
 
-	public static GameObject LighterObj
+	public static GameObject FireflyObj
 	{
 		get
 		{
-			return _lighterObj;
+			return _fireflyObj;
 		}
 		set
 		{
-			_lighterObj = value;
+			_fireflyObj = value;
 		}
 	}
-	
+
+	public static GameObject FireflySpawner
+	{
+		get
+		{
+			return _fireflySpawner;
+		}
+		set
+		{
+			_fireflySpawner = value;
+		}
+	}
+
 	public static Backrooms Backrooms
 	{
 		get

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
-public class Lighter : MonoBehaviour
+public class Firefly : MonoBehaviour
 {
     public GameObject _vis;
     public GameObject _wingLeft;

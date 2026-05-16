@@ -4,8 +4,9 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LighterSpawner : MonoBehaviour
+public class FireflySpawner : MonoBehaviour
 {
+    public bool _instant;
     private string _id;
     private string _idPos;
     private string _idScale;
@@ -49,7 +50,7 @@ public class LighterSpawner : MonoBehaviour
 
     IEnumerator Birn()
     {
-        while (S.SM == null || S.LighterObj == null)
+        while (S.SM == null || S.FireflyObj == null)
             yield return new WaitForSeconds(0.2f);
 
         _pos = S.SM.LoadVector3(_idPos) ?? Vector3.zero;
@@ -68,9 +69,9 @@ public class LighterSpawner : MonoBehaviour
     void Load()
     {
         byte sizeN = S.SM.LoadByte(_idScale) ?? 104;
-        _size = S.Lighters._lightersSizes[sizeN];
+        _size = S.Fireflies._firefliesSizes[sizeN];
         byte colorN = S.SM.LoadByte(_idColor) ?? 104;
-        _color = S.Lighters._lightersColors[colorN];
+        _color = S.Fireflies._firefliesColors[colorN];
         _wingsType = S.SM.LoadString(_idWingsType) ?? "";
         _wingsFrequency = S.SM.LoadFloat(_idWingsFrequency) ?? 0;
         _wingsAmplitude = S.SM.LoadFloat(_idWingsAmplitude) ?? 0;
@@ -79,14 +80,16 @@ public class LighterSpawner : MonoBehaviour
     void DefineExistenz()
     {
         float prob = 0;
-        if (_sceneName.Contains("BR"))
-            prob = S.Backrooms._lightersProbabilities[_sceneName];
+        if (_instant)
+            prob = 100;
+        else if (_sceneName.Contains("BR"))
+            prob = S.Backrooms._firefliesProbabilities[_sceneName];
         else if (_sceneName.Contains("Income"))
             prob = 40;
         else if (_sceneName.Contains("TL"))
             prob = 30;
         else if (_sceneName.Contains("MR"))
-            prob = prob = S.Mushrooms._lightersProbabilities[_sceneName];
+            prob = prob = S.Mushrooms._firefliesProbabilities[_sceneName];
 
         int n = S.RND.Next(100);
         if (n > prob)
@@ -211,7 +214,7 @@ public class LighterSpawner : MonoBehaviour
                     break;
             }
 
-            _size = S.Lighters._lightersSizes[sizeN];
+            _size = S.Fireflies._firefliesSizes[sizeN];
             S.SM.Save(_idScale, sizeN);
         }
         
@@ -286,9 +289,9 @@ public class LighterSpawner : MonoBehaviour
                 probs.Add(new("Bakalavrus", 7));
                 probs.Add(new("Zombella", 8));
             }
-            colorN = S.Lighters.ColorN[S.AllFather.SelFromProb(probs)];
+            colorN = S.Fireflies.ColorN[S.AllFather.SelFromProb(probs)];
 
-            _color = S.Lighters._lightersColors[colorN];
+            _color = S.Fireflies._firefliesColors[colorN];
             S.SM.Save(_idColor, colorN);
         }
     }
@@ -300,8 +303,8 @@ public class LighterSpawner : MonoBehaviour
 
     void Summon()
     {
-        GameObject obj = Instantiate(S.LighterObj, _pos, transform.rotation, transform);
-        Lighter lighter = obj.GetComponent<Lighter>();
+        GameObject obj = Instantiate(S.FireflyObj, _pos, transform.rotation, transform);
+        Firefly firefly = obj.GetComponent<Firefly>();
 
         SetSize();
         SetColor();
@@ -326,47 +329,47 @@ public class LighterSpawner : MonoBehaviour
 
                 if (_wingsType == "crow")
                 {
-                    _leftWing = GameObject.Instantiate(S.CrowWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.CrowWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _leftWing = GameObject.Instantiate(S.CrowWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.CrowWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
                 }
                 else if (_wingsType == "angel")
                 {
-                    _leftWing = GameObject.Instantiate(S.AngelWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.AngelWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _leftWing = GameObject.Instantiate(S.AngelWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.AngelWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
                 }
                 else if (_wingsType == "bat")
                 {
-                    _leftWing = GameObject.Instantiate(S.BatWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.BatWing, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _leftWing = GameObject.Instantiate(S.BatWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.BatWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
                 }
                 else if (_wingsType == "rainbow1")
                 {
-                    _leftWing = GameObject.Instantiate(S.RainbowWing1, lighter._vis.transform.position, lighter._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.RainbowWing1, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _leftWing = GameObject.Instantiate(S.RainbowWing1, firefly._vis.transform.position, firefly._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.RainbowWing1, firefly._vis.transform.position, firefly._vis.transform.rotation);
                 }
                 else
                 {
-                    _leftWing = GameObject.Instantiate(S.RainbowWing2, lighter._vis.transform.position, lighter._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.RainbowWing2, lighter._vis.transform.position, lighter._vis.transform.rotation);
+                    _leftWing = GameObject.Instantiate(S.RainbowWing2, firefly._vis.transform.position, firefly._vis.transform.rotation);
+                    _rightWing = GameObject.Instantiate(S.RainbowWing2, firefly._vis.transform.position, firefly._vis.transform.rotation);
                 }
 
-                _leftWing.transform.localScale = 0.0008f * lighter._vis.transform.localScale;
-                _rightWing.transform.localScale = 0.0008f * new Vector3(lighter._vis.transform.localScale.x, lighter._vis.transform.localScale.y, -lighter._vis.transform.localScale.z);
+                _leftWing.transform.localScale = 0.0008f * firefly._vis.transform.localScale;
+                _rightWing.transform.localScale = 0.0008f * new Vector3(firefly._vis.transform.localScale.x, firefly._vis.transform.localScale.y, -firefly._vis.transform.localScale.z);
 
-                _leftWing.transform.position -= 0.5f * lighter._vis.transform.right * _size;
-                _rightWing.transform.position += 0.5f * lighter._vis.transform.right * _size;
+                _leftWing.transform.position -= 0.5f * firefly._vis.transform.right * _size;
+                _rightWing.transform.position += 0.5f * firefly._vis.transform.right * _size;
 
-                _leftWing.transform.position += 0.25f * lighter._vis.transform.up * _size;
-                _rightWing.transform.position += 0.25f * lighter._vis.transform.up * _size;
+                _leftWing.transform.position += 0.25f * firefly._vis.transform.up * _size;
+                _rightWing.transform.position += 0.25f * firefly._vis.transform.up * _size;
 
-                _leftWing.transform.SetParent(lighter._vis.transform, true);
-                _rightWing.transform.SetParent(lighter._vis.transform, true);
+                _leftWing.transform.SetParent(firefly._vis.transform, true);
+                _rightWing.transform.SetParent(firefly._vis.transform, true);
 
-                lighter._wingLeft = _leftWing;
-                lighter._wingRight = _rightWing;
+                firefly._wingLeft = _leftWing;
+                firefly._wingRight = _rightWing;
 
-                lighter._wingAmplitude = _wingsAmplitude;
-                lighter._wingFrequency = _wingsFrequency;
+                firefly._wingAmplitude = _wingsAmplitude;
+                firefly._wingFrequency = _wingsFrequency;
             }
         }
         
@@ -374,18 +377,18 @@ public class LighterSpawner : MonoBehaviour
         {
             if (_color == "Zombella" || _color == "Bakalavrus")
             {
-                lighter._swayAmplitude = 35f;
-                lighter._swayFrequency = 1f;
+                firefly._swayAmplitude = 35f;
+                firefly._swayFrequency = 1f;
 
                 if (S.RND.Next(3) == 0)
-                    lighter._swayFrequency = 2f;
+                    firefly._swayFrequency = 2f;
 
                 int g = S.RND.Next(5);
 
                 if (g == 0)
-                    lighter._swayAmplitude = 45f;
+                    firefly._swayAmplitude = 45f;
                 else if (g == 1)
-                    lighter._swayAmplitude = 25f;
+                    firefly._swayAmplitude = 25f;
             }
         }
 
@@ -397,18 +400,18 @@ public class LighterSpawner : MonoBehaviour
 
         void SetId()
         {
-            lighter._id = _id;
-            lighter._idPos = _idPos;
-            lighter._sceneName = _sceneName;
+            firefly._id = _id;
+            firefly._idPos = _idPos;
+            firefly._sceneName = _sceneName;
         }
 
         void SetColor()
         {
             if (_color != "Yellow")
             {
-                MeshRenderer renderer = lighter._vis.GetComponent<MeshRenderer>();
+                MeshRenderer renderer = firefly._vis.GetComponent<MeshRenderer>();
 
-                renderer.sharedMaterial = S.Lighters._materials[_color];
+                renderer.sharedMaterial = S.Fireflies._materials[_color];
             }
         }
 
@@ -416,8 +419,8 @@ public class LighterSpawner : MonoBehaviour
         {
             if (_size != 1)
             {
-                var sc = lighter._vis.transform.localScale;
-                lighter._vis.transform.localScale = new Vector3(sc.x * _size, sc.y * _size, sc.z * _size);
+                var sc = firefly._vis.transform.localScale;
+                firefly._vis.transform.localScale = new Vector3(sc.x * _size, sc.y * _size, sc.z * _size);
             }
         }
     }

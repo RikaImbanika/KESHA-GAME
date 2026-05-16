@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ItemInfo : MonoBehaviour
 {
+	public string _name;
 	public string _spriteName;
 	public string _prefabName;
 	public string _visibleName;

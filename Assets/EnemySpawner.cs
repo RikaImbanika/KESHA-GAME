@@ -43,7 +43,7 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator Birn()
     {
-        while (S.SM == null || S.LighterObj == null)
+        while (S.SM == null || S.FireflyObj == null)
             yield return new WaitForSeconds(0.2f);
 
         while (!S.Loader.Roots.ContainsKey(_sceneName))

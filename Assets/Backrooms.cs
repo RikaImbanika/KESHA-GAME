@@ -10,7 +10,7 @@ public class Backrooms : MonoBehaviour
     List<string> _allRoomsListCopy;
     public Dictionary<string, byte> _snakes;
     public Dictionary<string, float> _lasersProbabilities;
-    public Dictionary<string, float> _lightersProbabilities;
+    public Dictionary<string, float> _firefliesProbabilities;
 
     //Room BR 5 should be at least 3 rooms from start
     //Room BR 8 should be maximally far
@@ -25,7 +25,7 @@ public class Backrooms : MonoBehaviour
         IEnumerator Yep()
         {
             _lasersProbabilities = new Dictionary<string, float>();
-            _lightersProbabilities = new Dictionary<string, float>();
+            _firefliesProbabilities = new Dictionary<string, float>();
 
             while (true)
             {
@@ -65,7 +65,7 @@ public class Backrooms : MonoBehaviour
 
             FillLaserProbabilities();
             SummonSnakes();
-            SummonLighters();
+            SummonFireflies();
             StartCoroutine(AddPortals());
         }
     }
@@ -214,7 +214,7 @@ public class Backrooms : MonoBehaviour
         }
     }
 
-    void SummonLighters()
+    void SummonFireflies()
     {
         List<float> probs = new List<float>
         {
@@ -258,7 +258,7 @@ public class Backrooms : MonoBehaviour
         for (int i = 0; i < _allRoomsList.Count; i++)
         {
             int d = S.RND.Next(100);
-            _lightersProbabilities.Add(_allRoomsList[i], array[d]);
+            _firefliesProbabilities.Add(_allRoomsList[i], array[d]);
         }
     }
 

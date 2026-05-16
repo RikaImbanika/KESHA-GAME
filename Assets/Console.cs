@@ -7,35 +7,62 @@ using UnityEngine;
 
 public class Console : MonoBehaviour
 {
-    public TextMeshPro _tmp;
+    public TextMeshPro _consoleTmp;
+    public TextMeshPro _historyTmp;
+    private List<TextMeshPro> _history;
+    private Vector3 _basePos;
+    private float _bottomOffset;
+    private float _step;
+    private int _headIndex;
+    
     public bool _opened;
     public string _input;
     private string[] _words;
     private string[] _wordsCaseSensetive;
 
-    private float _backspaceDelay = 0.3f;    // Delay before next backspace
-    private float _backspaceRepeatRate = 0.05f; // Interval before backspaces
+    private float _backspaceDelay = 0.3f; // Delay before next backspace
+    private float _backspaceRepeatRate = 0.05f; // Interval before backspacess
     private float _nextBackspaceActionTime;
 
     void Start()
     {
-        S.Console = this;
+        StartCoroutine(LateStart());
 
-        StartCoroutine(FIXER());
-
-        IEnumerator FIXER()
+        IEnumerator LateStart()
         {
-            while (_tmp.gameObject.activeInHierarchy)
+            _history = new List<TextMeshPro>();
+
+            _basePos = _consoleTmp.transform.position;
+
+            _step = 0.5f;
+            _bottomOffset = 1.25f;
+
+            for (int i = 0; i < 28; i++)
             {
-                _tmp.gameObject.SetActive(false);
+                _history.Add(Instantiate(_historyTmp));
+                _history[i].transform.position = _basePos + Vector3.up * (_bottomOffset + i * _step);
+                _history[i].text = $"";
+                _history[i].enableWordWrapping = false;
+                _history[i].gameObject.SetActive(false);
+            }
+
+            Destroy(_historyTmp);
+
+            while (_consoleTmp.gameObject.activeInHierarchy)
+            {
+                _consoleTmp.gameObject.SetActive(false);
                 yield return new WaitForSeconds(0.1f);
             }
 
-            while (_tmp.text.Length > 1)
+            while (_consoleTmp.text.Length > 1)
             {
-                _tmp.text = "/";
+                _consoleTmp.text = "/";
                 yield return new WaitForSeconds(0.1f);
             }
+
+            S.Console = this;
+
+            AddMessage("To close console: /", Color.yellow);
         }
     }
 
@@ -55,7 +82,7 @@ public class Console : MonoBehaviour
             {
                 _input += inputThisFrame;
                 _input = Regex.Replace(_input, @" +", " ").TrimStart();
-                UpdateDisplay();
+                UpdateInput();
             }
 
             if (Input.GetKeyDown(KeyCode.Return))
@@ -87,26 +114,46 @@ public class Console : MonoBehaviour
     {
         _opened = value;
 
-        _tmp.gameObject.SetActive(_opened);
+        _consoleTmp.gameObject.SetActive(_opened);
         Cursor.visible = _opened;
-        _input = "/";
-        UpdateDisplay();
 
         if (reason == "Open" || reason == "Close" && _opened)
             S.AM.Play("Kill", 1f);
         else if (reason == "Open" || reason == "Close" && !_opened)
             S.AM.Play("Inventory", 1f);
         else if (reason == "Success")
+        {
             S.AM.Play("Kill", 1.1f);
+            AddMessage(_input, Color.green); /////////////////////////
+        }
         else if (reason == "Error")
         {
-            S.AM.Play("Not Enough Cash", 1f);
-            _opened = !_opened;
-            _tmp.gameObject.SetActive(_opened);
+            S.AM.Play("Not Enough Cas h", 1f);
+            _opened = true;
+            _consoleTmp.gameObject.SetActive(_opened);
+
             Cursor.visible = _opened;
+
+            AddMessage($"Error executing: \"{_input}\"", Color.red);
+        }
+        else if (reason == "Message")
+        {
+            S.AM.Play("Kill", 1f);
+            _opened = true;
+            _consoleTmp.gameObject.SetActive(_opened);
+
+            Cursor.visible = _opened;
+
+            AddMessage($"GG: {_input.Substring(1)}", Color.magenta);
         }
         else
             S.AM.Play("Wrong", 1f);
+
+        _input = "/";
+        UpdateInput();
+
+        foreach (TextMeshPro tmp in _history)
+            tmp.gameObject.SetActive(_opened);
     }
 
     void Backspace()
@@ -114,7 +161,7 @@ public class Console : MonoBehaviour
         if (_input.Length > 1)
         {
             _input = _input.Remove(_input.Length - 1);
-            UpdateDisplay();
+            UpdateInput();
         }
     }
 
@@ -232,8 +279,33 @@ public class Console : MonoBehaviour
             _words[0] == "smmon" ||
             _words[0] == "smn")
             Summon();
+        else if (_words[0] == "help" ||
+            _words[0] == "hlp" ||
+            _words[0] == "commands" ||
+            _words[0] == "helpme" ||
+            _words[0] == "info" ||
+            _words[0] == "commandlist")
+            Help();
         else
-            ToggleConsole("Error");
+            ToggleConsole("Message");
+    }
+
+    void Help()
+    {
+        AddMessage("COMMANDS:", Color.yellow);
+        AddMessage("=======================================================", Color.yellow);
+        AddMessage("/summon (zombella, baka, musculus, ghost, spider, firefly) <count>;", Color.yellow);
+        AddMessage("/get (gun, ammo, PurpleBall, FirstAidKit, cucumber, GreenKey, RedCrystal, Frerard1, so on...) <count>;", Color.yellow);
+        AddMessage("/tp (BR 1, BR 1R, BR 2, BR 2R, BR 3... MR 1, MR 4, Hall, Income, Corridor, TL 1, TL 2, TL 3, so on...);", Color.yellow);
+        AddMessage("/tp <x> <y>; /tp <x> <y> <z>;", Color.yellow);
+        AddMessage("/push <power>; /push <x> <y>; /push <x> <y> <z>;", Color.yellow);
+        AddMessage("/jump <power>,", Color.yellow);
+        AddMessage("/heal <amount>; /heal;", Color.yellow);
+        AddMessage("/save; /checkpoint;", Color.yellow);
+        AddMessage("/damage <amount>; /dam <amount>; /killme; /kill;", Color.yellow);
+        AddMessage("/help; /helpme; /info; /commands and so on...", Color.yellow);
+        AddMessage("There are also many aliases for commands.", Color.yellow);
+        AddMessage("=======================================================", Color.yellow);
     }
 
     void Summon()
@@ -247,11 +319,20 @@ public class Console : MonoBehaviour
 
             if (_words.Length > 2)
             {
-                int number;
+                int number = 1;
                 bool numberNext = int.TryParse(_words[2], out number);
 
                 if (numberNext && number > 1)
+                {
                     count = number;
+                    who = _words[1];
+                }
+                else
+                {
+                    int.TryParse(_words[1], out number);
+                    count = number;
+                    who = _words[2];
+                }
             }
 
             who = who.ToLower();
@@ -287,6 +368,22 @@ public class Console : MonoBehaviour
                     who == "laser_spider" ||
                     who == "spiderus")
                     Instantiate(S.Spider, position, Quaternion.identity, root);
+                else if (who == "firefly" ||
+                    who == "fly" ||
+                    who == "gloomworm" ||
+                    who == "lighter" ||
+                    who == "gloomfly" ||
+                    who == "lumie" ||
+                    who == "glowie" ||
+                    who == "glowbug" ||
+                    who == "firebug" ||
+                    who == "flybug" ||
+                    who == "sparkfly" ||
+                    who == "twinklebug" ||
+                    who == "sparkfly" ||
+                    who == "sparklefly" ||
+                    who == "sparkle")
+                    SummonFirefly(position, root);
                 else
                 {
                     Instantiate(S.Zombella, position, Quaternion.identity, root);
@@ -298,6 +395,13 @@ public class Console : MonoBehaviour
         }
         else
             ToggleConsole("Error");
+    }
+
+    void SummonFirefly(Vector3 pos, Transform root)
+    {
+        GameObject fireflySpawnerObj = Instantiate(S.FireflySpawner, pos, Quaternion.identity, root);
+        FireflySpawner fireflySpawner = fireflySpawnerObj.GetComponent<FireflySpawner>();
+        fireflySpawner._instant = true;
     }
 
     void Teleport()
@@ -527,13 +631,19 @@ public class Console : MonoBehaviour
 
     void Damage()
     {
-        if (_words.Length <= 1)
+        if (_words.Length < 1)
         {
             ToggleConsole("Error");
             return;
         }
+        else if (_words.Length == 1)
+        {
+            ToggleConsole("Success");
+            S.PS.Damage(10);
+            return;
+        }
 
-        float amount = 10f;
+        float amount;
 
         bool numberNext = float.TryParse(_words[1], out amount);
 
@@ -633,7 +743,6 @@ public class Console : MonoBehaviour
         }
     }
 
-
     void Speed()
     {
         ToggleConsole("Success");
@@ -664,9 +773,53 @@ public class Console : MonoBehaviour
         // }
     }
 
-    void UpdateDisplay()
+    void UpdateInput()
     {
-        //Debug.Log(_input);
-        _tmp.text = _input;
+        _consoleTmp.text = _input;
+    }
+
+    void AddMessage(string message, Color clr)
+    {
+        int limit = 90;
+        int countLimit = 5;
+
+        for (int i = 0; i < countLimit; i++)
+        {
+            if (message.Length <= limit)
+            {
+                AddMessage0(message, clr);
+                break;
+            }
+            else
+            {
+                if (i < countLimit - 1)
+                {
+                    AddMessage0(message.Remove(limit), clr);
+                    message = message.Substring(limit);
+                }
+                else
+                    AddMessage0($"{message.Remove(limit - 3)}...", clr);
+            }
+        }
+    }
+
+    void AddMessage0(string message, Color clr)
+    {
+        _history[_headIndex].text = message;
+        _history[_headIndex].color = clr;
+
+        _history[_headIndex].transform.position = _basePos + Vector3.up * _bottomOffset;
+
+        int idx = (_headIndex + 1) % _history.Count;
+        for (int i = 1; i < _history.Count; i++)
+        {
+            _history[idx].transform.position = _basePos + Vector3.up * (_bottomOffset + i * _step);
+            idx = (idx + 1) % _history.Count;
+        }
+
+        _headIndex--;
+
+        if (_headIndex < 0)
+            _headIndex = _history.Count - 1;
     }
 }

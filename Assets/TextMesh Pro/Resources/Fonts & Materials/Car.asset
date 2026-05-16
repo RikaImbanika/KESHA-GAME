@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: LiberationSans SDF Material
-  m_Shader: {fileID: 4800000, guid: a02a7d8c237544f1962732b55a9aebf1, type: 3}
+  m_Shader: {fileID: 4800000, guid: 8289f4dba1c2371478a219e6391787d4, type: 3}
   m_ValidKeywords:
   - OUTLINE_ON
   m_InvalidKeywords: []
@@ -29,16 +29,16 @@ Material:
     m_Floats:
     - _ColorMask: 15
     - _CullMode: 0
-    - _FaceDilate: 0.46
+    - _FaceDilate: 1
     - _GradientScale: 10
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _OutlineSoftness: 0
-    - _OutlineWidth: 0.51
+    - _OutlineWidth: 0.773
     - _PerspectiveFilter: 0.875
-    - _ScaleRatioA: 0.77753776
+    - _ScaleRatioA: 0.45906657
     - _ScaleRatioB: 1
-    - _ScaleRatioC: 0.31725
+    - _ScaleRatioC: 0
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -74,11 +74,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: Showing
+  m_Name: Car
   m_EditorClassIdentifier: 
-  hashCode: 1411074851
+  hashCode: 74096
   material: {fileID: 2180264}
-  materialHashCode: 670877475
+  materialHashCode: -1572425264
   m_Version: 1.1.0
   m_SourceFontFileGUID: e3265ab4bf004d28a9537516768c1c75
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: e3265ab4bf004d28a9537516768c1c75, type: 3}

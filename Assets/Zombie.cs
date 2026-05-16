@@ -255,8 +255,11 @@ public class Zombie : MonoBehaviour
     void Screamer()
     {
         if (!_screamerStarted)
-            if (UnityEngine.Random.Range(0, 1200) < 1)
-                StartCoroutine(ScreamerC());
+        {
+            if (UnityEngine.Random.value < _opti.DeltaTime / 20f)
+                if (S.Screamers.TryToScream())
+                    StartCoroutine(ScreamerC());
+        }
 
         IEnumerator ScreamerC()
         {
