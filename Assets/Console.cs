@@ -21,7 +21,7 @@ public class Console : MonoBehaviour
     private string[] _wordsCaseSensetive;
 
     private float _backspaceDelay = 0.3f; // Delay before next backspace
-    private float _backspaceRepeatRate = 0.05f; // Interval before backspacess
+    private float _backspaceRepeatRate = 0.05f; // Interval before backspaces
     private float _nextBackspaceActionTime;
 
     void Start()
@@ -128,7 +128,7 @@ public class Console : MonoBehaviour
         }
         else if (reason == "Error")
         {
-            S.AM.Play("Not Enough Cas h", 1f);
+            S.AM.Play("Not Enough Cash", 1f);
             _opened = true;
             _consoleTmp.gameObject.SetActive(_opened);
 

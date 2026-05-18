@@ -15,9 +15,9 @@ public class SaverTypewriter : MonoBehaviour
 		StartCoroutine(HideAfterDelay(go, 1f));
 	}
 
-	private IEnumerator HideAfterDelay(GameObject go2, float delay)
+	private IEnumerator HideAfterDelay(GameObject go, float delay)
 	{
 		yield return new WaitForSeconds(delay);
-		go2.SetActive(false);
+		go.SetActive(false);
 	}
 }
