@@ -78,8 +78,6 @@ public class Button1 : MonoBehaviour
 			_startTime = Time.time;
 			_pressed = true;
 
-			OldSave save = new OldSave();
-			save._pressed = true;
 			S.SaveManager.CurrentSave.SaveBool("Button1Pressed", true);
 
             yield return null;

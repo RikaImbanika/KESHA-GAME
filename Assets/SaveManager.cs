@@ -106,6 +106,11 @@ public class SaveManager : MonoBehaviour
         return _currentSave.LoadByte(key);
     }
 
+    public long? LoadLong(string key)
+    {
+        return _currentSave.LoadLong(key);
+    }
+
     public void RemoveBool(string key)
     {
         _currentSave.RemoveBool(key);
@@ -139,6 +144,11 @@ public class SaveManager : MonoBehaviour
     public void RemoveByte(string key)
     {
         _currentSave.RemoveByte(key);
+    }
+
+    public void RemoveLong(string key)
+    {
+        _currentSave.RemoveLong(key);
     }
 
     public void RemoveListString(string key)
@@ -202,6 +212,10 @@ public class SaveManager : MonoBehaviour
         else if (type == typeof(byte))
         {
             _currentSave.SaveByte(key, (byte)value);
+        }
+        else if (type == typeof(long))
+        {
+            _currentSave.SaveLong(key, (long)value);
         }
     }
 

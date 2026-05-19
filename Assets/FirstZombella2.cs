@@ -79,7 +79,7 @@ public class FirstZombella2 : MonoBehaviour
 
             yield return new WaitForSeconds(0.3f);
 
-            S.MM.FirstZombellaEntersHall(); //Yes.
+            S.MM.FirstZombellaEntersHall();
             Summon();
             _zombella._followPlayer = true;
 

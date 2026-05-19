@@ -180,8 +180,16 @@ public class Backrooms : MonoBehaviour
 
         for (byte i = 1; i <= 4;)
         {
-            int sceneId = S.RND.Next(_allRoomsList.Count());
-            string sceneName = _allRoomsList[sceneId];
+            string sceneName;
+
+            while (true)
+            {
+                int sceneId = S.RND.Next(_allRoomsList.Count());
+                sceneName = _allRoomsList[sceneId];
+                if (sceneName != "Hall")
+                    break;
+            }
+
             if (!_snakes.ContainsKey(sceneName))
             {
                 if (string.Equals(sceneName, "BR 7"))

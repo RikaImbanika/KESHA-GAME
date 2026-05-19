@@ -191,7 +191,7 @@ public class II : MonoBehaviour
 
             string a1 = name.ToLower();
             string a2 = S.AllFather.ToSnakeCase(name);
-            string a3 = S.AllFather.ToPascalStringCase(name);
+            string a3 = S.AllFather.ToPascalSnakeCase(name);
 
             if (!_aliases.ContainsKey(a1))
                 _aliases.Add(a1, name);

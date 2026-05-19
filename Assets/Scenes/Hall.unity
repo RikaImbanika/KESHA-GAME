@@ -1327,7 +1327,6 @@ MonoBehaviour:
   _audioName: 
   _locked: 0
   _stamp: {fileID: 0}
-  _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
 --- !u!64 &369608022
@@ -1452,7 +1451,6 @@ MonoBehaviour:
   _audioName: 
   _locked: 1
   _stamp: {fileID: 0}
-  _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
 --- !u!64 &434388374
@@ -1599,6 +1597,7 @@ GameObject:
   - component: {fileID: 444641927}
   - component: {fileID: 444641926}
   - component: {fileID: 444641925}
+  - component: {fileID: 444641928}
   m_Layer: 0
   m_Name: Info 2
   m_TagString: Untagged
@@ -1628,15 +1627,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Commands:
 
-    /get <itemName> (Gun, PurpleBall, Ammo...)
-
-    /tp <sceneName>
-    (Hall, BR  1R, MR 1, TL 1...)
-
-    /summon <who> <count> (zombella, baka...)
-
-    /push,
-    /jump, /damage, /heal, /save,  /killme'
+    ...'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
@@ -1699,7 +1690,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -66.16178, w: 0}
+  m_margin: {x: 0, y: 0, z: -119.106705, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -1767,9 +1758,22 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.065, y: -0.66}
+  m_AnchoredPosition: {x: 4.065, y: 2.88}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &444641928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444641924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb66e50af4f5754db5c494622f5733e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _textFilePath: Help
 --- !u!1001 &516815051
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3879,7 +3883,6 @@ MonoBehaviour:
   _audioName: 
   _locked: 0
   _stamp: {fileID: 0}
-  _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
 --- !u!64 &1271182732
@@ -4325,7 +4328,6 @@ MonoBehaviour:
   _audioName: 
   _locked: 1
   _stamp: {fileID: 0}
-  _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
 --- !u!64 &1337046915
@@ -5685,6 +5687,7 @@ GameObject:
   - component: {fileID: 1812026508}
   - component: {fileID: 1812026507}
   - component: {fileID: 1812026506}
+  - component: {fileID: 1812026509}
   m_Layer: 0
   m_Name: Info 1
   m_TagString: Untagged
@@ -5714,12 +5717,11 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Combinations:
 
-    U + O - teleport to dev zone (and back)
+    ...
 
-    U + P
-    - autopicker, no death
+    ...
 
-    T + Y - teleport up 8 meters'
+    ...'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
@@ -5841,7 +5843,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812026505}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 78.77}
+  m_LocalPosition: {x: 0, y: 0, z: 79.64}
   m_LocalScale: {x: 0.105882324, y: 0.105882324, z: 0.105882324}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5850,9 +5852,22 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.065, y: -0.64}
+  m_AnchoredPosition: {x: 4.06, y: 0.71}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1812026509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812026505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb66e50af4f5754db5c494622f5733e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _textFilePath: Combinations
 --- !u!1 &1838400671
 GameObject:
   m_ObjectHideFlags: 0

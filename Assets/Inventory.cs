@@ -228,7 +228,7 @@ public class Inventory : MonoBehaviour
 
 	public void Update()
 	{
-		if (S.Negative == null)
+		if (S.Negative == null || S.Console  == null)
 			return;
 
 		if (_negated > 0)

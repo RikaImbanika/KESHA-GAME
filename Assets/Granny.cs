@@ -15,6 +15,7 @@ public class Granny : MonoBehaviour
     public float _calmingSpeed;
     public float _fleeingAcceleration;
     public float _calmingAcceleration;
+    public long _lastGreetingsTime;
 
     private string _sceneName;
     private string _id;
@@ -30,7 +31,7 @@ public class Granny : MonoBehaviour
     private float _distanceThreshold;
     private int _calmingPointsLeft;
     private Trader _trader;
-
+    private string _previousPlayerScene;
 
     void Start()
     {
@@ -59,6 +60,8 @@ public class Granny : MonoBehaviour
             _idPos = S.ID(_id, "Pos");
             _idRot = S.ID(_id, "Rot");
             _idPhase = S.ID(_id, "Phase");
+
+            _lastGreetingsTime = S.SM.LoadLong("GrannyLastGreetingsTime") ?? 0;
 
             _phase = S.SM.LoadString(_idPhase) ?? "Stay on market";
 
@@ -92,6 +95,7 @@ public class Granny : MonoBehaviour
         _agent.speed = _fleeingSpeed;
         _agent.acceleration = _fleeingAcceleration;
         _trader.CloseMarket();
+        S.Console.AddMessage("Aaaaaaaaaahhhhhhhhhh!", Color.cyan);
         GoToNewPoint();
     }
 
@@ -136,11 +140,11 @@ public class Granny : MonoBehaviour
 
                 if (dist < _distanceThreshold)
                 {
-                    if (_phase == "Fleeing")
+                    if (_phase.Equals("Fleeing"))
                     {
                         GoToNewPoint();
                     }
-                    else if (_phase == "Calming")
+                    else if (_phase.Equals("Calming"))
                     {
                         _calmingPointsLeft--;
 
@@ -149,14 +153,37 @@ public class Granny : MonoBehaviour
                         else
                             ReturnToMarket();
                     }
-                    else if (_phase == "Returning to market")
+                    else if (_phase.Equals("Returning to market"))
                     {
-                        //Debug.LogError($"Granny: dist = {dist}");
                         ReturnToMarketFinal();
                     }
                 }
 
                 Save();
+            }
+
+            Talking();
+        }
+    }
+
+    void Talking()
+    {
+        if (_phase.Equals("Stay on market") || _phase.Equals("Calming"))
+        {
+            if (S.Ps._currentSceneName == _sceneName && _previousPlayerScene != _sceneName)
+            {
+                _previousPlayerScene = _sceneName;
+
+                long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+                long delta = now - _lastGreetingsTime;
+
+                if (delta > 120)
+                {
+                    S.Console.AddMessage($"Granny: Hello, dear!)", Color.cyan);
+                    _lastGreetingsTime = now;
+                    S.SM.Save("GrannyLastGreetingsTime", _lastGreetingsTime);
+                }
             }
         }
     }
@@ -234,7 +261,7 @@ public class Granny : MonoBehaviour
             return -direction;
     }
 
-    //
+    //Math
 
     public Vector2 GetRandomPointInQuad(Vector2[] quad)
     {

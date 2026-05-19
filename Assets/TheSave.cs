@@ -39,7 +39,9 @@ public class TheSave : MonoBehaviour
 
     [SerializeField] private List<string> byteKeys = new List<string>();
     [SerializeField] private List<byte?> byteValues = new List<byte?>();
-    
+
+    [SerializeField] private List<string> longKeys = new List<string>();
+    [SerializeField] private List<long?> longValues = new List<long?>();
 
     public void RemoveBool(string key) => RemoveGeneric(key, boolKeys, boolValues);
     public void RemoveString(string key) => RemoveGeneric(key, stringKeys, stringValues);
@@ -51,6 +53,7 @@ public class TheSave : MonoBehaviour
     public void RemoveListInt(string key) => RemoveGeneric(key, listIntKeys, listIntValues);
     public void RemoveQuaternion(string key) => RemoveGeneric(key, quaternionKeys, quaternionValues);
     public void RemoveByte(string key) => RemoveGeneric(key, byteKeys, byteValues);
+    public void RemoveLong(string key) => RemoveGeneric(key, longKeys, longValues);
     public void RemoveListBool(string key) => RemoveGeneric(key, listBoolKeys, listBoolValues);
   
     private void RemoveGeneric<T>(string key, List<string> keys, List<T> values)
@@ -72,6 +75,7 @@ public class TheSave : MonoBehaviour
     public void SaveListInt(string key, List<int>? value) => SaveGeneric(key, value, listIntKeys, listIntValues);
     public void SaveQuaternion(string key, Quaternion? value) => SaveGeneric(key, value, quaternionKeys, quaternionValues);
     public void SaveByte(string key, byte? value) => SaveGeneric(key, value, byteKeys, byteValues);
+    public void SaveLong(string key, long? value) => SaveGeneric(key, value, longKeys, longValues);
     public void SaveListBool(string key, List<bool>? value) => SaveGeneric(key, value, listBoolKeys, listBoolValues);
     private void SaveGeneric<T>(string key, T value, List<string> keys, List<T> values)
     {
@@ -98,6 +102,7 @@ public class TheSave : MonoBehaviour
     public List<int>? LoadListInt(string key) => LoadGeneric(key, listIntKeys, listIntValues);
     public Quaternion? LoadQuaternion(string key) => LoadGeneric(key, quaternionKeys, quaternionValues);
     public byte? LoadByte(string key) => LoadGeneric(key, byteKeys, byteValues);
+    public long? LoadLong(string key) => LoadGeneric(key, longKeys, longValues);
     public List<bool>? LoadListBool(string key) => LoadGeneric(key, listBoolKeys, listBoolValues);
     private string? LoadGeneric(string key, List<string> keys, List<string?> values)
     {
@@ -199,7 +204,6 @@ public class TheSave : MonoBehaviour
     {
         return new TheSave
         {
-            // Простые типы
             stringKeys = new List<string>(stringKeys),
             stringValues = new List<string?>(stringValues),
             boolKeys = new List<string>(boolKeys),
@@ -214,8 +218,9 @@ public class TheSave : MonoBehaviour
             quaternionValues = new List<Quaternion?>(quaternionValues),
             byteKeys = new List<string>(byteKeys),
             byteValues = new List<byte?>(byteValues),
+            longKeys = new List<string>(longKeys),
+            longValues = new List<long?>(longValues),
 
-            // Глубокое копирование списков списков
             listStringKeys = new List<string>(listStringKeys),
             listStringValues = listStringValues
                 .Select(list => list != null ? new List<string>(list) : null)
@@ -295,6 +300,12 @@ public class TheSave : MonoBehaviour
         if (byteKeys.Count > 0)
             for (int i = 0; i < byteKeys.Count; i++)
                 sb.AppendLine($"  {byteKeys[i]}: {byteValues[i]?.ToString() ?? "null"}");
+
+        sb.AppendLine("> Longs:");
+
+        if (longKeys.Count > 0)
+            for (int i = 0; i < longKeys.Count; i++)
+                sb.AppendLine($"  {longKeys[i]}: {longValues[i]?.ToString() ?? "null"}");
 
         return sb.ToString();
     }

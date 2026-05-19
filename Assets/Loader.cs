@@ -222,6 +222,8 @@ public class Loader : MonoBehaviour
 
     public void InitMap()
     {
+        Debug.LogError($"Loader initialising map...");
+
         _map = new Dictionary<string, List<string>>();
         _rooms = new Dictionary<string, RoomModel>();
 
@@ -310,6 +312,8 @@ public class Loader : MonoBehaviour
         AddValue("BR 4R", "BR 6R", 2, 1);
         AddValue("BR 4R", "BR 1", 3, 2);
         AddValue("BR 4R", "BR 7", 1, 2); //14
+
+        Debug.LogError($"Loader initialised map...");
     }
 
     public void Update()

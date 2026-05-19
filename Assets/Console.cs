@@ -9,11 +9,13 @@ public class Console : MonoBehaviour
 {
     public TextMeshPro _consoleTmp;
     public TextMeshPro _historyTmp;
-    private List<TextMeshPro> _history;
+    private TextMeshPro[] _history;
+    private float[] _historyTimesLeft;
     private Vector3 _basePos;
     private float _bottomOffset;
     private float _step;
     private int _headIndex;
+    private int _count;
     
     public bool _opened;
     public string _input;
@@ -23,6 +25,7 @@ public class Console : MonoBehaviour
     private float _backspaceDelay = 0.3f; // Delay before next backspace
     private float _backspaceRepeatRate = 0.05f; // Interval before backspaces
     private float _nextBackspaceActionTime;
+    private bool _openedOnce;
 
     void Start()
     {
@@ -30,16 +33,19 @@ public class Console : MonoBehaviour
 
         IEnumerator LateStart()
         {
-            _history = new List<TextMeshPro>();
+            _count = 28;
+
+            _history = new TextMeshPro[_count];
+            _historyTimesLeft = new float[_count];
 
             _basePos = _consoleTmp.transform.position;
 
             _step = 0.5f;
             _bottomOffset = 1.25f;
 
-            for (int i = 0; i < 28; i++)
+            for (int i = 0; i < _count; i++)
             {
-                _history.Add(Instantiate(_historyTmp));
+                _history[i] = Instantiate(_historyTmp);
                 _history[i].transform.position = _basePos + Vector3.up * (_bottomOffset + i * _step);
                 _history[i].text = $"";
                 _history[i].enableWordWrapping = false;
@@ -61,14 +67,12 @@ public class Console : MonoBehaviour
             }
 
             S.Console = this;
-
-            AddMessage("To close console: /", Color.yellow);
         }
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Slash))
+        if (Input.GetKeyDown(KeyCode.Slash) && !Input.GetKey(KeyCode.LeftShift))
         {
             ToggleConsole("Open");
         }
@@ -76,8 +80,7 @@ public class Console : MonoBehaviour
         if (_opened)
         {
             string inputThisFrame = UnityEngine.Input.inputString;
-            inputThisFrame = Regex.Replace(inputThisFrame, @"[^a-zA-Z0-9 \-]", "");
-
+            inputThisFrame = Regex.Replace(inputThisFrame, @"[^a-zA-Z0-9 .,?;""'\-]", "");
             if (!string.IsNullOrEmpty(inputThisFrame))
             {
                 _input += inputThisFrame;
@@ -102,6 +105,29 @@ public class Console : MonoBehaviour
                 _nextBackspaceActionTime = Time.time + _backspaceRepeatRate;
             }
         }
+
+        if (!_opened)
+        {
+            for (int i = 0; i < _count; i++)
+            {
+                if (_historyTimesLeft[i] > 0)
+                {
+                    _historyTimesLeft[i] -= Time.deltaTime;
+                    if (_historyTimesLeft[i] < 0)
+                    {
+                        _historyTimesLeft[i] = 0;
+                        _history[i].gameObject.SetActive(false);
+                    }
+                    else if (_historyTimesLeft[i] < 3)
+                    {
+                        float t = _historyTimesLeft[i] / 3;
+                        Color clr = _history[i].color;
+                        clr.a = Mathf.SmoothStep(0, 1, t);
+                        _history[i].color = clr;
+                    }
+                }
+            }
+        }
     }
 
     public void ToggleConsole(string reason)
@@ -114,6 +140,13 @@ public class Console : MonoBehaviour
     {
         _opened = value;
 
+        if (!_openedOnce && _opened)
+        {
+            AddMessage("Hello!", Color.yellow);
+            AddMessage("To close console: /", Color.yellow);
+            _openedOnce = true;
+        }
+
         _consoleTmp.gameObject.SetActive(_opened);
         Cursor.visible = _opened;
 
@@ -124,7 +157,7 @@ public class Console : MonoBehaviour
         else if (reason == "Success")
         {
             S.AM.Play("Kill", 1.1f);
-            AddMessage(_input, Color.green); /////////////////////////
+            AddMessage(_input, Color.green);
         }
         else if (reason == "Error")
         {
@@ -152,8 +185,19 @@ public class Console : MonoBehaviour
         _input = "/";
         UpdateInput();
 
-        foreach (TextMeshPro tmp in _history)
-            tmp.gameObject.SetActive(_opened);
+        for (int i = 0; i < _count; i++)
+        {
+            if (_opened)
+            {
+                _history[i].gameObject.SetActive(true);
+                Color clr = _history[i].color;
+                clr.a = 1f;
+                _history[i].color = clr;
+            }
+            else
+                if (_historyTimesLeft[i] <= 0)
+                    _history[i].gameObject.SetActive(false);
+        }
     }
 
     void Backspace()
@@ -265,9 +309,9 @@ public class Console : MonoBehaviour
             _words[0] == "goto" ||
             _words[0] == "go")
             Teleport();
-        else if (_words[0] == "scene" ||
+        else if ((_words[0] == "scene" && _words.Length >= 2) ||
             _words[0] == "gotoscene" ||
-            _words[0] == "room" ||
+            (_words[0] == "room" && _words.Length >= 2) ||
             _words[0] == "gotoroom" ||
             _words[0] == "goscene" ||
             _words[0] == "goroom")
@@ -286,26 +330,122 @@ public class Console : MonoBehaviour
             _words[0] == "info" ||
             _words[0] == "commandlist")
             Help();
-        else
+        else if (_words[0] == "help" ||
+            _words[0] == "hlp" ||
+            _words[0] == "commands" ||
+            _words[0] == "helpme" ||
+            _words[0] == "info" ||
+            _words[0] == "commandlist")
+            Help();
+        else if (_words[0] == "combinations" ||
+            _words[0] == "combi" ||
+            _words[0] == "hotkeys" ||
+            _words[0] == "keys" ||
+            _words[0] == "combis" ||
+            _words[0] == "combies")
+            Combinations();
+        else if (_words[0] == "coordinates" ||
+            _words[0] == "coords" ||
+            _words[0] == "position" ||
+            _words[0] == "mypos" ||
+            _words[0] == "pos" ||
+            _words[0] == "location" ||
+            _words[0] == "mylocation" ||
+            _words[0] == "playerlocation" ||
+            _words[0] == "where" ||
+            _words[0] == "whereami" ||
+            _words[0] == "myposition")
+            Coordinates();
+        else if (_words[0] == "scene" ||
+            _words[0] == "scenename" ||
+            _words[0] == "room" ||
+            _words[0] == "roomname" ||
+            _words[0] == "currentscene" ||
+            _words[0] == "currentroom" ||
+            _words[0] == "currentscenename" ||
+            _words[0] == "currentroomname" ||
+            _words[0] == "whatscene" ||
+            _words[0] == "whatroom" ||
+            _words[0] == "playerscene" ||
+            _words[0] == "playerroom" ||
+            _words[0] == "myscene" ||
+            _words[0] == "myroom")
+            SceneName();
+        else if (_words[0] == "snakes" ||
+            _words[0] == "wherearesnakes")
+            Snakes();
+        else if (!string.IsNullOrWhiteSpace(command))
             ToggleConsole("Message");
+        else
+            ToggleConsole("Close");
+    }
+
+    void SceneName()
+    {
+        ToggleConsole("Success", true);
+        string sceneNameFromLoader = S.SM.LoadString("sceneName") ?? "no";
+        AddMessage($"{S.Ps._currentSceneName} (from loader: {sceneNameFromLoader})", Color.yellow);
+    }
+
+    void Coordinates()
+    {
+        ToggleConsole("Success", true);
+                
+        Vector3 pos = S.Ph.transform.position;
+        AddMessage($"{pos.x} {pos.y} {pos.z}", Color.yellow);
+    }
+
+    void Combinations()
+    {
+        Info("Combinations");
     }
 
     void Help()
     {
-        AddMessage("COMMANDS:", Color.yellow);
-        AddMessage("=======================================================", Color.yellow);
-        AddMessage("/summon (zombella, baka, musculus, ghost, spider, firefly) <count>;", Color.yellow);
-        AddMessage("/get (gun, ammo, PurpleBall, FirstAidKit, cucumber, GreenKey, RedCrystal, Frerard1, so on...) <count>;", Color.yellow);
-        AddMessage("/tp (BR 1, BR 1R, BR 2, BR 2R, BR 3... MR 1, MR 4, Hall, Income, Corridor, TL 1, TL 2, TL 3, so on...);", Color.yellow);
-        AddMessage("/tp <x> <y>; /tp <x> <y> <z>;", Color.yellow);
-        AddMessage("/push <power>; /push <x> <y>; /push <x> <y> <z>;", Color.yellow);
-        AddMessage("/jump <power>,", Color.yellow);
-        AddMessage("/heal <amount>; /heal;", Color.yellow);
-        AddMessage("/save; /checkpoint;", Color.yellow);
-        AddMessage("/damage <amount>; /dam <amount>; /killme; /kill;", Color.yellow);
-        AddMessage("/help; /helpme; /info; /commands and so on...", Color.yellow);
-        AddMessage("There are also many aliases for commands.", Color.yellow);
-        AddMessage("=======================================================", Color.yellow);
+        Info("Help");
+    }
+
+    void Info(string path)
+    {
+        ToggleConsole("Success", true);
+
+        TextAsset help = Resources.Load<TextAsset>($"Texts/{path}");
+        string[] lines = help.text.Split('\n');
+        foreach (string line in lines)
+            AddMessage(line.Trim('\r'), Color.yellow);
+    }
+
+    void Snakes()
+    {
+        ToggleConsole("Success", true);
+
+        string str = "";
+
+        if (S.Backrooms == null || S.Backrooms._snakes == null)
+        {
+            AddMessage("Not initialised yet.", Color.yellow);
+        }
+
+        foreach (KeyValuePair<string, byte> kvp in S.Backrooms._snakes)
+        {
+            if (kvp.Value > 0)
+            {
+                string type = "Unknown";
+                if (kvp.Value == 1)
+                        type = "Sun";
+                else if (kvp.Value == 2)
+                    type = "Ice";
+                else if (kvp.Value == 3)
+                    type = "Nature";
+                else if (kvp.Value == 4)
+                    type = "Silent";
+                str += $"{type} - {kvp.Key}, ";
+            }
+        }
+
+        str = $"{str.Remove(str.Length - 3)}.";
+
+        AddMessage(str, Color.yellow);
     }
 
     void Summon()
@@ -778,7 +918,7 @@ public class Console : MonoBehaviour
         _consoleTmp.text = _input;
     }
 
-    void AddMessage(string message, Color clr)
+    public void AddMessage(string message, Color clr)
     {
         int limit = 90;
         int countLimit = 5;
@@ -808,18 +948,21 @@ public class Console : MonoBehaviour
         _history[_headIndex].text = message;
         _history[_headIndex].color = clr;
 
+        _historyTimesLeft[_headIndex] = 6f;
+        _history[_headIndex].gameObject.SetActive(true);
+
         _history[_headIndex].transform.position = _basePos + Vector3.up * _bottomOffset;
 
-        int idx = (_headIndex + 1) % _history.Count;
-        for (int i = 1; i < _history.Count; i++)
+        int idx = (_headIndex + 1) % _count;
+        for (int i = 1; i < _count; i++)
         {
             _history[idx].transform.position = _basePos + Vector3.up * (_bottomOffset + i * _step);
-            idx = (idx + 1) % _history.Count;
+            idx = (idx + 1) % _count;
         }
 
         _headIndex--;
 
         if (_headIndex < 0)
-            _headIndex = _history.Count - 1;
+            _headIndex = _count - 1;
     }
 }

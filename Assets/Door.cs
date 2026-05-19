@@ -13,16 +13,15 @@ public class Door : MonoBehaviour
 	public string _audioName;
 	public bool _locked;
 	public Stamp _stamp;
-	public float _stampAnimationTimeLeft;
 	public int _sparklesCount;
 	public DoorModel _doorModel;
 	private string _sceneName;
 	private bool _needArrow;
-	private Vector3 _stampStartScale;
+	private bool _arrowPlaced;
 
 	public void Start()
 	{
-		_sparklesCount = 100;
+		_sparklesCount = 75;
 
 		// if (string.IsNullOrEmpty(_audioName))
 		// 	_audioName = "Door";
@@ -32,142 +31,155 @@ public class Door : MonoBehaviour
 
 		IEnumerator Wait()
 		{
-			_sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-			
-			bool ok = false;
+			_sceneName = gameObject.scene.name;
 
-			while (true)
-			{
-				try
-				{
-					if (S.Loader._rooms == null)
-						Debug.Log("Wtf#1");
+			float delay = UnityEngine.Random.Range(0, 0.5f);
 
-					if (S.Loader._rooms[_sceneName] == null)
-						Debug.Log($"Wtf#2 sceneName {_sceneName} obj {S.Loader._rooms[_sceneName]}");
+			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #1", Color.green);
 
-					RoomModel roomModel = S.Loader._rooms[_sceneName];
-					_doorModel = roomModel._doors[_number];
-					_doorModel._door = this;
-					_doorModel._coordinates = transform.position;
-					_doorModel._right = transform.right;
-					_locked = _doorModel._locked;
-					_needArrow = _doorModel._needArrow;
-					ok = true;
-				}
-				catch
-				{
-					ok = false;
-				}
+			while (S.Loader._rooms == null)
+				yield return new WaitForSeconds(delay);
 
-				if (ok)
-					break;
-				else
-					yield return new WaitForSeconds(0.5f);
-			}
+			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #2", Color.green);
+
+			while (!S.Loader._rooms.ContainsKey(_sceneName))
+				yield return new WaitForSeconds(delay);
+
+			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #3", Color.green);
+
+			RoomModel roomModel = S.Loader._rooms[_sceneName];
+
+			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #4", Color.green);
+
+			_doorModel = roomModel._doors[_number];
+			_doorModel._door = this;
+			_doorModel._coordinates = transform.position;
+			_doorModel._right = transform.right;
+			_locked = _doorModel._locked; //
+			_needArrow = _doorModel._needArrow;
+
+			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #5", Color.green);
 
 			if (_needArrow)
 			{
-				Vector3 point0 = transform.position + transform.right * 3f; ///
+				PlaceArrowAndExitSignAsync();
 
-				Quaternion rot = Quaternion.LookRotation(transform.right);
-
-				StartCoroutine(SetParent0());
-
-				IEnumerator SetParent0()
-				{
-					while (S.Loader.Roots[_sceneName] == null)
-						yield return new WaitForSeconds(0.25f);
-
-					GameObject arrowObj = GameObject.Instantiate(S.Arrow, point0, rot, S.Loader.Roots[_sceneName]);
-
-					Vector3 point1 = point0;
-
-					RaycastHit hit;
-					if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
-					{
-						point1 = hit.point;
-						arrowObj.transform.position = point1;
-					}
-
-					Vector3 originalScale = S.Arrow.transform.localScale;
-					Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
-
-					arrowObj.transform.localScale = new Vector3(
-						originalScale.x / parentScale.x,
-						originalScale.y / parentScale.y,
-						originalScale.z / parentScale.z
-					);
-
-					Vector3 point2 = point1 + new Vector3(0, 14, 0);
-
-					Vector3 point3 = point2;
-
-					GameObject exitObj = GameObject.Instantiate(S.Exit, point0, rot, S.Loader.Roots[_sceneName]);
-
-					if (Physics.Raycast(point2, -transform.right, out hit, 20f))
-					{
-						point3 = hit.point + new Vector3(0, -5, 0);
-						exitObj.transform.position = point3;
-					}
-
-					Vector3 originalScale2 = S.Exit.transform.localScale;
-
-					exitObj.transform.localScale = new Vector3(
-						originalScale2.x / parentScale.x,
-						originalScale2.y / parentScale.y,
-						originalScale2.z / parentScale.z
-					);
-				}
+				while (!_arrowPlaced)
+					yield return new WaitForSeconds(delay);
 			}
 
 			if (_locked)
+				PlaceStampAsync();
+
+			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #5", Color.green);
+		}
+	}
+
+	void PlaceStampAsync()
+	{
+		Vector3 point0 = transform.position + transform.right * 3f; ///
+
+		Quaternion rot = Quaternion.LookRotation(transform.right);
+
+		StartCoroutine(SetParent());
+
+		IEnumerator SetParent()
+		{
+			while (S.Loader.Roots[_sceneName] == null)
+				yield return new WaitForSeconds(0.25f);
+
+			GameObject stampObj = GameObject.Instantiate(S.Stamp, point0, rot, S.Loader.Roots[_sceneName]);
+
+			RaycastHit hit;
+			if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
 			{
-				Vector3 point0 = transform.position + transform.right * 0.5f;
+				Vector3 point1 = hit.point;
+				point1 += Vector3.up * 3.75f;
+				stampObj.transform.position = point1;
 
-				Quaternion rot = Quaternion.LookRotation(transform.right);
-
-				StartCoroutine(SetParent());
-
-				IEnumerator SetParent()
+				RaycastHit hit2;
+				Vector3 point2 = point0 + Vector3.up * 10f;
+				if (Physics.Raycast(point2, -transform.right, out hit2, 5f))
 				{
-					while (S.Loader.Roots[_sceneName] == null)
-						yield return new WaitForSeconds(0.25f);
-
-					GameObject stampObj = GameObject.Instantiate(S.Stamp, point0, rot, S.Loader.Roots[_sceneName]);
-
-					RaycastHit hit;
-					if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
-					{
-						Vector3 point1 = hit.point;
-						point1 += Vector3.up * 3.75f;
-						stampObj.transform.position = point1;
-
-						RaycastHit hit2;
-						Vector3 point2 = point0 + Vector3.up * 10f;
-						if (Physics.Raycast(point2, -transform.right, out hit2, 5f))
-						{
-							Vector3 point3 = hit2.point;
-							point3.y = point1.y;
-							point3 += transform.right * 0.55f;
-							stampObj.transform.position = point3;
-						}
-					}
-
-					Vector3 originalScale = S.Stamp.transform.localScale;
-					Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
-
-					stampObj.transform.localScale = new Vector3(
-						originalScale.x / parentScale.x,
-						originalScale.y / parentScale.y,
-						originalScale.z / parentScale.z
-					);
-
-					_stamp = stampObj.GetComponent<Stamp>();
-					_stamp._door = this;
-					_stampStartScale = stampObj.transform.localScale;
+					Vector3 point3 = hit2.point;
+					point3.y = point1.y;
+					point3 += transform.right * 0.55f;
+					stampObj.transform.position = point3;
 				}
-			}			
+			}
+			else
+				S.Console.AddMessage($"I can't place stamp! Scene: {_sceneName}, door number: {_number}", Color.red);
+
+			Vector3 originalScale = S.Stamp.transform.localScale;
+			Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
+
+			stampObj.transform.localScale = new Vector3(
+				originalScale.x / parentScale.x,
+				originalScale.y / parentScale.y,
+				originalScale.z / parentScale.z
+			);
+
+			_stamp = stampObj.GetComponent<Stamp>();
+			_stamp._door = this;
+
+			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, stamp placed", Color.green);
+		}
+	}
+
+	void PlaceArrowAndExitSignAsync()
+	{
+		Vector3 point0 = transform.position + transform.right * 3f; ///
+
+		Quaternion rot = Quaternion.LookRotation(transform.right);
+
+		StartCoroutine(SetParent0());
+
+		IEnumerator SetParent0()
+		{
+			while (S.Loader.Roots[_sceneName] == null)
+				yield return new WaitForSeconds(0.25f);
+
+			GameObject arrowObj = GameObject.Instantiate(S.Arrow, point0, rot, S.Loader.Roots[_sceneName]);
+
+			Vector3 point1 = point0;
+
+			RaycastHit hit;
+			if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
+			{
+				point1 = hit.point;
+				arrowObj.transform.position = point1;
+			}
+
+			Vector3 originalScale = S.Arrow.transform.localScale;
+			Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
+
+			arrowObj.transform.localScale = new Vector3(
+				originalScale.x / parentScale.x,
+				originalScale.y / parentScale.y,
+				originalScale.z / parentScale.z
+			);
+
+			Vector3 point2 = point1 + new Vector3(0, 14, 0);
+
+			GameObject exitObj = GameObject.Instantiate(S.Exit, point0, rot, S.Loader.Roots[_sceneName]);
+
+			if (Physics.Raycast(point2, -transform.right, out hit, 20f))
+			{
+				Vector3 point3 = hit.point + new Vector3(0, -5, 0);
+				exitObj.transform.position = point3;
+			}
+
+			Vector3 originalScale2 = S.Exit.transform.localScale;
+
+			exitObj.transform.localScale = new Vector3(
+				originalScale2.x / parentScale.x,
+				originalScale2.y / parentScale.y,
+				originalScale2.z / parentScale.z
+			);
+
+			_arrowPlaced = true;
+
+			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, arrow placed", Color.green);
 		}
 	}
 
@@ -182,8 +194,6 @@ public class Door : MonoBehaviour
 		if (!_locked)
 		{
 			S.AudioManager.Play(_audioName); //Was set before
-
-			_doorModel = S.Loader._rooms[_sceneName]._doors[_number];
 
 			S.Loader.GoTo(_doorModel._nextSceneName, _doorModel._nextDoorId, transform.right);
 		}
@@ -213,38 +223,11 @@ public class Door : MonoBehaviour
 	{
 		if (_locked)
 		{
-			_stampAnimationTimeLeft = 1.75f;
 			_locked = false;
 			_doorModel._locked = false;
 			Debug.LogError($"sc {_doorModel._nextSceneName} did {_doorModel._nextDoorId}");
-			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._locked = false;
 			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._door.Unlock();
-			_stamp.Unlock();
-		}
-	}
-
-	public void Update()
-	{
-		if (_stampAnimationTimeLeft > 0)
-		{
-			_stampAnimationTimeLeft -= Time.deltaTime;
-
-			float totalTime = 1.75f;
-			float progress = _stampAnimationTimeLeft / totalTime;
-
-			float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
-
-			float currentScale = Mathf.Lerp(0f, 1f, smoothProgress);
-
-			_stamp._go.transform.localScale = _stampStartScale * currentScale;
-
-			float randomX = UnityEngine.Random.Range(0f, 360f);
-			float randomY = UnityEngine.Random.Range(0f, 360f);
-			float randomZ = UnityEngine.Random.Range(0f, 360f);
-			_stamp._go.transform.rotation = Quaternion.Euler(randomX, randomY, randomZ);
-
-			if (_stampAnimationTimeLeft <= 0)
-				Destroy(_stamp._go);
+			_stamp.Unlock(); //
 		}
 	}
 }

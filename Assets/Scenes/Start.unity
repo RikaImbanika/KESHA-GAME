@@ -3476,11 +3476,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4712578818540465055, guid: 7cf0e818b56a5964ca10eb38cc35fcda, type: 3}
       propertyPath: m_LocalScale.y
-      value: 5.3461
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4712578818540465055, guid: 7cf0e818b56a5964ca10eb38cc35fcda, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.603
+      value: 8.21
       objectReference: {fileID: 0}
     - target: {fileID: 4712578818540465055, guid: 7cf0e818b56a5964ca10eb38cc35fcda, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7228,8 +7228,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 544288600}
   m_LocalRotation: {x: -0, y: 0.92374, z: -0, w: 0.38302022}
-  m_LocalPosition: {x: -30.84, y: -159.66, z: -60.03}
-  m_LocalScale: {x: -2.1601653, y: 18.912655, z: -20.959038}
+  m_LocalPosition: {x: -30.84, y: -157.99, z: -60.03}
+  m_LocalScale: {x: -2.1601653, y: 22.235607, z: -25.878122}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 888405743}
@@ -11243,6 +11243,7 @@ GameObject:
   - component: {fileID: 888405743}
   - component: {fileID: 888405745}
   - component: {fileID: 888405744}
+  - component: {fileID: 888405746}
   m_Layer: 0
   m_Name: Info 1
   m_TagString: Untagged
@@ -11267,7 +11268,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 225.889, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.536, y: -0.268}
+  m_AnchoredPosition: {x: 0.536, y: -0.19}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &888405744
@@ -11292,12 +11293,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Combinations:
 
-    U + O - teleport to dev zone (and back)
-
-    U + P
-    - autopicker, no death
-
-    T + Y - teleport up 8 meters'
+    ...'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
@@ -11411,6 +11407,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &888405746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888405742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb66e50af4f5754db5c494622f5733e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _textFilePath: Combinations
 --- !u!1 &892028741
 GameObject:
   m_ObjectHideFlags: 0
@@ -12164,7 +12173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c26ef0893f954604a91624bbf6fe354f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _version: 1.11.19
+  _version: 1.11.20
   _tmpOnStartPanel: {fileID: 404712816}
   _tmpInInventory: {fileID: 1186545224}
 --- !u!114 &895244302
@@ -24074,6 +24083,7 @@ GameObject:
   - component: {fileID: 2139621188}
   - component: {fileID: 2139621190}
   - component: {fileID: 2139621189}
+  - component: {fileID: 2139621191}
   m_Layer: 0
   m_Name: Info 2
   m_TagString: Untagged
@@ -24090,7 +24100,7 @@ RectTransform:
   m_GameObject: {fileID: 2139621187}
   m_LocalRotation: {x: -0, y: 0.70900095, z: -0, w: 0.7052076}
   m_LocalPosition: {x: 0, y: 0, z: 0.025}
-  m_LocalScale: {x: -0.007215971, y: 0.008793933, z: -0.065895066}
+  m_LocalScale: {x: -0.0061954884, y: 0.007550295, z: -0.056576185}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 544288604}
@@ -24098,7 +24108,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 225.266, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.51, y: -0.241}
+  m_AnchoredPosition: {x: 0.51, y: 0.123}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2139621189
@@ -24123,15 +24133,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Commands:
 
-    /get <itemName> (Gun, PurpleBall, Ammo...)
-
-    /tp <sceneName>
-    (Hall, BR  1R, MR 1, TL 1...)
-
-    /summon <who> <count> (zombella, baka...)
-
-    /push,
-    /jump, /damage, /heal, /save,  /killme'
+    ...'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: a6f26670f581f5248ad70ed0ebcc3f81, type: 2}
@@ -24174,7 +24176,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -24194,7 +24196,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -66.16178, w: 0}
+  m_margin: {x: 0, y: 0, z: -66.16178, w: -0.8124974}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -24245,6 +24247,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2139621191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139621187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fb66e50af4f5754db5c494622f5733e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _textFilePath: Help
 --- !u!1 &2147220119
 GameObject:
   m_ObjectHideFlags: 0
