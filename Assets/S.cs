@@ -99,6 +99,7 @@ public static class S : object
 	private static GameObject _rainbowWing2;
 	private static Paintings _paintings;
 	private static GameObject _squarePainting;
+	private static GameObject _woodenPaintingFrame;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
 	public static Granny _granny;
 	public static WallColorCapturer _wallColorCapturer;
@@ -106,6 +107,17 @@ public static class S : object
 	public static Console _console;
 	public static Screamers _screamers;
 
+	public static GameObject WoodenPaintingFrame
+	{
+		get
+		{
+			return _woodenPaintingFrame;
+		}
+		set
+		{
+			_woodenPaintingFrame = value;
+		}
+	}
 
 	public static Screamers Screamers
 	{

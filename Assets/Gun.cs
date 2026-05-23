@@ -117,7 +117,7 @@ public class Gun : MonoBehaviour
                                     float healthPercent = MathF.Max(brain._health / brain._maxHealth, 0);
                                     int hp = (int)MathF.Max(brain._health, 0);
                                     int maxHp = (int)brain._maxHealth;
-                                    S.LifeBars.Show(brain._visibleName, healthPercent, hp, maxHp, brain._nameColor, brain._lifeColor);
+                                    S.LifeBars.Show(brain._visibleName, healthPercent, hp, maxHp, brain._lifeBarNameColor, brain._lifeColor);
                                 }
                             }
                         }

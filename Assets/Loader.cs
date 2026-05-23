@@ -10,6 +10,7 @@ public class Loader : MonoBehaviour
 {
     public Dictionary<string, RoomModel> _rooms;
     public Dictionary<string, List<string>> _map;
+    public Dictionary<string, string> _aliases;
     private List<string> _scenesToLoad;
     private bool _workingOnIt;
     private Dictionary<string, Transform> _sceneRoots;
@@ -23,18 +24,6 @@ public class Loader : MonoBehaviour
     }
 
     public Dictionary<string, Transform> Roots
-    {
-        get
-        {
-            return _sceneRoots;
-        }
-        set
-        {
-            _sceneRoots = value;
-        }
-    }
-
-    public Dictionary<string, Transform> SceneRoots
     {
         get
         {
@@ -61,6 +50,7 @@ public class Loader : MonoBehaviour
             }
 
             InitMap();
+            FillAliases();
 
             SceneManager.LoadSceneAsync("Income", LoadSceneMode.Additive);
             SceneManager.LoadSceneAsync("Corridor", LoadSceneMode.Additive);
@@ -101,6 +91,27 @@ public class Loader : MonoBehaviour
             S.SM.Save("sceneName", "Income");
 
             yield return null;
+        }
+    }
+
+    void FillAliases()
+    {
+        _aliases = new Dictionary<string, string>();
+
+        foreach (string name in _rooms.Keys)
+        {
+            string a1 = name.ToLower();
+            string a2 = S.AllFather.ToSnakeCase(name);
+            string a3 = S.AllFather.ToPascalSnakeCase(name);
+
+            if (!_aliases.ContainsKey(a1))
+                _aliases.Add(a1, name);
+
+            if (!_aliases.ContainsKey(a2))
+                _aliases.Add(a2, name);
+
+            if (!_aliases.ContainsKey(a3))
+                _aliases.Add(a3, name);
         }
     }
 
@@ -208,24 +219,14 @@ public class Loader : MonoBehaviour
         }
     }
 
-    IEnumerator UnloadSceneAsync(Scene scene)
-    {
-        //Why it exists?
-
-        if (scene.isLoaded)
-        {
-            AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(scene);
-            while (!asyncUnload.isDone) yield return null;
-            Debug.Log($"Unloaded scene: {scene.name}!");
-        }
-    }
-
     public void InitMap()
     {
         Debug.LogError($"Loader initialising map...");
 
         _map = new Dictionary<string, List<string>>();
         _rooms = new Dictionary<string, RoomModel>();
+
+        _rooms.Add("Start", new RoomModel("Start"));
 
         AddValue("Income", "Corridor", 1, 1);
 
@@ -404,17 +405,10 @@ public class Loader : MonoBehaviour
                 Debug.Log("Loader waiting for S.AllFater");
             }
 
-            while (!SceneRoots.ContainsKey(_sceneName))
-            {
-                elapsed += 0.1f;
-
-                if (elapsed > 20f)
-                    yield break;
-
-                yield return new WaitForSeconds(0.1f);
-            }
-
-            while (SceneRoots[_sceneName] == null)
+            while (!S.AllFather.SceneCurrentlyLoaded(_sceneName) ||
+                Roots == null ||
+                !Roots.ContainsKey(_sceneName) ||
+                Roots[_sceneName] == null)
             {
                 //Null left from previous unloaded root
 
@@ -426,12 +420,7 @@ public class Loader : MonoBehaviour
                 yield return new WaitForSeconds(0.1f);
             }
 
-            Transform root = SceneRoots[_sceneName];
-
-            while (!S.AllFather.SceneCurrentlyLoaded(_sceneName))
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
+            Transform root = Roots[_sceneName];
 
             List<string> ids = S.SM.LoadListString(S.ID(_sceneName, "ids"));
             if (ids != null)

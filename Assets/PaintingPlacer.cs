@@ -78,6 +78,11 @@ public class PaintingPlacer : MonoBehaviour
 
     IEnumerator Place()
     {
+        while (S.Loader.Roots == null ||
+            !S.Loader.Roots.ContainsKey(_sceneName) ||
+            S.Loader.Roots[_sceneName] == null)
+            yield return new WaitForSeconds(0.25f);
+
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.forward, out hit, 5f, _layerMask))
         {
@@ -87,22 +92,28 @@ public class PaintingPlacer : MonoBehaviour
             if (Physics.Raycast(point1, -transform.up, out hit2, 25f, _layerMask))
             {
                 Material mat;
+                Material frameMat;
 
                 if (_sceneName == "BR 7" || _sceneName == "BR 7R")
                 {
                     mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
+                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
                     mat.SetFloat("_Speed", 0.1667f);
+                    frameMat.SetFloat("_Speed", 0.1667f);
                     _wallHueShiftSpeed = 0.1667f;
                 }
                 else if (_sceneName == "BR 6" || _sceneName == "BR 6R")
                 {
                     mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
+                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
                     mat.SetFloat("_Speed", 0.08f);
+                    frameMat.SetFloat("_Speed", 0.08f);
                     _wallHueShiftSpeed = 0.08f;
                 }
                 else
                 {
                     mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSide"));
+                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSide"));
                     _wallHueShiftSpeed = 0f;
                 }
 
@@ -117,17 +128,24 @@ public class PaintingPlacer : MonoBehaviour
                 }
 
                 mat.color = _tint;
+                frameMat.color = _tint;
 
                 Vector3 point2 = new Vector3(hit.point.x, hit2.point.y + 7f, hit.point.z);
 
                 GameObject painting = GameObject.Instantiate(S.SquarePainting, point2, transform.rotation, S.Loader.Roots[_sceneName]);
                 GameObject child = painting.transform.GetChild(0).gameObject;
 
+                GameObject frame = GameObject.Instantiate(S.WoodenPaintingFrame, point2, transform.rotation, S.Loader.Roots[_sceneName]);
+
                 string name = S.Paintings._names[_paintingId];
                 Debug.LogError($"Texture name = {name}");
                 mat.mainTexture = Resources.Load<Texture2D>($"Textures/Paintings/{name}");
+                frameMat.mainTexture = Resources.Load<Texture2D>($"Textures/WoodenFrameTexture");
 
                 child.GetComponent<MeshRenderer>().material = mat;
+
+                GameObject frameChild = frame.transform.Find("Child/Frame").gameObject;
+                frameChild.GetComponent<MeshRenderer>().material = frameMat;
             }
         }
 

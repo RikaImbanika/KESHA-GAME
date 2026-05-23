@@ -95,7 +95,7 @@ public class Granny : MonoBehaviour
         _agent.speed = _fleeingSpeed;
         _agent.acceleration = _fleeingAcceleration;
         _trader.CloseMarket();
-        S.Console.AddMessage("Aaaaaaaaaahhhhhhhhhh!", Color.cyan);
+        S.Console.AddMessage("Granny: Aaaaaaaaaahhhhhhhhhh!", Color.cyan);
         GoToNewPoint();
     }
 

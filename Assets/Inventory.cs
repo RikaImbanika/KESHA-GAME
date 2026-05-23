@@ -326,7 +326,7 @@ public class Inventory : MonoBehaviour
 						_objectNameShowen = $"{info._visibleName} ({count})";
 
 					_objectBeforeTakenTMP.text = _objectNameShowen;
-					_objectBeforeTakenTMP.color = info._nameColor;
+					_objectBeforeTakenTMP.color = info._lookNameColor;
 					showAnyName = true;
 
 					goto render;
@@ -388,7 +388,7 @@ public class Inventory : MonoBehaviour
 
 					_objectNameShowen = ball._brain._visibleName;
 					_objectBeforeTakenTMP.text = _objectNameShowen;
-					_objectBeforeTakenTMP.color = ball._brain._nameColor;
+					_objectBeforeTakenTMP.color = ball._brain._lookNameColor;
 					showAnyName = true;
 
 					goto render;
@@ -1216,7 +1216,7 @@ public class Inventory : MonoBehaviour
 		if (!items[selectedId].IsUnityNull())
 		{
 			ItemInfo ii = S.II.Get(items[selectedId]._name);
-			S.ItemNameShower.Show(ii._visibleName, ii._nameColor);
+			S.ItemNameShower.Show(ii._visibleName, ii._inventoryNameColor);
 		}
 	}
 

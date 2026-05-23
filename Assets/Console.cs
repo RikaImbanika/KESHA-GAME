@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Console : MonoBehaviour
 {
@@ -372,12 +374,64 @@ public class Console : MonoBehaviour
             _words[0] == "myroom")
             SceneName();
         else if (_words[0] == "snakes" ||
-            _words[0] == "wherearesnakes")
+            _words[0] == "wherearesnakes" ||
+            _words[0] == "wheresnakes" ||
+            _words[0] == "snakeswhere")
             Snakes();
+        else if (_words[0] == "scenes" ||
+            _words[0] == "rooms" ||
+            _words[0] == "allscenes" ||
+            _words[0] == "allrooms" ||
+            _words[0] == "sceneslist" ||
+            _words[0] == "roomslist" ||
+            _words[0] == "allsceneslist" ||
+            _words[0] == "allroomslist" ||
+            _words[0] == "scenesnames" ||
+            _words[0] == "roomsnames" ||
+            _words[0] == "allscenesnames" ||
+            _words[0] == "allroomsnames")
+            Scenes();
+        else if (_words[0] == "items" ||
+            _words[0] == "things" ||
+            _words[0] == "allitems" ||
+            _words[0] == "allthings" ||
+            _words[0] == "itemslist" ||
+            _words[0] == "thingslist" ||
+            _words[0] == "allitemslist" ||
+            _words[0] == "allthingslist" ||
+            _words[0] == "itemsnames" ||
+            _words[0] == "thingsnames" ||
+            _words[0] == "allitemsnames" ||
+            _words[0] == "allthingsnames")
+            Items();
         else if (!string.IsNullOrWhiteSpace(command))
             ToggleConsole("Message");
         else
             ToggleConsole("Close");
+    }
+
+    void Items()
+    {
+        ToggleConsole("Success", true);
+
+        string[] items = S.II.Names;
+        for (int i = 0; i < items.Length; i++)
+            items[i] = $"\"{items[i]}\"";
+        AddMessage(string.Join(", ", items), Color.yellow);
+    }
+
+    void Scenes()
+    {
+        ToggleConsole("Success", true);
+
+        int count = SceneManager.sceneCountInBuildSettings;
+        string[] names = new string[count];
+        for (int i = 0; i < count; i++)
+        {
+            string path = SceneUtility.GetScenePathByBuildIndex(i);
+            names[i] = $"\"{Path.GetFileNameWithoutExtension(path)}\"";
+        }
+        AddMessage(string.Join(", ", names), Color.yellow);
     }
 
     void SceneName()
@@ -439,11 +493,11 @@ public class Console : MonoBehaviour
                     type = "Nature";
                 else if (kvp.Value == 4)
                     type = "Silent";
-                str += $"{type} - {kvp.Key}, ";
+                str += $"{type} - \"{kvp.Key}\", ";
             }
         }
 
-        str = $"{str.Remove(str.Length - 3)}.";
+        str = $"{str.Remove(str.Length - 2)}.";
 
         AddMessage(str, Color.yellow);
     }
@@ -622,6 +676,9 @@ public class Console : MonoBehaviour
     void GoToScene()
     {
         string sceneName = _input.Substring(_input.IndexOf(" ") + 1);
+
+        if (S.Loader._aliases.ContainsKey(sceneName))
+            sceneName = S.Loader._aliases[sceneName];
 
         if (!S.Loader._map.ContainsKey(sceneName))
         {

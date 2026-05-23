@@ -13,7 +13,8 @@ public class SnakeBrain : MonoBehaviour
     public float _health;
     public float _maxHealth;
     public string _visibleName;
-    public Color _nameColor;
+    public Color _lookNameColor;
+    public Color _lifeBarNameColor;
     public Color _lifeColor;
     public string _id;
     public string _idHealth;
@@ -84,7 +85,7 @@ public class SnakeBrain : MonoBehaviour
                 {
                     Vector3 point1 = _head._clones[i].transform.position;
 
-                    GameObject loot = Instantiate(S.Loot, point1, Quaternion.identity, S.Loader.SceneRoots[_head._sceneName]);
+                    GameObject loot = Instantiate(S.Loot, point1, Quaternion.identity, S.Loader.Roots[_head._sceneName]);
                     ItemP itemP = loot.GetComponent<ItemP>();
                     itemP._count = count;
 

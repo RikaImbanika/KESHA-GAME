@@ -18,26 +18,36 @@ public class FrerardHolder : MonoBehaviour
 
         string name = S.SM.LoadString(S.ID(_id, "name"));
 
-        if (!string.IsNullOrEmpty(name))
+        StartCoroutine(LateStart());
+
+        IEnumerator LateStart()
         {
-            GameObject prefab = Prefabs.Get(name);
-            GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.SceneRoots["Hall"]);
-            obj.transform.localScale = transform.localScale;
-            obj.transform.SetParent(transform, true);
+            if (!string.IsNullOrEmpty(name))
+            {
+                while (S.Loader.Roots == null ||
+                    !S.Loader.Roots.ContainsKey("Hall") ||
+                    S.Loader.Roots["Hall"] == null)
+                    yield return new WaitForSeconds(0.25f);
 
-            _placedItem = obj.GetComponent<ItemP>();
-            _placedItem._forLoader = false;
+                GameObject prefab = Prefabs.Get(name);
+                GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.Roots["Hall"]);
+                obj.transform.localScale = transform.localScale;
+                obj.transform.SetParent(transform, true);
 
-            int currentRotation = S.SM.LoadInt(S.ID(_id, "realRot")) ?? 0;
+                _placedItem = obj.GetComponent<ItemP>();
+                _placedItem._forLoader = false;
 
-            for (int i = 0; i < currentRotation; i++)
-                RotateReal(obj);
+                int currentRotation = S.SM.LoadInt(S.ID(_id, "realRot")) ?? 0;
 
-            _fakeRotation = S.SM.LoadInt(S.ID(_id, "fakeRot")) ?? 0;
+                for (int i = 0; i < currentRotation; i++)
+                    RotateReal(obj);
 
-            bool ok = _placedItem._name == _waitItem && _realRotation == 0;
-            _frerard.Set(_number, ok);
-            //SaveRotations();
+                _fakeRotation = S.SM.LoadInt(S.ID(_id, "fakeRot")) ?? 0;
+
+                bool ok = _placedItem._name == _waitItem && _realRotation == 0;
+                _frerard.Set(_number, ok);
+                //SaveRotations();
+            }
         }
     }
 
@@ -81,7 +91,7 @@ public class FrerardHolder : MonoBehaviour
         _fakeRotation = 0; //ok
         
         GameObject prefab = Prefabs.Get(item._name);
-        GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.SceneRoots["Hall"]);
+        GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.Roots["Hall"]);
         obj.transform.localScale = transform.localScale;
         obj.transform.SetParent(transform, true);
         

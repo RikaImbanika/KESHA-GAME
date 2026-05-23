@@ -16,13 +16,13 @@ public class SceneRoot : MonoBehaviour
             while (S.Loader == null)
                 yield return new WaitForSeconds(0.1f);
 
-            while (S.Loader.SceneRoots == null)
+            while (S.Loader.Roots == null)
                 yield return new WaitForSeconds(0.1f);
 
-            if (!S.Loader.SceneRoots.ContainsKey(sceneName))
-                S.Loader.SceneRoots.Add(sceneName, transform);
+            if (!S.Loader.Roots.ContainsKey(sceneName))
+                S.Loader.Roots.Add(sceneName, transform);
             else
-                S.Loader.SceneRoots[sceneName] = transform;
+                S.Loader.Roots[sceneName] = transform;
         }
     }
 }

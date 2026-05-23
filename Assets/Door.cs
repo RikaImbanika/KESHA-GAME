@@ -35,30 +35,20 @@ public class Door : MonoBehaviour
 
 			float delay = UnityEngine.Random.Range(0, 0.5f);
 
-			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #1", Color.green);
-
 			while (S.Loader._rooms == null)
 				yield return new WaitForSeconds(delay);
-
-			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #2", Color.green);
 
 			while (!S.Loader._rooms.ContainsKey(_sceneName))
 				yield return new WaitForSeconds(delay);
 
-			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #3", Color.green);
-
 			RoomModel roomModel = S.Loader._rooms[_sceneName];
-
-			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #4", Color.green);
 
 			_doorModel = roomModel._doors[_number];
 			_doorModel._door = this;
 			_doorModel._coordinates = transform.position;
 			_doorModel._right = transform.right;
-			_locked = _doorModel._locked; //
+			_locked = _doorModel._locked;
 			_needArrow = _doorModel._needArrow;
-
-			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #5", Color.green);
 
 			if (_needArrow)
 			{
@@ -70,8 +60,6 @@ public class Door : MonoBehaviour
 
 			if (_locked)
 				PlaceStampAsync();
-
-			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, #5", Color.green);
 		}
 	}
 
@@ -85,44 +73,67 @@ public class Door : MonoBehaviour
 
 		IEnumerator SetParent()
 		{
-			while (S.Loader.Roots[_sceneName] == null)
-				yield return new WaitForSeconds(0.25f);
-
-			GameObject stampObj = GameObject.Instantiate(S.Stamp, point0, rot, S.Loader.Roots[_sceneName]);
-
-			RaycastHit hit;
-			if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
+			while (true)
 			{
-				Vector3 point1 = hit.point;
-				point1 += Vector3.up * 3.75f;
-				stampObj.transform.position = point1;
+				while (S.Loader.Roots == null ||
+					!S.Loader.Roots.ContainsKey(_sceneName) ||
+					S.Loader.Roots[_sceneName] == null)
+					yield return new WaitForSeconds(0.25f);
 
-				RaycastHit hit2;
-				Vector3 point2 = point0 + Vector3.up * 10f;
-				if (Physics.Raycast(point2, -transform.right, out hit2, 5f))
+				GameObject stampObj = GameObject.Instantiate(S.Stamp, point0, rot, S.Loader.Roots[_sceneName]);
+
+				try
 				{
-					Vector3 point3 = hit2.point;
-					point3.y = point1.y;
-					point3 += transform.right * 0.55f;
-					stampObj.transform.position = point3;
+					RaycastHit hit;
+					if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
+					{
+						Vector3 point1 = hit.point;
+						point1 += Vector3.up * 3.75f;
+						stampObj.transform.position = point1;
+
+						RaycastHit hit2;
+						Vector3 point2 = point0 + Vector3.up * 10f;
+						if (Physics.Raycast(point2, -transform.right, out hit2, 5f))
+						{
+							Vector3 point3 = hit2.point;
+							point3.y = point1.y;
+							point3 += transform.right * 0.55f;
+							stampObj.transform.position = point3;
+						}
+					}
+					else
+					{
+						throw new Exception("Can't raycast");
+					}
 				}
+				catch (Exception ex)
+				{
+					S.Console.AddMessage($"I can't place stamp (#1)! Scene: {_sceneName}, door number: {_number}", Color.red);
+					continue;
+				}
+
+				try
+				{
+					Vector3 originalScale = S.Stamp.transform.localScale;
+					Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
+
+					stampObj.transform.localScale = new Vector3(
+						originalScale.x / parentScale.x,
+						originalScale.y / parentScale.y,
+						originalScale.z / parentScale.z
+					);
+
+					_stamp = stampObj.GetComponent<Stamp>();
+					_stamp._door = this;
+				}
+				catch (Exception ex)
+				{
+					S.Console.AddMessage($"I can't place stamp (#2)! Scene: {_sceneName}, door number: {_number}", Color.red);
+					continue;
+				}
+
+				break;
 			}
-			else
-				S.Console.AddMessage($"I can't place stamp! Scene: {_sceneName}, door number: {_number}", Color.red);
-
-			Vector3 originalScale = S.Stamp.transform.localScale;
-			Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
-
-			stampObj.transform.localScale = new Vector3(
-				originalScale.x / parentScale.x,
-				originalScale.y / parentScale.y,
-				originalScale.z / parentScale.z
-			);
-
-			_stamp = stampObj.GetComponent<Stamp>();
-			_stamp._door = this;
-
-			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, stamp placed", Color.green);
 		}
 	}
 
@@ -136,50 +147,67 @@ public class Door : MonoBehaviour
 
 		IEnumerator SetParent0()
 		{
-			while (S.Loader.Roots[_sceneName] == null)
-				yield return new WaitForSeconds(0.25f);
-
-			GameObject arrowObj = GameObject.Instantiate(S.Arrow, point0, rot, S.Loader.Roots[_sceneName]);
-
-			Vector3 point1 = point0;
-
-			RaycastHit hit;
-			if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
+			while (true)
 			{
-				point1 = hit.point;
-				arrowObj.transform.position = point1;
+				while (S.Loader.Roots == null ||
+					!S.Loader.Roots.ContainsKey(_sceneName) ||
+					S.Loader.Roots[_sceneName] == null)
+					yield return new WaitForSeconds(0.25f);
+
+				GameObject arrowObj = GameObject.Instantiate(S.Arrow, point0, rot, S.Loader.Roots[_sceneName]);
+
+				Vector3 point1 = point0;
+
+				RaycastHit hit;
+				if (Physics.Raycast(point0, Vector3.down, out hit, 20f))
+				{
+					point1 = hit.point;
+					arrowObj.transform.position = point1;
+				}
+				else
+				{
+					S.Console.AddMessage("Arrow not placed one time (#1)", Color.red);
+					yield return new WaitForSeconds(1f);
+					continue;
+				}
+
+				Vector3 originalScale = S.Arrow.transform.localScale;
+				Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
+
+				arrowObj.transform.localScale = new Vector3(
+					originalScale.x / parentScale.x,
+					originalScale.y / parentScale.y,
+					originalScale.z / parentScale.z
+				);
+
+				Vector3 point2 = point1 + new Vector3(0, 14, 0);
+
+				GameObject exitObj = GameObject.Instantiate(S.Exit, point0, rot, S.Loader.Roots[_sceneName]);
+
+				if (Physics.Raycast(point2, -transform.right, out hit, 20f))
+				{
+					Vector3 point3 = hit.point + new Vector3(0, -5, 0);
+					exitObj.transform.position = point3;
+				}
+				else
+				{
+					S.Console.AddMessage("Arrow not placed one time (#2)", Color.red);
+					yield return new WaitForSeconds(1f);
+					continue;
+				}
+
+				Vector3 originalScale2 = S.Exit.transform.localScale;
+
+				exitObj.transform.localScale = new Vector3(
+					originalScale2.x / parentScale.x,
+					originalScale2.y / parentScale.y,
+					originalScale2.z / parentScale.z
+				);
+
+				_arrowPlaced = true;
+
+				break;
 			}
-
-			Vector3 originalScale = S.Arrow.transform.localScale;
-			Vector3 parentScale = S.Loader.Roots[_sceneName].lossyScale;
-
-			arrowObj.transform.localScale = new Vector3(
-				originalScale.x / parentScale.x,
-				originalScale.y / parentScale.y,
-				originalScale.z / parentScale.z
-			);
-
-			Vector3 point2 = point1 + new Vector3(0, 14, 0);
-
-			GameObject exitObj = GameObject.Instantiate(S.Exit, point0, rot, S.Loader.Roots[_sceneName]);
-
-			if (Physics.Raycast(point2, -transform.right, out hit, 20f))
-			{
-				Vector3 point3 = hit.point + new Vector3(0, -5, 0);
-				exitObj.transform.position = point3;
-			}
-
-			Vector3 originalScale2 = S.Exit.transform.localScale;
-
-			exitObj.transform.localScale = new Vector3(
-				originalScale2.x / parentScale.x,
-				originalScale2.y / parentScale.y,
-				originalScale2.z / parentScale.z
-			);
-
-			_arrowPlaced = true;
-
-			S.Console.AddMessage($"Trying init door, {_sceneName}, number {_number}, arrow placed", Color.green);
 		}
 	}
 
@@ -227,7 +255,7 @@ public class Door : MonoBehaviour
 			_doorModel._locked = false;
 			Debug.LogError($"sc {_doorModel._nextSceneName} did {_doorModel._nextDoorId}");
 			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._door.Unlock();
-			_stamp.Unlock(); //
+			_stamp.Unlock();
 		}
 	}
 }

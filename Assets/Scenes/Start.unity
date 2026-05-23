@@ -11743,6 +11743,7 @@ GameObject:
   - component: {fileID: 895244304}
   - component: {fileID: 895244305}
   - component: {fileID: 895244306}
+  - component: {fileID: 895244307}
   m_Layer: 0
   m_Name: AllFather
   m_TagString: AllFather
@@ -12173,7 +12174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c26ef0893f954604a91624bbf6fe354f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _version: 1.11.20
+  _version: 1.11.21
   _tmpOnStartPanel: {fileID: 404712816}
   _tmpInInventory: {fileID: 1186545224}
 --- !u!114 &895244302
@@ -12255,6 +12256,24 @@ MonoBehaviour:
   _lastDelay: 0
   _lastScreamerTime: 0
   _queueSize: 0
+--- !u!114 &895244307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895244273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f63027f5024c042ab9b3e62036a9a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _count: 500
+  _r: 25
+  _minSpeed: 0.2
+  _maxSpeed: 1
+  _speedSmooth: 2
+  _noiseScale: 0.3
 --- !u!1 &916329583
 GameObject:
   m_ObjectHideFlags: 0
@@ -19663,7 +19682,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1747890672}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -238.49, y: -146.084, z: 80.6}
+  m_LocalPosition: {x: -238.487, y: -146.084, z: 80.6}
   m_LocalScale: {x: 0.22766282, y: 0.1977107, z: -0.2304994}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20145,7 +20164,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1795291829}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0.7071068, w: 0}
-  m_LocalPosition: {x: -221.27, y: -146.084, z: 80.6}
+  m_LocalPosition: {x: -221.273, y: -146.078, z: 80.6}
   m_LocalScale: {x: 0.22766282, y: -0.1977107, z: -0.2304994}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23903,7 +23922,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_AllowMSAA: 0
+  m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 0

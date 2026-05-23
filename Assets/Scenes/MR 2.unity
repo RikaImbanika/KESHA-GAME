@@ -560,7 +560,7 @@ MonoBehaviour:
   _id: 
   _name: Crystal
   _count: 1
-  _unnatural: 0
+  _forLoader: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1 &795189064
@@ -576,7 +576,7 @@ GameObject:
   - component: {fileID: 795189067}
   - component: {fileID: 795189066}
   - component: {fileID: 795189065}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Door 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,10 +597,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _number: 2
   col: {fileID: 795189067}
-  audioName: Door
+  _audioName: 
   _locked: 0
   _stamp: {fileID: 0}
-  _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
 --- !u!64 &795189066
@@ -769,7 +768,7 @@ MonoBehaviour:
   _id: 
   _name: Crystal
   _count: 1
-  _unnatural: 0
+  _forLoader: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1001 &1180860683
@@ -1411,7 +1410,7 @@ MonoBehaviour:
   _id: 
   _name: Crystal
   _count: 1
-  _unnatural: 0
+  _forLoader: 0
   _locked: 0
   _obj: {fileID: 0}
 --- !u!1 &1842115579
@@ -1427,7 +1426,7 @@ GameObject:
   - component: {fileID: 1842115582}
   - component: {fileID: 1842115581}
   - component: {fileID: 1842115580}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Door 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1448,10 +1447,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _number: 1
   col: {fileID: 1842115582}
-  audioName: Door
+  _audioName: 
   _locked: 0
   _stamp: {fileID: 0}
-  _stampAnimationTimeLeft: 0
   _sparklesCount: 0
   _doorModel: {fileID: 0}
 --- !u!64 &1842115581

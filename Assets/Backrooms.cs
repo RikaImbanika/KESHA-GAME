@@ -58,7 +58,7 @@ public class Backrooms : MonoBehaviour
 
             Debug.LogError("Arrows added");
 
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 10; i++)
                 yield return LockOneConnection();
 
             yield return LockLast();

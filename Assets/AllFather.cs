@@ -73,25 +73,6 @@ public class AllFather : MonoBehaviour
 		}
 	}
 
-	// public Dictionary<string, OldSave> DeepCopyDictionary(Dictionary<string, OldSave> original)
-	// {
-	// 	Dictionary<string, OldSave> copy = new Dictionary<string, OldSave>();
-
-	// 	foreach (var entry in original)
-	// 	{
-	// 		string key = entry.Key;
-	// 		OldSave originalValue = entry.Value;
-
-	// 		string json = JsonUtility.ToJson(originalValue);
-
-	// 		OldSave copyValue = JsonUtility.FromJson<OldSave>(json);
-
-	// 		copy.Add(key, copyValue);
-	// 	}
-
-	// 	return copy;
-	// }
-
 	public void Shuffle(int[] array)
 	{
 		for (int i = array.Length - 1; i > 0; i--)

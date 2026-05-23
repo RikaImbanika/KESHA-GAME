@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class II : MonoBehaviour
@@ -16,173 +17,199 @@ public class II : MonoBehaviour
         _base = new Dictionary<string, ItemInfo>();
 
         _base.Add("PurpleBall", new ItemInfo(
-            nameColor: Color.white,
-            spriteName: "CoinTex",
-            prefabName: "Balls/ItemBalls/PurpleBall",
-            visibleName: "Purple ball",
-            throwable: true
-            ));
+         inventoryNameColor: Color.white,
+         lookNameColor: Color.white,
+         spriteName: "CoinTex",
+         prefabName: "Balls/ItemBalls/PurpleBall",
+         visibleName: "Purple ball",
+         throwable: true
+     ));
 
         _base.Add("BlueBall", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "CoinTex",
             prefabName: "Balls/ItemBalls/BlueBall",
             visibleName: "Blue ball",
             throwable: true
-            ));
+        ));
 
         _base.Add("FirstAidKit", new ItemInfo(
-            nameColor: new Color(0.099f, 1f, 0.18f),
+            inventoryNameColor: new Color(0.066f, 1f, 0.12f),
+            lookNameColor: new Color(0.099f, 1f, 0.18f),
             spriteName: "FirstAidKit",
             prefabName: "FirstAidKit",
             visibleName: "First aid kit",
             throwable: false
-            ));
+        ));
 
         _base.Add("Gun", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "Gun",
             prefabName: "Gun",
             visibleName: "Gun",
             throwable: false
-            ));
+        ));
 
         _base.Add("Ammo", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "Ammo",
             prefabName: "Ammo",
             visibleName: "Ammo",
             throwable: false
-            ));
+        ));
 
         _base.Add("Apple", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "Apple",
             prefabName: "Apple",
             visibleName: "Apple",
             throwable: false
-            ));
+        ));
 
         _base.Add("Cucumber", new ItemInfo(
-            nameColor:  Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "Cucumber",
             prefabName: "Cucumber",
             visibleName: "Cucumber",
             throwable: false
-            ));
+        ));
 
         _base.Add("Frerard1", new ItemInfo(
-            nameColor: new Color(0.4f, 0.16f, 1f),
+            inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+            lookNameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard1",
             prefabName: "Frerard1",
             visibleName: "Picture part",
             throwable: false
-            ));
+        ));
 
         _base.Add("Frerard2", new ItemInfo(
-            nameColor: new Color(0.4f, 0.16f, 1f),
+            inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+            lookNameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard2",
             prefabName: "Frerard2",
             visibleName: "Picture part",
             throwable: false
-            ));
+        ));
 
         _base.Add("Frerard3", new ItemInfo(
-            nameColor: new Color(0.4f, 0.16f, 1f),
+            inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+            lookNameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard3",
             prefabName: "Frerard3",
             visibleName: "Picture part",
             throwable: false
-            ));
+        ));
 
         _base.Add("Frerard4", new ItemInfo(
-            nameColor: new Color(0.4f, 0.16f, 1f),
+            inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+            lookNameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard4",
             prefabName: "Frerard4",
             visibleName: "Picture part",
             throwable: false
-            ));
+        ));
 
         _base.Add("Frerard5", new ItemInfo(
-            nameColor: new Color(0.4f, 0.16f, 1f),
+            inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+            lookNameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard5",
             prefabName: "Frerard5",
             visibleName: "Picture part",
             throwable: false
-            ));
+        ));
 
         _base.Add("Frerard6", new ItemInfo(
-            nameColor: new Color(0.4f, 0.16f, 1f),
+            inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+            lookNameColor: new Color(0.4f, 0.16f, 1f),
             spriteName: "Frerard6",
             prefabName: "Frerard6",
             visibleName: "Picture part",
             throwable: false
-            ));
+        ));
 
         _base.Add("BlueKey", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "BlueKey",
             prefabName: "BlueKey",
             visibleName: "Blue key",
             throwable: false
-            ));
+        ));
 
         _base.Add("PurpleKey", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "PurpleKey",
             prefabName: "PurpleKey",
             visibleName: "Purple key",
             throwable: false
-            ));
+        ));
 
         _base.Add("RedKey", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "RedKey",
             prefabName: "RedKey",
             visibleName: "Red key",
             throwable: false
-            ));
+        ));
 
         _base.Add("GreenKey", new ItemInfo(
-            nameColor: new Color(0.2118f, 1f, 0.4f),
+            inventoryNameColor: new Color(0.066f, 1f, 0.12f),
+            lookNameColor: new Color(0.099f, 1f, 0.18f),
             spriteName: "GreenKey",
             prefabName: "GreenKey",
             visibleName: "Green key",
             throwable: false
-            ));
+        ));
 
         _base.Add("RedCrystal", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "RedCrystal",
             prefabName: "RedCrystal",
             visibleName: "Red crystal",
             throwable: false
-            ));
+        ));
 
         _base.Add("Earth", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "Earth",
             prefabName: "Earth",
             visibleName: "Earth",
             throwable: true
-            ));
+        ));
 
         _base.Add("Moon", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "Moon",
             prefabName: "Moon",
             visibleName: "Moon",
             throwable: true
-            ));
+        ));
 
         _base.Add("Mars", new ItemInfo(
-            nameColor: Color.white,
+            inventoryNameColor: Color.white,
+            lookNameColor: Color.white,
             spriteName: "Mars",
             prefabName: "Mars",
             visibleName: "Mars",
             throwable: true
-            ));
+        ));
 
+        FillAliases();
+    }
+    
+    void FillAliases()
+    {
         _aliases = new Dictionary<string, string>();
 
         foreach (string name in _base.Keys)
@@ -205,13 +232,14 @@ public class II : MonoBehaviour
     }
 
     public ItemInfo Get(string name)
-	{
+    {
         if (!_base.ContainsKey(name))
         {
             if (!_aliases.ContainsKey(name))
             {
                 _base.Add(name, new ItemInfo(
-                nameColor: Color.white,
+                inventoryNameColor: Color.white,
+                lookNameColor: Color.white,
                 spriteName: name,
                 prefabName: name,
                 visibleName: name,
@@ -224,5 +252,13 @@ public class II : MonoBehaviour
         }
 
         return _base[name];
-	}
+    }
+
+    public string[] Names
+    {
+        get
+        {
+            return _base.Keys.ToArray<string>();
+        }
+    }
 }

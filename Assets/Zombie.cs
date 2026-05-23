@@ -46,11 +46,13 @@ public class Zombie : MonoBehaviour
 
         IEnumerator Start0()
         {
-            while (S.AllFather == null)
-            {
-                yield return new WaitForSeconds(0.1f);
-                Debug.Log("Zombie waiting for S.AllFather");
-            }
+            _sceneName = gameObject.scene.name;
+                        
+            while (S.AllFather == null ||
+                S.Loader.Roots == null ||
+                !S.Loader.Roots.ContainsKey(_sceneName) ||
+                S.Loader.Roots[_sceneName] == null)
+                yield return new WaitForSeconds(0.15f);
 
             if (_health == 0)
                 _health = 100;
@@ -65,7 +67,6 @@ public class Zombie : MonoBehaviour
 
             _ep = S.AllFather.GetEnemyParams(_type);
 
-            _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
             _id = S.ID(_sceneName, S.ID(gameObject));
             _idPos = S.ID(_id, "pos");
             _idRot = S.ID(_id, "rot");
