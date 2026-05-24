@@ -74,14 +74,18 @@ public class Console : MonoBehaviour
 
     void Update()
     {
+        bool skipOne;
+
         if (Input.GetKeyDown(KeyCode.Slash) && !Input.GetKey(KeyCode.LeftShift))
         {
             ToggleConsole("Open");
         }
-
-        if (_opened)
+        else if (_opened)
         {
             string inputThisFrame = UnityEngine.Input.inputString;
+
+            inputThisFrame = S.TextProcessor.ConvertCyrillicToLatinLayout(inputThisFrame);
+
             inputThisFrame = Regex.Replace(inputThisFrame, @"[^a-zA-Z0-9 .,?;""'\-]", "");
             if (!string.IsNullOrEmpty(inputThisFrame))
             {
@@ -107,8 +111,7 @@ public class Console : MonoBehaviour
                 _nextBackspaceActionTime = Time.time + _backspaceRepeatRate;
             }
         }
-
-        if (!_opened)
+        else if (!_opened)
         {
             for (int i = 0; i < _count; i++)
             {
@@ -417,7 +420,27 @@ public class Console : MonoBehaviour
         string[] items = S.II.Names;
         for (int i = 0; i < items.Length; i++)
             items[i] = $"\"{items[i]}\"";
-        AddMessage(string.Join(", ", items), Color.yellow);
+
+        string full = string.Join(", ", items);
+        int maxLen = 90;
+        int start = 0;
+
+        while (start < full.Length)
+        {
+            if (full.Length - start <= maxLen)
+            {
+                AddMessage(full.Substring(start) + ".", Color.yellow);
+                break;
+            }
+
+            int end = start + maxLen;
+            int splitPos = full.LastIndexOf(", ", end, end - start);
+            if (splitPos == -1 || splitPos <= start)
+                splitPos = end;
+
+            AddMessage(full.Substring(start, splitPos - start), Color.yellow);
+            start = splitPos + 2;
+        }
     }
 
     void Scenes()
@@ -431,7 +454,7 @@ public class Console : MonoBehaviour
             string path = SceneUtility.GetScenePathByBuildIndex(i);
             names[i] = $"\"{Path.GetFileNameWithoutExtension(path)}\"";
         }
-        AddMessage(string.Join(", ", names), Color.yellow);
+        AddMessage(string.Join(", ", names) + ".", Color.yellow);
     }
 
     void SceneName()
@@ -977,25 +1000,41 @@ public class Console : MonoBehaviour
 
     public void AddMessage(string message, Color clr)
     {
-        int limit = 90;
-        int countLimit = 5;
+        const int limit = 90;
+        const int countLimit = 5;
+        const int minLineLength = limit - 15;
+
+        string remaining = message;
 
         for (int i = 0; i < countLimit; i++)
         {
-            if (message.Length <= limit)
+            if (remaining.Length <= limit)
             {
-                AddMessage0(message, clr);
+                AddMessage0(remaining, clr);
                 break;
+            }
+
+            if (i == countLimit - 1)
+            {
+                string truncated = remaining.Substring(0, limit - 3);
+                AddMessage0(truncated + "...", clr);
+                break;
+            }
+
+            string line = remaining.Substring(0, limit);
+            int lastSpace = line.LastIndexOf(' ');
+
+            if (lastSpace >= 0 && lastSpace >= minLineLength)
+            {
+                string part = remaining.Substring(0, lastSpace);
+                AddMessage0(part, clr);
+
+                remaining = remaining.Substring(lastSpace + 1).TrimStart();
             }
             else
             {
-                if (i < countLimit - 1)
-                {
-                    AddMessage0(message.Remove(limit), clr);
-                    message = message.Substring(limit);
-                }
-                else
-                    AddMessage0($"{message.Remove(limit - 3)}...", clr);
+                AddMessage0(line, clr);
+                remaining = remaining.Substring(limit).TrimStart();
             }
         }
     }

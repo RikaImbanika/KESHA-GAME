@@ -106,6 +106,19 @@ public static class S : object
 	public static ItemShower _itemShower;
 	public static Console _console;
 	public static Screamers _screamers;
+	public static TextProcessor _textProcessor;
+
+	public static TextProcessor TextProcessor
+	{
+		get
+		{
+			return _textProcessor;
+		}
+		set
+		{
+			_textProcessor = value;
+		}
+	}
 
 	public static GameObject WoodenPaintingFrame
 	{

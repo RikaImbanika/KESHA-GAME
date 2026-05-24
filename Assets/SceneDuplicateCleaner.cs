@@ -59,7 +59,6 @@ public class SceneDuplicateCleaner : MonoBehaviour
             {
                 if (!isFirst && scene.isLoaded)
                 {
-                    Debug.Log($"UNLOADING SCENE DUPLICATE: {scene.name}");
                     StartCoroutine(UnloadSceneAsync(scene));
                 }
                 else isFirst = false;
@@ -69,11 +68,13 @@ public class SceneDuplicateCleaner : MonoBehaviour
 
     private IEnumerator UnloadSceneAsync(Scene scene)
     {
+        string name = scene.name;
+
         if (scene.isLoaded)
         {
             AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(scene);
             while (!asyncUnload.isDone) yield return null;
-            Debug.Log($"UNLOADED DUPLICATE SCENE: {scene.name}!");
+            S.Console.AddMessage($"Unloaded scene duplicate: {name}", Color.red);
         }
     }
 

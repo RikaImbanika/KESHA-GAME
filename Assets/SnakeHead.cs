@@ -167,8 +167,22 @@ public class SnakeHead : MonoBehaviour
             if (randomNumber == 0)
                 randomIndex = UnityEngine.Random.Range(0, ballsTypesCount);
 
-            GameObject ballInBallInBallInBall = GameObject.Instantiate(S.SnakeBalls[_type][randomIndex], body.BallInBallInBall.transform);
-            ballInBallInBallInBall.transform.position = body.BallInBallInBall.transform.position;
+            GameObject ballInBallInBallInBall = Instantiate(
+                S.SnakeBalls[_type][randomIndex],
+                body.BallInBallInBall.transform
+            );
+
+            Rigidbody rb = ballInBallInBallInBall.GetComponent<Rigidbody>();
+            if (rb != null)
+                rb.isKinematic = true;
+
+            body.BallInBallInBall.transform.localPosition = Vector3.zero;
+            ballInBallInBallInBall.transform.localPosition = Vector3.zero;
+            ballInBallInBallInBall.transform.localScale = Vector3.one;
+
+            Destroy(ballInBallInBallInBall.GetComponent<ItemP>());
+            Destroy(ballInBallInBallInBall.GetComponent<SphereCollider>());
+            Destroy(rb);
 
             StartCoroutine(IEKek());
 

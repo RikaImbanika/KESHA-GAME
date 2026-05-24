@@ -101,8 +101,9 @@ public class Loader : MonoBehaviour
         foreach (string name in _rooms.Keys)
         {
             string a1 = name.ToLower();
-            string a2 = S.AllFather.ToSnakeCase(name);
-            string a3 = S.AllFather.ToPascalSnakeCase(name);
+            string a2 = S.TextProcessor.ToSnakeCase(name);
+            string a3 = S.TextProcessor.ToPascalSnakeCase(name);
+            //TO DO: a2 & a3 will not work here
 
             if (!_aliases.ContainsKey(a1))
                 _aliases.Add(a1, name);

@@ -19,19 +19,235 @@ public class II : MonoBehaviour
         _base.Add("PurpleBall", new ItemInfo(
          inventoryNameColor: Color.white,
          lookNameColor: Color.white,
-         spriteName: "CoinTex",
-         prefabName: "Balls/ItemBalls/PurpleBall",
+         spriteName: "Balls/PurpleBall",
+         prefabName: "Balls/PurpleBall",
          visibleName: "Purple ball",
          throwable: true
-     ));
+        ));
 
         _base.Add("BlueBall", new ItemInfo(
             inventoryNameColor: Color.white,
             lookNameColor: Color.white,
-            spriteName: "CoinTex",
-            prefabName: "Balls/ItemBalls/BlueBall",
+            spriteName: "Balls/BlueBall",
+            prefabName: "Balls/BlueBall",
             visibleName: "Blue ball",
             throwable: true
+        ));
+
+        _base.Add("CyanBall", new ItemInfo(
+        inventoryNameColor: Color.white,
+        lookNameColor: Color.white,
+        spriteName: "Balls/CyanBall",
+        prefabName: "Balls/CyanBall",
+        visibleName: "Cyan ball",
+        throwable: true
+        ));
+
+        _base.Add("YellowBall", new ItemInfo(
+        inventoryNameColor: Color.yellow,
+        lookNameColor: Color.yellow,
+        spriteName: "Balls/YellowBall",
+        prefabName: "Balls/YellowBall",
+        visibleName: "Yellow ball",
+        throwable: true
+        ));
+
+        _base.Add("RedBall", new ItemInfo(
+        inventoryNameColor: Color.red,
+        lookNameColor: Color.red,
+        spriteName: "Balls/RedBall",
+        prefabName: "Balls/RedBall",
+        visibleName: "Red ball",
+        throwable: true
+        ));
+
+        _base.Add("WhiteBall", new ItemInfo(
+        inventoryNameColor: Color.white,
+        lookNameColor: Color.white,
+        spriteName: "Balls/WhiteBall",
+        prefabName: "Balls/WhiteBall",
+        visibleName: "White ball",
+        throwable: true
+        ));
+
+        _base.Add("NatureBall1", new ItemInfo(
+        inventoryNameColor: Color.green,
+        lookNameColor: Color.green,
+        spriteName: "Balls/NatureBall 1",
+        prefabName: "Balls/NatureBall 1",
+        visibleName: "Nature ball",
+        throwable: true
+        ));
+
+        _base.Add("NatureBall2", new ItemInfo(
+        inventoryNameColor: Color.green,
+        lookNameColor: Color.green,
+        spriteName: "Balls/NatureBall 2",
+        prefabName: "Balls/NatureBall 2",
+        visibleName: "Nature ball",
+        throwable: true
+        ));
+
+        _base.Add("NatureBall3", new ItemInfo(
+        inventoryNameColor: Color.green,
+        lookNameColor: Color.green,
+        spriteName: "Balls/NatureBall 3",
+        prefabName: "Balls/NatureBall 3",
+        visibleName: "Nature ball",
+        throwable: true
+        ));
+
+        _base.Add("NatureBall4", new ItemInfo(
+        inventoryNameColor: Color.green,
+        lookNameColor: Color.green,
+        spriteName: "Balls/NatureBall 4",
+        prefabName: "Balls/NatureBall 4",
+        visibleName: "Nature ball",
+        throwable: true
+        ));
+
+        _base.Add("NatureBall5", new ItemInfo(
+        inventoryNameColor: Color.green,
+        lookNameColor: Color.green,
+        spriteName: "Balls/NatureBall 5",
+        prefabName: "Balls/NatureBall 5",
+        visibleName: "Nature ball",
+        throwable: true
+        ));
+
+        _base.Add("NatureBall6", new ItemInfo(
+        inventoryNameColor: Color.green,
+        lookNameColor: Color.green,
+        spriteName: "Balls/NatureBall 6",
+        prefabName: "Balls/NatureBall 6",
+        visibleName: "Nature ball",
+        throwable: true
+        ));
+
+        _base.Add("NatureBall7", new ItemInfo(
+        inventoryNameColor: Color.green,
+        lookNameColor: Color.green,
+        spriteName: "Balls/NatureBall 7",
+        prefabName: "Balls/NatureBall 7",
+        visibleName: "Nature ball",
+        throwable: true
+        ));
+
+        _base.Add("NatureBall8", new ItemInfo(
+        inventoryNameColor: Color.green,
+        lookNameColor: Color.green,
+        spriteName: "Balls/NatureBall 8",
+        prefabName: "Balls/NatureBall 8",
+        visibleName: "Nature ball",
+        throwable: true
+        ));
+
+        _base.Add("IceBall1", new ItemInfo(
+        inventoryNameColor: Color.cyan,
+        lookNameColor: Color.cyan,
+        spriteName: "Balls/IceBall 1",
+        prefabName: "Balls/IceBall 1",
+        visibleName: "Ice ball",
+        throwable: true
+        ));
+
+        _base.Add("IceBall2", new ItemInfo(
+        inventoryNameColor: Color.cyan,
+        lookNameColor: Color.cyan,
+        spriteName: "Balls/IceBall 2",
+        prefabName: "Balls/IceBall 2",
+        visibleName: "Ice ball",
+        throwable: true
+        ));
+
+        _base.Add("IceBall3", new ItemInfo(
+        inventoryNameColor: Color.cyan,
+        lookNameColor: Color.cyan,
+        spriteName: "Balls/IceBall 3",
+        prefabName: "Balls/IceBall 3",
+        visibleName: "Ice ball",
+        throwable: true
+        ));
+
+        _base.Add("IceBall4", new ItemInfo(
+        inventoryNameColor: Color.cyan,
+        lookNameColor: Color.cyan,
+        spriteName: "Balls/IceBall 4",
+        prefabName: "Balls/IceBall 4",
+        visibleName: "Ice ball",
+        throwable: true
+        ));
+
+        _base.Add("IceBall5", new ItemInfo(
+        inventoryNameColor: Color.cyan,
+        lookNameColor: Color.cyan,
+        spriteName: "Balls/IceBall 5",
+        prefabName: "Balls/IceBall 5",
+        visibleName: "Ice ball",
+        throwable: true
+        ));
+
+        _base.Add("IceBall6", new ItemInfo(
+        inventoryNameColor: Color.cyan,
+        lookNameColor: Color.cyan,
+        spriteName: "Balls/IceBall 6",
+        prefabName: "Balls/IceBall 6",
+        visibleName: "Ice ball",
+        throwable: true
+        ));
+
+        _base.Add("SilentBall1", new ItemInfo(
+        inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+        lookNameColor: new Color(0.4f, 0.16f, 1f),
+        spriteName: "Balls/SilentBall 1",
+        prefabName: "Balls/SilentBall 1",
+        visibleName: "Silent ball",
+        throwable: true
+        ));
+
+        _base.Add("SilentBall2", new ItemInfo(
+        inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+        lookNameColor: new Color(0.4f, 0.16f, 1f),
+        spriteName: "Balls/SilentBall 2",
+        prefabName: "Balls/SilentBall 2",
+        visibleName: "Silent ball",
+        throwable: true
+        ));
+
+        _base.Add("SilentBall3", new ItemInfo(
+        inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+        lookNameColor: new Color(0.4f, 0.16f, 1f),
+        spriteName: "Balls/SilentBall 3",
+        prefabName: "Balls/SilentBall 3",
+        visibleName: "Silent ball",
+        throwable: true
+        ));
+
+        _base.Add("SilentBall4", new ItemInfo(
+        inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+        lookNameColor: new Color(0.4f, 0.16f, 1f),
+        spriteName: "Balls/SilentBall 4",
+        prefabName: "Balls/SilentBall 4",
+        visibleName: "Silent ball",
+        throwable: true
+        ));
+
+        _base.Add("SilentBall5", new ItemInfo(
+        inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+        lookNameColor: new Color(0.4f, 0.16f, 1f),
+        spriteName: "Balls/SilentBall 5",
+        prefabName: "Balls/SilentBall 5",
+        visibleName: "Silent ball",
+        throwable: true
+        ));
+
+        _base.Add("SilentBall6", new ItemInfo(
+        inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+        lookNameColor: new Color(0.4f, 0.16f, 1f),
+        spriteName: "Balls/SilentBall 6",
+        prefabName: "Balls/SilentBall 6",
+        visibleName: "Silent ball",
+        throwable: true
         ));
 
         _base.Add("FirstAidKit", new ItemInfo(
@@ -217,8 +433,8 @@ public class II : MonoBehaviour
             _base[name]._name = name;
 
             string a1 = name.ToLower();
-            string a2 = S.AllFather.ToSnakeCase(name);
-            string a3 = S.AllFather.ToPascalSnakeCase(name);
+            string a2 = S.TextProcessor.ToSnakeCase(name);
+            string a3 = S.TextProcessor.ToPascalSnakeCase(name);
 
             if (!_aliases.ContainsKey(a1))
                 _aliases.Add(a1, name);
@@ -237,10 +453,14 @@ public class II : MonoBehaviour
         {
             if (!_aliases.ContainsKey(name))
             {
+                string spriteName = "Zombella";
+                if (S.RND.Next(2) == 0)
+                    spriteName = "Baka";
+
                 _base.Add(name, new ItemInfo(
                 inventoryNameColor: Color.white,
                 lookNameColor: Color.white,
-                spriteName: name,
+                spriteName: spriteName,
                 prefabName: name,
                 visibleName: name,
                 throwable: false

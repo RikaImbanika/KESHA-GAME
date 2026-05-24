@@ -70,66 +70,69 @@ public class Dust : MonoBehaviour
 
     void Update()
     {
-        if (!S.PS._currentSceneName.Contains("BR"))
-            return;
-
-        Transform cam = S.Camera.transform;
-        Vector3 c = cam.position;
-        Vector3 forward = cam.forward;
-
-        // Wrapping cube center: camera position + r/2 forward
-        Vector3 cubeCenter = c + forward * (_r * 0.5f);
-        float half = _r * 0.5f;            // half side length (cube side = r)
-        float doubleHalf = _r;             // 2 * half = full side
-        float invR = 1f / _r;              // for fade only
-        float time = Time.time;
-        float timeScaled = time * _noiseScale;
-        float smoothDelta = _speedSmooth * Time.deltaTime;
-
-        for (int i = 0; i < _count; i++)
+        if (S.PS._currentSceneName.Contains("BR") ||
+            S.PS._currentSceneName == "MR 1" ||
+            S.PS._currentSceneName == "TL 0" ||
+            S.PS._currentSceneName == "Corridor")
         {
-            // Smooth turbulent velocity (Perlin noise)
-            Vector3 noiseDir = new Vector3(
-                Mathf.PerlinNoise(i * 1.7f + timeScaled, 0.0f) - 0.5f,
-                Mathf.PerlinNoise(0.0f, i * 2.3f + timeScaled) - 0.5f,
-                Mathf.PerlinNoise(i * 3.1f, timeScaled) - 0.5f
-            ).normalized;
+            Transform cam = S.Camera.transform;
+            Vector3 c = cam.position;
+            Vector3 forward = cam.forward;
 
-            float mag = Mathf.Lerp(_minSpeed, _maxSpeed,
-                Mathf.PerlinNoise(timeScaled * 0.7f, i * 5.7f));
+            // Wrapping cube center: camera position + r/2 forward
+            Vector3 cubeCenter = c + forward * (_r * 0.5f);
+            float half = _r * 0.5f;            // half side length (cube side = r)
+            float doubleHalf = _r;             // 2 * half = full side
+            float invR = 1f / _r;              // for fade only
+            float time = Time.time;
+            float timeScaled = time * _noiseScale;
+            float smoothDelta = _speedSmooth * Time.deltaTime;
 
-            Vector3 targetSpeed = noiseDir * mag;
-            _speeds[i] = Vector3.Lerp(_speeds[i], targetSpeed, smoothDelta);
+            for (int i = 0; i < _count; i++)
+            {
+                // Smooth turbulent velocity (Perlin noise)
+                Vector3 noiseDir = new Vector3(
+                    Mathf.PerlinNoise(i * 1.7f + timeScaled, 0.0f) - 0.5f,
+                    Mathf.PerlinNoise(0.0f, i * 2.3f + timeScaled) - 0.5f,
+                    Mathf.PerlinNoise(i * 3.1f, timeScaled) - 0.5f
+                ).normalized;
 
-            // Clamp speed
-            float speedMag = _speeds[i].magnitude;
-            if (speedMag < _minSpeed * 0.5f)
-                _speeds[i] = _speeds[i].normalized * _minSpeed;
-            else if (speedMag > _maxSpeed)
-                _speeds[i] = _speeds[i].normalized * _maxSpeed;
+                float mag = Mathf.Lerp(_minSpeed, _maxSpeed,
+                    Mathf.PerlinNoise(timeScaled * 0.7f, i * 5.7f));
 
-            // Move
-            _transforms[i].position += _speeds[i] * Time.deltaTime;
+                Vector3 targetSpeed = noiseDir * mag;
+                _speeds[i] = Vector3.Lerp(_speeds[i], targetSpeed, smoothDelta);
 
-            // Wrap inside cube (side = r, center = cubeCenter)
-            Vector3 pos = _transforms[i].position;
-            Vector3 delta = pos - cubeCenter;
+                // Clamp speed
+                float speedMag = _speeds[i].magnitude;
+                if (speedMag < _minSpeed * 0.5f)
+                    _speeds[i] = _speeds[i].normalized * _minSpeed;
+                else if (speedMag > _maxSpeed)
+                    _speeds[i] = _speeds[i].normalized * _maxSpeed;
 
-            // Optimized wrapping using Mathf.Repeat (no branches)
-            delta.x = Mathf.Repeat(delta.x + half, doubleHalf) - half;
-            delta.y = Mathf.Repeat(delta.y + half, doubleHalf) - half;
-            delta.z = Mathf.Repeat(delta.z + half, doubleHalf) - half;
+                // Move
+                _transforms[i].position += _speeds[i] * Time.deltaTime;
 
-            _transforms[i].position = cubeCenter + delta;
+                // Wrap inside cube (side = r, center = cubeCenter)
+                Vector3 pos = _transforms[i].position;
+                Vector3 delta = pos - cubeCenter;
 
-            // Face camera
-            Vector3 toPlayer = _transforms[i].position - c;
-            _transforms[i].rotation = Quaternion.LookRotation(-toPlayer);
+                // Optimized wrapping using Mathf.Repeat (no branches)
+                delta.x = Mathf.Repeat(delta.x + half, doubleHalf) - half;
+                delta.y = Mathf.Repeat(delta.y + half, doubleHalf) - half;
+                delta.z = Mathf.Repeat(delta.z + half, doubleHalf) - half;
 
-            // Size fade
-            float dist = toPlayer.magnitude;
-            float t = 1f - Mathf.SmoothStep(0f, 1f, dist * invR);
-            _transforms[i].localScale = new Vector3(_uniformScale * t, _uniformScale * t, _uniformScale * t);
+                _transforms[i].position = cubeCenter + delta;
+
+                // Face camera
+                Vector3 toPlayer = _transforms[i].position - c;
+                _transforms[i].rotation = Quaternion.LookRotation(-toPlayer);
+
+                // Size fade
+                float dist = toPlayer.magnitude;
+                float t = 1f - Mathf.SmoothStep(0f, 1f, dist * invR);
+                _transforms[i].localScale = new Vector3(_uniformScale * t, _uniformScale * t, _uniformScale * t);
+            }
         }
     }
 }
