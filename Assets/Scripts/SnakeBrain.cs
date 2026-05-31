@@ -18,28 +18,63 @@ public class SnakeBrain : MonoBehaviour
     public Color _lifeColor;
     public string _id;
     public string _idHealth;
+    public string _idPos;
+    public string _idType;
+    public bool _forLoader;
 
     public SnakeHead _head;
-
-    public Vector3[] _points;
-    private Vector2[] _corners2d;
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private bool _stuckAvoidance;
     private bool _tailEnabled;
     private Vector3 _velocity;
     private float _distanceThreshold = 3f;
-    private float _areaDivideTotalBuffered;
     private bool _dead;
+    private string _sceneName;
+    private SceneRoot _sceneRoot;
 
     void Start()
     {
         _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         _agent.acceleration = 0;
         _head._aims.Add(transform.position);
+        _sceneName = gameObject.scene.name;
 
-        MakeCorners2d();
-        PreCalculateAreas(_corners2d);
+        GetId();
+
+        StartCoroutine(LateStart());
+
+        IEnumerator LateStart()
+        {
+            while (S.Loader == null)
+                yield return new WaitForSeconds(0.33f);
+
+            while (S.Loader.SceneRoots == null)
+                yield return new WaitForSeconds(0.33f);
+
+            while (!S.Loader.SceneRoots.ContainsKey(_sceneName))
+                yield return new WaitForSeconds(0.33f);
+
+            while (S.Loader.SceneRoots[_sceneName] == null)
+                yield return new WaitForSeconds(0.33f);
+
+            _sceneRoot = S.Loader.SceneRoots[_sceneName];
+
+            InvokeRepeating("SavingMethod", 0f, 5f);
+        }
+    }
+
+    void GetId()
+    {
+        _idPos = S.IDM(_id, "pos");
+        _idHealth = S.IDM(_id, "hp");
+        _idType = S.IDM(_id, "type");
+    }
+
+    void SavingMethod()
+    {
+        S.SM.Save(_idPos, transform.position);
+        S.SM.Save(_idHealth, _health);
     }
 
     public void Damage(float amount)
@@ -47,9 +82,10 @@ public class SnakeBrain : MonoBehaviour
         if (!_dead)
         {
             _health = MathF.Max(_health - amount, 0);
-            S.SM.Save(_idHealth, _health);
 
-            if (_health <= 0)
+            if (_health > _maxHealth)
+                _health = _maxHealth;
+            else if (_health <= 0)
             {
                 _dead = true;
                 Die();
@@ -58,39 +94,50 @@ public class SnakeBrain : MonoBehaviour
             {
                 S.AM.Play("Kill", 0.9f);
             }
+
+            S.SM.Save(_idHealth, _health);
         }
     }
 
     void Die()
     {
+        S.AM.Play("Kill", 1.1f);
+                
         S.SM.Save(_idHealth, _health);
 
-        S.AM.Play("Kill", 1.1f);
+        if (_forLoader)
+        {
+            S.SM.RemoveFromList(S.IDM(_sceneName, "ids"), _id);
+            S.SM.RemoveString(_idHealth);
+            S.SM.RemoveVector3(_idPos);
+            S.SM.RemoveQuaternion(_idType);
+        }
 
         StartCoroutine(Later());
 
         IEnumerator Later()
         {
+            int layerMaskForLoot = 1 << LayerMask.NameToLayer("Static") |
+            1 << LayerMask.NameToLayer("Default");
+
             for (int i = 0; i < _head._ballsCount; i++)
             {
                 int a = S.RND.Next(3);
                 if (a == 0)
                     SetLoot(1);
-                if (a == 1)
-                {
+                else if (a == 1)
                     SetLoot(2);
-                }
 
                 void SetLoot(int count)
                 {
-                    Vector3 point1 = _head._clones[i].transform.position;
+                    Vector3 point1 = _head._clones[i].transform.position - Vector3.down * 2f; //it's up
 
                     GameObject loot = Instantiate(S.Loot, point1, Quaternion.identity, S.Loader.Roots[_head._sceneName]);
                     ItemP itemP = loot.GetComponent<ItemP>();
                     itemP._count = count;
 
                     RaycastHit hit;
-                    if (Physics.Raycast(point1, Vector3.down, out hit, 10f))
+                    if (Physics.Raycast(point1, Vector3.down, out hit, 40f, layerMaskForLoot))
                     {
                         Vector3 point2 = hit.point;
                         loot.transform.position = point2;
@@ -101,33 +148,9 @@ public class SnakeBrain : MonoBehaviour
             }
 
             _head.Die();
+            
             Destroy(gameObject);
             yield return null;
-        }
-    }
-
-    void MakeCorners2d()
-    {
-        _corners2d = new Vector2[4];
-        for (int i = 0; i < 4; i++)
-            _corners2d[i] = new Vector2(_points[i].x, _points[i].z);
-
-        _corners2d = OrderQuadPointsClockwise(_corners2d);
-
-        Vector2[] OrderQuadPointsClockwise(Vector2[] points)
-        {
-            Vector2 center = (points[0] + points[1] + points[2] + points[3]) / 4f;
-
-            Vector2[] ordered = (Vector2[])points.Clone();
-
-            Array.Sort(ordered, (p1, p2) =>
-            {
-                float angle1 = Mathf.Atan2(p1.y - center.y, p1.x - center.x);
-                float angle2 = Mathf.Atan2(p2.y - center.y, p2.x - center.x);
-                return angle1.CompareTo(angle2);
-            });
-
-            return ordered;
         }
     }
 
@@ -150,16 +173,20 @@ public class SnakeBrain : MonoBehaviour
             //This is doing something important
         }
 
-        Vector2 p = new Vector2(transform.position.x, transform.position.z);
-        if (!IsPointInQuad(p, _corners2d))
+        if (!_agent.isOnNavMesh)
         {
-            Vector2 center = (_corners2d[0] + _corners2d[2]) / 2;
-            transform.position = new Vector3(center.x, transform.position.y, center.y);
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 10f, NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                _agent.Warp(hit.position);
+            }
+            else
+                transform.position = Vector3.zero; //
 
             _stuckAvoidance = true;
             SwitchTail(!_stuckAvoidance);
             _agent.destination = GetNewPoint();
-            Debug.LogError($"Brain is out of quad");
         }
 
         Vector3 bestDir = (_agent.steeringTarget - _agent.transform.position).normalized;
@@ -204,8 +231,7 @@ public class SnakeBrain : MonoBehaviour
             while ((point - transform.position).magnitude < 8f)
             {
                 //Maybe dangerous in little scenes, but they should not exist
-                flatPoint = GetRandomPointInQuad(_corners2d);
-                point = new Vector3(flatPoint.x, point.y, flatPoint.y);
+                point = _sceneRoot.GetRandomPoint();
             }
             
             bool reachable;
@@ -242,7 +268,6 @@ public class SnakeBrain : MonoBehaviour
             Debug.DrawRay(final - transform.up * 50f, transform.up * 100f, Color.green, 0.1f);
 
             float dist = (final - target).magnitude;
-            Debug.LogError($"Distance: {dist}");
             reachable = dist < _distanceThreshold;
         }
         else
@@ -253,56 +278,4 @@ public class SnakeBrain : MonoBehaviour
         else
             return -direction;
     }
-
-    public Vector2 GetRandomPointInQuad(Vector2[] quad)
-    {
-        if ((float)S.RND.NextDouble() < _areaDivideTotalBuffered)
-            return RandomPointInTriangle(quad[0], quad[1], quad[2]);
-        else
-            return RandomPointInTriangle(quad[0], quad[2], quad[3]);
-
-        Vector2 RandomPointInTriangle(Vector2 p1, Vector2 p2, Vector2 p3)
-        {
-            float r1 = (float)S.RND.NextDouble();
-            float r2 = (float)S.RND.NextDouble();
-            if (r1 + r2 > 1f)
-            {
-                r1 = 1f - r1;
-                r2 = 1f - r2;
-            }
-            return p1 + r1 * (p2 - p1) + r2 * (p3 - p1);
-        }
-    }
-
-    void PreCalculateAreas(Vector2[] quad)
-    {
-        //For optimisation
-        float area1 = TriangleArea(quad[0], quad[1], quad[2]);
-        float area2 = TriangleArea(quad[0], quad[2], quad[3]);
-        float total = area1 + area2;
-        _areaDivideTotalBuffered = area1 / total;
-
-        float TriangleArea(Vector2 p1, Vector2 p2, Vector2 p3)
-        {
-            return Mathf.Abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)) * 0.5f;
-        }
-    }
-
-    bool IsPointInQuad(Vector2 point, Vector2[] quad)
-    {
-        return IsPointInTriangle(point, quad[0], quad[1], quad[2]) ||
-            IsPointInTriangle(point, quad[0], quad[2], quad[3]);
-
-        bool IsPointInTriangle(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
-        {
-            float Cross(Vector2 o, Vector2 p1, Vector2 p2) =>
-                (p1.x - o.x) * (p2.y - o.y) - (p1.y - o.y) * (p2.x - o.x);
-
-            bool sign1 = Cross(a, b, p) >= 0f;
-            bool sign2 = Cross(b, c, p) >= 0f;
-            bool sign3 = Cross(c, a, p) >= 0f;
-
-            return (sign1 == sign2) && (sign2 == sign3);
-        }
-    }   
 }

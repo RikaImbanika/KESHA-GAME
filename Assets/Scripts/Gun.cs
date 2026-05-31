@@ -26,12 +26,14 @@ public class Gun : MonoBehaviour
                 1 << LayerMask.NameToLayer("Transparent Items"));
 
             while (S.AllFather == null)
-            {
                 yield return new WaitForSeconds(0.1f);
-                Debug.Log("IsGun waiting for S.AllFater");
-            }
 
             _root = S.AllFather.transform;
+
+            while (S.Cheats == null)
+                yield return new WaitForSeconds(0.1f);
+
+            S.Cheats._cheatPower = 1f;
         }
     }
 
@@ -45,6 +47,8 @@ public class Gun : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, 1001f, _layerMask))
             {
+                float damage = 15f * S.Cheats._cheatPower;
+
                 S.Inventory.Remove("Ammo", 1);
 
                 S.AM.Play("Plasma");
@@ -75,7 +79,7 @@ public class Gun : MonoBehaviour
                 Zombie zombie = hit.collider.gameObject.GetComponent<Zombie>();
                 if (zombie != null)
                 {
-                    zombie.Damage(15);
+                    zombie.Damage(damage);
                     float healthPercent = MathF.Max(zombie._health / zombie._maxHealth, 0);
                     int hp = (int)MathF.Max(zombie._health, 0);
                     int maxHp = (int)zombie._maxHealth;
@@ -86,7 +90,7 @@ public class Gun : MonoBehaviour
                     Spider spider = hit.collider.gameObject.GetComponent<Spider>();
                     if (spider != null)
                     {
-                        spider.Damage(15);
+                        spider.Damage(damage);
                         float healthPercent = MathF.Max(spider._health / spider._maxHealth, 0);
                         int hp = (int)MathF.Max(spider._health, 0);
                         int maxHp = (int)spider._maxHealth;
@@ -113,7 +117,7 @@ public class Gun : MonoBehaviour
                                 if (sb != null)
                                 {
                                     SnakeBrain brain = sb._brain;
-                                    brain.Damage(15); //lmao
+                                    brain.Damage(damage); //lmao
                                     float healthPercent = MathF.Max(brain._health / brain._maxHealth, 0);
                                     int hp = (int)MathF.Max(brain._health, 0);
                                     int maxHp = (int)brain._maxHealth;

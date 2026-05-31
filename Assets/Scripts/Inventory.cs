@@ -311,7 +311,7 @@ public class Inventory : MonoBehaviour
 					goto render;
 				}
 
-				ItemP itemP = hit.collider.gameObject.GetComponent<ItemP>();
+				ItemP itemP = hit.collider.gameObject.GetComponentInParent<ItemP>();
 				if (itemP != null)
 				{
 					clickable = true;

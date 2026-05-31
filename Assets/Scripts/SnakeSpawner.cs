@@ -5,14 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class SnakeSpawner : MonoBehaviour
 {
-    private string _id;
+    public string _id;
     private string _idHealth;
     private string _idType;
+    private string _idPos;
     private string _sceneName;
     private float _health;
     private byte _type;
-    public GameObject[] _corners;
-
+    public bool _instant;
+    public bool _forLoader;
 
     void Start()
     {
@@ -28,16 +29,19 @@ public class SnakeSpawner : MonoBehaviour
     void GetId()
     {
         _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-        _id = S.ID("SN", gameObject);
+
+        if (string.IsNullOrEmpty(_id))
+            _id = S.ID("SN", gameObject);
+
+        _idHealth = S.IDM(_id, "hp");
+        _idType = S.IDM(_id, "type");
+        _idPos = S.IDM(_id, "pos");
     }
 
     IEnumerator Birn()
     {
         while (S.SM == null)
             yield return new WaitForSeconds(0.2f);
-
-        _idHealth = S.IDM(_id, "hp");
-        _idType = S.IDM(_id, "type");
 
         _health = S.SM.LoadFloat(_idHealth) ?? -404f;
 
@@ -46,12 +50,20 @@ public class SnakeSpawner : MonoBehaviour
         else if (_health <= 0f)
             Destroy(gameObject);
         else
-            Summon();
+            Load();
     }
 
     void DefineExistenz()
     {
-        if (S.Backrooms._snakes.ContainsKey(_sceneName))
+        if (_instant)
+        {
+            if (_type == 0)
+                _type = (byte)Random.Range(1, 4 + 1);
+
+            S.SM.Save(_idType, _type);
+            Summon();
+        }
+        else if (S.Backrooms._snakes.ContainsKey(_sceneName))
         {
             _type = S.Backrooms._snakes[_sceneName];
             S.SM.Save(_idType, _type);
@@ -65,6 +77,13 @@ public class SnakeSpawner : MonoBehaviour
         }
     }
 
+    void Load()
+    {
+        transform.position = S.SM.LoadVector3(_idPos) ?? transform.position;
+        _type = S.SM.LoadByte(_idType) ?? 1;
+        Summon();
+    }
+
     void Summon()
     {
         GameObject obj = null;
@@ -75,7 +94,10 @@ public class SnakeSpawner : MonoBehaviour
 
         SnakeBrain snakeBrain = snakeBrainObj.GetComponent<SnakeBrain>();
         snakeBrain._id = _id;
-        snakeBrain._idHealth = _idHealth;
+        snakeBrain._forLoader = _forLoader;
+
+        if (_health > 0)
+            snakeBrain._health = _health;
 
         if (snakeBrain._head._type == "Silent")
         {
@@ -104,15 +126,6 @@ public class SnakeSpawner : MonoBehaviour
 
         if (_health != -404)
             snakeBrain._health = _health;
-
-        snakeBrain._points = new Vector3[4];
-
-        for (int i = 0; i < 4; i++)
-        {
-            snakeBrain._points[i] = _corners[i].transform.position;
-
-            Destroy(_corners[i]);
-        }
 
         Destroy(this);
     }

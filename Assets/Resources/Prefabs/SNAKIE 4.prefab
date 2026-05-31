@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 242267438310680831}
-  - component: {fileID: 242267438310680828}
   - component: {fileID: 242267438310680826}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SnakeHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,28 +24,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242267438310680824}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.878006, y: -15.223001, z: -10.272003}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 1.8780057, y: -15.223001, z: 5.727998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2847426735392546270}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &242267438310680828
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 242267438310680824}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 2
-  m_Height: 9.89
-  m_Direction: 1
-  m_Center: {x: 0, y: 3.33, z: 0}
 --- !u!114 &242267438310680826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,10 +68,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 242267439621252093}
-  - component: {fileID: 242267439621252090}
   - component: {fileID: 242267439621252091}
   - component: {fileID: 242267439621252092}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SnakeBrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,28 +84,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242267439621252086}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.878006, y: -15.223001, z: -9.082001}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 1.8780053, y: -15.223001, z: 6.918}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2847426735392546270}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &242267439621252090
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 242267439621252086}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 2
-  m_Height: 9.89
-  m_Direction: 1
-  m_Center: {x: 0, y: 3.33, z: 0}
 --- !u!195 &242267439621252091
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -162,7 +132,8 @@ MonoBehaviour:
   _health: 1500
   _maxHealth: 1500
   _visibleName: Snake of Silence
-  _nameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lookNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lifeBarNameColor: {r: 0, g: 0, b: 0, a: 0}
   _lifeColor: {r: 0, g: 0, b: 0, a: 0}
   _id: 
   _idHealth: 
@@ -181,7 +152,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2847426735392546270}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SNAKIE 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,8 +166,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3606166304352083315}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -240.078, y: 10.713, z: -91.618}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -239.078, y: 10.713, z: -91.618}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -213,6 +184,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2847426735392546270}
     m_Modifications:
+    - target: {fileID: 100269977383723194, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 202188772036125369, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -273,6 +248,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Silent Snake
       objectReference: {fileID: 0}
+    - target: {fileID: 686096567651366915, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1889339222549160563, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -281,10 +260,34 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 26ac2e8b18ecbdf44919bd51dabbcdff, type: 2}
+    - target: {fileID: 2216014669867407358, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2973834029082273177, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3166948861185697636, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4044926977280163907, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 4097227479232004424, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 26ac2e8b18ecbdf44919bd51dabbcdff, type: 2}
+    - target: {fileID: 5368356444590201023, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6595144131416270879, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 6992552896195760165, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -293,6 +296,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 26ac2e8b18ecbdf44919bd51dabbcdff, type: 2}
+    - target: {fileID: 8005414873600132990, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 8115668738849150488, guid: 5caa6f5e1ba949445b4d6f65e7284c5d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

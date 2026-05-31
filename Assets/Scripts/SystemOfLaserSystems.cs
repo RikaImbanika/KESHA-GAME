@@ -40,7 +40,7 @@ public class SystemOfLaserSystems : MonoBehaviour
                     yield return new WaitForSeconds(0.201f);
 
                 while (!S.Loader.Roots.ContainsKey(_sceneName))
-                    yield return new WaitForSeconds(0.11f);
+                    yield return new WaitForSeconds(0.11f); //okay
 
                 var a = S.SM.LoadInt(_idActualCount);
                 if (a != null)
@@ -58,6 +58,8 @@ public class SystemOfLaserSystems : MonoBehaviour
 
             void Initiate()
             {
+                try
+                {
                 if (_count < 2)
                     _count = 2;
 
@@ -76,7 +78,12 @@ public class SystemOfLaserSystems : MonoBehaviour
                     for (int i = 0; i < _mask.Count; i++)
                         _mask[i] = false;
 
-                S.SM.Save(_idMask, _mask);
+                    S.SM.Save(_idMask, _mask);
+                }
+                catch (Exception ex)
+                {
+                    S.Console.AddMessage($"SOLS error: {ex.Message}", Color.red);
+                }
             }
 
             void CheckExistenZ()
@@ -144,14 +151,16 @@ public class SystemOfLaserSystems : MonoBehaviour
                 Vector3 start = transform.position - transform.forward * length / 2;
 
                 int half = (_actualCount + 1) / 2;
-
                 transform.localScale = new Vector3(1, 1, 1);
 
                 for (int i = 0; i < _actualCount; i++)
                 {
                     int j = i;
                     if (j >= half)
-                        j = half - i;
+                        j = _actualCount - 1 - i; //okay?
+
+                    if (j < 0)
+                        S.Console.AddMessage($"WRONG!", Color.red);
 
                     if (_mask[j])
                         PlaceOneLaserSystem(start + step * i);

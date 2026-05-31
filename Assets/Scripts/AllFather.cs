@@ -136,6 +136,7 @@ public class AllFather : MonoBehaviour
 
 	public bool SceneCurrentlyLoaded(string name)
 	{
+		//Deepseek said it's safe
 		for (int i = 0; i < SceneManager.sceneCount; ++i)
 		{
 			Scene scene = SceneManager.GetSceneAt(i);

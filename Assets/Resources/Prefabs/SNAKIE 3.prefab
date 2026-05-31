@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 242267438310680831}
-  - component: {fileID: 242267438310680828}
   - component: {fileID: 242267438310680826}
   m_Layer: 0
   m_Name: SnakeHead
@@ -33,20 +32,6 @@ Transform:
   m_Father: {fileID: 2847426735392546270}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &242267438310680828
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 242267438310680824}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 2
-  m_Height: 9.89
-  m_Direction: 1
-  m_Center: {x: 0, y: 3.33, z: 0}
 --- !u!114 &242267438310680826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,7 +68,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 242267439621252093}
-  - component: {fileID: 242267439621252090}
   - component: {fileID: 242267439621252091}
   - component: {fileID: 242267439621252092}
   m_Layer: 0
@@ -108,20 +92,6 @@ Transform:
   m_Father: {fileID: 2847426735392546270}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &242267439621252090
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 242267439621252086}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 2
-  m_Height: 9.89
-  m_Direction: 1
-  m_Center: {x: 0, y: 3.33, z: 0}
 --- !u!195 &242267439621252091
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -162,7 +132,8 @@ MonoBehaviour:
   _health: 1000
   _maxHealth: 1000
   _visibleName: Snake of Nature
-  _nameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lookNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lifeBarNameColor: {r: 0, g: 0, b: 0, a: 0}
   _lifeColor: {r: 0, g: 0, b: 0, a: 0}
   _id: 
   _idHealth: 

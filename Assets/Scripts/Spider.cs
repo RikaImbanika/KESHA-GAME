@@ -150,13 +150,15 @@ public class Spider : MonoBehaviour
 
     public void Damage(float amount)
     {
-        _followPlayer = true;
-
-        _health -= amount;
-
-        if (_health <= 0)
+        if (!_dead)
         {
-            if (!_dead)
+            _followPlayer = true;
+
+            _health -= amount;
+
+            if (_health > _maxHealth)
+                _health = _maxHealth;
+            else if (_health <= 0)
             {
                 _dead = true;
 

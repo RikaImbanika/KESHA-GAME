@@ -83,11 +83,15 @@ public class SnakeHead : MonoBehaviour
         _tailEnabled = true;
         _saveInterval = 1 / 60f;
 
+        Destroy(_headVis.GetComponent<Rigidbody>());
+        Destroy(_headVis.GetComponent<ItemP>());
+        Destroy(_headVis.GetComponent<SphereCollider>());
+
         int randomIndex = UnityEngine.Random.Range(0, S.SnakeBallMaterials.Count);
 
         int ballsTypesCount = S.SnakeBalls[_type].Count;
 
-        Debug.LogError($"Balls of \"{_type}\" count: {ballsTypesCount}");
+        Debug.Log($"Balls of \"{_type}\" count: {ballsTypesCount}");
 
         for (int i = 0; i < _ballsCount; i++)
         {
@@ -148,7 +152,7 @@ public class SnakeHead : MonoBehaviour
 
             string color = "";
 
-            if (_type == "Classic")
+            if (_type == "Sun")
                 color = "red";
             else if (_type == "Nature")
                 color = "green";
@@ -172,6 +176,8 @@ public class SnakeHead : MonoBehaviour
                 body.BallInBallInBall.transform
             );
 
+            body._ballIndex = randomIndex;
+
             Rigidbody rb = ballInBallInBallInBall.GetComponent<Rigidbody>();
             if (rb != null)
                 rb.isKinematic = true;
@@ -179,6 +185,8 @@ public class SnakeHead : MonoBehaviour
             body.BallInBallInBall.transform.localPosition = Vector3.zero;
             ballInBallInBallInBall.transform.localPosition = Vector3.zero;
             ballInBallInBallInBall.transform.localScale = Vector3.one;
+
+            body.BallInBallInBallInBall = ballInBallInBallInBall;
 
             Destroy(ballInBallInBallInBall.GetComponent<ItemP>());
             Destroy(ballInBallInBallInBall.GetComponent<SphereCollider>());
@@ -260,9 +268,24 @@ public class SnakeHead : MonoBehaviour
 
     public void Die()
     {
-        for (int i = 0; i < _ballsCount; i++)
-            Destroy(_bodies[i].gameObject);
+        Transform root = S.Loader.Roots[_sceneName];
 
+        for (int i = 0; i < _ballsCount; i++)
+            _bodies[i].Die(S.SnakeBalls[_type][_bodies[i]._ballIndex], root);
+
+        Transform oldTransform = _headVis.transform;
+        Vector3 worldPos = oldTransform.position;
+        Quaternion worldRot = oldTransform.rotation;
+        Vector3 worldScale = oldTransform.lossyScale;
+        GameObject prefab = S.SnakeHeads[_type];
+        GameObject newInstance = Instantiate(prefab, worldPos, worldRot);
+        newInstance.transform.localScale = worldScale;
+        newInstance.transform.SetParent(root, true);
+
+        ItemP itemP = newInstance.GetComponent<ItemP>();
+        itemP._forLoader = true;
+
+        Destroy(_headVis);
         Destroy(gameObject);
     }
 

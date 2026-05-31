@@ -407,10 +407,47 @@ public class Console : MonoBehaviour
             _words[0] == "allitemsnames" ||
             _words[0] == "allthingsnames")
             Items();
+        else if (_words[0] == "power" ||
+            _words[0] == "pwr" ||
+            _words[0] == "pow" ||
+            _words[0] == "powr" ||
+            _words[0] == "strength" ||
+            _words[0] == "cheatpower" ||
+            _words[0] == "cheatpow" ||
+            _words[0] == "shootpower" ||
+            _words[0] == "shootpow")
+            Power();
         else if (!string.IsNullOrWhiteSpace(command))
             ToggleConsole("Message");
         else
             ToggleConsole("Close");
+    }
+
+    void Power()
+    {
+        if (_words.Length == 1)
+        {
+            ToggleConsole("Success", true);
+            AddMessage($"Current shooting power is {S.Cheats._cheatPower}.", Color.yellow);
+        }
+        else
+        {
+            float number = 1;
+            bool numberNext = float.TryParse(_words[1], out number);
+
+            if (numberNext)
+            {
+                ToggleConsole("Success", true);
+                   
+                S.Cheats._cheatPower = number;
+                AddMessage($"Shooting power set to {S.Cheats._cheatPower}.", Color.yellow);
+
+                if (number < 0)
+                    AddMessage($"(You set negative power, it will heal.)", Color.yellow);
+            }
+            else
+                ToggleConsole("Error");
+        }
     }
 
     void Items()
@@ -601,6 +638,10 @@ public class Console : MonoBehaviour
                     who == "sparklefly" ||
                     who == "sparkle")
                     SummonFirefly(position, root);
+                else if (who == "snake")
+                {
+                    SummonSnake(position, root);
+                }
                 else
                 {
                     InstaZombie(S.Zombella, "Zombella");
@@ -623,6 +664,17 @@ public class Console : MonoBehaviour
         }
         else
             ToggleConsole("Error");
+    }
+    
+    void SummonSnake(Vector3 pos, Transform root)
+    {
+        GameObject obj = Instantiate(S.SnakeSpawner, pos, Quaternion.identity, root);
+        SnakeSpawner spawner = obj.GetComponent<SnakeSpawner>();
+        spawner._instant = true;
+        string id = S.ID("SN");
+        spawner._id = id;
+        spawner._forLoader = true;
+        S.SM.AddToList(S.IDM(S.PS._currentSceneName, "ids"), id);
     }
 
     void SummonFirefly(Vector3 pos, Transform root)

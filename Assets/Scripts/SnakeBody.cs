@@ -8,6 +8,7 @@ public class SnakeBody : MonoBehaviour
     public GameObject _ball; // For full system following path
     public GameObject _ballInBall; // Rotating around Right axis while moving
     public GameObject _ballInBallInBall; // For initial random rotation
+    public GameObject _ballInBallInBallInBall; // For easy parenting
     public GameObject _droneObj;
     public Drone _drone;
     public NavMeshObstacle _obstacle;
@@ -15,6 +16,7 @@ public class SnakeBody : MonoBehaviour
     private int _number;
     private float _R;
     private float _startRotation;
+    public int _ballIndex;
 
     public Renderer Renderer
     {
@@ -57,6 +59,11 @@ public class SnakeBody : MonoBehaviour
         set { _ballInBallInBall = value; }
     }
 
+    public GameObject BallInBallInBallInBall
+    {
+        get { return _ballInBallInBallInBall; }
+        set { _ballInBallInBallInBall = value; }
+    }
 
     public GameObject DroneObj
     {
@@ -74,5 +81,23 @@ public class SnakeBody : MonoBehaviour
     {
         get { return _startRotation; }
         set { _startRotation = value; }
+    }
+
+    public void Die(GameObject prefab, Transform root)
+    {
+        Transform oldTransform = _ballInBallInBallInBall.transform;
+        Vector3 worldPos = oldTransform.position;
+        Quaternion worldRot = oldTransform.rotation;
+        Vector3 worldScale = oldTransform.lossyScale;
+        GameObject newInstance = Instantiate(prefab, worldPos, worldRot);
+        newInstance.transform.localScale = worldScale;
+        newInstance.transform.SetParent(root, true);
+
+        ItemP itemP = newInstance.GetComponent<ItemP>();
+        itemP._forLoader = true;
+
+        Destroy(_ballInBallInBallInBall);
+
+        Destroy(gameObject);
     }
 }

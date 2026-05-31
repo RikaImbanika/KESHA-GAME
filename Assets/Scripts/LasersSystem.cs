@@ -42,7 +42,12 @@ public class LasersSystem : MonoBehaviour
             _forward = transform.forward;
 
             GetId();
-            StartCoroutine(GetActualType());
+
+            while (!S.Loader.Roots.ContainsKey(_sceneName) ||
+                S.Loader.Roots[_sceneName] == null)
+                yield return new WaitForSeconds(0.25f);
+
+            yield return GetActualType();
             PlaceLasers();
             yield return null;
 

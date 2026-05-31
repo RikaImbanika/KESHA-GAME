@@ -7,6 +7,8 @@ public class CHEATS : MonoBehaviour
     public GameObject _e;
     public GameObject _d;
     public float _message;
+    public float _cheatPower;
+    public float _cheatSpeed;
 
     public void Remember(string sceneName)
     {

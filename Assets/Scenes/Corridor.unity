@@ -179,6 +179,41 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7cf0e818b56a5964ca10eb38cc35fcda, type: 3}
+--- !u!1 &25203335 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5454497465066634723, guid: 7cf0e818b56a5964ca10eb38cc35fcda, type: 3}
+  m_PrefabInstance: {fileID: 25203334}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &25203336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25203335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.13666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 185080038d63abf47aa2434d2aff4b3f, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &46450741
 GameObject:
   m_ObjectHideFlags: 0
@@ -688,7 +723,7 @@ MonoBehaviour:
   _count: 1
   _forLoader: 0
   _locked: 0
-  _obj: {fileID: 0}
+  _sceneName: 
 --- !u!1 &403434280
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,7 +1124,7 @@ MonoBehaviour:
   _count: 1
   _forLoader: 0
   _locked: 1
-  _obj: {fileID: 0}
+  _sceneName: 
 --- !u!1 &739956756
 GameObject:
   m_ObjectHideFlags: 0
@@ -1936,7 +1971,7 @@ MonoBehaviour:
   _count: 1
   _forLoader: 0
   _locked: 0
-  _obj: {fileID: 0}
+  _sceneName: 
 --- !u!1001 &1177741693
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2055,7 +2090,7 @@ MonoBehaviour:
   _count: 1
   _forLoader: 0
   _locked: 1
-  _obj: {fileID: 0}
+  _sceneName: 
 --- !u!1 &1179125819
 GameObject:
   m_ObjectHideFlags: 0
@@ -2565,7 +2600,7 @@ MonoBehaviour:
   _count: 1
   _forLoader: 0
   _locked: 0
-  _obj: {fileID: 0}
+  _sceneName: 
 --- !u!1001 &1401622209
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3103,7 +3138,7 @@ MonoBehaviour:
   _count: 1
   _forLoader: 0
   _locked: 0
-  _obj: {fileID: 0}
+  _sceneName: 
 --- !u!1001 &1573268257
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3292,7 +3327,7 @@ MonoBehaviour:
   _count: 1
   _forLoader: 0
   _locked: 0
-  _obj: {fileID: 0}
+  _sceneName: 
 --- !u!1001 &1697419733
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3410,7 +3445,7 @@ MonoBehaviour:
   _count: 1
   _forLoader: 0
   _locked: 1
-  _obj: {fileID: 0}
+  _sceneName: 
 --- !u!64 &1739798880
 MeshCollider:
   m_ObjectHideFlags: 0

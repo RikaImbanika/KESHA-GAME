@@ -75,6 +75,15 @@ public class II : MonoBehaviour
             throwable: true
             ));
 
+            _base.Add("GreenBall", new ItemInfo(
+            inventoryNameColor: Color.green,
+            lookNameColor: Color.green,
+            spriteName: "Balls/GreenBall",
+            prefabName: "Balls/GreenBall",
+            visibleName: "Green ball",
+            throwable: true
+            ));
+
             _base.Add("NatureBall1", new ItemInfo(
             inventoryNameColor: Color.green,
             lookNameColor: Color.green,
@@ -403,7 +412,7 @@ public class II : MonoBehaviour
                 inventoryNameColor: Color.red,
                 lookNameColor: Color.red,
                 spriteName: "RedCrystal",
-                prefabName: "RedCrystal",
+                prefabName: "Loot",
                 visibleName: "Red crystal",
                 throwable: false
             ));
@@ -432,6 +441,42 @@ public class II : MonoBehaviour
                 spriteName: "Mars",
                 prefabName: "Mars",
                 visibleName: "Mars",
+                throwable: true
+            ));
+
+            _base.Add("SnakeOfSunHead", new ItemInfo(
+                inventoryNameColor: Color.yellow,
+                lookNameColor: Color.yellow,
+                spriteName: "Zombella",
+                prefabName: "SnakeOfSunHead",
+                visibleName: "Snake of Sun's head",
+                throwable: true
+            ));
+
+            _base.Add("SnakeOfIceHead", new ItemInfo(
+                inventoryNameColor: Color.cyan,
+                lookNameColor: Color.cyan,
+                spriteName: "Zombella",
+                prefabName: "SnakeOfIceHead",
+                visibleName: "Snake of Ice's head",
+                throwable: true
+            ));
+
+            _base.Add("SnakeOfNatureHead", new ItemInfo(
+                inventoryNameColor: Color.green,
+                lookNameColor: Color.green,
+                spriteName: "Zombella",
+                prefabName: "SnakeOfNatureHead",
+                visibleName: "Snake of Nature's head",
+                throwable: true
+            ));
+
+            _base.Add("SnakeOfSilenceHead", new ItemInfo(
+                inventoryNameColor: Color.magenta,
+                lookNameColor: Color.magenta,
+                spriteName: "Zombella",
+                prefabName: "SnakeOfSilenceHead",
+                visibleName: "Snake of Silence's head",
                 throwable: true
             ));
 

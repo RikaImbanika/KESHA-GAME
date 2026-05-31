@@ -13,17 +13,31 @@ public class Loader : MonoBehaviour
     public Dictionary<string, string> _aliases;
     private List<string> _scenesToLoad;
     private bool _workingOnIt;
-    private Dictionary<string, Transform> _sceneRoots;
+    private Dictionary<string, Transform> _roots;
+    private Dictionary<string, SceneRoot> _sceneRoots;
     public bool _teleporting;
 
     public void Start()
     {
-        _sceneRoots = new Dictionary<string, Transform>();
+        _roots = new Dictionary<string, Transform>();
+        _sceneRoots = new Dictionary<string, SceneRoot>();
         _scenesToLoad = new List<string>();
         FirstWaitLoad();
     }
 
     public Dictionary<string, Transform> Roots
+    {
+        get
+        {
+            return _roots;
+        }
+        set
+        {
+            _roots = value;
+        }
+    }
+
+    public Dictionary<string, SceneRoot> SceneRoots
     {
         get
         {
@@ -393,7 +407,6 @@ public class Loader : MonoBehaviour
         IEnumerator ALA()
         {
             string _sceneName = _scenesToLoad[0];
-
             float elapsed = 0;
 
             while (S.AllFather == null)
@@ -403,73 +416,19 @@ public class Loader : MonoBehaviour
             }
 
             while (!S.AllFather.SceneCurrentlyLoaded(_sceneName) ||
-                Roots == null ||
-                !Roots.ContainsKey(_sceneName) ||
-                Roots[_sceneName] == null)
+                   Roots == null ||
+                   !Roots.ContainsKey(_sceneName) ||
+                   Roots[_sceneName] == null)
             {
-                //Null left from previous unloaded root
-
                 elapsed += 0.1f;
-
                 if (elapsed > 20f)
+                {
+                    Debug.LogError($"Timeout loading scene {_sceneName}");
+                    _workingOnIt = false;
                     yield break;
-
+                }
                 yield return new WaitForSeconds(0.1f);
             }
-
-            Transform root = Roots[_sceneName];
-
-            List<string> ids = S.SM.LoadListString(S.IDM(_sceneName, "ids"));
-            if (ids != null)
-                for (int i = 0; i < ids.Count; i++)
-                {
-                    if (ids[i].Remove(2) == "IT")
-                    {
-                        InstaItem();
-                    }
-                    else if (ids[i].Remove(2) == "ZM")
-                    {
-                        InstaZombie();
-                    }
-
-                    void InstaZombie()
-                    {
-                        try
-                        {
-                            string prefabName = S.SM.LoadString(S.IDM(ids[i], "name"));
-                            Vector3 pos = S.SM.LoadVector3(S.IDM(ids[i], "pos")) ?? Vector3.zero;
-
-                            GameObject go = Instantiate(Prefabs.Get(prefabName), pos, Quaternion.identity, root);
-                            Zombie zombie = go.GetComponent<Zombie>();
-                            zombie._id = ids[i];
-                            zombie._forLoader = true;
-                        }
-                        catch (NullReferenceException ex)
-                        {
-                            S.Console.AddMessage($"Can't instantiate \"{ids[i]}\" ({ex.Message})", Color.red);
-                        }
-                    }
-                    
-                    void InstaItem()
-                    {                        
-                        try
-                        {
-                            string itemName = S.SM.LoadString(S.IDM(ids[i], "name"));
-                            GameObject prefab = Prefabs.Get(S.II.Get(itemName)._prefabName);
-                            GameObject obj = Instantiate(prefab, root);
-                            ItemP itemP = obj.GetComponent<ItemP>();
-                            itemP._id = ids[i];
-                            itemP._forLoader = true;
-                            itemP._sceneName = _sceneName;
-                        }
-                        catch (NullReferenceException ex)
-                        {
-                            S.Console.AddMessage($"Can't find item \"{name}\" ({ex.Message})", Color.red);
-                        }
-                    }
-                }
-
-            _scenesToLoad.RemoveAt(0);
 
             while (S.SM == null)
             {
@@ -477,7 +436,103 @@ public class Loader : MonoBehaviour
                 Debug.Log("Loader waiting for S.SaverManager");
             }
 
-            _workingOnIt = false;
+            try
+            {
+                Transform root = Roots[_sceneName];
+                List<string> ids = S.SM.LoadListString(S.IDM(_sceneName, "ids"));
+
+                if (ids != null)
+                {
+                    for (int i = 0; i < ids.Count; i++)
+                    {
+                        string currentId = ids[i];
+                        
+                        if (currentId.Length < 3)
+                        {
+                            Debug.LogError($"Invalid id '{currentId}' – too short, skipping");
+                            continue;
+                        }
+
+                        string prefix = currentId.Remove(2);
+                        if (prefix == "IT")
+                        {
+                            InstaItem(); 
+                        }
+                        else if (prefix == "ZM")
+                        {
+                            InstaZombie();
+                        }
+                        else if (prefix == "SN")
+                        {
+                            InstaSnake();
+                        }
+
+                        void InstaSnake()
+                        {
+                            try
+                            {
+                                Vector3 pos = S.SM.LoadVector3(S.IDM(currentId, "pos")) ?? Vector3.zero;
+                                GameObject go = Instantiate(S.SnakeSpawner, pos, Quaternion.identity, root);
+                                SnakeSpawner spawner = go.GetComponent<SnakeSpawner>();
+                                spawner._id = currentId;
+                            }
+                            catch (Exception ex)
+                            {
+                                S.Console.AddMessage($"Can't instantiate \"{currentId}\" ({ex.Message})", Color.red);
+                            }
+                        }
+
+                        void InstaZombie()
+                        {
+                            try
+                            {
+                                string prefabName = S.SM.LoadString(S.IDM(currentId, "name"));
+                                Vector3 pos = S.SM.LoadVector3(S.IDM(currentId, "pos")) ?? Vector3.zero;
+                                GameObject go = Instantiate(Prefabs.Get(prefabName), pos, Quaternion.identity, root);
+                                Zombie zombie = go.GetComponent<Zombie>();
+                                zombie._id = currentId;
+                                zombie._forLoader = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                S.Console.AddMessage($"Can't instantiate \"{currentId}\" ({ex.Message})", Color.red);
+                            }
+                        }
+
+                        void InstaItem()
+                        {
+                            string itemName = "not set yet";
+                            try
+                            {
+                                itemName = S.SM.LoadString(S.IDM(currentId, "name"));
+                                GameObject prefab = Prefabs.Get(S.II.Get(itemName)._prefabName);
+                                GameObject obj = Instantiate(prefab, root);
+                                ItemP itemP = obj.GetComponent<ItemP>();
+                                itemP._id = currentId;
+                                itemP._forLoader = true;
+                                itemP._sceneName = _sceneName;
+                            }
+                            catch (Exception ex)
+                            {
+                                S.Console.AddMessage($"Can't instantiate item \"{itemName}\" ({ex.Message})", Color.red);
+                            }
+                        }
+                    }
+                }
+
+                _scenesToLoad.RemoveAt(0);
+            }
+            catch (Exception e)
+            {
+                S.Console.AddMessage($"Critical error loading scene {_sceneName}: {e}", Color.red);
+                Debug.LogError($"Critical error loading scene {_sceneName}: {e}");
+                if (_scenesToLoad.Count > 0)
+                    _scenesToLoad.RemoveAt(0);
+            }
+            finally
+            {
+                _workingOnIt = false; 
+            }
         }
     }
 

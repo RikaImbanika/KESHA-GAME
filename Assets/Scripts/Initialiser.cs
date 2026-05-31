@@ -30,18 +30,18 @@ public class Initialiser : MonoBehaviour
         S.PortalObj1 = Prefabs.Get("Portals/Portal 1");
 
         S.SnakeBalls = new Dictionary<string, List<GameObject>>();
-        S.SnakeBalls.Add("Classic", new List<GameObject>());
+        S.SnakeBalls.Add("Sun", new List<GameObject>());
         S.SnakeBalls.Add("Ice", new List<GameObject>());
         S.SnakeBalls.Add("Nature", new List<GameObject>());
         S.SnakeBalls.Add("Silent", new List<GameObject>());
 
-        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/RedBall"));
-        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/BlueBall"));
-        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/PurpleBall"));
-        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/YellowBall"));
-        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/GreenBall"));
-        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/WhiteBall"));
-        S.SnakeBalls["Classic"].Add(Prefabs.Get("Balls/CyanBall"));
+        S.SnakeBalls["Sun"].Add(Prefabs.Get("Balls/RedBall"));
+        S.SnakeBalls["Sun"].Add(Prefabs.Get("Balls/BlueBall"));
+        S.SnakeBalls["Sun"].Add(Prefabs.Get("Balls/PurpleBall"));
+        S.SnakeBalls["Sun"].Add(Prefabs.Get("Balls/YellowBall"));
+        S.SnakeBalls["Sun"].Add(Prefabs.Get("Balls/GreenBall"));
+        S.SnakeBalls["Sun"].Add(Prefabs.Get("Balls/WhiteBall"));
+        S.SnakeBalls["Sun"].Add(Prefabs.Get("Balls/CyanBall"));
 
         S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/CyanBall"));
         S.SnakeBalls["Ice"].Add(Prefabs.Get("Balls/IceBall 1"));
@@ -67,6 +67,15 @@ public class Initialiser : MonoBehaviour
         S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 4"));
         S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 5"));
         S.SnakeBalls["Silent"].Add(Prefabs.Get("Balls/SilentBall 6"));
+
+        S.SnakeHeads = new Dictionary<string, GameObject>();
+
+        S.SnakeHeads["Sun"] = Prefabs.Get("SnakeOfSunHead");
+        S.SnakeHeads["Ice"] = Prefabs.Get("SnakeOfIceHead");
+        S.SnakeHeads["Nature"] = Prefabs.Get("SnakeOfNatureHead");
+        S.SnakeHeads["Silent"] = Prefabs.Get("SnakeOfSilenceHead");
+
+        S.SnakeSpawner = Prefabs.Get("SNAKIE");
 
         yield return WaitForCondition(() => Camera.main != null, "Waiting for camera");
         S.Camera = Camera.main;

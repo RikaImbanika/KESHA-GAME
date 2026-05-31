@@ -101,6 +101,7 @@ public static class S : object
 	private static GameObject _squarePainting;
 	private static GameObject _woodenPaintingFrame;
 	private static Dictionary<string, List<GameObject>> _snakeBalls;
+	private static Dictionary<string, GameObject> _snakeHeads;
 	public static Granny _granny;
 	public static WallColorCapturer _wallColorCapturer;
 	public static ItemShower _itemShower;
@@ -108,6 +109,19 @@ public static class S : object
 	public static Screamers _screamers;
 	public static TextProcessor _textProcessor;
 	public static IDs _ids;
+	public static GameObject _snakeSpawner;
+
+	public static GameObject SnakeSpawner
+	{
+		get
+		{
+			return _snakeSpawner;
+		}
+		set
+		{
+			_snakeSpawner = value;
+		}
+	}
 
 	public static IDs IDs
 	{
@@ -398,6 +412,19 @@ public static class S : object
 			_snakeBalls = value;
 		}
 	}
+
+	public static Dictionary<string, GameObject> SnakeHeads
+	{
+		get
+		{
+			return _snakeHeads;
+		}
+		set
+		{
+			_snakeHeads = value;
+		}
+	}
+
 	public static GameObject Stamp
 	{
 		get

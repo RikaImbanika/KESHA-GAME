@@ -126,7 +126,9 @@ public class Zombie : MonoBehaviour
             _followPlayer = true;
             _health -= amount;
 
-            if (_health <= 0)
+            if (_health > _maxHealth)
+                _health = _maxHealth;
+            else if (_health <= 0)
             {
                 _dead = true;
                 Die();
