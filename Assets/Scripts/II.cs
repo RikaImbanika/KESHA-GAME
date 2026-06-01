@@ -22,8 +22,8 @@ public class II : MonoBehaviour
             _base = new Dictionary<string, ItemInfo>();
 
             _base.Add("PurpleBall", new ItemInfo(
-             inventoryNameColor: Color.white,
-             lookNameColor: Color.white,
+             inventoryNameColor: Color.magenta,
+             lookNameColor: Color.magenta,
              spriteName: "Balls/PurpleBall",
              prefabName: "Balls/PurpleBall",
              visibleName: "Purple ball",
@@ -31,8 +31,8 @@ public class II : MonoBehaviour
             ));
 
             _base.Add("BlueBall", new ItemInfo(
-                inventoryNameColor: Color.white,
-                lookNameColor: Color.white,
+                inventoryNameColor: Color.blue,
+                lookNameColor: Color.blue,
                 spriteName: "Balls/BlueBall",
                 prefabName: "Balls/BlueBall",
                 visibleName: "Blue ball",
@@ -40,8 +40,8 @@ public class II : MonoBehaviour
             ));
 
             _base.Add("CyanBall", new ItemInfo(
-            inventoryNameColor: Color.white,
-            lookNameColor: Color.white,
+            inventoryNameColor: Color.cyan,
+            lookNameColor: Color.cyan,
             spriteName: "Balls/CyanBall",
             prefabName: "Balls/CyanBall",
             visibleName: "Cyan ball",
@@ -289,6 +289,16 @@ public class II : MonoBehaviour
                 prefabName: "Ammo",
                 visibleName: "Ammo",
                 throwable: false
+            ));
+
+            _base.Add("FirstDrawing", new ItemInfo(
+                inventoryNameColor: Color.magenta,
+                lookNameColor: Color.magenta,
+                spriteName: "FirstDrawing",
+                prefabName: "FirstDrawing",
+                visibleName: "Drawing",
+                throwRotX: 90,
+                throwable: true
             ));
 
             _base.Add("Apple", new ItemInfo(

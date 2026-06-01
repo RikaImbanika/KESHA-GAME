@@ -34,7 +34,7 @@ public class Item : MonoBehaviour
         ItemInfo ii = S.II.Get(_name);
         string prefabName = ii._prefabName;
         GameObject prefab = Prefabs.Get(prefabName);
-        Quaternion rot = Quaternion.identity * Quaternion.Euler(ii._throwRotX, ii._throwRotY, ii._throwRotZ);
+        Quaternion rot = rotation * Quaternion.Euler(ii._throwRotX, ii._throwRotY, ii._throwRotZ);
 
         if (!S.Loader.Roots.ContainsKey(S.PS._currentSceneName))
             return;

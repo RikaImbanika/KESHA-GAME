@@ -98,42 +98,6 @@ public class AllFather : MonoBehaviour
 		return null; // Should never reach here if input is valid
 	}
 
-	public EnemyParams GetEnemyParams(string name)
-	{
-		EnemyParams ep = new EnemyParams();
-
-		if (name == "zombie")
-		{
-			ep._screamerX = 0;
-			ep._screamerY = -3.9f;
-			ep._screamerZ = 0.60f;
-			ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
-		}
-		else if (name == "bakalavr")
-		{
-			ep._screamerX = 0;
-			ep._screamerY = -4.2f;
-			ep._screamerZ = 0.65f;
-			ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
-		}
-		else if (name == "musculus")
-		{
-			ep._screamerX = 0;
-			ep._screamerY = -4.6f;
-			ep._screamerZ = 2.7f;
-			ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
-		}
-		else if (name == "ghost")
-		{
-			ep._screamerX = 0;
-			ep._screamerY = -3;
-			ep._screamerZ = 1.5f;
-			ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
-		}
-
-		return ep;
-	}
-
 	public bool SceneCurrentlyLoaded(string name)
 	{
 		//Deepseek said it's safe

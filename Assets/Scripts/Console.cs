@@ -148,7 +148,8 @@ public class Console : MonoBehaviour
         if (!_openedOnce && _opened)
         {
             AddMessage("Hello!", Color.yellow);
-            AddMessage("To close console: /", Color.yellow);
+            AddMessage("Welcome to KeshaGame console!", Color.yellow);
+            AddMessage("To toggle console press: /", Color.yellow);
             _openedOnce = true;
         }
 
@@ -182,7 +183,7 @@ public class Console : MonoBehaviour
 
             Cursor.visible = _opened;
 
-            AddMessage($"GG: {_input.Substring(1)}", Color.magenta);
+            AddMessage($"Rika: {_input.Substring(1)}", Color.magenta);
         }
         else
             S.AM.Play("Wrong", 1f);
@@ -538,6 +539,7 @@ public class Console : MonoBehaviour
         if (S.Backrooms == null || S.Backrooms._snakes == null)
         {
             AddMessage("Not initialised yet.", Color.yellow);
+            return;
         }
 
         foreach (KeyValuePair<string, byte> kvp in S.Backrooms._snakes)
@@ -605,8 +607,10 @@ public class Console : MonoBehaviour
                     who == "bakalavr" ||
                     who == "bakalavrian" ||
                     who == "bakalavrium" ||
-                    who == "baka")
-                    InstaZombie(S.Bakalavrus, "Bakalavrus");
+                    who == "baka" ||
+                    who == "bachelor" ||
+                    who == "bechelor")
+                    InstaZombie(S.Baka, "Baka");
                 else if (who == "ghost" ||
                     who == "ghast" ||
                     who == "gost" ||

@@ -176,8 +176,17 @@ public class Backrooms : MonoBehaviour
     {
         _snakes = new Dictionary<string, byte>();
 
+        byte forBR8 = (byte)S.RND.Next(1, 4);
+        _snakes.Add("BR 8", forBR8);
+
         for (byte i = 1; i <= 4;)
         {
+            if (i == forBR8)
+            {
+                i++;
+                continue;
+            }
+
             string sceneName;
 
             while (true)

@@ -32,6 +32,7 @@ public class Granny : MonoBehaviour
     private int _calmingPointsLeft;
     private Trader _trader;
     private string _previousPlayerScene;
+    private bool _saidFirstAim;
 
     void Start()
     {
@@ -62,6 +63,7 @@ public class Granny : MonoBehaviour
             _idPhase = S.IDM(_id, "phase");
 
             _lastGreetingsTime = S.SM.LoadLong("GrannyLastGreetingsTime") ?? 0;
+            _saidFirstAim = S.SM.LoadBool("GrannySaidFirstAim") ?? false;
 
             _phase = S.SM.LoadString(_idPhase) ?? "Stay on market";
 
@@ -183,6 +185,21 @@ public class Granny : MonoBehaviour
                     S.Console.AddMessage($"Granny: Hello, dear!)", Color.cyan);
                     _lastGreetingsTime = now;
                     S.SM.Save("GrannyLastGreetingsTime", _lastGreetingsTime);
+                    
+                    if (!_saidFirstAim)
+                    {
+                        _saidFirstAim = true;
+                        StartCoroutine(SayAimLater());
+                        S.SM.Save("GrannySaidFirstAim", _saidFirstAim);
+                    }
+
+                    IEnumerator SayAimLater()
+                    {
+                        yield return new WaitForSeconds(2f);
+                        S.Console.AddMessage($"Granny: Those bakas came and turned my house into chaos!", Color.cyan);
+                        yield return new WaitForSeconds(2f);
+                        S.Console.AddMessage($"Rika: Oh no!", Color.magenta);
+                    }
                 }
             }
         }

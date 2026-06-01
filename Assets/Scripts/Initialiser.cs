@@ -163,7 +163,7 @@ public class Initialiser : MonoBehaviour
             S.Snakes.Add(Prefabs.Get($"SNAKIE {i}"));
 
         S.Zombella = Prefabs.Get("Zombella");
-        S.Bakalavrus = Prefabs.Get("Bakalavrus");
+        S.Baka = Prefabs.Get("Baka");
         S.Musculus = Prefabs.Get("Musculus");
         S.Ghost = Prefabs.Get("Ghost");
         S.Spider = Prefabs.Get("Spider");

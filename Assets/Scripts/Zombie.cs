@@ -66,7 +66,7 @@ public class Zombie : MonoBehaviour
             _stopSpeed = 350;
             _animationSpeed = 0.005f;
 
-            _ep = S.AllFather.GetEnemyParams(_type);
+            _ep = S.Enemies.GetEnemyParams(_type);
 
             GetId();
 
@@ -184,20 +184,22 @@ public class Zombie : MonoBehaviour
                         Vector3 toPlayer = S.Camera.transform.position - from;
                         Ray ray = new Ray(from, toPlayer);
                         RaycastHit hit;
-                        Physics.Raycast(ray, out hit);
 
-                        _nextFireTime -= _opti.DeltaTime;
-
-                        if (hit.collider.gameObject.tag == "Player")
+                        if (Physics.Raycast(ray, out hit))
                         {
-                            float angle = Vector3.Angle(toPlayer, transform.forward);
-                            if (angle > -90f && angle < 90f)
-                            {
-                                _followPlayer = true;
-                            }
+                            _nextFireTime -= _opti.DeltaTime;
 
-                            if (_followPlayer)
-                                Fire();
+                            if (hit.collider.gameObject.tag == "Player")
+                            {
+                                float angle = Vector3.Angle(toPlayer, transform.forward);
+                                if (angle > -90f && angle < 90f)
+                                {
+                                    _followPlayer = true;
+                                }
+
+                                if (_followPlayer)
+                                    Fire();
+                            }
                         }
 
                         if (_followPlayer)

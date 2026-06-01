@@ -461,7 +461,7 @@ public static class S : object
 		}
 	}
 
-	public static GameObject Bakalavrus
+	public static GameObject Baka
 	{
 		get
 		{

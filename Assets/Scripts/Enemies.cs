@@ -31,7 +31,7 @@ public class Enemies : MonoBehaviour
         {
             _types = new List<string>();
             _types.Add("Zombella");
-            _types.Add("Bakalavrus");
+            _types.Add("Baka");
             _types.Add("Musculus");
             _types.Add("Ghost");
             _types.Add("Spider");
@@ -42,5 +42,39 @@ public class Enemies : MonoBehaviour
         }
     }
 
-    
+    public EnemyParams GetEnemyParams(string name)
+    {
+        EnemyParams ep = new EnemyParams();
+
+        if (name == "zombella")
+        {
+            ep._screamerX = 0;
+            ep._screamerY = -3.9f;
+            ep._screamerZ = 0.60f;
+            ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
+        }
+        else if (name == "baka")
+        {
+            ep._screamerX = 0;
+            ep._screamerY = -4.2f;
+            ep._screamerZ = 0.65f;
+            ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
+        }
+        else if (name == "musculus")
+        {
+            ep._screamerX = 0;
+            ep._screamerY = -4.6f;
+            ep._screamerZ = 2.7f;
+            ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
+        }
+        else if (name == "ghost")
+        {
+            ep._screamerX = 0;
+            ep._screamerY = -3;
+            ep._screamerZ = 1.5f;
+            ep._screamerSounds = new string[] { "Screamer 1", "Screamer 2", "Screamer 3", "Screamer 4", "Screamer 5", "Screamer 6", "Screamer 7" };
+        }
+
+        return ep;
+    }
 }

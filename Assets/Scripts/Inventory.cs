@@ -142,7 +142,7 @@ public class Inventory : MonoBehaviour
 		_objectBeforeTakenTMP.text = "";
 		_objectBeforeTakenTMP.color = Color.white;
 
-	S.Inventory = this;
+		S.Inventory = this;
 		S.Negative = _negative;
 
 		_zoomTime = 0.1f;
@@ -220,10 +220,19 @@ public class Inventory : MonoBehaviour
 
 			numberLabelExample.SetActive(false);
 
+			FillFirstInventory();
+
 			Visualize();
 
 			S.AudioManager._muted = false;
 		}
+	}
+
+	public void FillFirstInventory()
+	{
+		items[22]._name = "FirstDrawing";
+		items[22]._count = 1;
+		SaveOneItem(23);
 	}
 
 	public void Update()

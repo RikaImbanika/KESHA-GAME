@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Threading;
 using UnityEngine.UI;
 using TMPro;
 
@@ -13,6 +12,14 @@ public class OnStartPanel : MonoBehaviour
 	public TextMeshProUGUI _text3;
 	public Image _p1;
 	public Image _p2;
+
+	float K
+	{
+		get
+		{
+			return Time.deltaTime * 0.4f;
+		}
+	}
 
 	void Start()
 	{
@@ -27,46 +34,47 @@ public class OnStartPanel : MonoBehaviour
 			gameObject.SetActive(true);
 
 			float alfa = 0;
-
 			UPD();
 
 			while (alfa < 1)
 			{
-				alfa += 0.03f;
+				alfa = Mathf.Min(alfa + 1.8f * K, 1f);
 
 				UPD();
 
-				yield return new WaitForSeconds(0.02f);
+				yield return null;
 			}
 
 			while (alfa > 0)
 			{
-				alfa -= 0.015f;
+				alfa = Mathf.Max(alfa - 0.9f * K, 0f);
 
 				UPD();
 
-				yield return new WaitForSeconds(0.02f);
+				yield return null;
 			}
 
 			alfa = 1;
 
 			while (alfa > 0.5f)
 			{
-				alfa -= 0.005f;
+				alfa = Mathf.Max(alfa - 0.9f * K, 0.5f);
 
 				UPD2();
 
-				yield return new WaitForSeconds(0.02f);
+				yield return null;
 			}
 
 			while (alfa > 0)
 			{
-				alfa -= 0.025f;
+				alfa = Mathf.Max(alfa - 3f * K, 0f);
 
 				UPD2();
 
-				yield return new WaitForSeconds(0.02f);
+				yield return null;
 			}
+
+			S.Console.AddMessage("Rika: One day I go to visit my granny...", Color.magenta);
 
 			gameObject.SetActive(false);
 
