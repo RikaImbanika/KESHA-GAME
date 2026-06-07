@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -406,7 +409,7 @@ public class Loader : MonoBehaviour
 
         IEnumerator ALA()
         {
-            string _sceneName = _scenesToLoad[0];
+            string sceneName = _scenesToLoad[0];
             float elapsed = 0;
 
             while (S.AllFather == null)
@@ -415,15 +418,15 @@ public class Loader : MonoBehaviour
                 Debug.Log("Loader waiting for S.AllFater");
             }
 
-            while (!S.AllFather.SceneCurrentlyLoaded(_sceneName) ||
+            while (!S.AllFather.SceneCurrentlyLoaded(sceneName) ||
                    Roots == null ||
-                   !Roots.ContainsKey(_sceneName) ||
-                   Roots[_sceneName] == null)
+                   !Roots.ContainsKey(sceneName) ||
+                   Roots[sceneName] == null)
             {
                 elapsed += 0.1f;
                 if (elapsed > 20f)
                 {
-                    Debug.LogError($"Timeout loading scene {_sceneName}");
+                    Debug.LogError($"Timeout loading scene {sceneName}");
                     _workingOnIt = false;
                     yield break;
                 }
@@ -438,8 +441,10 @@ public class Loader : MonoBehaviour
 
             try
             {
-                Transform root = Roots[_sceneName];
-                List<string> ids = S.SM.LoadListString(S.IDM(_sceneName, "ids"));
+                S.Fog.SetFog(sceneName);
+
+                Transform root = Roots[sceneName];
+                List<string> ids = S.SM.LoadListString(S.IDM(sceneName, "ids"));
 
                 if (ids != null)
                 {
@@ -510,7 +515,7 @@ public class Loader : MonoBehaviour
                                 ItemP itemP = obj.GetComponent<ItemP>();
                                 itemP._id = currentId;
                                 itemP._forLoader = true;
-                                itemP._sceneName = _sceneName;
+                                itemP._sceneName = sceneName;
                             }
                             catch (Exception ex)
                             {
@@ -524,8 +529,8 @@ public class Loader : MonoBehaviour
             }
             catch (Exception e)
             {
-                S.Console.AddMessage($"Critical error loading scene {_sceneName}: {e}", Color.red);
-                Debug.LogError($"Critical error loading scene {_sceneName}: {e}");
+                S.Console.AddMessage($"Critical error loading scene {sceneName}: {e}", Color.red);
+                Debug.LogError($"Critical error loading scene {sceneName}: {e}");
                 if (_scenesToLoad.Count > 0)
                     _scenesToLoad.RemoveAt(0);
             }

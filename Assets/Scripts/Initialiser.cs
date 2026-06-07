@@ -1,4 +1,7 @@
-﻿using System;
+﻿// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;

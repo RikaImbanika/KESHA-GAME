@@ -1,18 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class NoSpots : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //Just marker.
 }

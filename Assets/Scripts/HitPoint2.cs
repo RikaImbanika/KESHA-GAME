@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +21,7 @@ public class HitPoint2 : MonoBehaviour
         _scale = transform.localScale;
         transform.rotation = S.RandRot.Get();
 
-        Shader shader = Shader.Find("Custom/FadeOverTime");
+        Shader shader = Shader.Find("Custom/FadeOverTimeF");
 
         _mat = new Material(shader);
         _mat.SetTexture("_MainTex", _texture);

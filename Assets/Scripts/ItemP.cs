@@ -1,7 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Item Physically placed in world
 public class ItemP : MonoBehaviour
 {
     public string _id;
@@ -133,7 +137,7 @@ public class ItemP : MonoBehaviour
             S.SM.Save(_idDestroyed, true);
 
         Debug.Log($"Destroyed ItemP {_name}.");
-        
+
         Destroy(gameObject);
     }
 }

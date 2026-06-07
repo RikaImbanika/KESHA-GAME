@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,24 +98,24 @@ public class PaintingPlacer : MonoBehaviour
 
                 if (_sceneName == "BR 7" || _sceneName == "BR 7R")
                 {
-                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
-                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
+                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShiftF"));
+                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShiftF"));
                     mat.SetFloat("_Speed", 0.1667f);
                     frameMat.SetFloat("_Speed", 0.1667f);
                     _wallHueShiftSpeed = 0.1667f;
                 }
                 else if (_sceneName == "BR 6" || _sceneName == "BR 6R")
                 {
-                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
-                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShift"));
+                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShiftF"));
+                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideHueShiftF"));
                     mat.SetFloat("_Speed", 0.08f);
                     frameMat.SetFloat("_Speed", 0.08f);
                     _wallHueShiftSpeed = 0.08f;
                 }
                 else
                 {
-                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSide"));
-                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSide"));
+                    mat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideF"));
+                    frameMat = new Material(Shader.Find("Custom/SelfIlluminUnlitTintSingleSideF"));
                     _wallHueShiftSpeed = 0f;
                 }
 

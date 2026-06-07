@@ -1,9 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+//S = Static
 public static class S : object
 {
 	private static System.Random _rnd;
@@ -24,10 +28,10 @@ public static class S : object
 	private static SaveManager _saveManager;
 	private static PlayerCamScript _playerCamScript;
 	private static Camera _camera;
-    private static GameObject fpsObj;
-    private static TextMeshProUGUI fpsTMP;
-    private static GameObject _spot;
-    private static GameObject _blueSparkle;
+	private static GameObject fpsObj;
+	private static TextMeshProUGUI fpsTMP;
+	private static GameObject _spot;
+	private static GameObject _blueSparkle;
 	private static GameObject _redSparkle;
 	private static GameObject _greenSparkle;
 	private static GameObject _purpleSparkle;
@@ -110,6 +114,19 @@ public static class S : object
 	public static TextProcessor _textProcessor;
 	public static IDs _ids;
 	public static GameObject _snakeSpawner;
+	public static Fog _fog;
+
+	public static Fog Fog
+	{
+		get
+		{
+			return _fog;
+		}
+		set
+		{
+			_fog = value;
+		}
+	}
 
 	public static GameObject SnakeSpawner
 	{
@@ -194,7 +211,7 @@ public static class S : object
 			_itemShower = value;
 		}
 	}
-	
+
 	public static WallColorCapturer WallColorCapturer
 	{
 		get
@@ -376,7 +393,7 @@ public static class S : object
 			_portalObj1 = value;
 		}
 	}
-	
+
 	public static PlayerMovement PlayerMovement
 	{
 		get
@@ -762,28 +779,28 @@ public static class S : object
 	}
 
 	public static AudioSource Caboom
-    {
+	{
 		get
-        {
+		{
 			return _caboom;
-        }
+		}
 		set
-        {
+		{
 			_caboom = value;
-        }
-    }
+		}
+	}
 
 	public static GameObject SnakeBody
-    {
+	{
 		get
 		{
 			return _snakeBody;
 		}
 		set
-        {
+		{
 			_snakeBody = value;
-        }
-    }
+		}
+	}
 
 	public static List<Material> SnakeBallMaterials
 	{
@@ -798,7 +815,7 @@ public static class S : object
 	}
 
 	public static GameObject FireballRed
-    {
+	{
 		get
 		{
 			return _fireballRed;
@@ -807,10 +824,10 @@ public static class S : object
 		{
 			_fireballRed = value;
 		}
-    }
+	}
 
-		public static GameObject FireballBlue
-    {
+	public static GameObject FireballBlue
+	{
 		get
 		{
 			return _fireballBlue;
@@ -819,10 +836,10 @@ public static class S : object
 		{
 			_fireballBlue = value;
 		}
-    }
+	}
 
-		public static GameObject FireballGreen
-    {
+	public static GameObject FireballGreen
+	{
 		get
 		{
 			return _fireballGreen;
@@ -831,7 +848,7 @@ public static class S : object
 		{
 			_fireballGreen = value;
 		}
-    }
+	}
 
 	public static GameObject FireballPurple
 	{
@@ -1000,7 +1017,7 @@ public static class S : object
 			_loot = value;
 		}
 	}
-	
+
 	public static AudioManager AM
 	{
 		get
@@ -1013,19 +1030,7 @@ public static class S : object
 		}
 	}
 
-    public static MusicManager MM
-    {
-        get
-        {
-            return _musicManager;
-        }
-        set
-        {
-            _musicManager = value;
-        }
-    }
-
-    public static MusicManager MusicManager
+	public static MusicManager MM
 	{
 		get
 		{
@@ -1037,18 +1042,30 @@ public static class S : object
 		}
 	}
 
-    public static SceneDuplicateCleaner SDC
-    {
-        get
-        {
-            return _sceneDuplicateCleaner;
-        }
-        set
-        {
-            _sceneDuplicateCleaner = value;
-        }
-    }
-    
+	public static MusicManager MusicManager
+	{
+		get
+		{
+			return _musicManager;
+		}
+		set
+		{
+			_musicManager = value;
+		}
+	}
+
+	public static SceneDuplicateCleaner SDC
+	{
+		get
+		{
+			return _sceneDuplicateCleaner;
+		}
+		set
+		{
+			_sceneDuplicateCleaner = value;
+		}
+	}
+
 	public static SceneDuplicateCleaner SceneDuplicateCleaner
 	{
 		get
@@ -1206,7 +1223,7 @@ public static class S : object
 		}
 	}
 
-    public static AudioManager AudioManager
+	public static AudioManager AudioManager
 	{
 		get
 		{
@@ -1302,19 +1319,19 @@ public static class S : object
 		}
 	}
 
-    public static PlayerStorage PS
-    {
-        get
-        {
-            return _ps;
-        }
-        set
-        {
-            _ps = value;
-        }
-    }
+	public static PlayerStorage PS
+	{
+		get
+		{
+			return _ps;
+		}
+		set
+		{
+			_ps = value;
+		}
+	}
 
-    public static Canvas Canvas
+	public static Canvas Canvas
 	{
 		get
 		{
@@ -1410,17 +1427,17 @@ public static class S : object
 		}
 	}
 
-    public static SaveManager SM
-    {
-        get
-        {
-            return _saveManager;
-        }
-        set
-        {
-            _saveManager = value;
-        }
-    }
+	public static SaveManager SM
+	{
+		get
+		{
+			return _saveManager;
+		}
+		set
+		{
+			_saveManager = value;
+		}
+	}
 
 	public static TextMeshProUGUI FpsTMP
 	{
@@ -1434,7 +1451,7 @@ public static class S : object
 		}
 	}
 
-    public static GameObject FpsObj
+	public static GameObject FpsObj
 	{
 		get
 		{

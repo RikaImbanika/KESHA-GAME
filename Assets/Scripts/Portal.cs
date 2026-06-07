@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -237,7 +240,7 @@ public class Portal : MonoBehaviour
 
         _secondCamera.targetTexture = _rts[_resolutionIndex]; //
 
-        _material = new Material(Resources.Load<Shader>("Shaders/PortalShader"));
+        _material = new Material(Resources.Load<Shader>("Shaders/PortalShaderF"));
         _material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
 
         _material.mainTexture = _rts[_resolutionIndex];
