@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 Shader "Custom/Skybox/SkyHemisphereMirror" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
@@ -10,7 +13,7 @@ Shader "Custom/Skybox/SkyHemisphereMirror" {
         Tags { "Queue"="Background" "RenderType"="Background" "PreviewType"="Skybox" }
         Cull Off
         ZWrite Off
-//
+
         Pass {
             CGPROGRAM
             #pragma vertex vert
@@ -41,7 +44,6 @@ Shader "Custom/Skybox/SkyHemisphereMirror" {
             fixed4 frag (v2f i) : SV_Target {
                 float3 dir = i.worldDir;
                 
-                // Поворот вокруг Y
                 float rad = _Rotation * (UNITY_PI / 180.0);
                 float cosA = cos(rad);
                 float sinA = sin(rad);
@@ -50,24 +52,17 @@ Shader "Custom/Skybox/SkyHemisphereMirror" {
                 rotatedDir.z = dir.x * sinA + dir.z * cosA;
                 rotatedDir.y = dir.y;
 
-                // Вычисляем широту и долготу
                 float lon = atan2(rotatedDir.x, rotatedDir.z);
                 float lat = asin(rotatedDir.y);
                 
-                // Нормируем долготу в [0,1]
                 float u = (lon / (2.0 * UNITY_PI)) + 0.5;
                 
-                // Для верхней полусферы (y>=0) используем lat напрямую
-                // Для нижней (y<0) берём абсолютную широту (отражение)
                 float absLat = abs(lat);
                 
-                // Преобразуем широту в v-координату в диапазоне [_VMin, _VMax]
-                // При absLat = 0 (горизонт) -> v = _VMin
-                // При absLat = PI/2 (зенит/надир) -> v = _VMax
                 float v = _VMin + (absLat / (UNITY_PI / 2.0)) * (_VMax - _VMin);
                 
                 #ifdef _MIRRORHORIZONTAL_ON
-                // Для нижней полусферы инвертируем u (горизонтальное зеркало)
+                
                 if (lat < 0) {
                     u = 1.0 - u;
                 }

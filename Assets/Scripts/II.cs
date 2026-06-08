@@ -493,6 +493,16 @@ public class II : MonoBehaviour
                 throwable: true
             ));
 
+            _base.Add("Plank", new ItemInfo(
+                inventoryNameColor: Color.white,
+                lookNameColor: Color.white,
+                spriteName: "Plank",
+                prefabName: "Plank",
+                visibleName: "Plank",
+                throwable: true
+            ));
+
+
             FillAliases();
 
             S.II = this;

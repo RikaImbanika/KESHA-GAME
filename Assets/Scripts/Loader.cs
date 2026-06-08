@@ -72,18 +72,14 @@ public class Loader : MonoBehaviour
             SceneManager.LoadSceneAsync("Income", LoadSceneMode.Additive);
             SceneManager.LoadSceneAsync("Corridor", LoadSceneMode.Additive);
 
-            GameObject pObj = GameObject.FindGameObjectWithTag("Player");
-            GameObject playerHub = pObj.transform.parent.gameObject;
-            PlayerMovement pm = playerHub.GetComponent<PlayerMovement>();
-
             while (!S.AllFather.SceneCurrentlyLoaded("Income"))
                 yield return new WaitForSeconds(0.2f);
 
             Vector3 v = new Vector3(0, 0, 0);
-            if (pm.isCrouching)
+            if (S.Pm.isCrouching)
                 v = new Vector3(0, -2.2f, 0);
 
-            playerHub.transform.position = new Vector3(6.08f, -13.18f, -852.67f) + v;
+            S.Ph.transform.position = new Vector3(6.08f, -13.18f, -852.67f) + v;
 
             while (S.PS == null)
             {
@@ -441,13 +437,16 @@ public class Loader : MonoBehaviour
 
             try
             {
-                S.Fog.SetFog(sceneName);
-
                 Transform root = Roots[sceneName];
+                                
+                S.Fog.SetFog(sceneName, root.gameObject);
+
                 List<string> ids = S.SM.LoadListString(S.IDM(sceneName, "ids"));
 
                 if (ids != null)
                 {
+                    MaterialPropertyBlock mpt = S.Fog.GetMPB(sceneName);
+
                     for (int i = 0; i < ids.Count; i++)
                     {
                         string currentId = ids[i];
@@ -497,6 +496,7 @@ public class Loader : MonoBehaviour
                                 Zombie zombie = go.GetComponent<Zombie>();
                                 zombie._id = currentId;
                                 zombie._forLoader = true;
+                                S.Fog.ApplyToGameObject(go, mpt);
                             }
                             catch (Exception ex)
                             {
@@ -516,6 +516,7 @@ public class Loader : MonoBehaviour
                                 itemP._id = currentId;
                                 itemP._forLoader = true;
                                 itemP._sceneName = sceneName;
+                                S.Fog.ApplyToGameObject(obj, mpt);
                             }
                             catch (Exception ex)
                             {

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 Shader "Custom/UnlitF"
 {
     Properties
@@ -30,7 +33,7 @@ Shader "Custom/UnlitF"
             {
                 float2 uv      : TEXCOORD0;
                 float4 vertex  : SV_POSITION;
-                float3 viewVec : TEXCOORD1;  // вектор от камеры к вершине в мировом пространстве (или view space)
+                float3 viewVec : TEXCOORD1;
             };
 
             sampler2D _MainTex;
@@ -45,9 +48,8 @@ Shader "Custom/UnlitF"
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
-                // Получаем мировую позицию вершины
                 float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-                // Вектор из камеры в вершину (в мировом пространстве)
+
                 o.viewVec = worldPos - _WorldSpaceCameraPos;
                 return o;
             }
@@ -56,9 +58,6 @@ Shader "Custom/UnlitF"
             {
                 fixed4 col = tex2D(_MainTex, i.uv) * _Color;
 
-                // Расстояние от камеры до точки (длина viewVec) – плавная, без привязки к геометрии,
-                // потому что интерполируется линейно в экранном пространстве.
-                // Это имитирует туман, основанный на глубине, и даёт ровный эффект на плоских поверхностях.
                 float dist = length(i.viewVec);
 
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);

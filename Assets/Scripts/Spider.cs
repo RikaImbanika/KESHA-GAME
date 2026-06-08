@@ -57,6 +57,7 @@ public class Spider : MonoBehaviour
     private int _laserOptimiser;
     private Vector3 _lasersOffset;
     private float _lasersScaleFactor;
+    private MaterialPropertyBlock _mpb;
 
 
     void Start()
@@ -89,6 +90,9 @@ public class Spider : MonoBehaviour
 
         GetId();
 
+        _mpb = S.Fog.GetMPB(_sceneName);
+        S.Fog.ApplyToGameObject(gameObject, _mpb);
+
         _directions = new Vector3[4];
         _lasers = new GameObject[4];
         _points = new GameObject[4];
@@ -104,15 +108,19 @@ public class Spider : MonoBehaviour
         for (int i = 0; i < _lasersCount; i++)
         {
             _directions[i] = GetLasDir();
-            _lasers[i] = Instantiate(S.RedLaser, transform.position + _lasersOffset, transform.rotation, transform); //
 
+            _lasers[i] = Instantiate(S.RedLaser, transform.position + _lasersOffset, transform.rotation, transform); //
+            S.Fog.ApplyToGameObject(_lasers[i], _mpb);
             _lasersScaleFactor = 1f / _lasers[i].transform.lossyScale.z;
             _lasers[i].SetActive(false);
+
             _points[i] = Instantiate(S.RedPoint, transform.position + _lasersOffset, transform.rotation, transform); //
+            S.Fog.ApplyToGameObject(_points[i], _mpb);
             _points[i].SetActive(false);
         }
 
         _laserDown = Instantiate(S.RedLaser, transform.position + _lasersOffset, Quaternion.LookRotation(Vector3.down), transform); //
+        S.Fog.ApplyToGameObject(_laserDown, _mpb);
         _laserDown.SetActive(false);
 
         var loadPos = S.SM.LoadVector3(_idPos);
@@ -175,7 +183,7 @@ public class Spider : MonoBehaviour
                 IEnumerator Loott()
                 {
                     yield return new WaitForSeconds(0.5f);
-                    GameObject loot = Instantiate(S.Loot);
+                    GameObject loot = Instantiate(S.Loot, S.Loader.Roots[_sceneName]);
                     loot.transform.position = transform.position;
                 }
 
@@ -345,7 +353,9 @@ public class Spider : MonoBehaviour
                             GameObject sparkle = Instantiate(S.RedSparkle);
                             sparkle.transform.position = hit.point;
                             sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-                        } /////////////
+
+                            S.Fog.ApplyToGameObject(sparkle, _mpb);
+                        }
 
                         if (hit.collider.gameObject.CompareTag("Player"))
                             _damagePlayer += 24f;
@@ -367,12 +377,12 @@ public class Spider : MonoBehaviour
             {
                 _nextFireTime = _fireCooldown;
                 Quaternion rotation = Quaternion.Euler(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(-30f, 30));
-                GameObject bullet = Instantiate(S.FireballRed, gameObject.transform.position + new Vector3(0, 6, 0), rotation, S.Loader.Roots[_sceneName]);
+                GameObject fireball = Instantiate(S.FireballRed, gameObject.transform.position + new Vector3(0, 6, 0), rotation, S.Loader.Roots[_sceneName]);
 
-                Fireball eb = bullet.GetComponent<Fireball>();
-                eb._active = true;
-                eb._speed = 30;
-                Destroy(bullet, 15);
+                Fireball fb = fireball.GetComponent<Fireball>();
+                fb._active = true;
+                fb._speed = 30;
+                Destroy(fireball, 15);
             }
         }
     }

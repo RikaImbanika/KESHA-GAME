@@ -421,10 +421,39 @@ public class Console : MonoBehaviour
             _words[0] == "shootpower" ||
             _words[0] == "shootpow")
             Power();
+        else if (_words[0] == "spawn" ||
+            _words[0] == "gospawn" ||
+            _words[0] == "tospawn" ||
+            _words[0] == "gotospawn")
+            Spawn();
         else if (!string.IsNullOrWhiteSpace(command))
             ToggleConsole("Message");
         else
             ToggleConsole("Close");
+    }
+
+    void Spawn()
+    {
+        StartCoroutine(Longer());
+
+        IEnumerator Longer()
+        {
+            string sceneName = "Income";
+
+            Vector3 forward = -S.PM.orientation.forward;
+            S.Loader.GoTo(sceneName, -1, forward);
+
+            while (!S.AllFather.SceneCurrentlyLoaded("Income"))
+                yield return new WaitForSeconds(0.2f);
+
+            Vector3 v = new Vector3(0, 0, 0);
+            if (S.Pm.isCrouching)
+                v = new Vector3(0, -2.2f, 0);
+
+            S.Ph.transform.position = new Vector3(6.08f, -13.18f, -852.67f) + v;
+
+            ToggleConsole("Success");
+        }
     }
 
     void Power()

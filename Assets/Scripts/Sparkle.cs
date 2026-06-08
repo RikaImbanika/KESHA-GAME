@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sparkle3 : MonoBehaviour
+public class Sparkle : MonoBehaviour
 {
     public float _pushNormal;
     public float _pushRandom;
@@ -35,10 +35,14 @@ public class Sparkle3 : MonoBehaviour
     private bool _instantiated;
     private int _deadLine;
     private float _deltaTime;
-
+    private string _sceneName;
+    private MaterialPropertyBlock _mpb;
 
     void Start()
     {
+        _sceneName = gameObject.scene.name;
+        _mpb = S.Fog.GetMPB(_sceneName);
+
         _deadLine = -1;
 
         _layerMask = 1 << LayerMask.NameToLayer("Player") |
@@ -86,6 +90,8 @@ public class Sparkle3 : MonoBehaviour
                 _visual[_index] = GameObject.Instantiate(S.GreenLaser); /////////////////
             else if (_color == "purple")
                 _visual[_index] = GameObject.Instantiate(S.PurpleLaser); /////////////////
+
+            S.Fog.ApplyToGameObject(_visual[_index], _mpb);
         }
     }
 

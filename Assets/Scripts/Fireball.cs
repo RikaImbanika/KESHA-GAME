@@ -18,12 +18,16 @@ public class Fireball : MonoBehaviour
     public string _color;
     private string _sceneName;
     public float _damage;
+    private MaterialPropertyBlock _mpb;
     
     void Start()
     {
         _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
         _opti = new Optimiser(_sceneName);
         _opti.MaxPeriodForDistance = 1 / 12f;
+
+        _mpb = S.Fog.GetMPB(_sceneName);
+        S.Fog.ApplyToGameObject(gameObject, _mpb);
 
         if (_damage == 0)
             _damage = 5f;
@@ -87,6 +91,9 @@ public class Fireball : MonoBehaviour
                         spot.transform.SetParent(hit.collider.gameObject.transform);
                         spot.transform.localScale = spot.transform.localScale * 5;
 
+                        S.Fog.ApplyToGameObject(spot, _mpb);
+                        //This should include HitPoint
+
                         S.AllFather._spots.Add(spot);
                         if (S.AllFather._spots.Count > 300)
                         {
@@ -111,6 +118,8 @@ public class Fireball : MonoBehaviour
                         sparkle.transform.position = hit.point;
                         sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
 
+                        S.Fog.ApplyToGameObject(sparkle, _mpb);
+
                         int gg2 = S.RND.Next(25);
 
                         float decay = 1f;
@@ -123,40 +132,31 @@ public class Fireball : MonoBehaviour
                         else if (gg2 == 3)
                             decay = 4f;
 
-                        sparkle.GetComponent<Sparkle3>()._minimisingSpeedCoef = decay;
+                        sparkle.GetComponent<Sparkle>()._minimisingSpeedCoef = decay;
                     }
+
+                    Vector3 p = hit.point;
+                    Quaternion r = Quaternion.LookRotation(hit.normal);
 
                     if (_color == "red")
-                    {
-                        Instantiate(S.RedHitPoint, hit.point, Quaternion.identity);
-                        Instantiate(S.RedHeavySparkle);
-                    }
+                        Inst(S.RedHitPoint, S.RedHeavySparkle);
                     else if (_color == "green")
-                    {
-                        Instantiate(S.GreenHitPoint, hit.point, Quaternion.identity);
-                        Instantiate(S.GreenHeavySparkle);
-                    }
+                        Inst(S.GreenHitPoint, S.GreenHeavySparkle);
                     else if (_color == "blue")
-                    {
-                        Instantiate(S.BlueHitPoint, hit.point, Quaternion.identity);
-                        Instantiate(S.BlueHeavySparkle);
-                    }
+                        Inst(S.BlueHitPoint, S.BlueHeavySparkle);
                     else if (_color == "purple")
-                    {
-                        Instantiate(S.PurpleHitPoint, hit.point, Quaternion.identity);
-                        Instantiate(S.PurpleHeavySparkle);
-                    }
-
-                    int gg = S.RND.Next(10);
-
-                    if (gg == 0)
-                    {
-                        GameObject sparkle = Instantiate(S.RedHeavySparkle);
-                        sparkle.transform.position = hit.point;
-                        sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
-                    }
+                        Inst(S.PurpleHitPoint, S.PurpleHeavySparkle);
 
                     Destroy(gameObject);
+
+                    void Inst(GameObject hitPointPrefab, GameObject heavySparklePrefab)
+                    {
+                        GameObject hitPoint = Instantiate(hitPointPrefab, p, r);
+                        GameObject heavySparkle = Instantiate(heavySparklePrefab, p, r);
+
+                        S.Fog.ApplyToGameObject(hitPoint, _mpb);
+                        S.Fog.ApplyToGameObject(heavySparkle, _mpb);
+                    }
                 }
 
                 foreach (Transform child in _children)

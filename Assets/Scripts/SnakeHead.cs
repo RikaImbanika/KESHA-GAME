@@ -51,6 +51,7 @@ public class SnakeHead : MonoBehaviour
     public float _timeSinceTailSwitched;
 
     private Optimiser _opti;
+    private MaterialPropertyBlock _mpb;
 
     void Start()
     {
@@ -90,6 +91,10 @@ public class SnakeHead : MonoBehaviour
         Destroy(_headVis.GetComponent<ItemP>());
         Destroy(_headVis.GetComponent<SphereCollider>());
 
+        _mpb = S.Fog.GetMPB(_sceneName);
+        S.Fog.ApplyToGameObject(gameObject, _mpb);
+        S.Fog.ApplyToGameObject(_headVis, _mpb);
+
         int randomIndex = UnityEngine.Random.Range(0, S.SnakeBallMaterials.Count);
 
         int ballsTypesCount = S.SnakeBalls[_type].Count;
@@ -99,6 +104,7 @@ public class SnakeHead : MonoBehaviour
         for (int i = 0; i < _ballsCount; i++)
         {
             GameObject clone = Instantiate(S.SnakeBody, transform.position, transform.rotation, transform.parent);
+            S.Fog.ApplyToGameObject(clone, _mpb);
 
             _clones.Add(clone);
 
@@ -190,6 +196,8 @@ public class SnakeHead : MonoBehaviour
             ballInBallInBallInBall.transform.localScale = Vector3.one;
 
             body.BallInBallInBallInBall = ballInBallInBallInBall;
+
+            S.Fog.ApplyToGameObject(body.BallInBallInBallInBall, _mpb);
 
             Destroy(ballInBallInBallInBall.GetComponent<ItemP>());
             Destroy(ballInBallInBallInBall.GetComponent<SphereCollider>());

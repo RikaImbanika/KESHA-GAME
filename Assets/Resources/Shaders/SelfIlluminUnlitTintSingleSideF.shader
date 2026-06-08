@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 Shader "Custom/SelfIlluminUnlitTintSingleSideF"
 {
     Properties
@@ -21,11 +24,15 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideF"
             Tags { "LightMode"="Always" }
 
             CGPROGRAM
-// Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members _MainTex_ST,_FogColor,_FogDensity,worldPos)
-#pragma exclude_renderers d3d11
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            fixed4 _Color;
+            float4 _FogColor;
+            float  _FogDensity;
 
             struct appdata
             {
@@ -38,12 +45,7 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideF"
                 float4 pos : SV_POSITION;
                 float2 uv  : TEXCOORD0;
                 float3 viewVec : TEXCOORD1;
-
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            fixed4 _Color;
-            float4 _FogColor;
-            float  _FogDensity;
+            };
 
             v2f vert(appdata v)
             {
@@ -51,7 +53,6 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideF"
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv  = TRANSFORM_TEX(v.uv, _MainTex);
 
-                // Мировая позиция вершины
                 float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 o.viewVec = worldPos - _WorldSpaceCameraPos;
 

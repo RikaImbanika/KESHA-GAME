@@ -25,10 +25,14 @@ public class Drone : MonoBehaviour
     private int _layerMaskForLasers;
     private Optimiser _opti;
     private float _damageMultiplier;
+    private string _sceneName;
+    private MaterialPropertyBlock _mpb;
     
     public void Start()
     {
-        _opti = new Optimiser(gameObject.scene.name);
+        _sceneName = gameObject.scene.name;
+        _mpb = S.Fog.GetMPB(_sceneName);
+        _opti = new Optimiser(_sceneName);
         
         _layerMaskForLasers = 1 << LayerMask.NameToLayer("Player") |
                          1 << LayerMask.NameToLayer("Static") |
@@ -100,24 +104,24 @@ public class Drone : MonoBehaviour
         void Add()
         {
             if (_color == "red")
-            {
-                _lasers.Add(Instantiate(S.RedLaser, transform.position, transform.rotation, transform));
-                _points.Add(Instantiate(S.RedPoint, transform.position, transform.rotation, transform));
-            }
+                Add2(S.RedLaser, S.RedPoint);
             else if (_color == "blue")
-            {
-                _lasers.Add(Instantiate(S.BlueLaser, transform.position, transform.rotation, transform));
-                _points.Add(Instantiate(S.BluePoint, transform.position, transform.rotation, transform));
-            }
+                Add2(S.BlueLaser, S.BluePoint);
             else if (_color == "green")
-            {
-                _lasers.Add(Instantiate(S.GreenLaser, transform.position, transform.rotation, transform));
-                _points.Add(Instantiate(S.GreenPoint, transform.position, transform.rotation, transform));
-            }
+                Add2(S.GreenLaser, S.GreenPoint);
             else if (_color == "purple")
+                Add2(S.PurpleLaser, S.PurplePoint);
+
+            void Add2(GameObject laserPrefab, GameObject pointPrefab)
             {
-                _lasers.Add(Instantiate(S.PurpleLaser, transform.position, transform.rotation, transform));
-                _points.Add(Instantiate(S.PurplePoint, transform.position, transform.rotation, transform));
+                GameObject laser = Instantiate(laserPrefab, transform.position, transform.rotation, transform);
+                GameObject point = Instantiate(pointPrefab, transform.position, transform.rotation, transform);
+
+                S.Fog.ApplyToGameObject(laser, _mpb);
+                S.Fog.ApplyToGameObject(point, _mpb);
+
+                _lasers.Add(laser);
+                _points.Add(point);
             }
         }
 
@@ -309,6 +313,8 @@ public class Drone : MonoBehaviour
                     GameObject sparkle = Instantiate(_sparklePrefab);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
+
+                    S.Fog.ApplyToGameObject(sparkle, _mpb);
                 } /////////////
             }
         }

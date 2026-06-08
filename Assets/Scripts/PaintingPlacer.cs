@@ -147,6 +147,10 @@ public class PaintingPlacer : MonoBehaviour
 
                 GameObject frameChild = frame.transform.Find("Child/Frame").gameObject;
                 frameChild.GetComponent<MeshRenderer>().material = frameMat;
+
+                MaterialPropertyBlock mpt = S.Fog.GetMPB(_sceneName);
+                S.Fog.ApplyToGameObject(painting, mpt);
+                S.Fog.ApplyToGameObject(frame, mpt);
             }
         }
 

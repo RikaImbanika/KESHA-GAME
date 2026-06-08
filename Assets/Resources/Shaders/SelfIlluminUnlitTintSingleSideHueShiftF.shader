@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 Shader "Custom/SelfIlluminUnlitTintSingleSideHueShiftF"
 {
     Properties
@@ -7,7 +10,6 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideHueShiftF"
         _Speed ("Speed (cycles per second)", Float) = 0.1667   // 1/6
         _HueOffset ("Hue Offset", Range(0,1)) = 0.0
 
-        // Параметры экспоненциального тумана (плавный, по расстоянию)
         [HDR] _FogColor ("Fog Color", Color) = (0.5, 0.6, 0.7, 1.0)
         _FogDensity ("Fog Density", Range(0, 0.1)) = 0.02
     }
@@ -38,7 +40,7 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideHueShiftF"
             {
                 float4 pos : SV_POSITION;
                 float2 uv  : TEXCOORD0;
-                float3 viewVec : TEXCOORD1;   // вектор из камеры к вершине (мировое пространство)
+                float3 viewVec : TEXCOORD1;
             };
 
             sampler2D _MainTex;
@@ -47,7 +49,6 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideHueShiftF"
             float _Speed;
             float _HueOffset;
 
-            // Туман
             float4 _FogColor;
             float  _FogDensity;
 
@@ -57,7 +58,6 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideHueShiftF"
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv  = TRANSFORM_TEX(v.uv, _MainTex);
 
-                // Мировая позиция вершины
                 float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 o.viewVec = worldPos - _WorldSpaceCameraPos;
 
@@ -88,10 +88,9 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideHueShiftF"
 
                 float3 hsv = rgb2hsv(baseCol.rgb);
                 float timeShift = frac(_Time.y * _Speed + _HueOffset);
-                hsv.x = frac(hsv.x + timeShift);    // сдвиг тона
+                hsv.x = frac(hsv.x + timeShift);
                 float3 rgb = hsv2rgb(hsv);
 
-                // Туман (экспоненциальный, плавный, как в последнем рабочем варианте)
                 float dist = length(i.viewVec);
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);

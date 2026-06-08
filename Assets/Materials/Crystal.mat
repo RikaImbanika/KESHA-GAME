@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Crystal
-  m_Shader: {fileID: 4800000, guid: 75d82be95d6af1249986148d0173d07d, type: 3}
+  m_Shader: {fileID: 4800000, guid: 58ef78fa148e34b44b8be11621884f5d, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _EMISSION
@@ -68,6 +68,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Alpha: 1
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5

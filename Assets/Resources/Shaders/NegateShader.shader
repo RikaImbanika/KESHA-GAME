@@ -1,4 +1,5 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
 
 Shader "Custom/NegateShader" {
 Properties

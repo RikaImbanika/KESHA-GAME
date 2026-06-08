@@ -31,7 +31,7 @@ public class ItemP : MonoBehaviour
 
         IEnumerator Start0()
         {
-            while (S.SM == null)
+            while (S.SM == null || S.Fog == null)
             {
                 yield return new WaitForSeconds(0.1f);
                 Debug.Log("ItemP waiting for S.SaveManager");
@@ -39,9 +39,16 @@ public class ItemP : MonoBehaviour
 
             GetId();
             Load();
+            SetFog();
 
             StartCoroutine(Saver(UnityEngine.Random.Range(5f, 6f)));
         }
+    }
+
+    void SetFog()
+    {
+        MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+        S.Fog.ApplyToGameObject(gameObject, mpb);
     }
 
     void Load()

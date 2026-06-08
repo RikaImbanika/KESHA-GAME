@@ -131,6 +131,8 @@ public class Gun : MonoBehaviour
                     }
                 }
 
+                MaterialPropertyBlock mpb = S.Fog.GetMPB(S.PS._currentSceneName);
+
                 Vector3 from = S.Camera.transform.position + S.Camera.transform.right * _rayRight - S.Camera.transform.up * _rayDown;
 
                 float desiredLength = (hit.point - from).magnitude;
@@ -152,6 +154,8 @@ public class Gun : MonoBehaviour
                 ray2.transform.position = new Vector3(rx, ry, rz);
                 ray2.transform.rotation = Quaternion.LookRotation(hit.point - from);
 
+                
+
                 for (int i = 0; i < _sparklesCount; i++)
                 {
                     GameObject sparkle = Instantiate(S.PlayerSparkle);
@@ -171,18 +175,24 @@ public class Gun : MonoBehaviour
                     else if (gg2 == 3)
                         decay = 4f;
 
-                    sparkle.GetComponent<Sparkle3>()._minimisingSpeedCoef = decay;
+                    sparkle.GetComponent<Sparkle>()._minimisingSpeedCoef = decay;
+
+                    S.Fog.ApplyToGameObject(sparkle, mpb);
                 }
 
-                Instantiate(S.BlueHitPoint, hit.point, Quaternion.identity);
+                GameObject hitPoint = Instantiate(S.BlueHitPoint, hit.point, Quaternion.identity);
 
-                int gg = S.RND.Next(10);
+                S.Fog.ApplyToGameObject(hitPoint, mpb);
+
+                int gg = S.RND.Next(7);
 
                 if (gg == 0)
                 {
                     GameObject sparkle = Instantiate(S.BlueHeavySparkle);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
+
+                    S.Fog.ApplyToGameObject(sparkle, mpb);
                 }
             }
             else

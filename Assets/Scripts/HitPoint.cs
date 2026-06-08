@@ -15,6 +15,8 @@ public class HitPoint : MonoBehaviour
     {
         _timeLeft = 0.3f;
         _scale = transform.localScale;
+        MaterialPropertyBlock mpb = S.Fog.GetMPB(gameObject.scene.name);
+        S.Fog.ApplyToGameObject(gameObject, mpb);
     }
 
     void Update()

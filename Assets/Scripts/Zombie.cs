@@ -89,6 +89,9 @@ public class Zombie : MonoBehaviour
 
             var loadPos = S.SM.LoadVector3(_idPos);
 
+            MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+            S.Fog.ApplyToGameObject(gameObject, mpb);
+
             if (loadPos.HasValue)
             {
                 transform.position = loadPos ?? transform.position;

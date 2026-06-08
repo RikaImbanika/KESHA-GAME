@@ -43,34 +43,57 @@ public class LocalLaser : MonoBehaviour
     private bool _hitSomething;
     private bool _hitSomethingBeforeRight;
     private bool _hitSomethingBeforeLeft;
+    private string _sceneName;
 
     private Optimiser _opti;
 
     void Start()
     {
-        _opti = new Optimiser(gameObject.scene.name);
-        _opti.MaxPeriodForDistance = 1 / 24f;
-        
-        _period = (_forwardTime + _backwardTime + _forwardPause + _backwardPause);
-        _frequency = 2 * MathF.PI / _period;
-        _forwardPosition = transform.position + _movementDirection * _forwardDistance;
-        _backwardPosition = transform.position - _movementDirection * _backwardDistance;
+        StartCoroutine(Start0());
 
-        _leftLaserObj = Instantiate(S.RedLaser, transform);
-        _rightLaserObj = Instantiate(S.RedLaser, transform);
-        _leftPointObj = Instantiate(S.RedPoint, transform);
-        _rightPointObj = Instantiate(S.RedPoint, transform);
-        _leftPointObj.SetActive(false);
-        _rightPointObj.SetActive(false);
+        IEnumerator Start0()
+        {
+            _sceneName = gameObject.scene.name;
+                        
+            while (S.Loader.Roots == null ||
+                !S.Loader.Roots.ContainsKey(_sceneName) ||
+                S.Loader.Roots[_sceneName] == null)
+                yield return new WaitForSeconds(0.25f);
 
-        _layerMask = 1 << LayerMask.NameToLayer("Player") |
-                         1 << LayerMask.NameToLayer("Static") |
-                         1 << LayerMask.NameToLayer("Enemies") |
-                         1 << LayerMask.NameToLayer("Items") |
-                         1 << LayerMask.NameToLayer("Default");
+            _opti = new Optimiser(_sceneName);
+            _opti.MaxPeriodForDistance = 1 / 24f;
 
-        InitLaserBots();
-        UpdateLaserVisuals();
+            _period = (_forwardTime + _backwardTime + _forwardPause + _backwardPause);
+            _frequency = 2 * MathF.PI / _period;
+            _forwardPosition = transform.position + _movementDirection * _forwardDistance;
+            _backwardPosition = transform.position - _movementDirection * _backwardDistance;
+
+            _leftLaserObj = Instantiate(S.RedLaser, transform);
+            _rightLaserObj = Instantiate(S.RedLaser, transform);
+            _leftPointObj = Instantiate(S.RedPoint, transform);
+            _rightPointObj = Instantiate(S.RedPoint, transform);
+            _leftPointObj.SetActive(false);
+            _rightPointObj.SetActive(false);
+
+            _layerMask = 1 << LayerMask.NameToLayer("Player") |
+                             1 << LayerMask.NameToLayer("Static") |
+                             1 << LayerMask.NameToLayer("Enemies") |
+                             1 << LayerMask.NameToLayer("Items") |
+                             1 << LayerMask.NameToLayer("Default");
+
+            InitLaserBots();
+            UpdateLaserVisuals();
+            SetFog();
+
+            yield return null;
+        }
+    }
+
+    void SetFog()
+    {
+        MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+        S.Fog.ApplyToGameObject(gameObject, mpb);
+        //Should automaticly include points, lasers, bots
     }
 
     void Update()
@@ -160,6 +183,9 @@ public class LocalLaser : MonoBehaviour
                 {
                     for (int i = 0; i < 3; i++)
                         ThrowSparkle();
+
+                    if (hit.collider.gameObject.CompareTag("Player"))
+                        S.PS.Damage(4f); //x2 for right & left
 
                     if (right)
                         _hitSomethingBeforeRight = true;

@@ -315,6 +315,7 @@ public class FireflySpawner : MonoBehaviour
         SetId();
         SetSway();
         SetWings();
+        SetFog();
 
         var ren = GetComponent<MeshRenderer>();
 
@@ -322,6 +323,12 @@ public class FireflySpawner : MonoBehaviour
             Destroy(ren);
 
         Destroy(this);
+
+        void SetFog()
+        {
+            MaterialPropertyBlock mpt = S.Fog.GetMPB(_sceneName);
+            S.Fog.ApplyToGameObject(obj, mpt);
+        }
 
         void SetWings()
         {

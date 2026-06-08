@@ -119,6 +119,9 @@ public class EnemySpawner : MonoBehaviour
     {
         GameObject obj = Instantiate(S.UnworkedSpawner, transform.position, transform.rotation, S.Loader.Roots[_sceneName]);
 
+        MaterialPropertyBlock mpt = S.Fog.GetMPB(_sceneName);
+        S.Fog.ApplyToGameObject(obj, mpt);
+
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit, 20f))
             obj.transform.position = hit.point;
@@ -128,25 +131,31 @@ public class EnemySpawner : MonoBehaviour
 
     void Summon()
     {
-        GameObject obj;
+        GameObject obj = null;
+
+        Transform root = S.Loader.Roots[_sceneName];
 
         if (_type == "Zombella")
-            obj = Instantiate(S.Zombella, transform.position, transform.rotation, transform);
+            obj = Instantiate(S.Zombella, transform.position, transform.rotation, root);
         else if (_type == "Baka")
-            obj = Instantiate(S.Baka, transform.position, transform.rotation, transform);
+            obj = Instantiate(S.Baka, transform.position, transform.rotation, root);
         else if (_type == "Musculus")
-            obj = Instantiate(S.Musculus, transform.position, transform.rotation, transform);
+            obj = Instantiate(S.Musculus, transform.position, transform.rotation, root);
         else if (_type == "Ghost")
-            obj = Instantiate(S.Ghost, transform.position, transform.rotation, transform);
+            obj = Instantiate(S.Ghost, transform.position, transform.rotation, root);
         else if (_type == "Spider")
-            obj = Instantiate(S.Spider, transform.position, transform.rotation, transform);
+            obj = Instantiate(S.Spider, transform.position, transform.rotation, root);
+        else
+        {
+            S.Console.AddMessage($"Cannot spawn \"_type\" - no such type!", Color.red);
+            Destroy(gameObject);
+        }
 
-        var ren = GetComponent<MeshRenderer>();
+        MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+        S.Fog.ApplyToGameObject(obj, mpb);
+        //Duplication but lets it be so
 
-        if (ren != null)
-            Destroy(ren);
-
-        Destroy(this);
+        Destroy(gameObject);
     }
 
 #if UNITY_EDITOR
