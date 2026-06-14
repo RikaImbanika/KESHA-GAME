@@ -80,8 +80,6 @@ public class Zombie : MonoBehaviour
 
             _collider = gameObject.GetComponent<Collider>();
 
-            _followPlayer = false;
-
             _startPosition = transform.position;
 
             while (S.SM == null)
@@ -130,14 +128,14 @@ public class Zombie : MonoBehaviour
         if (!_dead)
         {
             _followPlayer = true;
+            S.Enemies.FollowPlayer(this);
             _health -= amount;
 
             if (_health > _maxHealth)
                 _health = _maxHealth;
             else if (_health <= 0)
             {
-                _dead = true;
-                Die();
+                DieRightNow();
                 S.AM.Play("Kill", 1.1f);
 
                 StartCoroutine(Loott());
@@ -154,6 +152,13 @@ public class Zombie : MonoBehaviour
                 S.AM.Play("Kill", 0.9f);
             }
         }
+    }
+
+    public void DieRightNow()
+    {
+        S.Enemies.UnfollowPlayer(this);
+        S.Enemies.SomebodyDies();
+        Die();
     }
 
     public void Die()
@@ -201,6 +206,7 @@ public class Zombie : MonoBehaviour
                                 if (angle > -90f && angle < 90f)
                                 {
                                     _followPlayer = true;
+                                    S.Enemies.FollowPlayer(this);
                                 }
 
                                 if (_followPlayer)
@@ -217,6 +223,7 @@ public class Zombie : MonoBehaviour
                     else
                     {
                         _followPlayer = false;
+                        S.Enemies.UnfollowPlayer(this);
                         _agent.destination = _startPosition;
                     }
 

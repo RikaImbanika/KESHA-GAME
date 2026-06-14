@@ -31,11 +31,14 @@ public class Fog : MonoBehaviour
             foreach (string sceneName in S.Loader._rooms.Keys)
                 _mpbs.Add(sceneName, new MaterialPropertyBlock());
 
+            _mpbs["Income"].SetColor("_FogColor", new Color(0.4292453f, 0.6394855f, 1f));
+            _mpbs["Income"].SetFloat("_FogDensity", 0.001f);
+
             _mpbs["Hall"].SetColor("_FogColor", new Color(0.5f, 0.6f, 0.7f));
-            _mpbs["Hall"].SetFloat("_FogDensity", 0.02f);
+            _mpbs["Hall"].SetFloat("_FogDensity", 0.01f);
 
             _mpbs["Corridor"].SetColor("_FogColor", new Color(0.5f, 0.6f, 0.7f));
-            _mpbs["Corridor"].SetFloat("_FogDensity", 0.02f);
+            _mpbs["Corridor"].SetFloat("_FogDensity", 0.01f);
 
             Color[] fogPalette = {
                 new Color(0f, 0f, 0f),

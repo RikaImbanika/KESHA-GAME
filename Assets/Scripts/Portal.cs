@@ -82,6 +82,9 @@ public class Portal : MonoBehaviour
         gates.transform.localPosition = Vector3.zero;
         gates.transform.localRotation = Quaternion.identity;
         gates.transform.localScale = Vector3.one;
+
+        MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+        S.Fog.ApplyToGameObject(gates, mpb);
     }
 
     private bool UpdateSecondPortalParams()

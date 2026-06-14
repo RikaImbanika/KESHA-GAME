@@ -56,29 +56,6 @@ public class Gun : MonoBehaviour
 
                 S.AM.Play("Plasma");
 
-                NoSpots noSpots = hit.collider.gameObject.GetComponent<NoSpots>();
-                if (noSpots == null)
-                {
-                    GameObject spot = Instantiate(S.Spot);
-                    spot.transform.position = hit.point;
-                    spot.transform.rotation = Quaternion.LookRotation(hit.normal);
-                    spot.transform.Rotate(0f, 0f, UnityEngine.Random.Range(-180, 180));
-
-                    float x = spot.transform.localScale.x;
-                    float y = spot.transform.localScale.y;
-                    float z = spot.transform.localScale.z;
-                    float f = 2.5f;
-                    spot.transform.localScale = new Vector3(x * f, y * f, z * f);
-                    spot.transform.SetParent(hit.collider.gameObject.transform);
-
-                    S.AllFather._spots.Add(spot);
-                    if (S.AllFather._spots.Count > 300)
-                    {
-                        Destroy(S.AllFather._spots[0]);
-                        S.AllFather._spots.RemoveAt(0);
-                    }
-                }
-
                 Zombie zombie = hit.collider.gameObject.GetComponent<Zombie>();
                 if (zombie != null)
                 {
@@ -131,7 +108,11 @@ public class Gun : MonoBehaviour
                     }
                 }
 
+                Transform root = S.Loader.Roots[S.PS._currentSceneName];
+
                 MaterialPropertyBlock mpb = S.Fog.GetMPB(S.PS._currentSceneName);
+
+                AddSpot();
 
                 Vector3 from = S.Camera.transform.position + S.Camera.transform.right * _rayRight - S.Camera.transform.up * _rayDown;
 
@@ -154,11 +135,9 @@ public class Gun : MonoBehaviour
                 ray2.transform.position = new Vector3(rx, ry, rz);
                 ray2.transform.rotation = Quaternion.LookRotation(hit.point - from);
 
-                
-
                 for (int i = 0; i < _sparklesCount; i++)
                 {
-                    GameObject sparkle = Instantiate(S.PlayerSparkle);
+                    GameObject sparkle = Instantiate(S.PlayerSparkle, root);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
 
@@ -180,7 +159,7 @@ public class Gun : MonoBehaviour
                     S.Fog.ApplyToGameObject(sparkle, mpb);
                 }
 
-                GameObject hitPoint = Instantiate(S.BlueHitPoint, hit.point, Quaternion.identity);
+                GameObject hitPoint = Instantiate(S.BlueHitPoint, hit.point, Quaternion.identity, root);
 
                 S.Fog.ApplyToGameObject(hitPoint, mpb);
 
@@ -193,6 +172,35 @@ public class Gun : MonoBehaviour
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
 
                     S.Fog.ApplyToGameObject(sparkle, mpb);
+                }
+
+                void AddSpot()
+                {
+                    NoSpots noSpots = hit.collider.gameObject.GetComponent<NoSpots>();
+
+                    if (noSpots == null)
+                    {
+                        GameObject spot = Instantiate(S.Spot);
+                        spot.transform.position = hit.point;
+                        spot.transform.rotation = Quaternion.LookRotation(hit.normal);
+                        spot.transform.Rotate(0f, 0f, UnityEngine.Random.Range(-180, 180));
+
+                        float x = spot.transform.localScale.x;
+                        float y = spot.transform.localScale.y;
+                        float z = spot.transform.localScale.z;
+                        float f = 2.5f;
+                        spot.transform.localScale = new Vector3(x * f, y * f, z * f);
+                        spot.transform.SetParent(hit.collider.gameObject.transform);
+
+                        S.Fog.ApplyToGameObject(spot, mpb);
+
+                        S.AllFather._spots.Add(spot);
+                        if (S.AllFather._spots.Count > 300)
+                        {
+                            Destroy(S.AllFather._spots[0]);
+                            S.AllFather._spots.RemoveAt(0);
+                        }
+                    }
                 }
             }
             else

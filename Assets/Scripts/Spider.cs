@@ -189,9 +189,9 @@ public class Spider : MonoBehaviour
 
                 S.AM.Play("Kill", 1.1f);
             }
+            else
+                S.AM.Play("Kill", 0.9f);
         }
-        else
-            S.AM.Play("Kill", 0.9f);
     }
 
     public void Die()

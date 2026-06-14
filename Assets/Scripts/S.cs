@@ -116,6 +116,20 @@ public static class S : object
 	public static GameObject _snakeSpawner;
 	public static Fog _fog;
 
+	public static GameObject _rikaParticle;
+
+	public static GameObject RikaParticle
+	{
+		get
+		{
+			return _rikaParticle;
+		}
+		set
+		{
+			_rikaParticle = value;
+		}
+	}
+
 	public static Fog Fog
 	{
 		get

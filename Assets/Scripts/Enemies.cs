@@ -3,10 +3,17 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Enemies : MonoBehaviour
 {
+    private List<Zombie> _playerFollowers;
+
+    private float _timer;
+
+    private int _killsCounter;
+
     private List<string> _types;
     
     public List<string> Types
@@ -39,9 +46,63 @@ public class Enemies : MonoBehaviour
             _types.Add("Ghost");
             _types.Add("Spider");
 
+            _playerFollowers = new List<Zombie>();
+
             S.Enemies = this;
 
             yield return null;
+        }
+    }
+
+    void Update()
+    {
+        _timer += Time.deltaTime;
+
+        if (_timer > 1f)
+        {
+            for (int i = 0; i < _playerFollowers.Count; i++)
+            {
+                if (_playerFollowers[i] == null)
+                    Remove();
+                else if (!_playerFollowers[i]._followPlayer)
+                    Remove();
+                else if (_playerFollowers[i]._health <= 0)
+                    Remove();
+
+                void Remove()
+                {
+                    _playerFollowers.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    public void FollowPlayer(Zombie zombie)
+    {
+        if (!_playerFollowers.Contains(zombie))
+            _playerFollowers.Add(zombie);
+    }
+
+    public void UnfollowPlayer(Zombie zombie)
+    {
+        if (_playerFollowers.Contains(zombie))
+            _playerFollowers.Remove(zombie);
+    }
+
+    public void SomebodyDies()
+    {
+        _killsCounter++;
+
+        if (_playerFollowers.Count > 0)
+        {
+            if (_killsCounter > 7)
+            {
+                _killsCounter = 0;
+                Zombie who = _playerFollowers.Last();
+                string name = who._visibleName;
+                S.Console.AddMessage($"{name}: Guys, stop dying!", new Color(1f, 0.2f, 0f));
+            }
         }
     }
 

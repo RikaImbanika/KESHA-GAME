@@ -121,54 +121,49 @@ public class Sparkle : MonoBehaviour
 
     void Update()
     {
-        Do();
+        _deltaTime += Time.deltaTime;
 
-        void Do()
+        if (_deltaTime > _period)
         {
-            _deltaTime += Time.deltaTime;
+            if (_p > _minScale)
+                _decreaser += _deltaTime * 0.2f;
+            else
+                _decreaser += _deltaTime * 1f;
 
-            if (_deltaTime > _period)
+            _direction += new Vector3(0, _gravity * _deltaTime, 0); ///
+
+            _velocity = _direction.magnitude;
+
+            _p *= 1 - _deltaTime * _decreaser;
+
+            _prevIndex = _index;
+            _index++;
+            if (_index >= _count)
+                _index = 0;
+            else
+                Insta();
+
+            if (Dying())
+                return;
+
+            _visual[_index].transform.localScale = new Vector3(_p, _p, _velocity);
+
+            Ray ray = new Ray(_visual[_prevIndex].transform.position, _direction);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, _velocity, _layerMask))
             {
-                if (_p > _minScale)
-                    _decreaser += _deltaTime * 0.2f;
-                else
-                    _decreaser += _deltaTime * 1f;
-
-                _direction += new Vector3(0, _gravity * _deltaTime, 0); ///
-
-                _velocity = _direction.magnitude;
-
-                _p *= 1 - _deltaTime * _decreaser;
-
-                _prevIndex = _index;
-                _index++;
-                if (_index >= _count)
-                    _index = 0;
-                else
-                    Insta();
-
-                if (Dying())
-                    return;
-
-                _visual[_index].transform.localScale = new Vector3(_p, _p, _velocity);
-
-                Ray ray = new Ray(_visual[_prevIndex].transform.position, _direction);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, _velocity, _layerMask))
-                {
-                    _visual[_index].transform.position = hit.point;
-                    _visual[_index].transform.transform.rotation = Quaternion.LookRotation(-_direction);
-                    _direction = Vector3.Reflect(_direction, hit.normal.normalized) * _friction;
-                }
-                else
-                {
-                    _visual[_index].transform.position = _visual[_prevIndex].transform.position + _direction;
-                    _visual[_index].transform.transform.rotation = Quaternion.LookRotation(-_direction);
-                }
-
-                _deltaTime = 0;
+                _visual[_index].transform.position = hit.point;
+                _visual[_index].transform.transform.rotation = Quaternion.LookRotation(-_direction);
+                _direction = Vector3.Reflect(_direction, hit.normal.normalized) * _friction;
             }
+            else
+            {
+                _visual[_index].transform.position = _visual[_prevIndex].transform.position + _direction;
+                _visual[_index].transform.transform.rotation = Quaternion.LookRotation(-_direction);
+            }
+
+            _deltaTime = 0;
         }
     }
 }

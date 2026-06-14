@@ -146,6 +146,8 @@ public class Initialiser : MonoBehaviour
 
         S.Loot = Prefabs.Get("Loot");
 
+        S.RikaParticle = Prefabs.Get("Sparkles/RikaParticle");
+
         S.SquarePainting = Prefabs.Get("SquarePainting");
         S.WoodenPaintingFrame = Prefabs.Get("WoodenPaintingFrame");
 

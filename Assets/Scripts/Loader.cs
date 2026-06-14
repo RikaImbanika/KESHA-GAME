@@ -81,25 +81,20 @@ public class Loader : MonoBehaviour
 
             S.Ph.transform.position = new Vector3(6.08f, -13.18f, -852.67f) + v;
 
-            while (S.PS == null)
-            {
-                yield return new WaitForSeconds(0.1f);
-                Debug.Log("Loader waiting for S.PlayerStorage");
-            }
+            while (S.Loader == null ||
+            S.Loader.Roots == null ||
+            !S.Loader.Roots.ContainsKey("Income"))
+                yield return new WaitForSeconds(0.2f);
+
+            S.Fog.SetFog("Income", Roots["Income"].gameObject);
 
             while (S.PS == null)
-            {
-                yield return new WaitForSeconds(0.1f);
-                Debug.Log("Loader waiting for S.PlayerStorage");
-            }
+                yield return new WaitForSeconds(0.2f);
 
             S.PS._currentSceneName = "Income";
 
             while (S.SM == null)
-            {
-                yield return new WaitForSeconds(0.1f);
-                Debug.Log("Loader waiting for S.SaverManager");
-            }
+                yield return new WaitForSeconds(0.2f);
 
             S.SM.Save("sceneName", "Income");
 
@@ -147,12 +142,8 @@ public class Loader : MonoBehaviour
         float dRotation = -Vector3.SignedAngle(dir, -nextDoorModel._right, new Vector3(0, -1, 0));
         Vector3 offset = nextDoorModel._right * 2;
 
-        Debug.Log($"Forward is {offset.x} {offset.y} {offset.z}.");
-
         S.Ph.transform.position = nextDoorModel._coordinates + v + offset;
         S.PlayerCamScript.Rotate(dRotation);
-
-        Debug.Log($"GONE TO SCENE {nextSceneName} (through door)");
 
         S.SDC.RequestCleanup();
 
@@ -168,8 +159,6 @@ public class Loader : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
             deadline += 0.2f;
         }
-
-        Debug.Log($"GONE TO SCENE {nextSceneName} (through portal)");
 
         _teleporting = false;
     }
