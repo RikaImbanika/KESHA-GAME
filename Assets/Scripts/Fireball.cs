@@ -2,8 +2,6 @@
 // Copyright (c) 2026 RIKA IMBANIKA
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,7 +42,7 @@ public class Fireball : MonoBehaviour
         float distance = (transform.position - S.Camera.transform.position).magnitude;
         shot.volume = MathF.Min(0.2f, 50 / (distance * distance));
         shot.Play();
-        Destroy(shot, 5);
+        Destroy(shot.gameObject, 5);
     }
 
     void Update()
@@ -79,7 +77,7 @@ public class Fireball : MonoBehaviour
                     float distance = (transform.position - S.Camera.transform.position).magnitude;
                     caboom.volume = MathF.Min(0.20f, 50 / (distance * distance));
                     caboom.Play();
-                    Destroy(caboom, 5);
+                    Destroy(caboom.gameObject, 5);
 
                     NoSpots ns = go.GetComponent<NoSpots>();
                     if (ns == null)
@@ -156,6 +154,8 @@ public class Fireball : MonoBehaviour
 
                         S.Fog.ApplyToGameObject(hitPoint, _mpb);
                         S.Fog.ApplyToGameObject(heavySparkle, _mpb);
+
+                        Destroy(hitPoint, 5f);
                     }
                 }
 

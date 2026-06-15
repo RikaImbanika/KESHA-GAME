@@ -83,13 +83,13 @@ public class Sparkle : MonoBehaviour
                 _instantiated = true;
 
             if (_color == "red")
-                _visual[_index] = GameObject.Instantiate(S.RedLaser); /////////////////
+                _visual[_index] = Instantiate(S.RedLaser, transform); ///
             else if (_color == "blue")
-                _visual[_index] = GameObject.Instantiate(S.BlueLaser); /////////////////
+                _visual[_index] = Instantiate(S.BlueLaser, transform); ///
             else if (_color == "green")
-                _visual[_index] = GameObject.Instantiate(S.GreenLaser); /////////////////
+                _visual[_index] = Instantiate(S.GreenLaser, transform); ///
             else if (_color == "purple")
-                _visual[_index] = GameObject.Instantiate(S.PurpleLaser); /////////////////
+                _visual[_index] = Instantiate(S.PurpleLaser, transform); ///
 
             S.Fog.ApplyToGameObject(_visual[_index], _mpb);
         }

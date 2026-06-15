@@ -257,7 +257,6 @@ public class Door : MonoBehaviour
 		{
 			_locked = false;
 			_doorModel._locked = false;
-			Debug.LogError($"sc {_doorModel._nextSceneName} did {_doorModel._nextDoorId}");
 			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._door.Unlock();
 			_stamp.Unlock();
 		}

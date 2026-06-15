@@ -14,6 +14,7 @@ public class EnemySpawner : MonoBehaviour
     private string _type;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
+    private Transform _root;
 
     void Start()
     {
@@ -39,7 +40,7 @@ public class EnemySpawner : MonoBehaviour
 
     void GetId()
     {
-        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+        _sceneName = gameObject.scene.name;
         _id = S.ID("En", gameObject);
         _idType = S.IDM(_id, "typ");
     }
@@ -49,8 +50,11 @@ public class EnemySpawner : MonoBehaviour
         while (S.SM == null || S.FireflyObj == null)
             yield return new WaitForSeconds(0.2f);
 
-        while (!S.Loader.Roots.ContainsKey(_sceneName))
+        while (!S.Loader.Roots.ContainsKey(_sceneName) ||
+            S.Loader.Roots[_sceneName] == null)
             yield return new WaitForSeconds(0.1f);
+
+        _root = S.Loader.Roots[_sceneName];
 
         Load();
 
@@ -117,7 +121,7 @@ public class EnemySpawner : MonoBehaviour
 
     void NotExists()
     {
-        GameObject obj = Instantiate(S.UnworkedSpawner, transform.position, transform.rotation, S.Loader.Roots[_sceneName]);
+        GameObject obj = Instantiate(S.UnworkedSpawner, transform.position, transform.rotation, _root);
 
         MaterialPropertyBlock mpt = S.Fog.GetMPB(_sceneName);
         S.Fog.ApplyToGameObject(obj, mpt);
@@ -133,18 +137,16 @@ public class EnemySpawner : MonoBehaviour
     {
         GameObject obj = null;
 
-        Transform root = S.Loader.Roots[_sceneName];
-
         if (_type == "Zombella")
-            obj = Instantiate(S.Zombella, transform.position, transform.rotation, root);
+            obj = Instantiate(S.Zombella, transform.position, transform.rotation, _root);
         else if (_type == "Baka")
-            obj = Instantiate(S.Baka, transform.position, transform.rotation, root);
+            obj = Instantiate(S.Baka, transform.position, transform.rotation, _root);
         else if (_type == "Musculus")
-            obj = Instantiate(S.Musculus, transform.position, transform.rotation, root);
+            obj = Instantiate(S.Musculus, transform.position, transform.rotation, _root);
         else if (_type == "Ghost")
-            obj = Instantiate(S.Ghost, transform.position, transform.rotation, root);
+            obj = Instantiate(S.Ghost, transform.position, transform.rotation, _root);
         else if (_type == "Spider")
-            obj = Instantiate(S.Spider, transform.position, transform.rotation, root);
+            obj = Instantiate(S.Spider, transform.position, transform.rotation, _root);
         else
         {
             S.Console.AddMessage($"Cannot spawn \"_type\" - no such type!", Color.red);

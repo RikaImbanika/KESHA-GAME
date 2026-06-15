@@ -18,6 +18,7 @@ public class PaintingPlacer : MonoBehaviour
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
     private float _wallHueShiftSpeed;
+    private Transform _root;
 
     void Start()
     {
@@ -48,8 +49,12 @@ public class PaintingPlacer : MonoBehaviour
             while (S.SM == null)
                 yield return new WaitForSeconds(0.2f);
 
-            while (!S.Loader.Roots.ContainsKey(_sceneName))
-                yield return new WaitForSeconds(0.2f);
+            while (S.Loader.Roots == null ||
+                !S.Loader.Roots.ContainsKey(_sceneName) ||
+                S.Loader.Roots[_sceneName] == null)
+                yield return new WaitForSeconds(0.25f);
+
+            _root = S.Loader.Roots[_sceneName];
 
             _paintingId = S.SM.LoadInt(_pidid) ?? -1;
 
@@ -80,11 +85,6 @@ public class PaintingPlacer : MonoBehaviour
 
     IEnumerator Place()
     {
-        while (S.Loader.Roots == null ||
-            !S.Loader.Roots.ContainsKey(_sceneName) ||
-            S.Loader.Roots[_sceneName] == null)
-            yield return new WaitForSeconds(0.25f);
-
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.forward, out hit, 5f, _layerMask))
         {
@@ -134,10 +134,10 @@ public class PaintingPlacer : MonoBehaviour
 
                 Vector3 point2 = new Vector3(hit.point.x, hit2.point.y + 7f, hit.point.z);
 
-                GameObject painting = GameObject.Instantiate(S.SquarePainting, point2, transform.rotation, S.Loader.Roots[_sceneName]);
+                GameObject painting = Instantiate(S.SquarePainting, point2, transform.rotation, _root);
                 GameObject child = painting.transform.GetChild(0).gameObject;
 
-                GameObject frame = GameObject.Instantiate(S.WoodenPaintingFrame, point2, transform.rotation, S.Loader.Roots[_sceneName]);
+                GameObject frame = Instantiate(S.WoodenPaintingFrame, point2, transform.rotation, _root);
 
                 string name = S.Paintings._names[_paintingId];
                 mat.mainTexture = Resources.Load<Texture2D>($"Textures/Paintings/{name}");
@@ -214,7 +214,7 @@ public class PaintingPlacer : MonoBehaviour
 
     void GetId()
     {
-        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+        _sceneName = gameObject.scene.name;
 
         if (string.IsNullOrEmpty(_id))
             _id = S.ID("PA", gameObject);

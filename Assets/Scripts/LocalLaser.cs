@@ -161,8 +161,9 @@ public class LocalLaser : MonoBehaviour
                     _rightPointObj.SetActive(true);
                 }
 
+                //Stable damage
                 if (hit.collider.gameObject.CompareTag("Player"))
-                    S.PS.Damage(16f * _opti.DeltaTime);
+                    S.PS.Damage(14f * _opti.DeltaTime);
             }
             else if (_hitSomething)
             {
@@ -184,8 +185,9 @@ public class LocalLaser : MonoBehaviour
                     for (int i = 0; i < 3; i++)
                         ThrowSparkle();
 
+                    //First touch damage
                     if (hit.collider.gameObject.CompareTag("Player"))
-                        S.PS.Damage(4f); //x2 for right & left
+                        S.PS.Damage(2f); //x2 for right & left
 
                     if (right)
                         _hitSomethingBeforeRight = true;

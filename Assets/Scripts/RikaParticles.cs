@@ -15,12 +15,14 @@ public class RikaParticles : MonoBehaviour
     Texture2D _sparkleTex;
     Texture2D _longSparkleTex;
     float _currentAngle = 0f;
+    float _angleStep;
 
     void Start()
     {
-        _period = 1.1f;
-        _h = 2f;
-        _r = 2f;
+        _period = 0.16f;
+        _angleStep = 0.1f;
+        _h = 5f;
+        _r = 2.6f;
         _shader = Shader.Find("Custom/HueShiftUnlitTransparentTwoSidesF");
         _sparkleTex = Resources.Load<Texture2D>("Textures/Sparkles/SPARKLE_2_BLUE");
         _longSparkleTex = Resources.Load<Texture2D>("Textures/Lasers/BlueLaser");
@@ -33,15 +35,18 @@ public class RikaParticles : MonoBehaviour
 
         _timer += Time.deltaTime;
 
-        if (_timer > 0.2f)
+        if (_timer > _period)
         {
             Vector3 p1 = S.Camera.transform.position + new Vector3(0, _h, 0);
 
-            _currentAngle += 0.2f;
+            _currentAngle += _angleStep;
             float sinBuf = Mathf.Sin(_currentAngle);
             Vector3 dir = new Vector3(sinBuf * _r, 0f, Mathf.Cos(_currentAngle) * _r);
 
             Vector3 p2 = p1 + dir;
+
+            if (!S.Loader.Roots.ContainsKey(S.PS._currentSceneName))
+                return;
 
             Transform root = S.Loader.Roots[S.PS._currentSceneName];
 

@@ -27,18 +27,29 @@ public class Drone : MonoBehaviour
     private float _damageMultiplier;
     private string _sceneName;
     private MaterialPropertyBlock _mpb;
+    private Transform _root;
     
     public void Start()
     {
         _sceneName = gameObject.scene.name;
         _mpb = S.Fog.GetMPB(_sceneName);
         _opti = new Optimiser(_sceneName);
-        
+
         _layerMaskForLasers = 1 << LayerMask.NameToLayer("Player") |
                          1 << LayerMask.NameToLayer("Static") |
                          1 << LayerMask.NameToLayer("Enemies") |
                          1 << LayerMask.NameToLayer("Items") |
                          1 << LayerMask.NameToLayer("Default");
+
+        StartCoroutine(LateStart());
+
+        IEnumerator LateStart()
+        {
+            while (!S.Loader.Roots.ContainsKey(_sceneName) ||
+                S.Loader.Roots[_sceneName] == null)
+                yield return new WaitForSeconds(0.1f);
+            _root = S.Loader.Roots[_sceneName];
+        }
     }
 
     public void Init(string type, string type2, string color, float _damageMultiplier)
@@ -247,13 +258,13 @@ public class Drone : MonoBehaviour
             GameObject fireball = null;
 
             if (_color == "red")
-                fireball = Instantiate(S.FireballRed, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
+                fireball = Instantiate(S.FireballRed, transform.position + dir.normalized, rotation, _root);
             else if (_color == "blue")
-                fireball = Instantiate(S.FireballBlue, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
+                fireball = Instantiate(S.FireballBlue, transform.position + dir.normalized, rotation, _root);
             else if (_color == "green")
-                fireball = Instantiate(S.FireballGreen, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
+                fireball = Instantiate(S.FireballGreen, transform.position + dir.normalized, rotation, _root);
             else if (_color == "purple")
-                fireball = Instantiate(S.FireballPurple, transform.position + dir.normalized, rotation, S.Loader.Roots[_head._sceneName]);
+                fireball = Instantiate(S.FireballPurple, transform.position + dir.normalized, rotation, _root);
 
             Fireball eb = fireball.GetComponent<Fireball>();
             eb._active = true;
@@ -310,12 +321,12 @@ public class Drone : MonoBehaviour
                 int period = (int)(60f * 1f / deltaWalk);
                 if (S.RND.Next(0, period) == 0)
                 {
-                    GameObject sparkle = Instantiate(_sparklePrefab);
+                    GameObject sparkle = Instantiate(_sparklePrefab, _root);
                     sparkle.transform.position = hit.point;
                     sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
 
                     S.Fog.ApplyToGameObject(sparkle, _mpb);
-                } /////////////
+                } ///
             }
         }
     }

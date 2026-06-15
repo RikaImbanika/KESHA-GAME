@@ -10,122 +10,222 @@ public class RikaParticle : MonoBehaviour
     public GameObject _flatSparkle;
     public GameObject _longSparkle;
     GameObject[] _flatSparkles;
-    GameObject[] _longSparkles;
+    GameObject[] _flatSparklesDown;
     MaterialPropertyBlock _mpb;
     float _timer;
     float _globalTimer;
+    float _timer3;
     float _period;
     Vector3 _startPos;
     Vector3 _flatSparkleStartScale;
     bool _endedPart1;
     Vector3[] _flatSparklesDirs;
+    Vector3[] _flatSparklesDownDirs;
     Quaternion _rotatorBuffered;
-    int _longIndex;
-    float _fallSpeed;
-    Vector3 _p1;
-    Vector3 _p2;
+    Vector3 _position;
     float _gravity;
+    bool _needPart2;
+    float _height;
+    bool _part3Started;
+    bool _endedPart3;
+    bool _initialised;
+    Vector3 _hitPoint;
 
     void Start()
     {
-        _period = 1 / 30f;
+        StartCoroutine(LateStart());
 
-        _gravity = 1.3f;
-
-        _startPos = transform.position;
-
-        _mpb = S.Fog.GetMPB(S.PS._currentSceneName);
-
-        _flatSparkleStartScale = _flatSparkle.transform.localScale;
-
-        _flatSparkles = new GameObject[3];
-        _longSparkles = new GameObject[3];
-
-        _flatSparkles[0] = _flatSparkle;
-        _longSparkles[0] = _longSparkle; //TO DO: Only one.
-
-        _flatSparklesDirs = new Vector3[3];
-
-        Vector3 _toPlayer = S.Camera.transform.position - _startPos;
-
-        _rotatorBuffered = Quaternion.Euler(90, 0, 0);
-
-        for (int i = 1; i < 3; i++)
+        IEnumerator LateStart()
         {
-            _flatSparkles[i] = Instantiate(_flatSparkle, _flatSparkle.transform.position, _flatSparkle.transform.rotation, transform);
-            _longSparkles[i] = Instantiate(_longSparkle, transform);
-        }
+            _period = 1 / 30f;
 
-        for (int i = 0; i < 3; i++)
-        {
-            float power = Random.Range(0.05f, 1f);
+            _gravity = 4.5f;
 
-            _flatSparklesDirs[i] = RandomPerpendicular(_toPlayer) * power;
+            _startPos = transform.position;
 
-            S.Fog.ApplyToGameObject(_flatSparkles[i], _mpb);
-            S.Fog.ApplyToGameObject(_longSparkles[i], _mpb);
+            while (S.Fog == null ||
+                S.PS == null)
+                yield return new WaitForSeconds(0.25f);
 
-            _longSparkles[i].transform.localScale = Vector3.zero;
+            _mpb = S.Fog.GetMPB(S.PS._currentSceneName);
+
+            _flatSparkleStartScale = _flatSparkle.transform.localScale;
+
+            _flatSparkles = new GameObject[3];
+
+            _needPart2 = S.RND.Next(20) == 0;
+
+            if (_needPart2)
+            {
+                _flatSparklesDown = new GameObject[3];
+                _flatSparklesDownDirs = new Vector3[3];
+            }
+
+            _flatSparkles[0] = _flatSparkle;
+
+            _flatSparklesDirs = new Vector3[3];
+
+            Vector3 _toPlayer = S.Camera.transform.position - _startPos;
+
+            _rotatorBuffered = Quaternion.Euler(90, 0, 0);
+
+            for (int i = 1; i < 3; i++)
+                _flatSparkles[i] = Instantiate(_flatSparkle, _flatSparkle.transform.position, _flatSparkle.transform.rotation, transform);
+
+            for (int i = 0; i < 3; i++)
+            {
+                float power = Random.Range(0.02f, 0.65f);
+
+                _flatSparklesDirs[i] = RandomPerpendicular(_toPlayer) * power + new Vector3(0, -4f, 0);
+
+                S.Fog.ApplyToGameObject(_flatSparkles[i], _mpb);
+
+                if (_needPart2)
+                {
+                    _flatSparklesDown[i] = Instantiate(_flatSparkle, _flatSparkle.transform.position, _flatSparkle.transform.rotation, transform);
+
+                    S.Fog.ApplyToGameObject(_flatSparklesDown[i], _mpb);
+
+                    _flatSparklesDown[i].transform.localScale = Vector3.zero;
+                }
+            }
+
+            if (!_needPart2)
+                Destroy(_longSparkle);
+            else
+            {
+                _longSparkle.transform.localScale = Vector3.zero;
+                _height = 25f;
+
+                Ray ray = new Ray(transform.position, Vector3.down);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, 25f))
+                    _height = Vector3.Magnitude(hit.point - transform.position);
+
+                for (int i = 0; i < 3; i++)
+                    _flatSparklesDown[i].transform.position = hit.point;
+
+                _hitPoint = hit.point;
+            }
+
+            _initialised = true;
         }
     }
 
     void Update()
     {
+        if (!_initialised)
+            return;
+
         _timer += Time.deltaTime;
         _globalTimer += Time.deltaTime;
 
         if (_timer > _period)
         {
             Part1();
-            Part2();
+            if (_needPart2)
+            {
+                if (_part3Started)
+                {
+                    if (!_endedPart3)
+                        Part3();
+                }
+                else
+                    Part2();
+            }
 
             _timer = 0;
 
             void Part1()
             {
-                float _dur = 0.6f;
+                float dur = 1.5f;
 
-                if (_globalTimer < _dur)
+                if (_globalTimer < dur)
                 {
                     Vector3 _toPlayer = S.Camera.transform.position - _startPos;
 
-                    float s = (_dur - _globalTimer) / _dur;
+                    Quaternion rot = Quaternion.LookRotation(_toPlayer) * _rotatorBuffered;
+
+                    Vector3 s = _flatSparkleStartScale * (dur - _globalTimer) / dur;
 
                     for (int i = 0; i < 3; i++)
                     {
-                        _flatSparkles[i].transform.rotation = Quaternion.LookRotation(_toPlayer) * _rotatorBuffered;
-                        _flatSparkles[i].transform.localScale = _flatSparkleStartScale * s;
-                        _flatSparkles[i].transform.position += _flatSparklesDirs[i] * Time.deltaTime;
+                        _flatSparkles[i].transform.rotation = rot;
+                        _flatSparkles[i].transform.localScale = s;
+                        _flatSparkles[i].transform.position += _flatSparklesDirs[i] * _period;
                     }
                 }
                 else if (!_endedPart1)
                 {
                     for (int i = 0; i < 3; i++)
-                    {
                         Destroy(_flatSparkles[i]);
-                        Destroy(_longSparkles[i]);
-                    }
 
                     _endedPart1 = true;
 
-                    Destroy(gameObject); //
+                    if (_needPart2 && _part3Started && _endedPart3 || !_needPart2)
+                        Destroy(gameObject);
                 }
             }
 
             void Part2()
             {
-                _p1 = _longSparkles[_longIndex].transform.position;
+                float a1 = Mathf.Pow(_globalTimer - 0.15f, 2) * _gravity;
+                if (_globalTimer < 0.1f)
+                    a1 = 0;
+                float a2 = Mathf.Pow(_globalTimer, 2) * _gravity;
 
-                _fallSpeed += _gravity * Time.deltaTime;
+                _position = _startPos - new Vector3(0, a2, 0);
 
-                _p2 = _p1 - new Vector3(0, _fallSpeed, 0);
+                _longSparkle.transform.position = _position;
+                _longSparkle.transform.localScale = new Vector3(1, 1, a2 - a1);
 
-                _longIndex++;
-                if (_longIndex >= 3)
-                    _longIndex = 0;
+                if (a2 > _height)
+                {
+                    Destroy(_longSparkle);
 
-                _longSparkles[_longIndex].transform.position = _p2;
-                _longSparkles[_longIndex].transform.localScale = new Vector3(1, 1, _fallSpeed);
+                    Vector3 _toPlayer = S.Camera.transform.position - _flatSparklesDown[0].transform.position;
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float power = Random.Range(0.05f, 3f);
+
+                        _flatSparklesDownDirs[i] = RandomPerpendicular(_toPlayer) * power + new Vector3(0, 0.4f, 0);
+                    }
+
+                    _part3Started = true;
+                }
+            }
+
+            void Part3()
+            {
+                _timer3 += Time.deltaTime;
+
+                float dur = 0.2f;
+
+                if (_timer3 < dur)
+                {
+                    Vector3 _toPlayer = S.Camera.transform.position - _flatSparklesDown[0].transform.position;
+                    Quaternion rot = Quaternion.LookRotation(_toPlayer) * _rotatorBuffered;
+
+                    Vector3 s = _flatSparkleStartScale * (dur - _timer3) / dur;
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        _flatSparklesDown[i].transform.rotation = rot;
+                        _flatSparklesDown[i].transform.localScale = s;
+                        _flatSparklesDown[i].transform.position += _flatSparklesDownDirs[i] * _period;
+                    }
+                }
+                else if (!_endedPart3)
+                {
+                    for (int i = 0; i < 3; i++)
+                        Destroy(_flatSparklesDown[i]);
+
+                    _endedPart3 = true;
+
+                    if (_endedPart1)
+                        Destroy(gameObject);
+                }
             }
         }
     }

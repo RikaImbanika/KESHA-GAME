@@ -35,13 +35,17 @@ public class FireflySpawner : MonoBehaviour
         IEnumerator Start0()
         {
             GetId();
+
+            while (!S.Loader.Roots.ContainsKey(_sceneName))
+                yield return new WaitForSeconds(0.25f);
+
             yield return Birn();
         }
     }
 
     void GetId()
     {
-        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+        _sceneName = gameObject.scene.name;
         _id = S.ID("FF", gameObject);
         _idPos = S.IDM(_id, "pos");
         _idColor = S.IDM(_id, "clr");

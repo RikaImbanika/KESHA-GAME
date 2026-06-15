@@ -58,7 +58,7 @@ public class Spider : MonoBehaviour
     private Vector3 _lasersOffset;
     private float _lasersScaleFactor;
     private MaterialPropertyBlock _mpb;
-
+    private Transform _root;
 
     void Start()
     {
@@ -88,59 +88,70 @@ public class Spider : MonoBehaviour
 
         _startPosition = transform.position;
 
-        GetId();
+        StartCoroutine(LateStart());
 
-        _mpb = S.Fog.GetMPB(_sceneName);
-        S.Fog.ApplyToGameObject(gameObject, _mpb);
-
-        _directions = new Vector3[4];
-        _lasers = new GameObject[4];
-        _points = new GameObject[4];
-
-        _collider = gameObject.GetComponent<Collider>();
-
-        _agent = GetComponent<NavMeshAgent>();
-        _agent.speed = _speed;
-
-        _ani = GetComponent<Animator>();
-        _followPlayer = false;
-
-        for (int i = 0; i < _lasersCount; i++)
+        IEnumerator LateStart()
         {
-            _directions[i] = GetLasDir();
+            GetId();
 
-            _lasers[i] = Instantiate(S.RedLaser, transform.position + _lasersOffset, transform.rotation, transform); //
-            S.Fog.ApplyToGameObject(_lasers[i], _mpb);
-            _lasersScaleFactor = 1f / _lasers[i].transform.lossyScale.z;
-            _lasers[i].SetActive(false);
+            _mpb = S.Fog.GetMPB(_sceneName);
+            S.Fog.ApplyToGameObject(gameObject, _mpb);
 
-            _points[i] = Instantiate(S.RedPoint, transform.position + _lasersOffset, transform.rotation, transform); //
-            S.Fog.ApplyToGameObject(_points[i], _mpb);
-            _points[i].SetActive(false);
-        }
+            while (!S.Loader.Roots.ContainsKey(_sceneName) ||
+            S.Loader.Roots[_sceneName] == null)
+                yield return new WaitForSeconds(0.16f);
 
-        _laserDown = Instantiate(S.RedLaser, transform.position + _lasersOffset, Quaternion.LookRotation(Vector3.down), transform); //
-        S.Fog.ApplyToGameObject(_laserDown, _mpb);
-        _laserDown.SetActive(false);
+            _root = S.Loader.Roots[_sceneName];
 
-        var loadPos = S.SM.LoadVector3(_idPos);
+            _directions = new Vector3[4];
+            _lasers = new GameObject[4];
+            _points = new GameObject[4];
 
-        if (loadPos.HasValue)
-        {
-            transform.position = loadPos ?? transform.position;
-            transform.rotation = S.SM.LoadQuaternion(_idRot) ?? transform.rotation;
-            _health = S.SM.LoadFloat(_idHp) ?? _health;
+            _collider = gameObject.GetComponent<Collider>();
 
-            if (_health <= 0)
+            _agent = GetComponent<NavMeshAgent>();
+            _agent.speed = _speed;
+
+            _ani = GetComponent<Animator>();
+            _followPlayer = false;
+
+            for (int i = 0; i < _lasersCount; i++)
             {
-                _ani.SetFloat("deathSpeed", 100f);
-                Die();
+                _directions[i] = GetLasDir();
+
+                _lasers[i] = Instantiate(S.RedLaser, transform.position + _lasersOffset, transform.rotation, transform); //
+                S.Fog.ApplyToGameObject(_lasers[i], _mpb);
+                _lasersScaleFactor = 1f / _lasers[i].transform.lossyScale.z;
+                _lasers[i].SetActive(false);
+
+                _points[i] = Instantiate(S.RedPoint, transform.position + _lasersOffset, transform.rotation, transform); //
+                S.Fog.ApplyToGameObject(_points[i], _mpb);
+                _points[i].SetActive(false);
+            }
+
+            _laserDown = Instantiate(S.RedLaser, transform.position + _lasersOffset, Quaternion.LookRotation(Vector3.down), transform); //
+            S.Fog.ApplyToGameObject(_laserDown, _mpb);
+            _laserDown.SetActive(false);
+
+            var loadPos = S.SM.LoadVector3(_idPos);
+
+            if (loadPos.HasValue)
+            {
+                transform.position = loadPos ?? transform.position;
+                transform.rotation = S.SM.LoadQuaternion(_idRot) ?? transform.rotation;
+                _health = S.SM.LoadFloat(_idHp) ?? _health;
+
+                if (_health <= 0)
+                {
+                    _ani.SetFloat("deathSpeed", 100f);
+                    Die();
+                }
+                else
+                    InvokeRepeating("SavingMethod", 0f, 3f);
             }
             else
                 InvokeRepeating("SavingMethod", 0f, 3f);
         }
-        else
-            InvokeRepeating("SavingMethod", 0f, 3f);
     }
 
     void GetId()
@@ -183,7 +194,7 @@ public class Spider : MonoBehaviour
                 IEnumerator Loott()
                 {
                     yield return new WaitForSeconds(0.5f);
-                    GameObject loot = Instantiate(S.Loot, S.Loader.Roots[_sceneName]);
+                    GameObject loot = Instantiate(S.Loot, _root);
                     loot.transform.position = transform.position;
                 }
 
@@ -310,7 +321,7 @@ public class Spider : MonoBehaviour
         {
             _nextLaserTime -= _opti.DeltaTime;
 
-            _laserRotation += _laserRotationDelta * _opti.DeltaTime * 0.001f;
+            _laserRotation += _laserRotationDelta * _opti.DeltaTime * 0.2f;
 
             if (_nextLaserTime <= 0)
             {
@@ -350,7 +361,7 @@ public class Spider : MonoBehaviour
                         int speed = (int)(3 * 60f * _opti.DeltaTime);
                         if (S.RND.Next(0, speed) == 0)
                         {
-                            GameObject sparkle = Instantiate(S.RedSparkle);
+                            GameObject sparkle = Instantiate(S.RedSparkle, _root);
                             sparkle.transform.position = hit.point;
                             sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
 
@@ -377,7 +388,7 @@ public class Spider : MonoBehaviour
             {
                 _nextFireTime = _fireCooldown;
                 Quaternion rotation = Quaternion.Euler(UnityEngine.Random.Range(-30f, 30f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(-30f, 30));
-                GameObject fireball = Instantiate(S.FireballRed, gameObject.transform.position + new Vector3(0, 6, 0), rotation, S.Loader.Roots[_sceneName]);
+                GameObject fireball = Instantiate(S.FireballRed, gameObject.transform.position + new Vector3(0, 6, 0), rotation, _root);
 
                 Fireball fb = fireball.GetComponent<Fireball>();
                 fb._active = true;

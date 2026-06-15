@@ -60,11 +60,8 @@ public class Loader : MonoBehaviour
         {
             S.Loader = this;
 
-            while (S.AllFather == null)
-            {
+            while (S.AllFather == null || S.Console == null)
                 yield return new WaitForSeconds(0.1f);
-                Debug.Log("Loader waiting for S.AllFater");
-            }
 
             InitMap();
             FillAliases();
@@ -81,9 +78,7 @@ public class Loader : MonoBehaviour
 
             S.Ph.transform.position = new Vector3(6.08f, -13.18f, -852.67f) + v;
 
-            while (S.Loader == null ||
-            S.Loader.Roots == null ||
-            !S.Loader.Roots.ContainsKey("Income"))
+            while (!S.Loader.Roots.ContainsKey("Income"))
                 yield return new WaitForSeconds(0.2f);
 
             S.Fog.SetFog("Income", Roots["Income"].gameObject);

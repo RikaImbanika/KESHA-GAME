@@ -38,7 +38,6 @@ public class RemoveAllMissingScripts
                 "Yes, remove all", "Cancel"))
             return;
 
-        // Remember the active scene before starting
         Scene originalScene = EditorSceneManager.GetActiveScene();
 
         string[] sceneGuids = AssetDatabase.FindAssets("t:Scene");
@@ -53,7 +52,6 @@ public class RemoveAllMissingScripts
                     scenePath, (float)i / total))
             {
                 EditorUtility.ClearProgressBar();
-                // Reopen the original scene if interrupted
                 EditorSceneManager.OpenScene(originalScene.path);
                 return;
             }
@@ -81,19 +79,16 @@ public class RemoveAllMissingScripts
             {
                 Debug.LogError($"Error processing scene {scenePath}: {e.Message}");
             }
-            // Do not close the scene here; it will be replaced by the next OpenScene or final restoration
         }
 
         EditorUtility.ClearProgressBar();
 
-        // Restore the scene that was originally open
         if (originalScene.IsValid())
         {
             EditorSceneManager.OpenScene(originalScene.path);
         }
         else
         {
-            // If the original scene is invalid for some reason, open the first one from the list
             if (sceneGuids.Length > 0)
             {
                 string firstScenePath = AssetDatabase.GUIDToAssetPath(sceneGuids[0]);
@@ -153,23 +148,27 @@ public class RemoveAllMissingScripts
         Debug.Log("Prefab cleanup completed.");
     }
 
-    /// <summary>
-    /// Recursively removes Missing Scripts from the object and all its children.
-    /// Uses the safe method GameObjectUtility.RemoveMonoBehavioursWithMissingScript.
-    /// </summary>
     private static bool SafeRemoveMissingRecursive(GameObject go)
     {
         bool removed = false;
 
-        // Remove all missing scripts on this specific object
-        int before = go.GetComponents<MonoBehaviour>().Length; // before removal
-        GameObjectUtility.RemoveMonoBehavioursWithMissingScript(go);
-        int after = go.GetComponents<MonoBehaviour>().Length;  // after
+        SerializedObject so = new SerializedObject(go);
+        SerializedProperty prop = so.FindProperty("m_Component");
+        int i = 0;
+        while (i < prop.arraySize)
+        {
+            if (prop.GetArrayElementAtIndex(i).objectReferenceValue == null)
+            {
+                prop.DeleteArrayElementAtIndex(i);
+                removed = true;
+            }
+            else
+            {
+                i++;
+            }
+        }
+        so.ApplyModifiedProperties();
 
-        if (after < before)
-            removed = true;
-
-        // Recursively for children
         foreach (Transform child in go.transform)
         {
             removed |= SafeRemoveMissingRecursive(child.gameObject);

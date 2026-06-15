@@ -53,17 +53,16 @@ public class Hotkeys
         if (isDragging)
         {
             int id = dragControlId;
-            HandleUtility.AddDefaultControl(id);
+
+            if (GUIUtility.hotControl != id)
+            {
+                StopDragging();
+                sceneView.Repaint();
+                return;
+            }
 
             if (e.type == EventType.MouseDrag || e.type == EventType.MouseMove)
             {
-                if (GUIUtility.hotControl != id)
-                {
-                    StopDragging();
-                    sceneView.Repaint();
-                    return;
-                }
-
                 Vector2 mouseDelta = e.mousePosition - lastMousePos;
                 if (mouseDelta != Vector2.zero)
                 {
@@ -76,7 +75,7 @@ public class Hotkeys
                     if (dragPlane.Raycast(ray, out enter) && dragPlane.Raycast(prevRay, out prevEnter))
                     {
                         Vector3 worldDelta = ray.GetPoint(enter) - prevRay.GetPoint(prevEnter);
-                        worldDelta.y = 0f; // только по XZ
+                        worldDelta.y = 0f;
 
                         foreach (GameObject go in Selection.gameObjects)
                             go.transform.position += worldDelta;
@@ -98,14 +97,19 @@ public class Hotkeys
 
         dragControlId = GUIUtility.GetControlID(FocusType.Passive);
         GUIUtility.hotControl = dragControlId;
+        HandleUtility.AddDefaultControl(dragControlId);
 
         Undo.RecordObjects(Selection.gameObjects, "Drag XZ");
     }
 
     private static void StopDragging()
     {
+        if (!isDragging) return;
+
+        if (GUIUtility.hotControl == dragControlId)
+            GUIUtility.hotControl = 0;
+
         isDragging = false;
-        GUIUtility.hotControl = 0;
         dragControlId = 0;
     }
 
@@ -115,19 +119,15 @@ public class Hotkeys
         RotateSelected(90);
     }
 
-    // Shift + D: duplicate and apply a fixed shift in the Y=0 plane
     [MenuItem("Edit/Duplicate and Shift #d", false, 100)]
     static void DuplicateAndShift()
     {
         if (Selection.gameObjects.Length == 0) return;
 
-        // Duplicate (Unity will select the new copies)
         EditorApplication.ExecuteMenuItem("Edit/Duplicate");
 
-        // Fixed offset – here 1 unit along the X axis, pure horizontal (Y=0 plane)
         Vector3 fixedOffset = new Vector3(1f, 0f, 0f);
 
-        // Move each duplicated object
         foreach (GameObject go in Selection.gameObjects)
         {
             Undo.RecordObject(go.transform, "Shift Duplicate");

@@ -32,6 +32,7 @@ public class LasersSystem : MonoBehaviour
     private string _idPeriod;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
+    private Transform _root;
 
     void Start()
     {
@@ -49,6 +50,8 @@ public class LasersSystem : MonoBehaviour
             while (!S.Loader.Roots.ContainsKey(_sceneName) ||
                 S.Loader.Roots[_sceneName] == null)
                 yield return new WaitForSeconds(0.25f);
+
+            _root = S.Loader.Roots[_sceneName];
 
             yield return GetActualType();
             PlaceLasers();
@@ -241,7 +244,7 @@ public class LasersSystem : MonoBehaviour
                     GameObject paintingPlacerObj = new GameObject("The Painting Placer");
                     paintingPlacerObj.transform.position = p;
                     paintingPlacerObj.transform.rotation = Quaternion.LookRotation(-dir);
-                    paintingPlacerObj.transform.SetParent(S.Loader.Roots[_sceneName], true);
+                    paintingPlacerObj.transform.SetParent(_root, true);
                     PaintingPlacer paintingPlacer = paintingPlacerObj.AddComponent<PaintingPlacer>();
                     paintingPlacer._id = S.IDM(_id, $"PP {str}");
                     paintingPlacer.Instantiate();
