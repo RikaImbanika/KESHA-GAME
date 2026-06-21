@@ -58,7 +58,7 @@ Shader "Custom/UnlitF"
             {
                 fixed4 col = tex2D(_MainTex, i.uv) * _Color;
 
-                float dist = length(i.viewVec);
+                float dist = max(0.0, length(i.viewVec) - _ProjectionParams.y);
 
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);

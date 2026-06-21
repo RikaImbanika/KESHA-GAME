@@ -60,7 +60,7 @@ Shader "Custom/BlackToAlphaF"
 
                 float lum = dot(col.rgb, fixed3(0.299, 0.587, 0.114));
 
-                float dist = length(i.viewVec);
+                float dist = max(0.0, length(i.viewVec) - _ProjectionParams.y);
 
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);

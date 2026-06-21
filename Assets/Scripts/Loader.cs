@@ -83,6 +83,11 @@ public class Loader : MonoBehaviour
 
             S.Fog.SetFog("Income", Roots["Income"].gameObject);
 
+            while (!S.Loader.Roots.ContainsKey("Corridor"))
+                yield return new WaitForSeconds(0.2f);
+
+            S.Fog.SetFog("Corridor", Roots["Corridor"].gameObject);
+
             while (S.PS == null)
                 yield return new WaitForSeconds(0.2f);
 

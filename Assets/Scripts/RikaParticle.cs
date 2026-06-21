@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RikaParticle : MonoBehaviour
@@ -16,6 +17,7 @@ public class RikaParticle : MonoBehaviour
     float _globalTimer;
     float _timer3;
     float _period;
+    float _part1dur;
     Vector3 _startPos;
     Vector3 _flatSparkleStartScale;
     bool _endedPart1;
@@ -24,12 +26,14 @@ public class RikaParticle : MonoBehaviour
     Quaternion _rotatorBuffered;
     Vector3 _position;
     float _gravity;
+    float _gravity1;
     bool _needPart2;
     float _height;
     bool _part3Started;
     bool _endedPart3;
     bool _initialised;
     Vector3 _hitPoint;
+    float _airFriction;
 
     void Start()
     {
@@ -37,9 +41,15 @@ public class RikaParticle : MonoBehaviour
 
         IEnumerator LateStart()
         {
-            _period = 1 / 30f;
+            _period = 1 / 60f;
 
-            _gravity = 4.5f;
+            _gravity = 6f;
+
+            _gravity1 = 4.41f;
+
+            _part1dur = 0.6f;
+
+            _airFriction = 0.7f;
 
             _startPos = transform.position;
 
@@ -53,7 +63,7 @@ public class RikaParticle : MonoBehaviour
 
             _flatSparkles = new GameObject[3];
 
-            _needPart2 = S.RND.Next(20) == 0;
+            _needPart2 = S.RND.Next(30) == 0;
 
             if (_needPart2)
             {
@@ -74,9 +84,12 @@ public class RikaParticle : MonoBehaviour
 
             for (int i = 0; i < 3; i++)
             {
-                float power = Random.Range(0.02f, 0.65f);
+                float power = Random.Range(1.35f, 2.1f);
 
-                _flatSparklesDirs[i] = RandomPerpendicular(_toPlayer) * power + new Vector3(0, -4f, 0);
+                _flatSparklesDirs[i] = RandomPerpendicular(_toPlayer) * power;
+
+                float randomAngle = Random.Range(0f, 360f);
+                _flatSparkles[i].transform.GetChild(0).rotation = Quaternion.AngleAxis(randomAngle, Vector3.up);
 
                 S.Fog.ApplyToGameObject(_flatSparkles[i], _mpb);
 
@@ -138,21 +151,21 @@ public class RikaParticle : MonoBehaviour
 
             void Part1()
             {
-                float dur = 1.5f;
-
-                if (_globalTimer < dur)
+                if (_globalTimer < _part1dur)
                 {
-                    Vector3 _toPlayer = S.Camera.transform.position - _startPos;
-
+                    Vector3 _toPlayer = S.Camera.transform.position - _flatSparkles[0].transform.position;
                     Quaternion rot = Quaternion.LookRotation(_toPlayer) * _rotatorBuffered;
 
-                    Vector3 s = _flatSparkleStartScale * (dur - _globalTimer) / dur;
+                    Vector3 s = _flatSparkleStartScale * (_part1dur - _globalTimer) / _part1dur;
+
+                    Vector3 g = new Vector3(0, -_gravity1 * _period, 0);
 
                     for (int i = 0; i < 3; i++)
                     {
                         _flatSparkles[i].transform.rotation = rot;
                         _flatSparkles[i].transform.localScale = s;
-                        _flatSparkles[i].transform.position += _flatSparklesDirs[i] * _period;
+                        _flatSparklesDirs[i] *= (1 - (_airFriction * _period));
+                        _flatSparkles[i].transform.position += _flatSparklesDirs[i] * _period + g;
                     }
                 }
                 else if (!_endedPart1)
@@ -187,7 +200,7 @@ public class RikaParticle : MonoBehaviour
 
                     for (int i = 0; i < 3; i++)
                     {
-                        float power = Random.Range(0.05f, 3f);
+                        float power = Random.Range(0.1f, 6f);
 
                         _flatSparklesDownDirs[i] = RandomPerpendicular(_toPlayer) * power + new Vector3(0, 0.4f, 0);
                     }
@@ -200,7 +213,7 @@ public class RikaParticle : MonoBehaviour
             {
                 _timer3 += Time.deltaTime;
 
-                float dur = 0.2f;
+                float dur = 0.5f;
 
                 if (_timer3 < dur)
                 {

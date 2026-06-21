@@ -385,6 +385,11 @@ public class Console : MonoBehaviour
             _words[0] == "wheresnakes" ||
             _words[0] == "snakeswhere")
             Snakes();
+        else if (_words[0] == "entities" ||
+            _words[0] == "enemies" ||
+            _words[0] == "creatures" ||
+            _words[0] == "entity")
+            Entities();
         else if (_words[0] == "scenes" ||
             _words[0] == "rooms" ||
             _words[0] == "allscenes" ||
@@ -550,6 +555,11 @@ public class Console : MonoBehaviour
     void Help()
     {
         Info("Help");
+    }
+
+    void Entities()
+    {
+        Info("Entities");
     }
 
     void Info(string path)

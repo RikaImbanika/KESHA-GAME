@@ -64,7 +64,7 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideF"
                 fixed4 texCol = tex2D(_MainTex, i.uv);
                 fixed4 col = texCol * _Color;
 
-                float dist = length(i.viewVec);
+                float dist = max(0.0, length(i.viewVec) - _ProjectionParams.y);
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);
 

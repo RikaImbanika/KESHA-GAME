@@ -91,7 +91,7 @@ Shader "Custom/HueShiftUnlitF"
                 float3 rgb = hsv2rgb(hsv);
 
                 // Exponential fog
-                float dist = length(i.viewVec);
+                float dist = max(0.0, length(i.viewVec) - _ProjectionParams.y);
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);
                 rgb = lerp(rgb, _FogColor.rgb, fogFactor * _FogColor.a);

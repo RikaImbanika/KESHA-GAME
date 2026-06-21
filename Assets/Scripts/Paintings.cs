@@ -19,7 +19,8 @@ public class Paintings : MonoBehaviour
             "Paris",
             "SoManyVases",
             "Palms",
-            "BeDifferent"
+            "BeDifferent",
+            "GetEarth"
         };
 
         S.Paintings = this;

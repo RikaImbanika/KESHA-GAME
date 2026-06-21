@@ -84,7 +84,7 @@ Shader "Custom/ScrollTexF"
                 finalColor.a *= alphaMask * _AlphaMultiplier;
 
                 // Exponential fog
-                float dist = length(i.viewVec);
+                float dist = max(0.0, length(i.viewVec) - _ProjectionParams.y);
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);
                 finalColor.rgb = lerp(finalColor.rgb, _FogColor.rgb, fogFactor * _FogColor.a);

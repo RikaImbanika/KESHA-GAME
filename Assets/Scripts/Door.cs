@@ -21,6 +21,7 @@ public class Door : MonoBehaviour
 	private string _sceneName;
 	private bool _needArrow;
 	private bool _arrowPlaced;
+	private Transform _root;
 
 	public void Start()
 	{
@@ -53,6 +54,11 @@ public class Door : MonoBehaviour
 			_locked = _doorModel._locked;
 			_needArrow = _doorModel._needArrow;
 
+			while (!S.Loader.Roots.ContainsKey(_sceneName))
+				yield return new WaitForSeconds(delay);
+
+			_root = S.Loader.Roots[_sceneName];
+
 			if (_needArrow)
 			{
 				PlaceArrowAndExitSignAsync();
@@ -83,7 +89,7 @@ public class Door : MonoBehaviour
 					S.Loader.Roots[_sceneName] == null)
 					yield return new WaitForSeconds(0.25f);
 
-				GameObject stampObj = GameObject.Instantiate(S.Stamp, point0, rot, S.Loader.Roots[_sceneName]);
+				GameObject stampObj = Instantiate(S.Stamp, point0, rot, _root);
 
 				try
 				{

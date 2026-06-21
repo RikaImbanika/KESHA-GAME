@@ -91,7 +91,7 @@ Shader "Custom/SelfIlluminUnlitTintSingleSideHueShiftF"
                 hsv.x = frac(hsv.x + timeShift);
                 float3 rgb = hsv2rgb(hsv);
 
-                float dist = length(i.viewVec);
+                float dist = max(0.0, length(i.viewVec) - _ProjectionParams.y);
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);
 

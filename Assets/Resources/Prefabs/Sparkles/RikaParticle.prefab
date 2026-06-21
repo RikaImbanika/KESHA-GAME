@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &248987899695392670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 203950908554573200}
+  m_Layer: 0
+  m_Name: Flat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &203950908554573200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248987899695392670}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.00071042776, y: 0.018374968, z: -0.008129269}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 196758578747755033}
+  m_Father: {fileID: 1512112643474508232}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1512112643474508239
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,11 +57,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1512112643474508239}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 6, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 196758578747755033}
+  - {fileID: 203950908554573200}
   - {fileID: 7743183247755049752}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -46,7 +78,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa4c40f3add456a48b42229729584297, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _flatSparkle: {fileID: 7824310939004010611}
+  _flatSparkle: {fileID: 248987899695392670}
   _longSparkle: {fileID: 3017696268724434114}
 --- !u!1 &3017696268724434114
 GameObject:
@@ -176,7 +208,7 @@ GameObject:
   - component: {fileID: 5213704989780690544}
   - component: {fileID: 5573713017623724101}
   m_Layer: 6
-  m_Name: Flat
+  m_Name: FlatChild
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -189,12 +221,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7824310939004010611}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.014029243, y: 0.014029239, z: 0.014029239}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.00071042776, y: -0.018374968, z: 0.008129269}
+  m_LocalScale: {x: 0.051927853, y: 0.05192784, z: 0.05192784}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1512112643474508232}
+  m_Father: {fileID: 203950908554573200}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5213704989780690544

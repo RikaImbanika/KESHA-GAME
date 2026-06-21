@@ -17,6 +17,7 @@ public class Stamp : MonoBehaviour
     bool _alreadyUnlocked;
     float _stampAnimationTimeLeft;
     Vector3 _startScale;
+    MaterialPropertyBlock _mpb;
 
     public void Start()
     {
@@ -48,7 +49,12 @@ public class Stamp : MonoBehaviour
                 while (S.Loader.Roots[_sceneName] == null)
                     yield return new WaitForSeconds(0.25f);
 
-                _blueFlames = GameObject.Instantiate(Prefabs.Get("BlueFlames"), S.Loader.Roots[_sceneName]);
+                Transform root = S.Loader.Roots[_sceneName];
+
+                _blueFlames = Instantiate(Prefabs.Get("BlueFlames"), root);
+                _mpb = S.Fog.GetMPB(_sceneName);
+                S.Fog.ApplyToGameObject(_blueFlames, _mpb);
+                S.Fog.ApplyToGameObject(gameObject, _mpb);
 
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, Vector3.down, out hit, 20f))

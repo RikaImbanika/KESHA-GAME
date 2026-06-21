@@ -19,10 +19,10 @@ public class RikaParticles : MonoBehaviour
 
     void Start()
     {
-        _period = 0.16f;
-        _angleStep = 0.1f;
+        _period = 0.3f;
+        _angleStep = 0.051f;
         _h = 5f;
-        _r = 2.6f;
+        _r = 3f;
         _shader = Shader.Find("Custom/HueShiftUnlitTransparentTwoSidesF");
         _sparkleTex = Resources.Load<Texture2D>("Textures/Sparkles/SPARKLE_2_BLUE");
         _longSparkleTex = Resources.Load<Texture2D>("Textures/Lasers/BlueLaser");
@@ -65,7 +65,7 @@ public class RikaParticles : MonoBehaviour
             matFlat.SetFloat("_Speed", 0);
             matLong.SetFloat("_Speed", 0);
 
-            rp._flatSparkle.GetComponent<Renderer>().material = matFlat;
+            rp._flatSparkle.transform.GetChild(0).GetComponent<Renderer>().material = matFlat;
             rp._longSparkle.transform.GetChild(0).GetComponent<Renderer>().material = matLong;
             rp._longSparkle.transform.GetChild(1).GetComponent<Renderer>().material = matLong;
         }

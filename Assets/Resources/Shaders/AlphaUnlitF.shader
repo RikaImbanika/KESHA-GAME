@@ -61,7 +61,7 @@ Shader "Custom/AlphaUnlitF"
                 fixed4 col = tex2D(_MainTex, i.uv) * _Color;
 
                 // Exponential fog
-                float dist = length(i.viewVec);
+                float dist = max(0.0, length(i.viewVec) - _ProjectionParams.y);
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);
                 col.rgb = lerp(col.rgb, _FogColor.rgb, fogFactor * _FogColor.a);
