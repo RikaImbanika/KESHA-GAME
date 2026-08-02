@@ -21,7 +21,7 @@ public class PortalPlacer : MonoBehaviour
 
         IEnumerator LateStart()
         {
-            _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+            _sceneName = gameObject.scene.name;
             _id = S.ID("PR", gameObject);
             string idSecondPortId = S.IDM(_id, "npid");
             string idRotation = S.IDM(_id, "rot");

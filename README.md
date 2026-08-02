@@ -28,3 +28,7 @@ Made in Unity version 2021.3.45f1
 ![image](Images/11.jpg)
 
 ![image](Images/12.jpg)
+
+![image](Images/13.jpg)
+
+![image](Images/14.jpg)

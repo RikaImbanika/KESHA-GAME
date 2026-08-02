@@ -237,7 +237,10 @@ public class Loader : MonoBehaviour
         AddValue("Hall", "Corridor", 1, 2);
         AddValue("Hall", "BR 1", 2, 1);
         AddValue("Hall", "TL 0", 3, 1, true);
-        AddValue("Hall", "MR 1", 4, 1);
+        AddValue("Hall", "MR 1", 4, 1);        
+        AddValue("Hall", "Final", 6, 1);
+        
+        AddValue("Final", "Hall", 1, 6);
 
         AddValue("MR 1", "Hall", 1, 4);
         AddValue("MR 1", "MR 2", 2, 1, true);

@@ -49,7 +49,9 @@ public class Fireflies : MonoBehaviour
                 "RainbowSlow",
                 "RainbowFast",
                 "Zombella",
-                "Bakalavrus"
+                "Baka",
+                "FatZombella",
+                "FatBaka",
             };
 
             _colorN = new Dictionary<string, byte>();
@@ -61,7 +63,7 @@ public class Fireflies : MonoBehaviour
                 string colName = _firefliesColors[a];
                 _colorN.Add(colName, a);
 
-                if (colName != "Zombella" && colName != "Bakalavrus")
+                if (colName != "Zombella" && colName != "Baka" && colName != "FatZombella" && colName != "FatBaka")
                     _materials.Add(colName, Materials.Get($"Sparkles/Normal/Sparkle{colName}"));
                 else
                     _materials.Add(colName, Materials.Get($"FlyingEnemies/{colName}"));

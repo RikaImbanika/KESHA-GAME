@@ -17,6 +17,7 @@ public class ItemShower : MonoBehaviour
     public TextMeshProUGUI _showingText;
     public float _showingStartTime;
     public Vector3 _showingStartScale;
+    MaterialPropertyBlock _noFogMPB; 
     
     void Start()
     {
@@ -25,6 +26,10 @@ public class ItemShower : MonoBehaviour
         _showingCamera.gameObject.SetActive(false);
         _showingPanel.gameObject.SetActive(false);
         _showingOverlay.SetActive(false);
+
+        _noFogMPB = new MaterialPropertyBlock();
+        _noFogMPB.SetColor("_FogColor", new Color(0f, 0f, 1f));
+        _noFogMPB.SetFloat("_FogDensity", 0f);
 
         S.ItemShower = this;
     }
@@ -57,6 +62,17 @@ public class ItemShower : MonoBehaviour
                 var prefab = Prefabs.Get(itemName);
 
                 _showingItem = Instantiate(prefab, position + direction + offsetV, Quaternion.identity);
+                
+                Rigidbody rb = _showingItem.GetComponent<Rigidbody>();
+                if (rb != null)
+                    Destroy(rb);
+
+                ItemP itemP = _showingItem.GetComponent<ItemP>();
+                if (itemP != null)
+                    Destroy(itemP);
+
+                S.Fog.ApplyToGameObject(_showingItem, _noFogMPB);          
+                
                 _showingStartScale = _showingItem.transform.localScale;
                 _showingItem.transform.localScale = Vector3.zero;
 
@@ -97,13 +113,40 @@ public class ItemShower : MonoBehaviour
             {
                 S.SM.Save("Cucumber showed", true);
                 ShowItem(itemName, "You obtain a cucumber!!!", 0.7f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 7));
-            }
+                return;
+            };
+
         if (!(S.SM.LoadBool("Gun showed") ?? false))
             if (itemName == "Gun")
             {
                 S.SM.Save("Gun showed", true);
                 ShowItem(itemName, "You obtain a gun!!!", 1.6f, 0.35f, new Vector3(90, 0, 0), new Vector3(0, 0, 7));
-            }
+                return;
+            };
+
+        if (!(S.SM.LoadBool("Moon showed") ?? false))
+            if (itemName == "Moon")
+            {
+                S.SM.Save("Moon showed", true);
+                ShowItem(itemName, "You obtain The Moon!!!", -4.5f, 0.35f, new Vector3(0, 0, 0), new Vector3(0, 0, 4));
+                return;
+            };
+
+        if (!(S.SM.LoadBool("Earth showed") ?? false))
+            if (itemName == "Earth")
+            {
+                S.SM.Save("Earth showed", true);
+                ShowItem(itemName, "You obtain The Earth!!!", -4.5f, 0.35f, new Vector3(90, 0, 0), new Vector3(0, 0, 4));
+                return;
+            };
+
+        if (!(S.SM.LoadBool("Mars showed") ?? false))
+            if (itemName == "Mars")
+            {
+                S.SM.Save("Mars showed", true);
+                ShowItem(itemName, "You obtain The Mars!!!", -4.5f, 0.35f, new Vector3(180, 0, 0), new Vector3(0, 0, 4));
+                return;
+            };
     }
 
     void Update()

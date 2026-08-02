@@ -71,25 +71,34 @@ public class RikaParticle : MonoBehaviour
                 _flatSparklesDownDirs = new Vector3[3];
             }
 
-            _flatSparkles[0] = _flatSparkle;
+            //
+
 
             _flatSparklesDirs = new Vector3[3];
 
-            Vector3 _toPlayer = S.Camera.transform.position - _startPos;
-
             _rotatorBuffered = Quaternion.Euler(90, 0, 0);
 
+            Vector3 toPlayer = S.Camera.transform.position - transform.position;
+            Quaternion rot = Quaternion.LookRotation(toPlayer) * _rotatorBuffered;
+
+            _flatSparkle.transform.rotation = rot;
+
+            _flatSparkles[0] = _flatSparkle;
+
             for (int i = 1; i < 3; i++)
+            {
                 _flatSparkles[i] = Instantiate(_flatSparkle, _flatSparkle.transform.position, _flatSparkle.transform.rotation, transform);
+                _flatSparkles[i].transform.localScale = _flatSparkleStartScale;
+            }
 
             for (int i = 0; i < 3; i++)
             {
                 float power = Random.Range(1.35f, 2.1f);
 
-                _flatSparklesDirs[i] = RandomPerpendicular(_toPlayer) * power;
+                _flatSparklesDirs[i] = RandomPerpendicular(toPlayer) * power;
 
                 float randomAngle = Random.Range(0f, 360f);
-                _flatSparkles[i].transform.GetChild(0).rotation = Quaternion.AngleAxis(randomAngle, Vector3.up);
+                _flatSparkles[i].transform.GetChild(0).localRotation = Quaternion.Euler(0, randomAngle, 0);
 
                 S.Fog.ApplyToGameObject(_flatSparkles[i], _mpb);
 

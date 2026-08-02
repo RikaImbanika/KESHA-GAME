@@ -377,8 +377,8 @@ public class II : MonoBehaviour
             ));
 
             _base.Add("BlueKey", new ItemInfo(
-                inventoryNameColor: Color.white,
-                lookNameColor: Color.white,
+                inventoryNameColor: Color.cyan,
+                lookNameColor: Color.cyan,
                 spriteName: "BlueKey",
                 prefabName: "BlueKey",
                 visibleName: "Blue key",
@@ -386,8 +386,8 @@ public class II : MonoBehaviour
             ));
 
             _base.Add("PurpleKey", new ItemInfo(
-                inventoryNameColor: Color.white,
-                lookNameColor: Color.white,
+                inventoryNameColor: Color.magenta,
+                lookNameColor: Color.magenta,
                 spriteName: "PurpleKey",
                 prefabName: "PurpleKey",
                 visibleName: "Purple key",
@@ -395,8 +395,8 @@ public class II : MonoBehaviour
             ));
 
             _base.Add("RedKey", new ItemInfo(
-                inventoryNameColor: Color.white,
-                lookNameColor: Color.white,
+                inventoryNameColor: Color.red,
+                lookNameColor: Color.red,
                 spriteName: "RedKey",
                 prefabName: "RedKey",
                 visibleName: "Red key",
@@ -421,12 +421,12 @@ public class II : MonoBehaviour
                 throwable: false
             ));
 
-            _base.Add("RedCrystal", new ItemInfo(
+            _base.Add("Ruby", new ItemInfo(
                 inventoryNameColor: Color.red,
                 lookNameColor: Color.red,
-                spriteName: "RedCrystal",
+                spriteName: "Ruby",
                 prefabName: "Loot",
-                visibleName: "Red crystal",
+                visibleName: "Ruby",
                 throwable: false
             ));
 
@@ -499,6 +499,15 @@ public class II : MonoBehaviour
                 spriteName: "Plank",
                 prefabName: "Plank",
                 visibleName: "Plank",
+                throwable: true
+            ));
+
+            _base.Add("BakasHat", new ItemInfo(
+                inventoryNameColor: Color.white,
+                lookNameColor: Color.white,
+                spriteName: "Baka",
+                prefabName: "BakasHat",
+                visibleName: "Hat",
                 throwable: true
             ));
 

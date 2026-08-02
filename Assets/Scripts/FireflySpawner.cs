@@ -117,7 +117,7 @@ public class FireflySpawner : MonoBehaviour
         {
             //Defining doesn't mean summoning
 
-            if (_color == "Bakalavrus" || _color == "Zombella")
+            if (_color == "Zombella" || _color == "Baka" || _color == "FatZombella" || _color == "FatBaka")
             {
                 int n = S.RND.Next(5);
 
@@ -214,8 +214,20 @@ public class FireflySpawner : MonoBehaviour
                     else
                         sizeN = 3;
                 }
+                else
+                {
+                    if (n < 35)
+                        sizeN = 0;
+                    else if (n < 60)
+                        sizeN = 1;
+                    else if (n < 85)
+                        sizeN = 2;
+                    else
+                        sizeN = 3;
+                }
 
-                if ((_color == "Zombella" || _color == "Bakalavrus") && sizeN == 0 || sizeN == 1)
+                if ((_color == "Zombella" || _color == "Baka" || _color == "FatZombella" || _color == "FatBaka") 
+                    && sizeN == 0 || sizeN == 1)
                     continue;
                 else
                     break;
@@ -244,8 +256,10 @@ public class FireflySpawner : MonoBehaviour
                     probs.Add(new("Green", 2));
                     probs.Add(new("RainbowSlow", 2));
                     probs.Add(new("RainbowFast", 1));
-                    probs.Add(new("Bakalavrus", 8));
-                    probs.Add(new("Zombella", 8));
+                    probs.Add(new("Baka", 6));
+                    probs.Add(new("Zombella", 6));
+                    probs.Add(new("FatBaka", 2));
+                    probs.Add(new("FatZombella", 2));
                 }
                 else
                 {
@@ -256,8 +270,10 @@ public class FireflySpawner : MonoBehaviour
                     probs.Add(new("Green", 1));
                     probs.Add(new("RainbowSlow", 5));
                     probs.Add(new("RainbowFast", 4));
-                    probs.Add(new("Bakalavrus", 8));
-                    probs.Add(new("Zombella", 8));
+                    probs.Add(new("Baka", 6));
+                    probs.Add(new("Zombella", 6));
+                    probs.Add(new("FatBaka", 2));
+                    probs.Add(new("FatZombella", 2));
                 }
             }
             else if (_sceneName.Contains("MR"))
@@ -269,8 +285,10 @@ public class FireflySpawner : MonoBehaviour
                 probs.Add(new("Green", 3));
                 probs.Add(new("RainbowSlow", 4));
                 probs.Add(new("RainbowFast", 3));
-                probs.Add(new("Bakalavrus", 6));
-                probs.Add(new("Zombella", 7));
+                probs.Add(new("Baka", 4));
+                probs.Add(new("Zombella", 4));
+                probs.Add(new("FatBaka", 2));
+                probs.Add(new("FatZombella", 3));
             }
             else if (_sceneName.Contains("Income"))
             {
@@ -281,8 +299,10 @@ public class FireflySpawner : MonoBehaviour
                 probs.Add(new("Green", 2));
                 probs.Add(new("RainbowSlow", 2));
                 probs.Add(new("RainbowFast", 1));
-                probs.Add(new("Bakalavrus", 3));
+                probs.Add(new("Baka", 3));
                 probs.Add(new("Zombella", 4));
+                probs.Add(new("FatBaka", 0));
+                probs.Add(new("FatZombella", 0));
               }
             else if (_sceneName.Contains("TL"))
             {
@@ -293,8 +313,24 @@ public class FireflySpawner : MonoBehaviour
                 probs.Add(new("Green", 1));
                 probs.Add(new("RainbowSlow", 5));
                 probs.Add(new("RainbowFast", 4));
-                probs.Add(new("Bakalavrus", 7));
-                probs.Add(new("Zombella", 8));
+                probs.Add(new("Baka", 5));
+                probs.Add(new("Zombella", 5));
+                probs.Add(new("FatBaka", 2));
+                probs.Add(new("FatZombella", 3));
+            }
+            else
+            {
+                probs.Add(new("Yellow", 10));
+                probs.Add(new("Red", 10));
+                probs.Add(new("Blue", 10)); //30
+                probs.Add(new("Purple", 10)); //40
+                probs.Add(new("Green", 8)); //50
+                probs.Add(new("RainbowSlow", 10)); //58
+                probs.Add(new("RainbowFast", 10)); //68
+                probs.Add(new("Baka", 8)); //76
+                probs.Add(new("Zombella", 8)); //84
+                probs.Add(new("FatBaka", 8)); //92
+                probs.Add(new("FatZombella", 8)); //100
             }
             colorN = S.Fireflies.ColorN[S.AllFather.SelFromProb(probs)];
 
@@ -389,7 +425,7 @@ public class FireflySpawner : MonoBehaviour
         
         void SetSway()
         {
-            if (_color == "Zombella" || _color == "Bakalavrus")
+            if (_color == "Zombella" || _color == "Baka" || _color == "FatZombella" || _color == "FatBaka")
             {
                 firefly._swayAmplitude = 35f;
                 firefly._swayFrequency = 1f;

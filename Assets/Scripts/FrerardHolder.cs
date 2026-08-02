@@ -11,43 +11,49 @@ public class FrerardHolder : MonoBehaviour
     public int _number;
     public string _waitItem; 
     public Frerard _frerard;
-    private ItemP _placedItem;
+    private GameObject _placedItem;
     int _realRotation;
     int _fakeRotation;
+    string _name;
+    MaterialPropertyBlock _mpb;
 
     void Start()
     {
         _id = S.IDM("FrerardHolder", _number);
 
-        string name = S.SM.LoadString(S.IDM(_id, "name"));
+        _name = S.SM.LoadString(S.IDM(_id, "name"));
+
+        _mpb = S.Fog.GetMPB("Hall");
 
         StartCoroutine(LateStart());
 
         IEnumerator LateStart()
         {
-            if (!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(_name))
             {
                 while (S.Loader.Roots == null ||
                     !S.Loader.Roots.ContainsKey("Hall") ||
                     S.Loader.Roots["Hall"] == null)
                     yield return new WaitForSeconds(0.25f);
 
-                GameObject prefab = Prefabs.Get(name);
-                GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.Roots["Hall"]);
-                obj.transform.localScale = transform.localScale;
-                obj.transform.SetParent(transform, true);
-
-                _placedItem = obj.GetComponent<ItemP>();
-                _placedItem._forLoader = false;
+                GameObject prefab = Prefabs.Get(_name);
+                _placedItem = Instantiate(prefab, transform.position, transform.rotation, S.Loader.Roots["Hall"]);
+                _placedItem.transform.localScale = transform.localScale;
+                _placedItem.transform.SetParent(transform, true);
+                S.Fog.ApplyToGameObject(_placedItem, _mpb);
+                ItemP itemP = _placedItem.GetComponent<ItemP>();
+                Destroy(itemP);
 
                 int currentRotation = S.SM.LoadInt(S.IDM(_id, "realRot")) ?? 0;
 
                 for (int i = 0; i < currentRotation; i++)
-                    RotateReal(obj);
+                    RotateReal(_placedItem);
 
                 _fakeRotation = S.SM.LoadInt(S.IDM(_id, "fakeRot")) ?? 0;
 
-                bool ok = _placedItem._name == _waitItem && _realRotation == 0;
+                //S.Console.AddMessage($"FH{_number} curRot = {currentRotation} realRot = {_realRotation} fakeRot = {_fakeRotation}");
+
+                bool ok = _name == _waitItem && _realRotation == 0;
                 _frerard.Set(_number, ok);
                 //SaveRotations();
             }
@@ -70,21 +76,23 @@ public class FrerardHolder : MonoBehaviour
            
             if (_placedItem != null)
             {
-                bool ok = _placedItem._name == _waitItem && _realRotation == 0;
+                bool ok = _name == _waitItem && _realRotation == 0;
                 _frerard.Set(_number, ok);
-                Debug.Log($"okay = {ok}, waitItem = {_waitItem} name = {_placedItem._name} rot = {_realRotation}");
+                //S.Console.AddMessage($"okay = {ok}, waitItem = {_waitItem} name = {_name} rot = {_realRotation}");
             }
         }
 	}
 
     void Swap(Item item)
     {
-        Debug.Log("Frerard swap");
-        string name = _placedItem._name;
+        //S.Console.AddMessage("Frerard swap");
+        string nameRemember = _name;
         Destroy(_placedItem.gameObject);
         _placedItem = null;
+        _realRotation = 0;
+        _fakeRotation = 0;
         Put(item);
-        S.Inventory.Take(name, 1);
+        S.Inventory.Take(nameRemember, 1);
         ForcedShowName();
     }
 
@@ -94,18 +102,21 @@ public class FrerardHolder : MonoBehaviour
         _fakeRotation = 0; //ok
         
         GameObject prefab = Prefabs.Get(item._name);
-        GameObject obj = Instantiate(prefab, transform.position, transform.rotation, S.Loader.Roots["Hall"]);
-        obj.transform.localScale = transform.localScale;
-        obj.transform.SetParent(transform, true);
+        _placedItem = Instantiate(prefab, transform.position, transform.rotation, S.Loader.Roots["Hall"]);
+        S.Fog.ApplyToGameObject(_placedItem, _mpb);
+        ItemP itemP = _placedItem.GetComponent<ItemP>();
+        Destroy(itemP);
         
-        _placedItem = obj.GetComponent<ItemP>();
+        _placedItem.transform.localScale = transform.localScale;
+        _placedItem.transform.SetParent(transform, true);
+        _name = item._name;
         
         SaveName();
 
         int newRotations = UnityEngine.Random.Range(0, 4);
 
         for (int i = 0; i < newRotations; i++)
-            RotateReal(obj);
+            RotateReal(_placedItem);
 
         SaveRotations();
 
@@ -113,32 +124,36 @@ public class FrerardHolder : MonoBehaviour
 
         S.AM.Play("Kill", 0.7f);
 
-        Debug.Log($"Frerard put, realRot: {_realRotation}, fakeRot: {_fakeRotation}");
+        //S.Console.AddMessage($"Frerard put, realRot: {_realRotation}, fakeRot: {_fakeRotation}");
     }
 
     void Interact()
     {
-        Debug.Log("Frerard interact");
+        //S.Console.AddMessage("Frerard interact");
         if (_fakeRotation >= 3)
             Pick();
         else
         {
             RotateFake(_placedItem.gameObject);
             SaveRotations();
-            Debug.Log($"I rotated frerard!");
+            //S.Console.AddMessage($"I rotated frerard!");
             S.AM.Play("Kill", 0.85f);
         }
     }
 
     void Pick()
     {
-        S.Inventory.Take(_placedItem._name, 1);
+        S.Inventory.Take(_name, 1);
         ForcedShowName();
         Destroy(_placedItem.gameObject);
         SaveName("");
+        _realRotation = 0;
+        _fakeRotation = 0;
+        SaveRotations();
         _placedItem = null;
+        _name = "empty";
 
-        Debug.Log($"Frerard pick");
+        //S.Console.AddMessage($"Frerard pick");
     }
 
     void ForcedShowName()
@@ -165,7 +180,7 @@ public class FrerardHolder : MonoBehaviour
     
     void SaveName()
     {
-        SaveName(_placedItem._name);
+        SaveName(_name);
     }
     
     void SaveName(string name)
@@ -175,8 +190,7 @@ public class FrerardHolder : MonoBehaviour
     
     void SaveRotations()
     {
-        S.SM.Save(S.IDM(_id, "fakeRot"), _fakeRotation);
-        
+        S.SM.Save(S.IDM(_id, "fakeRot"), _fakeRotation);        
         S.SM.Save(S.IDM(_id, "realRot"), _realRotation);
     }
 }

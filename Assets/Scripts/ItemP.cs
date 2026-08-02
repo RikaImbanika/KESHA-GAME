@@ -72,7 +72,7 @@ public class ItemP : MonoBehaviour
             {
                 transform.position = position;
                 transform.rotation = rotation;
-                _locked = S.SM.LoadBool(_idLocked) ?? false;
+                _locked = S.SM.LoadBool(_idLocked) ?? _locked;
             }
         }
     }

@@ -68,7 +68,7 @@ public class EnemySpawner : MonoBehaviour
 
     void DefineExistenz()
     {
-        float prob = 0;
+        float prob = 100;
         if (_sceneName.Contains("BR"))
             prob = 30; //HOLY COW THERE ARE TOO MUCH OF THEM WITH 100... Maybe
         else if (_sceneName.Contains("Income"))

@@ -126,9 +126,9 @@ public class Console : MonoBehaviour
                         _historyTimesLeft[i] = 0;
                         _history[i].gameObject.SetActive(false);
                     }
-                    else if (_historyTimesLeft[i] < 3)
+                    else if (_historyTimesLeft[i] < 6)
                     {
-                        float t = _historyTimesLeft[i] / 3;
+                        float t = _historyTimesLeft[i] / 6;
                         Color clr = _history[i].color;
                         clr.a = Mathf.SmoothStep(0, 1, t);
                         _history[i].color = clr;
@@ -1107,6 +1107,11 @@ public class Console : MonoBehaviour
         _consoleTmp.text = _input;
     }
 
+    public void AddMessage(string message)
+    {
+        AddMessage(message, Color.green);
+    }
+
     public void AddMessage(string message, Color clr)
     {
         const int limit = 90;
@@ -1153,7 +1158,7 @@ public class Console : MonoBehaviour
         _history[_headIndex].text = message;
         _history[_headIndex].color = clr;
 
-        _historyTimesLeft[_headIndex] = 6f;
+        _historyTimesLeft[_headIndex] = 10f;
         _history[_headIndex].gameObject.SetActive(true);
 
         _history[_headIndex].transform.position = _basePos + Vector3.up * _bottomOffset;

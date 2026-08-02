@@ -616,7 +616,7 @@ public class Inventory : MonoBehaviour
 						Upd();
 					}
 				}
-				if (_zooming == -1)
+				else if (_zooming == -1)
 				{
 					if (_zoomed < 0f)
 					{
