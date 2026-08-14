@@ -1,6 +1,3 @@
-// SPDX-License-Identifier: Apache-2.0
-// Copyright (c) 2026 RIKA IMBANIKA
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,8 +49,6 @@ public class MusicManager : MonoBehaviour
         _fztVolume = 0;
         _playerOnIncome = true;
         _incomeSwapPhase = "1";
-        _backroomsTrackId = 0;
-        _backroomsPrevTrackId = 11; //Track here should not be equals first one
         _mushroomsPrevTrackId = 1; //
 
         StartCoroutine(LateStart(0.3f));
@@ -66,8 +61,8 @@ public class MusicManager : MonoBehaviour
                 Debug.Log("MusicManager waiting for S.AudioManager");
             }
 
-            int count = 7;
-            int count2 = 12;
+            int count = 5;
+            int count2 = 10;
 
             _backroomsVolumes = new float[count];
             _backroomsVolumes[0] = 1;
@@ -90,12 +85,6 @@ public class MusicManager : MonoBehaviour
             _backroomsSources[4] = S.AM.A["Riddik"];
             _backroomsLengthes[4] = 1116;
 
-            _backroomsSources[5] = S.AM.A["Labyrinth"];
-            _backroomsLengthes[5] = 597;
-
-            _backroomsSources[6] = S.AM.A["Great Mix"];
-            _backroomsLengthes[6] = 2378;
-
             bool[] remember = new bool[count2];
             _backroomsOrder = new int[count2];
 
@@ -103,14 +92,14 @@ public class MusicManager : MonoBehaviour
 
             //Ordering
 
-            //It's pretty complex but this
+            //It's pretty complex but this is
             //Only my own logic of music
             //I can't explain it
 
             _backroomsOrder[0] = 0;
             _backroomsOrder[1] = 1;
 
-            if (rnd.Next(10) < 4)
+            if (rnd.Next(10) < 3)
             {
                 _backroomsOrder[0] = 1;
                 _backroomsOrder[1] = 0;
@@ -136,11 +125,8 @@ public class MusicManager : MonoBehaviour
 
             _backroomsOrder[8] = _backroomsOrder[1];
 
-            _backroomsOrder[9] = 5;
-
-            _backroomsOrder[10] = rnd.Next(2);
-
-            _backroomsOrder[11] = 6;
+            _backroomsTrackId = 0;
+            _backroomsPrevTrackId = 1; //Track here should not be equals first one
 
             //Play
 

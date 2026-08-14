@@ -22,10 +22,14 @@ public class Door : MonoBehaviour
 	private bool _needArrow;
 	private bool _arrowPlaced;
 	private Transform _root;
+	private int _layerMask;
 
 	public void Start()
 	{
-		_sparklesCount = 75;
+		_sparklesCount = 50; //Whey are strange.
+
+		_layerMask = 1 << LayerMask.NameToLayer("Static") |
+			 1 << LayerMask.NameToLayer("Default");
 
 		// if (string.IsNullOrEmpty(_audioName))
 		// 	_audioName = "Door";
@@ -148,7 +152,7 @@ public class Door : MonoBehaviour
 
 	void PlaceArrowAndExitSignAsync()
 	{
-		Vector3 point0 = transform.position + transform.right * 3f; ///
+		Vector3 point0 = transform.position + transform.right * 3f;
 
 		Quaternion rot = Quaternion.LookRotation(transform.right);
 
@@ -162,6 +166,12 @@ public class Door : MonoBehaviour
 					!S.Loader.Roots.ContainsKey(_sceneName) ||
 					S.Loader.Roots[_sceneName] == null)
 					yield return new WaitForSeconds(0.25f);
+
+				float hueShiftSpeed = 0f;
+				if (_sceneName == "BR 7" || _sceneName == "BR 7R")
+					hueShiftSpeed = 0.1667f;
+				else if (_sceneName == "BR 6" || _sceneName == "BR 6R")
+					hueShiftSpeed = 0.08f;
 
 				GameObject arrowObj = GameObject.Instantiate(S.Arrow, point0, rot, S.Loader.Roots[_sceneName]);
 
@@ -189,6 +199,15 @@ public class Door : MonoBehaviour
 					originalScale.z / parentScale.z
 				);
 
+				Color arrowTint = GetSurfaceColor(
+					arrowObj.transform,
+					Vector3.down,
+					arrowObj.transform.up,
+					arrowObj.transform.right,
+					hueShiftSpeed
+				);
+				ApplyTintToObject(arrowObj, arrowTint, hueShiftSpeed > 0f, hueShiftSpeed);
+		
 				Vector3 point2 = point1 + new Vector3(0, 14, 0);
 
 				GameObject exitObj = GameObject.Instantiate(S.Exit, point0, rot, S.Loader.Roots[_sceneName]);
@@ -213,10 +232,102 @@ public class Door : MonoBehaviour
 					originalScale2.z / parentScale.z
 				);
 
+				Color exitTint = GetSurfaceColor(
+					exitObj.transform,
+					-transform.right,
+					exitObj.transform.up,
+					exitObj.transform.forward,
+					hueShiftSpeed
+				);
+				ApplyTintToObject(exitObj, exitTint, hueShiftSpeed > 0f, hueShiftSpeed);
+		
 				_arrowPlaced = true;
-
 				break;
 			}
+		}
+	}
+
+	Color GetSurfaceColor(Transform objTransform, Vector3 rayDirection, Vector3 basis1, Vector3 basis2, float hueShiftSpeed)
+	{
+		Vector3[] points = new Vector3[]
+		{
+		objTransform.position,
+		objTransform.position + basis1 + basis2,
+		objTransform.position + basis1 - basis2,
+		objTransform.position - basis1 + basis2,
+		objTransform.position - basis1 - basis2,
+		objTransform.position + basis1,
+		objTransform.position - basis1,
+		objTransform.position + basis2,
+		objTransform.position - basis2
+		};
+
+		Color[] colors = S.WallColorCapturer.CaptureAtPoints(points, rayDirection, _layerMask);
+
+		Color brightest = colors[0];
+		for (int i = 1; i < colors.Length; i++)
+			if (colors[i].grayscale > brightest.grayscale)
+				brightest = colors[i];
+
+		if (hueShiftSpeed > 0f)
+		{
+			float timeShift = Mathf.Repeat(Time.timeSinceLevelLoad * hueShiftSpeed, 1f);
+			Color.RGBToHSV(brightest, out float h, out float s, out float v);
+			h = (h - timeShift + 1f) % 1f;
+			brightest = Color.HSVToRGB(h, s, v);
+		}
+
+		return BrightenAndDesaturateColor(brightest, 0.3f, 0.2f);
+	}
+
+	public Color BrightenAndDesaturateColor(Color baseColor, float b = 0.2f, float st = 0.2f)
+	{
+		//Here are no any problems
+
+		Color.RGBToHSV(baseColor, out float h, out float s, out float v);
+
+		v = Mathf.Pow(v, 1 - b);
+
+		s = Mathf.Pow(s, 1 + st);
+
+		return Color.HSVToRGB(h, s, v);
+	}
+
+	void ApplyTintToObject(GameObject obj, Color tint, bool useHueShiftShader, float hueShiftSpeed)
+	{
+		Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+		foreach (Renderer rend in renderers)
+		{
+			Material originalMat = rend.sharedMaterial;
+			if (originalMat == null) continue;
+
+			string originalShaderName = originalMat.shader.name;
+			bool isTransparent = originalShaderName.Contains("Transparent") || originalShaderName.Contains("Alpha");
+
+			string shaderName;
+			if (isTransparent)
+			{
+				shaderName = useHueShiftShader ? "HueShiftUnlitTransparentF" : "UnlitTransparentF";
+			}
+			else
+			{
+				shaderName = useHueShiftShader ? "HueShiftUnlitF" : "UnlitF";
+			}
+
+			Shader shader = Shader.Find(shaderName);
+			if (shader == null)
+			{
+				shader = Shader.Find("Custom/" + shaderName);
+				if (shader == null) continue;
+			}
+
+			Material newMat = new Material(shader);
+			newMat.mainTexture = originalMat.mainTexture;
+			newMat.color = tint;
+			if (useHueShiftShader)
+				newMat.SetFloat("_Speed", hueShiftSpeed);
+
+			rend.material = newMat;
 		}
 	}
 
@@ -249,10 +360,10 @@ public class Door : MonoBehaviour
 
 			for (int i = 0; i < _sparklesCount; i++)
 			{
-				GameObject sparkle = Instantiate(S.BlueSparkle);
+				GameObject sparkle = Instantiate(S.BlueSparkle, _root);
 				sparkle.transform.position = transform.position;
 				sparkle.transform.rotation = Quaternion.LookRotation(direction);
-				sparkle.transform.localScale *= 4f;
+				sparkle.transform.localScale *= 2f;
 			}
 		}
 	}

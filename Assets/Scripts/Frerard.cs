@@ -23,17 +23,11 @@ public class Frerard : MonoBehaviour
         if (_values.Count != 6)
             _values = Enumerable.Repeat(false, 6).ToList();
 
-        //S.Console.AddMessage($"LoadedFrerard:");
-        //for (int i = 0; i < 6; i++)
-        //    S.Console.AddMessage($"{i} = {_values[i]}");
-        //S.Console.AddMessage($"------------------");
-
         if (S.SM.LoadBool("FrerardFinished") ?? false)
         {
             transform.position += new Vector3(0, _finalDeltaY, 0);
             _finished = true;
             _activated = true;
-            //S.Console.AddMessage($"Finished.");
         }
     }
 
@@ -59,7 +53,7 @@ public class Frerard : MonoBehaviour
 
         IEnumerator WaitLoad()
         {
-            S.SM.Save("FreardFinished", true);
+            S.SM.Save("FrerardFinished", true);
 
             S.AM.Play("Gong");
             yield return new WaitForSeconds(3);

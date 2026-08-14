@@ -49,12 +49,7 @@ public class CHEATS : MonoBehaviour
         }
 
         if ((Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.U)) || (Input.GetKey(KeyCode.P) && Input.GetKeyDown(KeyCode.U)))
-        {
-            _cheats = !_cheats;
-            _d.SetActive(!_cheats);
-            _e.SetActive(_cheats);
-            _message = 1f;
-        }
+            ToggleGodmode();
 
         S.SaveManager.CurrentSave.SaveBool("CHEATS", _cheats);
 
@@ -79,6 +74,31 @@ public class CHEATS : MonoBehaviour
                 _e.SetActive(false);
                 _d.SetActive(false);
             }
+        }
+    }
+
+    public void ToggleGodmode()
+    {
+        ToggleGodmode(!_cheats);
+    }
+
+    public void ToggleGodmode(bool value)
+    {
+        _cheats = value;
+
+        _d.SetActive(!_cheats);
+        _e.SetActive(_cheats);
+        _message = 1f;
+
+        if (_cheats && _cheatPower == 1f)
+        {
+            _cheatPower = 100f;
+            S.Console.AddMessage($"Shooting power set to {S.Cheats._cheatPower}.", Color.yellow);
+        }
+        else if (!_cheats && _cheatPower == 100f)
+        {
+            _cheatPower = 1f;
+            S.Console.AddMessage($"Shooting power set to {S.Cheats._cheatPower}.", Color.yellow);
         }
     }
 
@@ -156,13 +176,13 @@ public class CHEATS : MonoBehaviour
         if (go != null)
         {
             S.Inventory.Hack(go);
-            yield return new WaitForSeconds(0.10f);
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
     private IEnumerator TakeItemWithDelay2(string itemName, int count)
     {
         S.Inventory.Take(itemName, count);
-        yield return new WaitForSeconds(0.10f);
+        yield return new WaitForSeconds(0.05f);
     }
 }

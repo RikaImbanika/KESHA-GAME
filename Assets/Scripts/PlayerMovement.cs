@@ -32,6 +32,8 @@ public class PlayerMovement : MonoBehaviour
 	public float airWallFrictionRb;
 	public float beforeJumpSpeedSave;
 	public bool readyToJump;
+	public float _jumpBoost;
+	public float _jumpBoostUpdateTime;
 
 	[Header("Pushing")]
 	public float pushingCooldown;
@@ -99,6 +101,8 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Start()
 	{
+		_jumpBoost = 1f;
+		
 		_dirtStepsSoundsCount = 3;
 		_dirtStepSoundsNames = new string[_dirtStepsSoundsCount];
 		for (int i = 0; i < _dirtStepsSoundsCount; i++)
@@ -162,7 +166,7 @@ public class PlayerMovement : MonoBehaviour
 		if (grounded && readyToPush)
 			_pushed = false;
 
-		if (!S.PS._isTeleporting)
+		if (!S.Loader._isPortalTeleporting)
 		{
 			S.PS._prevCamPos = S.PS._camPos;
 			S.PS._camPos = S.Camera.transform.position;
@@ -376,16 +380,25 @@ public class PlayerMovement : MonoBehaviour
 	{
 		readyToJump = false;
 
+		if (Time.time - _jumpBoostUpdateTime > 3f)
+			_jumpBoost = 1f;
+
 		if (horizontalInput == 0 && verticalInput == 0)
-			rb.velocity = new Vector3(rb.velocity.x * beforeJumpSpeedSave, jumpForce, rb.velocity.z * beforeJumpSpeedSave);
+			rb.velocity = new Vector3(rb.velocity.x * beforeJumpSpeedSave, jumpForce * _jumpBoost, rb.velocity.z * beforeJumpSpeedSave);
 		else
-			rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+			rb.velocity = new Vector3(rb.velocity.x, jumpForce * _jumpBoost, rb.velocity.z);
 
 		DoStep();
 		_distBeforeStep = 0f;
 		_timeBeforeStep = 0.3f;
 
 		Invoke(nameof(ResetJump), jumpCooldown);
+	}
+
+	public void SetJumpBoost(float jumpBoost)
+	{
+		_jumpBoost = jumpBoost;
+		_jumpBoostUpdateTime = Time.time;
 	}
 
 	private void ResetJump()

@@ -88,7 +88,9 @@ public class PaintingPlacer : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.forward, out hit, 5f, _layerMask))
         {
-            Vector3 point1 = hit.point + transform.forward * 0.1f;
+            Quaternion wallRotation = Quaternion.FromToRotation(transform.forward, hit.normal) * transform.rotation;
+
+            Vector3 point1 = hit.point + hit.normal * 0.1f;
 
             RaycastHit hit2;
             if (Physics.Raycast(point1, -transform.up, out hit2, 25f, _layerMask))
@@ -134,10 +136,10 @@ public class PaintingPlacer : MonoBehaviour
 
                 Vector3 point2 = new Vector3(hit.point.x, hit2.point.y + 7f, hit.point.z);
 
-                GameObject painting = Instantiate(S.SquarePainting, point2, transform.rotation, _root);
+                GameObject painting = Instantiate(S.SquarePainting, point2, wallRotation, _root);
                 GameObject child = painting.transform.GetChild(0).gameObject;
 
-                GameObject frame = Instantiate(S.WoodenPaintingFrame, point2, transform.rotation, _root);
+                GameObject frame = Instantiate(S.WoodenPaintingFrame, point2, wallRotation, _root);
 
                 string name = S.Paintings._names[_paintingId];
                 mat.mainTexture = Resources.Load<Texture2D>($"Textures/Paintings/{name}");

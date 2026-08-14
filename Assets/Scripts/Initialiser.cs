@@ -80,12 +80,16 @@ public class Initialiser : MonoBehaviour
 
         S.SnakeSpawner = Prefabs.Get("SNAKIE");
 
+        S.InventoryPlane = Prefabs.Get("InventoryPlane");
+
         yield return WaitForCondition(() => Camera.main != null, "Waiting for camera");
         S.Camera = Camera.main;
 
         S.Camera.usePhysicalProperties = true;
         S.Camera.gateFit = Camera.GateFitMode.None;
         S.Camera.fieldOfView = 76f;
+
+        S.Intercam = GameObject.Find("INTERCAM").GetComponent<Camera>();
 
         yield return WaitForObjectWithTag("Player", obj => S.PObj = obj);
         S.Ph = S.PObj.transform.parent?.gameObject;

@@ -376,17 +376,13 @@ public class Portal : MonoBehaviour
             Vector3 dir = b - a;
             Vector3 c;
 
-            if (S.PS._isTeleporting)
+            if (S.Loader._isPortalTeleporting)
                 return;
 
             if (SegmentIntersectingRectangle(a, b, _quadCentered[0], _quadCentered[1], _quadCentered[2], _quadCentered[3]))
             {
-                S.PS._isTeleporting = true;
+                S.Loader._isPortalTeleporting = true;
 
-                S.PS._currentSceneName = _secondSceneName;
-                S.SaveManager.CurrentSave.SaveString("sceneName", _secondSceneName);
-
-                //S.Ph.transform.position += dir;
                 Vector3 localPos = Quaternion.Inverse(transform.rotation) * (S.Ph.transform.position - transform.position);
                 Vector3 newWorldPos = SecondPortal.transform.position + SecondPortal.transform.rotation * localPos;
                 S.Ph.transform.position = newWorldPos;
@@ -414,7 +410,7 @@ public class Portal : MonoBehaviour
                 IEnumerator UnlockLater()
                 {
                     yield return new WaitForSeconds(0.2f);
-                    S.PS._isTeleporting = false;
+                    S.Loader._isPortalTeleporting = false;
                 }
             }
         }
@@ -426,7 +422,7 @@ public class Portal : MonoBehaviour
 
             _fixerStarted = true;
 
-            while (S.PS._isTeleporting)
+            while (S.Loader._isPortalTeleporting || S.Loader._teleporting)
                 yield return new WaitForSeconds(0.333f);
 
             yield return new WaitForSeconds(0.5f);

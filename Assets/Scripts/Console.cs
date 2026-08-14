@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -431,10 +432,252 @@ public class Console : MonoBehaviour
             _words[0] == "tospawn" ||
             _words[0] == "gotospawn")
             Spawn();
+        else if (_words[0] == "map" ||
+            _words[0] == "loader" ||
+            _words[0] == "loadedscenes" ||
+            _words[0] == "currentscenes" ||
+            _words[0] == "currentloadedscenes" ||
+            _words[0] == "currentloadedmap" ||
+            _words[0] == "currentmap" ||
+            _words[0] == "checkmap" ||
+            _words[0] == "mapcheck")
+            Map();
+        else if (_words[0] == "fog" ||
+            _words[0] == "mist" ||
+            _words[0] == "setfog" ||
+            _words[0] == "setmist" ||
+            _words[0] == "fogis" ||
+            _words[0] == "mistis" ||
+            _words[0] == "setfogto" ||
+            _words[0] == "setmistto")
+            Fog();
+        else if (_words[0] == "godmode" ||
+            _words[0] == "god" ||
+            _words[0] == "devmode" ||
+            _words[0] == "dev")
+            Godmode();
         else if (!string.IsNullOrWhiteSpace(command))
             ToggleConsole("Message");
         else
             ToggleConsole("Close");
+    }
+
+    void Godmode()
+    {
+        ToggleConsole("Success");
+
+        if (_words.Length == 1)
+            S.Cheats.ToggleGodmode();
+        else
+        {
+            _words[1] = _words[1].ToLower();
+
+            if (_words[1] == "true" ||
+                _words[1] == "+" ||
+                _words[1] == "1" ||
+                _words[1] == "yes" ||
+                _words[1] == "enabled" ||
+                _words[1] == "enable" ||
+                _words[1] == "activate" ||
+                _words[1] == "activated" ||
+                _words[1] == "active")
+                S.Cheats.ToggleGodmode(true);
+            else if (_words[1] == "false" ||
+                _words[1] == "-" ||
+                _words[1] == "0" ||
+                _words[1] == "no" ||
+                _words[1] == "disabled" ||
+                _words[1] == "disable" ||
+                _words[1] == "deactivate" ||
+                _words[1] == "deactivated" ||
+                _words[1] == "unactive")
+                S.Cheats.ToggleGodmode(false);
+            else
+                S.Cheats.ToggleGodmode();
+        }
+    }
+
+    void Fog()
+    {
+        string scene = S.PS._currentSceneName;
+        float[] fog = S.Fog.GetFog(scene);
+
+        bool TryParseFloat(string s, out float result)
+        {
+            if (float.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+                return true;
+            if (float.TryParse(s, NumberStyles.Float, CultureInfo.CurrentCulture, out result))
+                return true;
+            return false;
+        }
+
+        if (_words.Length > 1)
+        {
+            float number = 1;
+            bool numberNext = TryParseFloat(_words[1], out number);
+
+            if (_words.Length > 2)
+            {
+                //fog 0,5 black 
+                if (_words.Length == 3 && TryParseFloat(_words[1], out float firstNum) && TryGetColor(_words[2], out Color firstColor))
+                {
+                    SetFog(firstColor, firstNum);
+                }
+                //fog black 0,5
+                else if (TryGetColor(_words[1], out Color namedColor))
+                {
+                    if (TryParseFloat(_words[2], out float density))
+                        SetFog(namedColor, density);
+                    else
+                        ToggleConsole("Error");
+                }
+                //fog r g b [density]
+                else if (_words.Length >= 4 &&
+                         TryParseFloat(_words[1], out float r) &&
+                         TryParseFloat(_words[2], out float g) &&
+                         TryParseFloat(_words[3], out float b))
+                {
+                    if (_words.Length >= 5 && TryParseFloat(_words[4], out float density))
+                        SetFog0(r, g, b, density);
+                    else if (_words.Length == 4)
+                        SetFog0(r, g, b, fog[3]);
+                    else
+                        ToggleConsole("Error");
+                }
+                else
+                    ToggleConsole("Error");
+            }
+            else
+            {
+                if (numberNext)
+                {
+                    //fog 0,5
+                    SetFog0(fog[0], fog[1], fog[2], number);
+                }
+                else
+                {
+                    //fog black
+                    if (TryGetColor(_words[1], out Color namedColor))
+                        SetFog(namedColor, fog[3]);
+                    else
+                        ToggleConsole("Error");
+                }
+            }
+        }
+        else
+        {
+            ToggleConsole("Success", true);
+            string message = $"Current fog: r = {fog[0]}, g = {fog[1]}, b = {fog[2]}, density = {fog[3]}.";
+            AddMessage(message, Color.yellow);
+        }
+
+        void SetFog0(float r, float g, float b, float d)
+        {
+            SetFog(new Color(r, g, b), d);
+        }
+
+        void SetFog(Color clr, float d)
+        {
+            ToggleConsole("Success", true);
+            S.Fog.SetFog(scene, clr, d);
+        }
+
+        bool TryGetColor(string name, out Color color)
+        {
+            switch (name.ToLowerInvariant())
+            {
+                case "red": color = Color.red; return true;
+                case "green": color = Color.green; return true;
+                case "blue": color = Color.blue; return true;
+                case "white": color = Color.white; return true;
+                case "black": color = Color.black; return true;
+                case "yellow": color = Color.yellow; return true;
+                case "cyan": color = Color.cyan; return true;
+                case "magenta": color = Color.magenta; return true;
+                case "gray": case "grey": color = Color.gray; return true;
+                case "clear": color = Color.clear; return true;
+
+                case "orange": color = new Color32(255, 165, 0, 255); return true;
+                case "purple": color = new Color32(128, 0, 128, 255); return true;
+                case "pink": color = new Color32(255, 192, 203, 255); return true;
+                case "brown": color = new Color32(165, 42, 42, 255); return true;
+                case "lime": color = new Color32(0, 255, 0, 255); return true;
+                case "teal": color = new Color32(0, 128, 128, 255); return true;
+                case "olive": color = new Color32(128, 128, 0, 255); return true;
+                case "maroon": color = new Color32(128, 0, 0, 255); return true;
+                case "navy": color = new Color32(0, 0, 128, 255); return true;
+                case "silver": color = new Color32(192, 192, 192, 255); return true;
+                case "gold": color = new Color32(255, 215, 0, 255); return true;
+                case "violet": color = new Color32(238, 130, 238, 255); return true;
+                case "indigo": color = new Color32(75, 0, 130, 255); return true;
+                case "turquoise": color = new Color32(64, 224, 208, 255); return true;
+                case "coral": color = new Color32(255, 127, 80, 255); return true;
+                case "salmon": color = new Color32(250, 128, 114, 255); return true;
+                case "beige": color = new Color32(245, 245, 220, 255); return true;
+                case "lavender": color = new Color32(230, 230, 250, 255); return true;
+                case "crimson": color = new Color32(220, 20, 60, 255); return true;
+                case "azure": color = new Color32(240, 255, 255, 255); return true;
+                case "ivory": color = new Color32(255, 255, 240, 255); return true;
+                case "khaki": color = new Color32(240, 230, 140, 255); return true;
+                case "plum": color = new Color32(221, 160, 221, 255); return true;
+                case "tan": color = new Color32(210, 180, 140, 255); return true;
+                case "thistle": color = new Color32(216, 191, 216, 255); return true;
+                case "wheat": color = new Color32(245, 222, 179, 255); return true;
+                case "chocolate": color = new Color32(210, 105, 30, 255); return true;
+
+                case "darkred": color = new Color32(139, 0, 0, 255); return true;
+                case "darkgreen": color = new Color32(0, 100, 0, 255); return true;
+                case "darkblue": color = new Color32(0, 0, 139, 255); return true;
+                case "darkcyan": color = new Color32(0, 139, 139, 255); return true;
+                case "darkmagenta": color = new Color32(139, 0, 139, 255); return true;
+                case "darkgray": case "darkgrey": color = new Color32(169, 169, 169, 255); return true;
+
+                case "lightblue": color = new Color32(173, 216, 230, 255); return true;
+                case "lightgreen": color = new Color32(144, 238, 144, 255); return true;
+                case "lightcyan": color = new Color32(224, 255, 255, 255); return true;
+                case "lightmagenta": color = new Color32(255, 153, 255, 255); return true;
+                case "lightyellow": color = new Color32(255, 255, 224, 255); return true;
+                case "lightgray": case "lightgrey": color = new Color32(211, 211, 211, 255); return true;
+
+                case "aqua": color = new Color32(0, 255, 255, 255); return true;
+                case "fuchsia": color = new Color32(255, 0, 255, 255); return true;
+                case "limegreen": color = new Color32(50, 205, 50, 255); return true;
+                case "springgreen": color = new Color32(0, 255, 127, 255); return true;
+                case "skyblue": color = new Color32(135, 206, 235, 255); return true;
+                case "royalblue": color = new Color32(65, 105, 225, 255); return true;
+                case "dodgerblue": color = new Color32(30, 144, 255, 255); return true;
+                case "steelblue": color = new Color32(70, 130, 180, 255); return true;
+                case "seagreen": color = new Color32(46, 139, 87, 255); return true;
+                case "forestgreen": color = new Color32(34, 139, 34, 255); return true;
+                case "mediumblue": color = new Color32(0, 0, 205, 255); return true;
+                case "midnightblue": color = new Color32(25, 25, 112, 255); return true;
+                case "darkslategray": case "darkslategrey": color = new Color32(47, 79, 79, 255); return true;
+                case "slategray": case "slategrey": color = new Color32(112, 128, 144, 255); return true;
+                case "lightslategray": case "lightslategrey": color = new Color32(119, 136, 153, 255); return true;
+                case "cornflowerblue": color = new Color32(100, 149, 237, 255); return true;
+                case "tomato": color = new Color32(255, 99, 71, 255); return true;
+                case "orangered": color = new Color32(255, 69, 0, 255); return true;
+                case "firebrick": color = new Color32(178, 34, 34, 255); return true;
+                case "indianred": color = new Color32(205, 92, 92, 255); return true;
+                case "hotpink": color = new Color32(255, 105, 180, 255); return true;
+                case "deeppink": color = new Color32(255, 20, 147, 255); return true;
+                case "mediumvioletred": color = new Color32(199, 21, 133, 255); return true;
+                case "palevioletred": color = new Color32(219, 112, 147, 255); return true;
+
+                default: color = default; return false;
+            }
+        }
+    }
+
+    void Map()
+    {
+        ToggleConsole("Success", true);
+
+        string[] sceneNames = new string[SceneManager.sceneCount];
+        for (int i = 0; i < sceneNames.Length; i++)
+            sceneNames[i] = $"\"{SceneManager.GetSceneAt(i).name}\"";
+
+        AddMessage($"Current scene names: {string.Join(", ", sceneNames)}.", Color.yellow);
     }
 
     void Spawn()
@@ -461,7 +704,7 @@ public class Console : MonoBehaviour
         }
     }
 
-    void Power()
+    public void Power()
     {
         if (_words.Length == 1)
         {

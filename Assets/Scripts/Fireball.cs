@@ -17,12 +17,15 @@ public class Fireball : MonoBehaviour
     private string _sceneName;
     public float _damage;
     private MaterialPropertyBlock _mpb;
+    private Transform _sceneRoot;
     
     void Start()
     {
-        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+        _sceneName = gameObject.scene.name;
         _opti = new Optimiser(_sceneName);
         _opti.MaxPeriodForDistance = 1 / 12f;
+
+        _sceneRoot = S.Loader.Roots[_sceneName];
 
         _mpb = S.Fog.GetMPB(_sceneName);
         S.Fog.ApplyToGameObject(gameObject, _mpb);
@@ -105,13 +108,13 @@ public class Fireball : MonoBehaviour
                         GameObject sparkle = null;
 
                         if (_color == "red")
-                            sparkle = Instantiate(S.RedSparkle);
+                            sparkle = Instantiate(S.RedSparkle, _sceneRoot);
                         else if (_color == "green")
-                            sparkle = Instantiate(S.GreenSparkle);
+                            sparkle = Instantiate(S.GreenSparkle, _sceneRoot);
                         else if (_color == "blue")
-                            sparkle = Instantiate(S.BlueSparkle);
+                            sparkle = Instantiate(S.BlueSparkle, _sceneRoot);
                         else if (_color == "purple")
-                            sparkle = Instantiate(S.PurpleSparkle);
+                            sparkle = Instantiate(S.PurpleSparkle, _sceneRoot);
 
                         sparkle.transform.position = hit.point;
                         sparkle.transform.rotation = Quaternion.LookRotation(hit.normal);
@@ -149,8 +152,8 @@ public class Fireball : MonoBehaviour
 
                     void Inst(GameObject hitPointPrefab, GameObject heavySparklePrefab)
                     {
-                        GameObject hitPoint = Instantiate(hitPointPrefab, p, r);
-                        GameObject heavySparkle = Instantiate(heavySparklePrefab, p, r);
+                        GameObject hitPoint = Instantiate(hitPointPrefab, p, r, _sceneRoot);
+                        GameObject heavySparkle = Instantiate(heavySparklePrefab, p, r, _sceneRoot);
 
                         S.Fog.ApplyToGameObject(hitPoint, _mpb);
                         S.Fog.ApplyToGameObject(heavySparkle, _mpb);

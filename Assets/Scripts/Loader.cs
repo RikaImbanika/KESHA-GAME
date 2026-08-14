@@ -19,6 +19,11 @@ public class Loader : MonoBehaviour
     private Dictionary<string, Transform> _roots;
     private Dictionary<string, SceneRoot> _sceneRoots;
     public bool _teleporting;
+    public bool _isPortalTeleporting;
+    public string _loaderTargetScene;
+    private int _targetDoorId;
+    private Vector3 _targetDir;
+    public bool _teleportingPending;
 
     public void Start()
     {
@@ -146,8 +151,6 @@ public class Loader : MonoBehaviour
         S.PlayerCamScript.Rotate(dRotation);
 
         S.SDC.RequestCleanup();
-
-        _teleporting = false;
     }
 
     public IEnumerator WaitLoadPortal(string nextSceneName)
@@ -159,13 +162,38 @@ public class Loader : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
             deadline += 0.2f;
         }
-
-        _teleporting = false;
     }
 
     public void GoTo(string nextSceneName, int doorId, Vector3 dir)
     {
+        if (_loaderTargetScene != nextSceneName)
+        {
+            _loaderTargetScene = nextSceneName;
+            _targetDoorId = doorId;
+            _targetDir = dir;
+            _teleportingPending = true;
+        }
+        else
+        {
+            S.Console.AddMessage($"Trying to go to \"{nextSceneName}\" second time. (doorId = {doorId}, dir = {dir.ToString()})");
+        }
+    }
+
+    private void ActuallyGoTo()
+    {
+        string nextSceneName = _loaderTargetScene;
+        int doorId = _targetDoorId;
+        Vector3 dir = _targetDir;
+
+        if (nextSceneName == S.PS._currentSceneName)
+        {
+            S.Console.AddMessage($"Trying to load scene \"{nextSceneName}\" second time somehow. (doorId = {doorId}, dir = {dir.ToString()})", Color.red);
+            _teleportingPending = false;
+            return;
+        }
+            
         StartCoroutine(GoToAsync());
+        _teleportingPending = false;
 
         IEnumerator GoToAsync()
         {
@@ -179,13 +207,14 @@ public class Loader : MonoBehaviour
             if (nextSceneName == "Start")
             {
                 //We should not be here
+                S.Console.AddMessage("We should not be here (Loader.cs)", Color.red);
                 _teleporting = false;
                 yield break;
             }
 
-            List<string> newScenesNames = new List<string>();
-            newScenesNames.AddRange(S.Loader._map[nextSceneName]);
-            newScenesNames.Add(nextSceneName);
+            HashSet<string> newScenesSet = new HashSet<string>(S.Loader._map[nextSceneName]);
+            newScenesSet.Add(nextSceneName);
+            List<string> newScenesNames = new List<string>(newScenesSet);
 
             List<string> oldScenesNames = new List<string>();
 
@@ -194,31 +223,37 @@ public class Loader : MonoBehaviour
                     oldScenesNames.Add(SceneManager.GetSceneAt(i).name);
 
             foreach (string name in newScenesNames)
-                if (!oldScenesNames.Contains(name))
+            {
+                if (!oldScenesNames.Contains(name) && !_scenesToLoad.Contains(name))
                 {
                     SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
                     S.Loader.PleaseLoadScene(name);
                 }
+            }
 
             foreach (string name in oldScenesNames)
                 if (!newScenesNames.Contains(name))
                     try
                     {
+                        //Delete roots
+                        if (_roots.ContainsKey(name))
+                            _roots.Remove(name);
+                        if (_sceneRoots.ContainsKey(name))
+                            _sceneRoots.Remove(name);
+
                         SceneManager.UnloadSceneAsync(name);
                     }
                     catch (System.Exception ex)
                     {
-                        Debug.LogError($"Error unloading scene {name}: {ex.Message}");
+                        S.Console.AddMessage($"Error unloading scene {name}: {ex.Message}", Color.red);
                     }
 
             if (doorId > 0)
-            {
-                StartCoroutine(WaitLoad(nextSceneName, doorId, dir));
-            }
+                yield return WaitLoad(nextSceneName, doorId, dir);
             else
-            {
-                StartCoroutine(WaitLoadPortal(nextSceneName));
-            }
+                yield return WaitLoadPortal(nextSceneName);
+
+            _teleporting = false;
         }
     }
 
@@ -321,6 +356,8 @@ public class Loader : MonoBehaviour
 
     public void Update()
     {
+        if (_teleportingPending)
+            ActuallyGoTo();
         if (_scenesToLoad.Count > 0)
             AddictiveLoadAsync();
     }
@@ -364,7 +401,7 @@ public class Loader : MonoBehaviour
         if (S.MM._playerOnIncome)
             S.MM.EnterIncome();
         else
-            S.MM.LeaveIncome(); //What do u want from me? .. IDK BRO
+            S.MM.LeaveIncome();
 
         if (nextSceneName.Contains("BR"))
             S.MM.EnterBackrooms();

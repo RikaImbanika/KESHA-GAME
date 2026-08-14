@@ -342,7 +342,7 @@ public class Backrooms : MonoBehaviour
             while (true)
             {
                 id = S.RND.Next(S.Loader._rooms.Count);
-                if (S.Loader._rooms.ElementAt(id).Key.Contains("BR") || S.Loader._rooms.ElementAt(id).Key.Contains("Hall"))
+                if (S.Loader._rooms.ElementAt(id).Key.Contains("BR"))
                     break;
             }
 
@@ -352,6 +352,7 @@ public class Backrooms : MonoBehaviour
 
             int doorNum1 = 1 + S.RND.Next(a.Value._doors.Count);
 
+            //_doors is dictionary, doorNum1 is a key, not an index
             if (roomModel1._doors[doorNum1]._locked)
                 continue;
 

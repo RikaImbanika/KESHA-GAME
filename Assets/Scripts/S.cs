@@ -115,8 +115,33 @@ public static class S : object
 	public static IDs _ids;
 	public static GameObject _snakeSpawner;
 	public static Fog _fog;
-
 	public static GameObject _rikaParticle;
+	public static Camera _intercam;
+	public static GameObject _inventoryPlane;
+
+	public static GameObject InventoryPlane
+	{
+		get
+		{
+			return _inventoryPlane;
+		}
+		set
+		{
+			_inventoryPlane = value;
+		}
+	}
+
+	public static Camera Intercam
+	{
+		get
+		{
+			return _intercam;
+		}
+		set
+		{
+			_intercam = value;
+		}
+	}
 
 	public static GameObject RikaParticle
 	{

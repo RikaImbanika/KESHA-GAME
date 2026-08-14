@@ -29,7 +29,7 @@ public class LowHealth : MonoBehaviour
         {
             _updateTimer = 0;
             float health = S.PS._health / 100;
-            _targetAlpha = (health - 0.05f) / 0.25f;
+            _targetAlpha = (health - 0.05f) / 0.35f;
             _targetAlpha = 1 - Mathf.Pow(Mathf.SmoothStep(0, 1, _targetAlpha), 0.5f);
         }
 

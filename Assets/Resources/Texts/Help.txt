@@ -1,13 +1,13 @@
 COMMANDS:
 =======================================================
-/summon (zombella, baka, musculus, ghost, spider, snake, firefly) <count>;
-/get (gun, ammo, PurpleBall, FirstAidKit, cucumber, GreenKey, RedCrystal, Frerard1, Earth, Moon, Mars...) <count>;
-/tp (BR 1, BR 1R, BR 2, BR 2R, BR 3, MR 1, MR 4, Hall, Income, Corridor, TL 1, TL 2, TL 3, so on...);
+/entities; /summon <entity> <count>;
+/items; /get <item> <count>;
+/tp <scene>; /scenes; /scene; /map;
 /tp <x> <y>; /tp <x> <y> <z>; /spawn;
 /jump <power>; /push <power>; /push <x> <y>; /push <x> <y> <z>;
-/heal <amount>; /heal; /save; /checkpoint;
-/damage <amount>; /dam <amount>; /killme; /kill;
+/heal <amount>; /heal; /save; /checkpoint; /godmode;
+/damage <amount>; /dam <amount>; /killme; /kill; /power <value>;
 /help; /combinations; /coords; /scenename; /snakes;
-/scenes; /items; /entities; /power <value>;
+/fog; /fog <r> <g> <b> <d>; /fog <color> <d>;
 There are also many aliases for commands.
 =======================================================
