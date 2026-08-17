@@ -42,6 +42,16 @@ public class MusicManager : MonoBehaviour
     public int _mushroomsPrevTrackId;
     public string _mushroomsPhase = "silence";
 
+    public AudioSource _finalOldTrack;
+    public AudioSource _finalNewTrack;
+    public AudioSource[] _finalSources;
+    public float[] _finalLengthes;
+    public float[] _finalVolumes;
+    public float _finalVolume;
+    public int _finalTrackId;
+    public int _finalPrevTrackId;
+    public string _finalPhase = "silence";
+
     void Start()
     {
         S.MM = this;
@@ -50,6 +60,7 @@ public class MusicManager : MonoBehaviour
         _playerOnIncome = true;
         _incomeSwapPhase = "1";
         _mushroomsPrevTrackId = 1; //
+        _finalPrevTrackId = 1;
 
         StartCoroutine(LateStart(0.3f));
 
@@ -61,8 +72,8 @@ public class MusicManager : MonoBehaviour
                 Debug.Log("MusicManager waiting for S.AudioManager");
             }
 
-            int count = 5;
-            int count2 = 10;
+            int count = 6;
+            int count2 = 12;
 
             _backroomsVolumes = new float[count];
             _backroomsVolumes[0] = 1;
@@ -85,6 +96,9 @@ public class MusicManager : MonoBehaviour
             _backroomsSources[4] = S.AM.A["Riddik"];
             _backroomsLengthes[4] = 1116;
 
+            _backroomsSources[5] = S.AM.A["White Fog"];
+            _backroomsLengthes[5] = 287;
+
             bool[] remember = new bool[count2];
             _backroomsOrder = new int[count2];
 
@@ -98,11 +112,14 @@ public class MusicManager : MonoBehaviour
 
             _backroomsOrder[0] = 0;
             _backroomsOrder[1] = 1;
+            _backroomsOrder[2] = 5;
 
-            if (rnd.Next(10) < 3)
+            for (int i = 2; i > 0; i--)
             {
-                _backroomsOrder[0] = 1;
-                _backroomsOrder[1] = 0;
+                int j = S.RND.Next(0, i + 1);
+                int temp = _backroomsOrder[i];
+                _backroomsOrder[i] = _backroomsOrder[j];
+                _backroomsOrder[j] = temp;
             }
 
             int[] localOrder = new int[3];
@@ -112,18 +129,20 @@ public class MusicManager : MonoBehaviour
 
             S.AllFather.Shuffle(localOrder);
 
-            _backroomsOrder[2] = localOrder[0];
+            _backroomsOrder[3] = localOrder[0];
 
-            _backroomsOrder[3] = _backroomsOrder[0];
-            _backroomsOrder[4] = _backroomsOrder[1];
+            _backroomsOrder[4] = _backroomsOrder[0];
+            _backroomsOrder[5] = _backroomsOrder[1];
 
-            _backroomsOrder[5] = localOrder[1];
+            _backroomsOrder[6] = localOrder[1];
 
-            _backroomsOrder[6] = _backroomsOrder[0];
+            _backroomsOrder[7] = _backroomsOrder[2];
+            _backroomsOrder[8] = _backroomsOrder[0];
 
-            _backroomsOrder[7] = localOrder[2];
+            _backroomsOrder[9] = localOrder[2];
 
-            _backroomsOrder[8] = _backroomsOrder[1];
+            _backroomsOrder[10] = _backroomsOrder[1];
+            _backroomsOrder[11] = _backroomsOrder[2];
 
             _backroomsTrackId = 0;
             _backroomsPrevTrackId = 1; //Track here should not be equals first one
@@ -144,6 +163,17 @@ public class MusicManager : MonoBehaviour
             _mushroomsLengthes = new float[2];
             _mushroomsLengthes[0] = 282;
             _mushroomsLengthes[1] = 128;
+
+            _finalVolumes = new float[2];
+            _finalVolumes[0] = 1;
+
+            _finalSources = new AudioSource[2];
+            _finalSources[0] = S.AM.A["Final 1"];
+            _finalSources[1] = S.AM.A["Final 2"];
+
+            _finalLengthes = new float[2];
+            _finalLengthes[0] = _finalSources[0].clip.length - 2f; // или точная длина Final 1
+            _finalLengthes[1] = _finalSources[1].clip.length - 2f; // или точная длина Final 2
         }
     }
 
@@ -161,6 +191,7 @@ public class MusicManager : MonoBehaviour
         Income(d);
         Backrooms(d);
         Mushrooms(d);
+        Final(d);
     }
 
     public void Mushrooms(float d)
@@ -229,6 +260,74 @@ public class MusicManager : MonoBehaviour
     public void LeaveMushrooms()
     {
         _mushroomsPhase = "leaving";
+    }
+
+    public void Final(float d)
+    {
+        if (_finalPhase == "silence")
+            return;
+
+        if (_finalPhase == "leaving")
+        {
+            if (_finalVolume > 0)
+                _finalVolume -= 0.005f * d;
+            else
+            {
+                _finalPhase = "silence";
+                _finalVolume = 0;
+                _finalSources[_finalTrackId].Pause();
+                _finalSources[_finalPrevTrackId].Pause();
+            }
+        }
+        else if (_finalPhase == "entering")
+        {
+            _finalVolume += 0.005f * d;
+
+            if (_finalVolume > 1)
+            {
+                _finalVolume = 1;
+                _finalPhase = "entered";
+            }
+        }
+
+        if (_finalSources[_finalTrackId].time > _finalLengthes[_finalTrackId])
+        {
+            _finalPrevTrackId = _finalTrackId;
+
+            _finalTrackId += 1;
+            if (_finalTrackId >= 2)
+                _finalTrackId = 0;
+
+            _finalSources[_finalTrackId].time = 0;
+            _finalVolumes[_finalTrackId] = 1;
+            _finalSources[_finalTrackId].volume = 1 * _finalVolume;
+            _finalSources[_finalTrackId].Play();
+        }
+
+        if (_finalVolumes[_finalPrevTrackId] > 0)
+            _finalVolumes[_finalPrevTrackId] -= 0.005f * d;
+        else
+        {
+            _finalVolumes[_finalPrevTrackId] = 0;
+            _finalSources[_finalPrevTrackId].volume = 0;
+            _finalSources[_finalPrevTrackId].Stop();
+        }
+
+        _finalSources[_finalTrackId].volume = _finalVolumes[_finalTrackId] * _finalVolume;
+        _finalSources[_finalPrevTrackId].volume = _finalVolumes[_finalPrevTrackId] * _finalVolume;
+    }
+
+    public void EnterFinal()
+    {
+        if (_finalPhase == "silence")
+            _finalSources[_finalTrackId].Play();
+
+        _finalPhase = "entering";
+    }
+
+    public void LeaveFinal()
+    {
+        _finalPhase = "leaving";
     }
 
     public void Backrooms(float d)

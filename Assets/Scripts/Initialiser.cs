@@ -10,6 +10,8 @@ using UnityEngine;
 
 public class Initialiser : MonoBehaviour
 {
+    //Initialises everything!)
+
     void Start()
     {
         StartCoroutine(InitializeCoroutine());
@@ -81,6 +83,9 @@ public class Initialiser : MonoBehaviour
         S.SnakeSpawner = Prefabs.Get("SNAKIE");
 
         S.InventoryPlane = Prefabs.Get("InventoryPlane");
+
+        S.DaySky = Materials.Get("HDRI/DaySkyMat");
+        S.NightSky = Materials.Get("HDRI/NightSkyMat");
 
         yield return WaitForCondition(() => Camera.main != null, "Waiting for camera");
         S.Camera = Camera.main;
@@ -155,11 +160,15 @@ public class Initialiser : MonoBehaviour
         S.SquarePainting = Prefabs.Get("SquarePainting");
         S.WoodenPaintingFrame = Prefabs.Get("WoodenPaintingFrame");
 
-        S.CrowWing = Prefabs.Get("Wings/CrowWing");
-        S.AngelWing = Prefabs.Get("Wings/AngelWing");
-        S.BatWing = Prefabs.Get("Wings/BatWing");
-        S.RainbowWing1 = Prefabs.Get("Wings/RainbowWing1");
-        S.RainbowWing2 = Prefabs.Get("Wings/RainbowWing2");
+        S.Wings = new Dictionary<string, GameObject>();
+
+        S.Wings.Add("crow", Prefabs.Get("Wings/CrowWing"));
+        S.Wings.Add("angel", Prefabs.Get("Wings/AngelWing"));
+        S.Wings.Add("bat", Prefabs.Get("Wings/BatWing"));
+        S.Wings.Add("rainbow1", Prefabs.Get("Wings/RainbowWing1"));
+        S.Wings.Add("rainbow2", Prefabs.Get("Wings/RainbowWing2"));
+        S.Wings.Add("ice1", Prefabs.Get("Wings/IceWing1"));
+        S.Wings.Add("ice2", Prefabs.Get("Wings/IceWing2"));
 
         S.Shot = Prefabs.GetAudioSource("Shot");
         S.Caboom = Prefabs.GetAudioSource("Caboom");

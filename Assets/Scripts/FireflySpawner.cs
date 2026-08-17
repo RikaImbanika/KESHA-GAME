@@ -117,9 +117,9 @@ public class FireflySpawner : MonoBehaviour
         {
             //Defining doesn't mean summoning
 
-            if (_color == "Zombella" || _color == "Baka" || _color == "FatZombella" || _color == "FatBaka")
+            if (S.Fireflies.IsZombieFirefly(_color))
             {
-                int n = S.RND.Next(5);
+                int n = S.RND.Next(7);
 
                 if (n == 0)
                     _wingsType = "crow";
@@ -131,6 +131,10 @@ public class FireflySpawner : MonoBehaviour
                     _wingsType = "rainbow1";
                 else if (n == 4)
                     _wingsType = "rainbow2";
+                else if (n == 5)
+                    _wingsType = "ice1";
+                else if (n == 6)
+                    _wingsType = "ice2";
 
                 S.SM.Save(_idWingsType, _wingsType);
 
@@ -226,7 +230,7 @@ public class FireflySpawner : MonoBehaviour
                         sizeN = 3;
                 }
 
-                if ((_color == "Zombella" || _color == "Baka" || _color == "FatZombella" || _color == "FatBaka") 
+                if (S.Fireflies.IsZombieFirefly(_color) 
                     && sizeN == 0 || sizeN == 1)
                     continue;
                 else
@@ -249,88 +253,118 @@ public class FireflySpawner : MonoBehaviour
             {
                 if (_sceneName != "BR 5" && _sceneName != "BR 7" && _sceneName != "BR 7R" && _sceneName != "BR 6" && _sceneName != "BR 6R")
                 {
-                    probs.Add(new("Yellow", 75));
-                    probs.Add(new("Red", 2));
-                    probs.Add(new("Blue", 1));
-                    probs.Add(new("Purple", 1));
-                    probs.Add(new("Green", 2));
-                    probs.Add(new("RainbowSlow", 2));
-                    probs.Add(new("RainbowFast", 1));
-                    probs.Add(new("Baka", 6));
-                    probs.Add(new("Zombella", 6));
-                    probs.Add(new("FatBaka", 2));
-                    probs.Add(new("FatZombella", 2));
+                    probs.Add(new("Yellow", 750));
+                    probs.Add(new("Red", 20));
+                    probs.Add(new("Blue", 10));
+                    probs.Add(new("Purple", 10));
+                    probs.Add(new("Green", 20));
+                    probs.Add(new("RainbowSlow", 20));
+                    probs.Add(new("RainbowFast", 10));
+                    probs.Add(new("Baka", 60));
+                    probs.Add(new("Zombella", 60));
+                    probs.Add(new("FatBaka", 30));
+                    probs.Add(new("FatZombella", 30));
+                    probs.Add(new("Illuminaty", 25));
+                    probs.Add(new("Kuplinov1", 30));
+                    probs.Add(new("Kuplinov2", 30));
+                    probs.Add(new("Boykisser1", 15));
+                    probs.Add(new("Boykisser2", 15));
                 }
                 else
                 {
-                    probs.Add(new("Yellow", 1));
-                    probs.Add(new("Red", 2));
-                    probs.Add(new("Blue", 69));
-                    probs.Add(new("Purple", 2));
-                    probs.Add(new("Green", 1));
-                    probs.Add(new("RainbowSlow", 5));
-                    probs.Add(new("RainbowFast", 4));
-                    probs.Add(new("Baka", 6));
-                    probs.Add(new("Zombella", 6));
-                    probs.Add(new("FatBaka", 2));
-                    probs.Add(new("FatZombella", 2));
+                    probs.Add(new("Yellow", 10));
+                    probs.Add(new("Red", 20));
+                    probs.Add(new("Blue", 690));
+                    probs.Add(new("Purple", 20));
+                    probs.Add(new("Green", 10));
+                    probs.Add(new("RainbowSlow", 50));
+                    probs.Add(new("RainbowFast", 40));
+                    probs.Add(new("Baka", 60));
+                    probs.Add(new("Zombella", 60));
+                    probs.Add(new("FatBaka", 20));
+                    probs.Add(new("FatZombella", 20));
+                    probs.Add(new("Illuminaty", 14));
+                    probs.Add(new("Kuplinov1", 30));
+                    probs.Add(new("Kuplinov2", 30));
+                    probs.Add(new("Boykisser1", 15));
+                    probs.Add(new("Boykisser2", 15));
                 }
             }
             else if (_sceneName.Contains("MR"))
             {
-                probs.Add(new("Yellow", 2));
-                probs.Add(new("Red", 1));
-                probs.Add(new("Blue", 70));
-                probs.Add(new("Purple", 4));
-                probs.Add(new("Green", 3));
-                probs.Add(new("RainbowSlow", 4));
-                probs.Add(new("RainbowFast", 3));
-                probs.Add(new("Baka", 4));
-                probs.Add(new("Zombella", 4));
-                probs.Add(new("FatBaka", 2));
-                probs.Add(new("FatZombella", 3));
+                probs.Add(new("Yellow", 20));
+                probs.Add(new("Red", 10));
+                probs.Add(new("Blue", 700));
+                probs.Add(new("Purple", 40));
+                probs.Add(new("Green", 30));
+                probs.Add(new("RainbowSlow", 40));
+                probs.Add(new("RainbowFast", 30));
+                probs.Add(new("Baka", 40));
+                probs.Add(new("Zombella", 40));
+                probs.Add(new("FatBaka", 20));
+                probs.Add(new("FatZombella", 30));
+                probs.Add(new("Illuminaty", 20));
+                probs.Add(new("Kuplinov1", 30));
+                probs.Add(new("Kuplinov2", 30));
+                probs.Add(new("Boykisser1", 20));
+                probs.Add(new("Boykisser2", 20));
             }
             else if (_sceneName.Contains("Income"))
             {
-                probs.Add(new("Yellow", 87));
-                probs.Add(new("Red", 1));
+                probs.Add(new("Yellow", 870));
+                probs.Add(new("Red", 10));
                 probs.Add(new("Blue", 0));
                 probs.Add(new("Purple", 0));
-                probs.Add(new("Green", 2));
-                probs.Add(new("RainbowSlow", 2));
-                probs.Add(new("RainbowFast", 1));
-                probs.Add(new("Baka", 3));
-                probs.Add(new("Zombella", 4));
-                probs.Add(new("FatBaka", 0));
-                probs.Add(new("FatZombella", 0));
-              }
+                probs.Add(new("Green", 20));
+                probs.Add(new("RainbowSlow", 20));
+                probs.Add(new("RainbowFast", 10));
+                probs.Add(new("Baka", 30));
+                probs.Add(new("Zombella", 40));
+                probs.Add(new("FatBaka", 2));
+                probs.Add(new("FatZombella", 2));
+                probs.Add(new("Illuminaty", 2));
+                probs.Add(new("Kuplinov1", 1));
+                probs.Add(new("Kuplinov2", 1));
+                probs.Add(new("Boykisser1", 1));
+                probs.Add(new("Boykisser2", 1));
+            }
             else if (_sceneName.Contains("TL"))
             {
                 probs.Add(new("Yellow", 0));
-                probs.Add(new("Red", 1));
-                probs.Add(new("Blue", 70));
-                probs.Add(new("Purple", 4));
-                probs.Add(new("Green", 1));
-                probs.Add(new("RainbowSlow", 5));
-                probs.Add(new("RainbowFast", 4));
-                probs.Add(new("Baka", 5));
-                probs.Add(new("Zombella", 5));
-                probs.Add(new("FatBaka", 2));
-                probs.Add(new("FatZombella", 3));
+                probs.Add(new("Red", 10));
+                probs.Add(new("Blue", 700));
+                probs.Add(new("Purple", 40));
+                probs.Add(new("Green", 10));
+                probs.Add(new("RainbowSlow", 50));
+                probs.Add(new("RainbowFast", 40));
+                probs.Add(new("Baka", 50));
+                probs.Add(new("Zombella", 50));
+                probs.Add(new("FatBaka", 20));
+                probs.Add(new("FatZombella", 30));
+                probs.Add(new("Illuminaty", 20));
+                probs.Add(new("Kuplinov1", 30));
+                probs.Add(new("Kuplinov2", 30));
+                probs.Add(new("Boykisser1", 20));
+                probs.Add(new("Boykisser2", 20));
             }
             else
             {
-                probs.Add(new("Yellow", 10));
-                probs.Add(new("Red", 10));
-                probs.Add(new("Blue", 10)); //30
-                probs.Add(new("Purple", 10)); //40
-                probs.Add(new("Green", 8)); //50
-                probs.Add(new("RainbowSlow", 10)); //58
-                probs.Add(new("RainbowFast", 10)); //68
-                probs.Add(new("Baka", 8)); //76
-                probs.Add(new("Zombella", 8)); //84
-                probs.Add(new("FatBaka", 8)); //92
-                probs.Add(new("FatZombella", 8)); //100
+                probs.Add(new("Yellow", 100));
+                probs.Add(new("Red", 100));
+                probs.Add(new("Blue", 100)); //300
+                probs.Add(new("Purple", 100));
+                probs.Add(new("Green", 80));
+                probs.Add(new("RainbowSlow", 100));
+                probs.Add(new("RainbowFast", 100));
+                probs.Add(new("Baka", 80));
+                probs.Add(new("Zombella", 80));
+                probs.Add(new("FatBaka", 80));
+                probs.Add(new("FatZombella", 80));
+                probs.Add(new("Illuminaty", 40));
+                probs.Add(new("Kuplinov1", 30));
+                probs.Add(new("Kuplinov2", 30));
+                probs.Add(new("Boykisser1", 20));
+                probs.Add(new("Boykisser2", 20));
             }
             colorN = S.Fireflies.ColorN[S.AllFather.SelFromProb(probs)];
 
@@ -377,31 +411,8 @@ public class FireflySpawner : MonoBehaviour
                 GameObject _leftWing;
                 GameObject _rightWing;
 
-                if (_wingsType == "crow")
-                {
-                    _leftWing = GameObject.Instantiate(S.CrowWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.CrowWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                }
-                else if (_wingsType == "angel")
-                {
-                    _leftWing = GameObject.Instantiate(S.AngelWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.AngelWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                }
-                else if (_wingsType == "bat")
-                {
-                    _leftWing = GameObject.Instantiate(S.BatWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.BatWing, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                }
-                else if (_wingsType == "rainbow1")
-                {
-                    _leftWing = GameObject.Instantiate(S.RainbowWing1, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.RainbowWing1, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                }
-                else
-                {
-                    _leftWing = GameObject.Instantiate(S.RainbowWing2, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                    _rightWing = GameObject.Instantiate(S.RainbowWing2, firefly._vis.transform.position, firefly._vis.transform.rotation);
-                }
+                _leftWing = GameObject.Instantiate(S.Wings[_wingsType], firefly._vis.transform.position, firefly._vis.transform.rotation);
+                _rightWing = GameObject.Instantiate(S.Wings[_wingsType], firefly._vis.transform.position, firefly._vis.transform.rotation);
 
                 _leftWing.transform.localScale = 0.0008f * firefly._vis.transform.localScale;
                 _rightWing.transform.localScale = 0.0008f * new Vector3(firefly._vis.transform.localScale.x, firefly._vis.transform.localScale.y, -firefly._vis.transform.localScale.z);
@@ -422,10 +433,10 @@ public class FireflySpawner : MonoBehaviour
                 firefly._wingFrequency = _wingsFrequency;
             }
         }
-        
+
         void SetSway()
         {
-            if (_color == "Zombella" || _color == "Baka" || _color == "FatZombella" || _color == "FatBaka")
+            if (S.Fireflies.IsZombieFirefly(_color))
             {
                 firefly._swayAmplitude = 35f;
                 firefly._swayFrequency = 1f;

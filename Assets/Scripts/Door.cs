@@ -26,7 +26,7 @@ public class Door : MonoBehaviour
 
 	public void Start()
 	{
-		_sparklesCount = 50; //Whey are strange.
+		_sparklesCount = 35; //They are strange.
 
 		_layerMask = 1 << LayerMask.NameToLayer("Static") |
 			 1 << LayerMask.NameToLayer("Default");
@@ -363,7 +363,7 @@ public class Door : MonoBehaviour
 				GameObject sparkle = Instantiate(S.BlueSparkle, _root);
 				sparkle.transform.position = transform.position;
 				sparkle.transform.rotation = Quaternion.LookRotation(direction);
-				sparkle.transform.localScale *= 2f;
+				sparkle.transform.localScale *= 1.1f;
 			}
 		}
 	}

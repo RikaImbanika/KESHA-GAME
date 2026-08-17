@@ -454,7 +454,8 @@ public class Console : MonoBehaviour
         else if (_words[0] == "godmode" ||
             _words[0] == "god" ||
             _words[0] == "devmode" ||
-            _words[0] == "dev")
+            _words[0] == "dev" ||
+            _words[0] == "gm")
             Godmode();
         else if (!string.IsNullOrWhiteSpace(command))
             ToggleConsole("Message");

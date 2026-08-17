@@ -103,6 +103,8 @@ public class Loader : MonoBehaviour
 
             S.SM.Save("sceneName", "Income");
 
+            S.Camera.GetComponent<Skybox>().material = S.DaySky;
+
             yield return null;
         }
     }
@@ -396,6 +398,14 @@ public class Loader : MonoBehaviour
         S.PS._currentSceneName = nextSceneName;
         S.SaveManager.CurrentSave.SaveString("sceneName", nextSceneName);
 
+        if (nextSceneName != "Start")
+        {
+            if (nextSceneName == "Income" || nextSceneName == "Corridor")
+                S.Camera.GetComponent<Skybox>().material = S.DaySky;
+            else
+                S.Camera.GetComponent<Skybox>().material = S.NightSky;
+        }
+            
         S.MM._playerOnIncome = (nextSceneName == "Income");
 
         if (S.MM._playerOnIncome)
@@ -422,6 +432,11 @@ public class Loader : MonoBehaviour
             S.MM.LeaveMushrooms();
         else if (nextSceneName != "MR 1" && nextSceneName != "MR 2")
             S.MM.EnterMushrooms();
+
+        if (nextSceneName == "Final")
+            S.MM.EnterFinal();
+        else 
+            S.MM.LeaveFinal();
     }
 
     private void AddictiveLoadAsync()

@@ -14,10 +14,12 @@ public class WrongWay : MonoBehaviour
     int _globalSignCounter;
     string[] _wrongWays;
     int[] _order;
+    string _sceneName;
 
 
     void Start()
     {
+        _sceneName = gameObject.scene.name;        
         _signs = new List<GameObject>();
 
         _wrongWays = new string[] 
@@ -41,6 +43,10 @@ public class WrongWay : MonoBehaviour
         S.AllFather.Shuffle(_signsOrder);
 
         _signsHolder = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        _signsHolder.name = "WrongWayHolder";
+        _signsHolder.transform.position += new Vector3(0, -20, 0);
+        Transform root = S.Loader.Roots[_sceneName];
+        _signsHolder.transform.SetParent(root, true);
     }
 
     int _num = 0;
@@ -97,6 +103,9 @@ public class WrongWay : MonoBehaviour
         mat.mainTexture = Resources.Load<Texture2D>($"Textures/Wrong Way/Wrong Way {_signsOrder[_signCounter]}");
         sign.GetComponent<MeshRenderer>().material = mat;
         _signs.Add(sign);
+
+        float pitch = Random.Range(0.95f, 1.05f);
+        S.AudioManager.Play("Kick Metal 1");
 
         _signCounter++;
         _globalSignCounter++;

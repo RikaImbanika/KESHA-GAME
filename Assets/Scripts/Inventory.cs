@@ -519,7 +519,7 @@ public class Inventory : MonoBehaviour
 		}
 		if (S.ItemShower._showingItem != null)
 		{
-			if (S.ItemShower._showingStartTime < Time.time - 1)
+			if (S.ItemShower._showingStartTime < Time.time - 1 || S.Cheats._cheats)
 				if (Input.anyKey)
 					S.ItemShower.HideShowingItem();
 		}

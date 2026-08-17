@@ -10,6 +10,7 @@ public class Fireflies : MonoBehaviour
 {
     public float[] _firefliesSizes;
     public string[] _firefliesColors;
+    public string[] _zombieFirefliesColors;
     public Dictionary<string, Material> _materials;
     private Dictionary<string, byte> _colorN;
 
@@ -52,6 +53,24 @@ public class Fireflies : MonoBehaviour
                 "Baka",
                 "FatZombella",
                 "FatBaka",
+                "Illuminaty",
+                "Kuplinov1",
+                "Kuplinov2",
+                "Boykisser1",
+                "Boykisser2"
+            };
+
+            _zombieFirefliesColors = new string[]
+            {
+                "Zombella",
+                "Baka",
+                "FatZombella",
+                "FatBaka",
+                "Illuminaty",
+                "Kuplinov1",
+                "Kuplinov2",
+                "Boykisser1",
+                "Boykisser2"
             };
 
             _colorN = new Dictionary<string, byte>();
@@ -63,7 +82,7 @@ public class Fireflies : MonoBehaviour
                 string colName = _firefliesColors[a];
                 _colorN.Add(colName, a);
 
-                if (colName != "Zombella" && colName != "Baka" && colName != "FatZombella" && colName != "FatBaka")
+                if (!IsZombieFirefly(colName))
                     _materials.Add(colName, Materials.Get($"Sparkles/Normal/Sparkle{colName}"));
                 else
                     _materials.Add(colName, Materials.Get($"FlyingEnemies/{colName}"));
@@ -73,5 +92,10 @@ public class Fireflies : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    public bool IsZombieFirefly(string color)
+    {
+        return _zombieFirefliesColors.Contains(color);
     }
 }

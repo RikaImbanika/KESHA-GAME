@@ -31,6 +31,9 @@ public class Fog : MonoBehaviour
             foreach (string sceneName in S.Loader._rooms.Keys)
                 _mpbs.Add(sceneName, new MaterialPropertyBlock());
 
+            _mpbs["Start"].SetColor("_FogColor", new Color(0.1f, 0f, 0.2f));
+            _mpbs["Start"].SetFloat("_FogDensity", 0.005f);
+
             _mpbs["Income"].SetColor("_FogColor", new Color(0.4292453f, 0.6394855f, 1f));
             _mpbs["Income"].SetFloat("_FogDensity", 0.001f);
 
@@ -40,8 +43,8 @@ public class Fog : MonoBehaviour
             _mpbs["Corridor"].SetColor("_FogColor", new Color(0.6f, 0.2f, 0.15f));
             _mpbs["Corridor"].SetFloat("_FogDensity", 0.01f);
 
-            _mpbs["Final"].SetColor("_FogColor", new Color(0.8f, 0f, 0f));
-            _mpbs["Final"].SetFloat("_FogDensity", 0.0055f);
+            _mpbs["Final"].SetColor("_FogColor", new Color(0.09f, 0f, 0.3f));
+            _mpbs["Final"].SetFloat("_FogDensity", 0.04f);
 
             _mpbs["TL 0"].SetColor("_FogColor", new Color(0.12f, 0.08f, 0f));
             _mpbs["TL 0"].SetFloat("_FogDensity", 0.022f);
@@ -65,6 +68,29 @@ public class Fog : MonoBehaviour
             _mpbs["BR 8"].SetColor("_FogColor", new Color(0.03f, 0.01f, 0f));
             _mpbs["BR 8"].SetFloat("_FogDensity", 0.05f);
 
+            _mpbs["BR 5"].SetColor("_FogColor", new Color(0.03f, 0.01f, 0f));
+            _mpbs["BR 5"].SetFloat("_FogDensity", 0.05f);
+
+            _mpbs["BR 1"].SetColor("_FogColor", new Color(0f, 0f, 0f));
+            _mpbs["BR 1"].SetFloat("_FogDensity", 0.1f);
+
+            _mpbs["BR 1R"].SetColor("_FogColor", new Color(0f, 0f, 0f));
+            _mpbs["BR 1R"].SetFloat("_FogDensity", 0.1f);
+
+            _mpbs["MR 4"].SetColor("_FogColor", new Color(0.3f, 0.65f, 1f));
+            _mpbs["MR 4"].SetFloat("_FogDensity", 0.01f);
+
+            _mpbs["MR 2"].SetColor("_FogColor", new Color(0.3f, 0.65f, 1f));
+            _mpbs["MR 2"].SetFloat("_FogDensity", 0.01f);
+
+            _mpbs["MR 3"].SetColor("_FogColor", new Color(0f, 0f, 0f));
+            _mpbs["MR 3"].SetFloat("_FogDensity", 0.03f);
+
+            _mpbs["BR 2"].SetColor("_FogColor", new Color(0f, 0f, 0f));
+            _mpbs["BR 2"].SetFloat("_FogDensity", 0.015f);
+
+            _mpbs["BR 2R"].SetColor("_FogColor", new Color(0f, 0f, 0f));
+            _mpbs["BR 2R"].SetFloat("_FogDensity", 0.015f);
 
             Color[] fogPalette = {
                 new Color(0f, 0f, 0f),
@@ -99,7 +125,7 @@ public class Fog : MonoBehaviour
                 new Color(0.5f, 0.55f, 0.5f)
             };
 
-            string[] scenes = { "BR 1", "BR 1R", "BR 2", "BR 2R", "BR 3", "BR 3R", "BR 4", "BR 4R", "BR 5", "TL 1", "TL 2", "MR 2", "MR 3", "MR 4" };
+            string[] scenes = { "BR 3", "BR 3R", "BR 4", "BR 4R", "TL 1", "TL 2" };
 
             foreach (string scene in scenes)
             {
@@ -109,8 +135,18 @@ public class Fog : MonoBehaviour
             
             S.Fog = this;
 
-            yield return null;
+            yield return new WaitForSeconds(3f);
+
+            SetFog("Start");
         }
+    }
+
+    public void SetFog(string sceneName)
+    {
+        MaterialPropertyBlock mpb = _mpbs[sceneName];
+        Color clr = mpb.GetColor("_FogColor");
+        float density = mpb.GetFloat("_FogDensity");
+        SetFog(sceneName, clr, density);
     }
 
     public void SetFog(string sceneName, Color clr, float density)

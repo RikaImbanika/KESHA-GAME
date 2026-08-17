@@ -2,11 +2,12 @@
 // Copyright (c) 2026 RIKA IMBANIKA
 
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class CHEATS : MonoBehaviour
 {
-    bool _cheats;
+    public bool _cheats;
     public GameObject _e;
     public GameObject _d;
     public float _message;
@@ -93,6 +94,8 @@ public class CHEATS : MonoBehaviour
         if (_cheats && _cheatPower == 1f)
         {
             _cheatPower = 100f;
+            S.Inventory.Take("Gun", 1);
+            S.Inventory.Take("Ammo", 999);
             S.Console.AddMessage($"Shooting power set to {S.Cheats._cheatPower}.", Color.yellow);
         }
         else if (!_cheats && _cheatPower == 100f)
@@ -120,14 +123,9 @@ public class CHEATS : MonoBehaviour
     {
         Remember("Income");
 
-        S.Inventory.Take("Gun", 1);
-        S.Inventory.Take("Ammo", 999);
-
         var obj = GameObject.Find("LimeLocker");
-        Debug.Log(obj);
         var locker = obj.GetComponent<Locker>();     
-        Debug.Log(locker);
-        locker.Cheat(); //??
+        locker.Cheat();
         yield return new WaitForSeconds(0.15f);
         GameObject.Find("BlueLocker").GetComponent<Locker>().Cheat();
         yield return new WaitForSeconds(0.15f);

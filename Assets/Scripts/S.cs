@@ -96,11 +96,7 @@ public static class S : object
 	private static GameObject _unworkedSpawner;
 	private static GameObject _portalObj1;
 	private static ItemNameShower _itemNameShower;
-	private static GameObject _angelWing;
-	private static GameObject _crowWing;
-	private static GameObject _batWing;
-	private static GameObject _rainbowWing1;
-	private static GameObject _rainbowWing2;
+	private static Dictionary<string, GameObject> _wings;
 	private static Paintings _paintings;
 	private static GameObject _squarePainting;
 	private static GameObject _woodenPaintingFrame;
@@ -118,7 +114,33 @@ public static class S : object
 	public static GameObject _rikaParticle;
 	public static Camera _intercam;
 	public static GameObject _inventoryPlane;
+	public static Material _daySky;
+	public static Material _nightSky;
 
+	public static Material DaySky
+	{
+		get
+		{
+			return _daySky;
+		}
+		set
+		{
+			_daySky = value;
+		}
+	}
+
+	public static Material NightSky
+	{
+		get
+		{
+			return _nightSky;
+		}
+		set
+		{
+			_nightSky = value;
+		}
+	}
+	
 	public static GameObject InventoryPlane
 	{
 		get
@@ -311,64 +333,15 @@ public static class S : object
 		}
 	}
 
-	public static GameObject BatWing
+	public static Dictionary<string, GameObject> Wings
 	{
 		get
 		{
-			return _batWing;
+			return _wings;
 		}
 		set
 		{
-			_batWing = value;
-		}
-	}
-
-	public static GameObject RainbowWing1
-	{
-		get
-		{
-			return _rainbowWing1;
-		}
-		set
-		{
-			_rainbowWing1 = value;
-		}
-	}
-
-	public static GameObject RainbowWing2
-	{
-		get
-		{
-			return _rainbowWing2;
-		}
-		set
-		{
-			_rainbowWing2 = value;
-		}
-	}
-
-
-	public static GameObject CrowWing
-	{
-		get
-		{
-			return _crowWing;
-		}
-		set
-		{
-			_crowWing = value;
-		}
-	}
-
-	public static GameObject AngelWing
-	{
-		get
-		{
-			return _angelWing;
-		}
-		set
-		{
-			_angelWing = value;
+			_wings = value;
 		}
 	}
 
