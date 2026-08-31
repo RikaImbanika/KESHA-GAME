@@ -89,12 +89,14 @@ public class Initialiser : MonoBehaviour
 
         yield return WaitForCondition(() => Camera.main != null, "Waiting for camera");
         S.Camera = Camera.main;
+        S.CentralCamera = Camera.main;
 
         S.Camera.usePhysicalProperties = true;
         S.Camera.gateFit = Camera.GateFitMode.None;
         S.Camera.fieldOfView = 76f;
 
         S.Intercam = GameObject.Find("INTERCAM").GetComponent<Camera>();
+        S.Moon = GameObject.Find("Moon");
 
         yield return WaitForObjectWithTag("Player", obj => S.PObj = obj);
         S.Ph = S.PObj.transform.parent?.gameObject;
@@ -112,7 +114,7 @@ public class Initialiser : MonoBehaviour
         yield return StartCoroutine(GetComponentSafe<Canvas>(S.CanvasObj, canvas => S.Canvas = canvas));
 
         yield return WaitForObjectWithTag("FPS", obj => S.FpsObj = obj);
-        yield return StartCoroutine(GetComponentSafe<TextMeshProUGUI>(S.FpsObj, fpsObj => S.FpsTMP = fpsObj));
+        yield return StartCoroutine(GetComponentSafe<TextMeshPro>(S.FpsObj, fpsObj => S.FpsTMP = fpsObj));
 
         yield return WaitForObjectWithTag("Spot", obj => S.Spot = obj);
         S.RedLaser = Prefabs.Get("Lasers/RedLaser");

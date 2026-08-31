@@ -25,14 +25,14 @@ public class TradeClick : MonoBehaviour, IPointerClickHandler
 
             if (_trade._buyedItemName == "Gun")
             {
-                S.SM.Save("gunWasBuyed", true);
-                if (S.SM.LoadBool("ammoWasBuyed") ?? false)
+                S.SM.Save("gunWasBought", true);
+                if (S.SM.LoadBool("ammoWasBought") ?? false)
                     S.FirstZombella2.FirstZombieEntersHall();
             }
             if (_trade._buyedItemName == "Ammo")
             {
-                S.SM.Save("ammoWasBuyed", true);
-                if (S.SM.LoadBool("gunWasBuyed") ?? false)
+                S.SM.Save("ammoWasBought", true);
+                if (S.SM.LoadBool("gunWasBought") ?? false)
                     S.FirstZombella2.FirstZombieEntersHall();
             }
         }

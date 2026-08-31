@@ -26,7 +26,7 @@ public class Door : MonoBehaviour
 
 	public void Start()
 	{
-		_sparklesCount = 35; //They are strange.
+		_sparklesCount = 35;
 
 		_layerMask = 1 << LayerMask.NameToLayer("Static") |
 			 1 << LayerMask.NameToLayer("Default");
@@ -365,6 +365,77 @@ public class Door : MonoBehaviour
 				sparkle.transform.rotation = Quaternion.LookRotation(direction);
 				sparkle.transform.localScale *= 1.1f;
 			}
+
+			StartCoroutine(Ough());
+
+			IEnumerator Ough()
+			{
+				bool wasHit = S.SM.LoadBool("WasHitByBlueFlames") ?? false;
+				bool readyToOpen = (S.SM.LoadBool("gunWasBought") ?? false) &&
+				(S.SM.LoadBool("ammoWasBought") ?? false);
+				bool unlockedAny = S.SM.LoadBool("UnlockedAnyBlueFlames") ?? false;
+				bool saidTip = S.SM.LoadBool("SaidTipForUseGunForBlueFlames") ?? false;
+
+				if (!wasHit)
+				{
+					//Wasn't hit
+
+					S.SM.Save("WasHitByBlueFlames", true);
+
+					yield return new WaitForSeconds(1f);
+					S.Console.AddMessage("Rika: Ough!", Color.magenta);
+					yield return new WaitForSeconds(1.5f);
+
+					if (unlockedAny)
+					{
+						//Already knows how to unlock
+						S.Console.AddMessage("Rika: Thoose blue flames hurts!", Color.magenta);
+						S.SM.Save("SaidTipForUseGunForBlueFlames", true);
+					}
+					else
+					{
+						//Was hit, doesn't unlock any
+						S.Console.AddMessage("Rika: Thoose blue flames blocks the door!", Color.magenta);
+
+						if (!saidTip)
+						{
+							yield return new WaitForSeconds(1.5f);
+							S.Console.AddMessage("Rika: How to remove them?", Color.magenta);
+
+							if (readyToOpen)
+							{
+								yield return new WaitForSeconds(1.5f);
+								S.Console.AddMessage("Rika: Maybe I can use gun for it? It's blue too...", Color.magenta);
+								
+								S.SM.Save("SaidTipForUseGunForBlueFlames", true);
+							}
+						}
+					}
+				}
+				else if (readyToOpen && !saidTip)
+				{
+					//Was hit, ready to open, doesn't said tip
+
+					yield return new WaitForSeconds(1f);
+					S.Console.AddMessage("Rika: Ough!", Color.magenta);
+					yield return new WaitForSeconds(1.5f);
+					S.Console.AddMessage("Rika: Thoose blue flames hurts!", Color.magenta);
+
+					if (!unlockedAny)
+					{
+						//doesn't open any, need tip
+
+						yield return new WaitForSeconds(1.5f);
+						S.Console.AddMessage("Rika: Gun is also blue... Maybe I can use gun to remove them?", Color.magenta);
+					}
+					else
+					{
+						//already knows how to open, doesn't need tip
+					}
+
+					S.SM.Save("SaidTipForUseGunForBlueFlames", true);
+				}
+			}
 		}
 	}
 
@@ -376,6 +447,7 @@ public class Door : MonoBehaviour
 			_doorModel._locked = false;
 			S.Loader._rooms[_doorModel._nextSceneName]._doors[_doorModel._nextDoorId]._door.Unlock();
 			_stamp.Unlock();
+			S.SM.Save("UnlockedAnyBlueFlames", true);
 		}
 	}
 }

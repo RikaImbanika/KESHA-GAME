@@ -25,14 +25,12 @@ public class Button1 : MonoBehaviour
 	public ToiletZombie _toiletZombie;
 	public float _startTime;
 
-	// ---------- Добавленные поля ----------
 	[Header("Camera Animation")]
-	public Vector3 _сameraTargetPosition;    // конечная позиция камеры
-	public Vector3 _сameraTargetRotation;    // конечный поворот (углы Эйлера)
+	public Vector3 _сameraTargetPosition;
+	public Vector3 _сameraTargetRotation;
 
 	private Vector3 _cameraStartPosition;
 	private Quaternion _cameraStartRotation;
-	// ---------------------------------------
 
 	public void Start()
 	{
@@ -90,7 +88,6 @@ public class Button1 : MonoBehaviour
 			_startTime = Time.time;
 			_pressed = true;
 
-			// Захват начальных позиции и поворота камеры
 			_cameraStartPosition = _camera.transform.position;
 			_cameraStartRotation = _camera.transform.rotation;
 
@@ -109,14 +106,12 @@ public class Button1 : MonoBehaviour
 
 			float duration = 3.5f;
 
-			// --- Анимация камеры (линейная) ---
 			if (_camera != null)
 			{
 				float tCam = Mathf.Clamp01(deltaTime / duration);
 				_camera.transform.position = Vector3.Lerp(_cameraStartPosition, _сameraTargetPosition, tCam);
 				_camera.transform.rotation = Quaternion.Lerp(_cameraStartRotation, Quaternion.Euler(_сameraTargetRotation), tCam);
 			}
-			// ---------------------------------
 
 			float t = deltaTime / duration;
 			float t2 = (-Mathf.Cos(t * 180 * Mathf.Deg2Rad) + 1) / 2f;
@@ -137,7 +132,15 @@ public class Button1 : MonoBehaviour
 				S.Camera = _playerCamera;
 
 				Thread.Sleep(500);
+
+				StartCoroutine(Oops());
 			}
 		}
+	}
+
+	IEnumerator Oops()
+	{
+		yield return new WaitForSeconds(1.5f);
+		S.Console.AddMessage("Rika: Oops...", Color.magenta);
 	}
 }

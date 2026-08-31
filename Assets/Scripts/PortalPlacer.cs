@@ -27,6 +27,9 @@ public class PortalPlacer : MonoBehaviour
             string idRotation = S.IDM(_id, "rot");
             string idNextSceneName = S.IDM(_id, "ncn");
 
+            MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+            S.Fog.ApplyToGameObject(gameObject, mpb);
+
             string secondPortId = S.SM.LoadString(idSecondPortId);
 
             RaycastHit hit;
@@ -57,6 +60,7 @@ public class PortalPlacer : MonoBehaviour
 
                 transform.rotation = S.SM.LoadQuaternion(idRotation) ?? Quaternion.identity;
 
+                Destroy(transform.GetChild(0).gameObject);
                 Destroy(this);
 
                 yield break;
@@ -99,6 +103,9 @@ public class PortalPlacer : MonoBehaviour
 
                 S.SM.Save(idSecondPortId, _portal._secondPortalId);
                 S.SM.Save(idRotation, transform.rotation);
+
+                Destroy(transform.GetChild(0).gameObject); //
+                Destroy(this); //
             }
         }
     }
@@ -122,7 +129,7 @@ public class PortalPlacer : MonoBehaviour
         {
             _unityEditorMeshFilter = gameObject.AddComponent<MeshFilter>();
 
-            Mesh scaledCube = CreateScaledCube(2f);
+            Mesh scaledCube = CreateScaledCube(0.2f);
             _unityEditorMeshFilter.sharedMesh = scaledCube;
         }
     }

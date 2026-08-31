@@ -11,10 +11,12 @@ public class FirstZombella2 : MonoBehaviour
     bool _playerInHall;
     bool _actuallySummoned;
     bool _dead;
+    bool _saidMessage;
 
     void Start()
     {
         S.FirstZombella2 = this;
+        _saidMessage = S.SM.LoadBool("DieStupiedZombella") ?? false;
 
         StartCoroutine(DelayCoroutine());
 
@@ -40,6 +42,13 @@ public class FirstZombella2 : MonoBehaviour
 
         if (_actuallySummoned)
         {
+            if (_zombella._health <= 0.5f * _zombella._maxHealth && !_saidMessage)
+            {
+                _saidMessage = true;
+                S.SM.Save("DieStupiedZombella", true);
+                S.Console.AddMessage("Rika: Die, stupied zombella!", Color.magenta);
+            }
+            
             if (_zombella._health <= 0 && !_dead)
             {
                 _dead = true;

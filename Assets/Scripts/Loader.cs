@@ -104,6 +104,7 @@ public class Loader : MonoBehaviour
             S.SM.Save("sceneName", "Income");
 
             S.Camera.GetComponent<Skybox>().material = S.DaySky;
+            S.Moon.SetActive(false);
 
             yield return null;
         }
@@ -208,7 +209,6 @@ public class Loader : MonoBehaviour
 
             if (nextSceneName == "Start")
             {
-                //We should not be here
                 S.Console.AddMessage("We should not be here (Loader.cs)", Color.red);
                 _teleporting = false;
                 yield break;
@@ -275,9 +275,12 @@ public class Loader : MonoBehaviour
         AddValue("Hall", "BR 1", 2, 1);
         AddValue("Hall", "TL 0", 3, 1, true);
         AddValue("Hall", "MR 1", 4, 1);        
-        AddValue("Hall", "Final", 6, 1);
+        AddValue("Hall", "PreFinal", 6, 1);
         
-        AddValue("Final", "Hall", 1, 6);
+        AddValue("PreFinal", "Hall", 1, 6);
+        AddValue("PreFinal", "Final", 2, 1);
+
+        AddValue("Final", "PreFinal", 1, 2);
 
         AddValue("MR 1", "Hall", 1, 4);
         AddValue("MR 1", "MR 2", 2, 1, true);
@@ -397,13 +400,38 @@ public class Loader : MonoBehaviour
     {
         S.PS._currentSceneName = nextSceneName;
         S.SaveManager.CurrentSave.SaveString("sceneName", nextSceneName);
+        _loaderTargetScene = nextSceneName; //Should be so...
 
         if (nextSceneName != "Start")
         {
             if (nextSceneName == "Income" || nextSceneName == "Corridor")
+            {
                 S.Camera.GetComponent<Skybox>().material = S.DaySky;
+                S.Moon.SetActive(false);
+            }
             else
+            {
                 S.Camera.GetComponent<Skybox>().material = S.NightSky;
+                S.Moon.SetActive(true);
+            }
+        }
+
+        if (nextSceneName == "TL 2")
+        {
+            if (!(S.SM.LoadBool("SaidOhNoTL2") ?? false))
+            {
+                S.SM.Save("SaidOhNoTL2", true);
+                StartCoroutine(SayOhNo());
+
+                IEnumerator SayOhNo()
+                {
+                    yield return new WaitForSeconds(1f);
+                    if (S.PS._currentSceneName == "TL 2")
+                        S.Console.AddMessage("Rika: Oh no!", Color.magenta);
+                    else
+                        S.SM.Save("SaidOhNoTL2", false);
+                }
+            }
         }
             
         S.MM._playerOnIncome = (nextSceneName == "Income");

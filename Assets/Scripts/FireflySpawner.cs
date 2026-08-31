@@ -17,6 +17,7 @@ public class FireflySpawner : MonoBehaviour
     private string _idWingsType;
     private string _idWingsFrequency;
     private string _idWingsAmplitude;
+    private string _idMirrored;
     private string _sceneName;
     private Vector3 _pos;
     private string _color;
@@ -24,6 +25,7 @@ public class FireflySpawner : MonoBehaviour
     private string _wingsType;
     private float _wingsAmplitude;
     private float _wingsFrequency;
+    private bool _mirrored;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
 
@@ -53,6 +55,7 @@ public class FireflySpawner : MonoBehaviour
         _idWingsType = S.IDM(_id, "wing");
         _idWingsFrequency = S.IDM(_id, "wfrq");
         _idWingsAmplitude = S.IDM(_id, "wamp");
+        _idMirrored = S.IDM(_id, "mirr");
     }
 
     IEnumerator Birn()
@@ -82,6 +85,8 @@ public class FireflySpawner : MonoBehaviour
         _wingsType = S.SM.LoadString(_idWingsType) ?? "";
         _wingsFrequency = S.SM.LoadFloat(_idWingsFrequency) ?? 0;
         _wingsAmplitude = S.SM.LoadFloat(_idWingsAmplitude) ?? 0;
+        byte mirroredByte = S.SM.LoadByte(_idMirrored) ?? 0;
+        _mirrored = mirroredByte == 1;
     }
 
     void DefineExistenz()
@@ -110,9 +115,20 @@ public class FireflySpawner : MonoBehaviour
             DefineColor();
             DefineSize();
             DefineWings();
+            DefineMirroring();
             Summon();
         }
-        
+
+        void DefineMirroring()
+        {
+            if (S.Fireflies.IsZombieFirefly(_color))
+                if (S.Fireflies._canMirror[_color])
+                {
+                    _mirrored = S.RND.Next(2) == 0;
+                }
+            S.SM.Save(_idMirrored, (byte)(_mirrored ? 1 : 0));
+        }
+
         void DefineWings()
         {
             //Defining doesn't mean summoning
@@ -173,7 +189,7 @@ public class FireflySpawner : MonoBehaviour
             while (true)
             {
                 int n = S.RND.Next(100);
-            
+
                 if (_sceneName.Contains("BR"))
                 {
                     if (n < 35)
@@ -230,7 +246,7 @@ public class FireflySpawner : MonoBehaviour
                         sizeN = 3;
                 }
 
-                if (S.Fireflies.IsZombieFirefly(_color) 
+                if (S.Fireflies.IsZombieFirefly(_color)
                     && sizeN == 0 || sizeN == 1)
                     continue;
                 else
@@ -240,7 +256,7 @@ public class FireflySpawner : MonoBehaviour
             _size = S.Fireflies._firefliesSizes[sizeN];
             S.SM.Save(_idScale, sizeN);
         }
-        
+
         void DefineColor()
         {
             int n = S.RND.Next(100);
@@ -390,6 +406,7 @@ public class FireflySpawner : MonoBehaviour
         SetSway();
         SetWings();
         SetFog();
+        SetMirroring();
 
         var ren = GetComponent<MeshRenderer>();
 
@@ -484,6 +501,25 @@ public class FireflySpawner : MonoBehaviour
                 firefly._vis.transform.localScale = new Vector3(sc.x * _size, sc.y * _size, sc.z * _size);
             }
         }
+
+        void SetMirroring()
+        {
+            if (_mirrored)
+            {
+                MeshRenderer renderer = firefly._vis.GetComponent<MeshRenderer>();
+                if (renderer != null)
+                {
+                    Material originalMat = renderer.sharedMaterial;
+                    if (originalMat != null)
+                    {
+                        Material mirroredMat = new Material(originalMat);
+                        mirroredMat.SetTextureScale("_MainTex", new Vector2(-1f, 1f));
+                        mirroredMat.SetTextureOffset("_MainTex", new Vector2(1f, 0f));
+                        renderer.material = mirroredMat;
+                    }
+                }
+            }
+        }
     }
 
 #if UNITY_EDITOR
@@ -510,5 +546,5 @@ public class FireflySpawner : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, 1f);
     }
-    #endif
+#endif
 }

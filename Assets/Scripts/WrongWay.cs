@@ -16,14 +16,13 @@ public class WrongWay : MonoBehaviour
     int[] _order;
     string _sceneName;
 
-
     void Start()
     {
-        _sceneName = gameObject.scene.name;        
+        _sceneName = gameObject.scene.name;
         _signs = new List<GameObject>();
 
-        _wrongWays = new string[] 
-        {"Oh No", 
+        _wrongWays = new string[]
+        {"Oh No",
         "Wrong",
         "Wrong 2"
         };
@@ -61,7 +60,7 @@ public class WrongWay : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider collider)
-	{
+    {
         if (collider.gameObject.tag == "Player")
         {
             Transform canvasTransform = S.CanvasObj.transform;
@@ -85,7 +84,9 @@ public class WrongWay : MonoBehaviour
 
         label.SetActive(true);
 
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.1f);
+
+        yield return new WaitForSeconds(0.05f);
 
         GameObject sign = Instantiate(S.InventoryPlane, _signsHolder.transform);
 
@@ -93,7 +94,9 @@ public class WrongWay : MonoBehaviour
         sign.transform.position = ict.position + ict.forward * (30f - 0.001f * _globalSignCounter);
         sign.transform.rotation = Quaternion.LookRotation(-ict.forward);
 
-        sign.transform.localScale *= 0.20f + (float)S.RND.NextDouble() * 0.6f;
+        Vector3 targetScale = sign.transform.localScale * (0.20f + (float)S.RND.NextDouble() * 0.6f);
+        sign.transform.localScale = targetScale;
+
         sign.transform.position += 29 * ict.right * ((float)S.RND.NextDouble() - 0.5f);
         sign.transform.position += 14 * ict.up * ((float)S.RND.NextDouble() - 0.5f);
 
@@ -102,10 +105,35 @@ public class WrongWay : MonoBehaviour
         Material mat = new Material(Shader.Find("Custom/AlphaUnlitSingleSideWithAlphaMultiplier"));
         mat.mainTexture = Resources.Load<Texture2D>($"Textures/Wrong Way/Wrong Way {_signsOrder[_signCounter]}");
         sign.GetComponent<MeshRenderer>().material = mat;
-        _signs.Add(sign);
 
-        float pitch = Random.Range(0.95f, 1.05f);
-        S.AudioManager.Play("Kick Metal 1");
+        Vector3 startScale = targetScale * 2.0f;
+        sign.transform.localScale = startScale;
+
+        float animDuration = 0.1f;
+        float animElapsed = 0f;
+        bool soundPlayed = false;
+
+        while (animElapsed < animDuration)
+        {
+            if (sign == null) yield break;
+
+            float t = animElapsed / animDuration;
+            sign.transform.localScale = Vector3.Lerp(startScale, targetScale, t);
+
+            animElapsed += Time.deltaTime;
+
+            if (!soundPlayed && animElapsed >= (animDuration - 0.05f))
+            {
+                float pitch = Random.Range(0.95f, 1.05f);
+                S.AudioManager.Play("Kick Metal 1", pitch);
+                soundPlayed = true;
+            }
+
+            yield return null;
+        }
+        sign.transform.localScale = targetScale;
+
+        _signs.Add(sign);
 
         _signCounter++;
         _globalSignCounter++;

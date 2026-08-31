@@ -12,6 +12,7 @@ using UnityEngine.UI;
 public class Zombie : MonoBehaviour
 {
     public string _type;
+    public Vector3 _clothes;
     public string _visibleName;
     public float _fireCooldown;
     public float _health;
@@ -34,6 +35,7 @@ public class Zombie : MonoBehaviour
     private string _idPos;
     private string _idHp;
     private string _idRot;
+    private string _idClothes;
     private NavMeshAgent _agent;
     private Vector3 _pos;
     private bool _run;
@@ -55,11 +57,10 @@ public class Zombie : MonoBehaviour
             while (S.AllFather == null ||
                 S.Loader.Roots == null ||
                 !S.Loader.Roots.ContainsKey(_sceneName) ||
-                S.Loader.Roots[_sceneName] == null)
+                S.Loader.Roots[_sceneName] == null ||
+                S.Fog == null)
                 yield return new WaitForSeconds(0.15f);
 
-            if (_health == 0)
-                _health = 100;
             if (_fireCooldown == 0)
                 _fireCooldown = 1.3f;
             if (_speed == 0)
@@ -85,26 +86,40 @@ public class Zombie : MonoBehaviour
             while (S.SM == null)
                 yield return new WaitForSeconds(0.1f);
 
-            var loadPos = S.SM.LoadVector3(_idPos);
+            Load();
 
-            MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
-            S.Fog.ApplyToGameObject(gameObject, mpb);
-
-            if (loadPos.HasValue)
+            void Load()
             {
-                transform.position = loadPos ?? transform.position;
-                transform.rotation = S.SM.LoadQuaternion(_idRot) ?? transform.rotation;
-                _health = S.SM.LoadFloat(_idHp) ?? _health;
+                MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
 
-                if (_health <= 0)
+                var loadPos = S.SM.LoadVector3(_idPos);
+
+                if (_health <= 0) //It's just corpse
                     Die();
+                else if (loadPos.HasValue)
+                {
+                    transform.position = loadPos ?? transform.position;
+                    transform.rotation = S.SM.LoadQuaternion(_idRot) ?? transform.rotation;
+                    _health = S.SM.LoadFloat(_idHp) ?? _health;
+                    _clothes = S.SM.LoadVector3(_idClothes) ?? _clothes;
+
+                    if (_health <= 0)
+                        Die();
+                    else
+                        InvokeRepeating("SavingMethod", 0f, 5f);
+                }
                 else
                     InvokeRepeating("SavingMethod", 0f, 5f);
+
+                mpb.SetFloat("_HueShift1", _clothes.x);
+                mpb.SetFloat("_HueShift2", _clothes.y);
+                mpb.SetFloat("_HueShift3", _clothes.z);
+                S.Fog.ApplyToGameObject(gameObject, mpb);
             }
-            else
-                InvokeRepeating("SavingMethod", 0f, 5f);
         }
     }
+
+
 
     void GetId()
     {
@@ -114,6 +129,7 @@ public class Zombie : MonoBehaviour
         _idPos = S.IDM(_id, "pos");
         _idRot = S.IDM(_id, "rot");
         _idHp = S.IDM(_id, "hp");
+        _idClothes = S.IDM(_id, "clth");
     }
 
     void SavingMethod()

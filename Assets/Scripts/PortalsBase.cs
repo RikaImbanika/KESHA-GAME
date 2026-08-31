@@ -197,8 +197,8 @@ public class PortalsBase : MonoBehaviour
         _freePortals = new Dictionary<string, List<string>>();
         _takenFreePortals = new Dictionary<string, Dictionary<string, string>>();
         _connections = new Dictionary<string, List<string>>();
-        AddConnection("Income", "Corridor");
-        AddConnection("Corridor", "Income");
+        AddConnection("PreFinal", "Final");
+        AddConnection("Final", "PreFinal");
         S.PortalsBase = this;
     }
 }

@@ -11,6 +11,7 @@ public class Fireflies : MonoBehaviour
     public float[] _firefliesSizes;
     public string[] _firefliesColors;
     public string[] _zombieFirefliesColors;
+    public Dictionary<string, bool> _canMirror;
     public Dictionary<string, Material> _materials;
     private Dictionary<string, byte> _colorN;
 
@@ -72,6 +73,17 @@ public class Fireflies : MonoBehaviour
                 "Boykisser1",
                 "Boykisser2"
             };
+
+            _canMirror = new Dictionary<string, bool>();
+            _canMirror.Add("Zombella", true);
+            _canMirror.Add("Baka", true);
+            _canMirror.Add("FatZombella", true);
+            _canMirror.Add("FatBaka", true);
+            _canMirror.Add("Illuminaty", true);
+            _canMirror.Add("Kuplinov1", false);
+            _canMirror.Add("Kuplinov2", false);
+            _canMirror.Add("Boykisser1", true);
+            _canMirror.Add("Boykisser2", true);
 
             _colorN = new Dictionary<string, byte>();
 

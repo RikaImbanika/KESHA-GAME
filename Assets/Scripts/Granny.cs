@@ -110,7 +110,16 @@ public class Granny : MonoBehaviour
         _calmingPointsLeft = 3;
         _agent.speed = _calmingSpeed;
         _agent.acceleration = _calmingAcceleration;
+        StartCoroutine(ZombellaKilled());
         GoToNewPoint();
+    }
+
+    IEnumerator ZombellaKilled()
+    {
+        yield return new WaitForSeconds(2.2f);
+        S.Console.AddMessage("Granny: Hooray!", Color.cyan);
+        yield return new WaitForSeconds(1.5f);
+        S.Console.AddMessage("Rika: Yaay!", Color.magenta);
     }
 
     public void ReturnToMarket()
@@ -185,23 +194,24 @@ public class Granny : MonoBehaviour
 
                 if (delta > 120)
                 {
-                    S.Console.AddMessage($"Granny: Hello, dear!)", Color.cyan);
-                    _lastGreetingsTime = now;
-                    S.SM.Save("GrannyLastGreetingsTime", _lastGreetingsTime);
-                    
-                    if (!_saidFirstAim)
-                    {
-                        _saidFirstAim = true;
-                        StartCoroutine(SayAimLater());
-                        S.SM.Save("GrannySaidFirstAim", _saidFirstAim);
-                    }
+                    StartCoroutine(SayLater());
 
-                    IEnumerator SayAimLater()
+                    IEnumerator SayLater()
                     {
-                        yield return new WaitForSeconds(2f);
-                        S.Console.AddMessage($"Granny: Those bakas came and turned my house into chaos!", Color.cyan);
-                        yield return new WaitForSeconds(2f);
-                        S.Console.AddMessage($"Rika: Oh no!", Color.magenta);
+                        yield return new WaitForSeconds(1.25f);
+                        S.Console.AddMessage($"Granny: Hello, dear!)", Color.cyan);
+                        _lastGreetingsTime = now;
+                        S.SM.Save("GrannyLastGreetingsTime", _lastGreetingsTime);
+
+                        if (!_saidFirstAim)
+                        {
+                            _saidFirstAim = true;
+                            yield return new WaitForSeconds(2.2f);
+                            S.Console.AddMessage($"Granny: Those bakas came and turned my house into chaos!", Color.cyan);
+                            yield return new WaitForSeconds(2.2f);
+                            S.Console.AddMessage($"Rika: Oh no!", Color.magenta);
+                            S.SM.Save("GrannySaidFirstAim", _saidFirstAim);
+                        }
                     }
                 }
             }

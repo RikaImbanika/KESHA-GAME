@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 RIKA IMBANIKA
+
 Shader "Custom/TMPUnlitF"
 {
     Properties
@@ -5,7 +8,6 @@ Shader "Custom/TMPUnlitF"
         _MainTex ("Font Atlas", 2D) = "white" {}
         _FaceColor ("Text Color", Color) = (1,1,1,1)
 
-        // Параметры тумана
         [HDR] _FogColor ("Fog Color", Color) = (0.5,0.6,0.7,1)
         _FogDensity ("Fog Density", Range(0, 0.1)) = 0.02
     }
@@ -61,19 +63,15 @@ Shader "Custom/TMPUnlitF"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // Выборка SDF-атласа: альфа хранит дистанцию до края глифа
                 fixed4 col = tex2D(_MainTex, i.uv);
 
-                // Сглаживание на основе дистанции (стандартный приём TMP)
                 float distance = col.a;
                 float width = fwidth(distance);
                 float alpha = smoothstep(0.5 - width, 0.5 + width, distance);
 
-                // Применяем цвет вершины и цвет текста
                 col.rgb = i.color.rgb;
                 col.a = alpha * i.color.a;
 
-                // Туман (та же формула, что и в Custom/UnlitF)
                 float dist = max(0.0, length(i.viewVec) - _ProjectionParams.y);
                 float fogFactor = 1.0 - exp(-_FogDensity * dist);
                 fogFactor = saturate(fogFactor);

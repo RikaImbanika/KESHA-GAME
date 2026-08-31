@@ -73,13 +73,12 @@ public class RikaParticle : MonoBehaviour
 
             //
 
-
             _flatSparklesDirs = new Vector3[3];
 
             _rotatorBuffered = Quaternion.Euler(90, 0, 0);
 
-            Vector3 toPlayer = S.Camera.transform.position - transform.position;
-            Quaternion rot = Quaternion.LookRotation(toPlayer) * _rotatorBuffered;
+            Vector3 toCamera = S.Camera.transform.position - transform.position;
+            Quaternion rot = Quaternion.LookRotation(toCamera) * _rotatorBuffered;
 
             _flatSparkle.transform.rotation = rot;
 
@@ -95,7 +94,7 @@ public class RikaParticle : MonoBehaviour
             {
                 float power = Random.Range(1.35f, 2.1f);
 
-                _flatSparklesDirs[i] = RandomPerpendicular(toPlayer) * power;
+                _flatSparklesDirs[i] = RandomPerpendicular(toCamera) * power;
 
                 float randomAngle = Random.Range(0f, 360f);
                 _flatSparkles[i].transform.GetChild(0).localRotation = Quaternion.Euler(0, randomAngle, 0);
@@ -162,8 +161,8 @@ public class RikaParticle : MonoBehaviour
             {
                 if (_globalTimer < _part1dur)
                 {
-                    Vector3 _toPlayer = S.Camera.transform.position - _flatSparkles[0].transform.position;
-                    Quaternion rot = Quaternion.LookRotation(_toPlayer) * _rotatorBuffered;
+                    Vector3 _toCamera = S.Camera.transform.position - _flatSparkles[0].transform.position;
+                    Quaternion rot = Quaternion.LookRotation(_toCamera) * _rotatorBuffered;
 
                     Vector3 s = _flatSparkleStartScale * (_part1dur - _globalTimer) / _part1dur;
 
@@ -205,13 +204,13 @@ public class RikaParticle : MonoBehaviour
                 {
                     Destroy(_longSparkle);
 
-                    Vector3 _toPlayer = S.Camera.transform.position - _flatSparklesDown[0].transform.position;
+                    Vector3 _toCamera = S.Camera.transform.position - _flatSparklesDown[0].transform.position;
 
                     for (int i = 0; i < 3; i++)
                     {
                         float power = Random.Range(0.1f, 6f);
 
-                        _flatSparklesDownDirs[i] = RandomPerpendicular(_toPlayer) * power + new Vector3(0, 0.4f, 0);
+                        _flatSparklesDownDirs[i] = RandomPerpendicular(_toCamera) * power + new Vector3(0, 0.4f, 0);
                     }
 
                     _part3Started = true;

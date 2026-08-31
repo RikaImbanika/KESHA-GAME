@@ -50,7 +50,7 @@ public class RikaParticles : MonoBehaviour
 
             //
 
-            Vector3 point1 = S.Camera.transform.position;
+            Vector3 point1 = S.CentralCamera.transform.position;
 
             _currentAngle += _angleStep;
             float sinBuf = Mathf.Sin(_currentAngle);

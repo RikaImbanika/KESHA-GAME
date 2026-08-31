@@ -59,6 +59,17 @@ public class OnStartPanel : MonoBehaviour
 
 			alfa = 1;
 
+			while (alfa > 0.85f)
+			{
+				alfa = Mathf.Max(alfa - 0.9f * K, 0.5f);
+
+				UPD2();
+
+				yield return null;
+			}
+
+			S.PM._muteSteps = false; //Okay?
+
 			while (alfa > 0.5f)
 			{
 				alfa = Mathf.Max(alfa - 0.9f * K, 0.5f);

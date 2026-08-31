@@ -9,6 +9,7 @@ public class Paintings : MonoBehaviour
 {
     public string[] _names;
     public bool[] _canMirror;
+    public float[] _probabilities;
     public (string, bool)[] _phrases;
     public List<string> _scenesTakePlainTextPainting;
 
@@ -23,7 +24,9 @@ public class Paintings : MonoBehaviour
             "SoManyVases",
             "Palms",
             "BeDifferent",
-            "GetEarth"
+            "GetEarth",
+            "Kuplinov",
+            "BrokenVase"
         };
 
         _canMirror = new bool[]
@@ -35,7 +38,23 @@ public class Paintings : MonoBehaviour
             false,
             true,
             false,
-            false
+            false,
+            false,
+            true
+        };
+
+        _probabilities = new float[]
+        {
+            100,
+            100,
+            100,
+            100,
+            80,
+            100,
+            100,
+            100,
+            36,
+            100
         };
 
         _phrases = new (string, bool)[]
@@ -57,7 +76,13 @@ public class Paintings : MonoBehaviour
             ("Holy cow!", true),
             ("Welcome to hell!", true),
             ("Impossible...", true),
-            ("You can do it!", true)
+            ("You can do it!", true),
+            ("Hello.", true),
+            ("Die, stupied zombella!", true),
+            ("O.M.G.", true),
+            ("Ready, set, fish.", true),
+            ("What?", true),
+            ("Revolutionise gaming again!", true),
         };
 
         _scenesTakePlainTextPainting = new List<string>();

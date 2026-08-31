@@ -56,7 +56,9 @@ public class Frerard : MonoBehaviour
             S.SM.Save("FrerardFinished", true);
 
             S.AM.Play("Gong");
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(2f);
+            S.Console.AddMessage("Rika: Yaaay!", Color.magenta);
+            yield return new WaitForSeconds(1f);
             S.AM.Play("Crowd Is Happy");
             _startY = transform.position.y;
             _activated = true;

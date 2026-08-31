@@ -175,28 +175,35 @@ public class Illuminati : MonoBehaviour
         {
             _lastSaidTime = Time.time;
 
-            int n = S.RND.Next(10);
+            StartCoroutine(SayItAsync());
 
-            if (n == 0)
-                S.Console.AddMessage("Rika: I found them!", Color.magenta);
-            else if (n == 1)
-                S.Console.AddMessage("Rika: HoLy CoW iT's A TRIANGLE!!!", Color.magenta);
-            else if (n == 2)
-                S.Console.AddMessage("Rika: Triangles... Triangles everywhere! Why...", Color.magenta);
-            else if (n == 3)
-                S.Console.AddMessage("Rika: Here you are!", Color.magenta);
-            else if (n == 4)
-                S.Console.AddMessage("Rika: Omg omg omg", Color.magenta);
-            else if (n == 5)
-                S.Console.AddMessage("Rika: Wow!", Color.magenta);
-            else if (n == 6)
-                S.Console.AddMessage("Rika: Oh no", Color.magenta);
-            else if (n == 7)
-                S.Console.AddMessage("Rika: ThEy WaTcHiNg Me!", Color.magenta);
-            else if (n == 8)
-                S.Console.AddMessage("Rika: Seriously...", Color.magenta);
-            else if (n == 9)
-                S.Console.AddMessage("Rika: What?", Color.magenta);
+            IEnumerator SayItAsync()
+            {
+                yield return new WaitForSeconds(3f);
+
+                int n = S.RND.Next(10);
+
+                if (n == 0)
+                    S.Console.AddMessage("Rika: I found them!", Color.magenta);
+                else if (n == 1)
+                    S.Console.AddMessage("Rika: HoLy CoW iT's A TRIANGLE!!!", Color.magenta);
+                else if (n == 2)
+                    S.Console.AddMessage("Rika: Triangles... Triangles everywhere! Why...", Color.magenta);
+                else if (n == 3)
+                    S.Console.AddMessage("Rika: Here you are!", Color.magenta);
+                else if (n == 4)
+                    S.Console.AddMessage("Rika: Omg omg omg", Color.magenta);
+                else if (n == 5)
+                    S.Console.AddMessage("Rika: Wow!", Color.magenta);
+                else if (n == 6)
+                    S.Console.AddMessage("Rika: Oh no", Color.magenta);
+                else if (n == 7)
+                    S.Console.AddMessage("Rika: ThEy WaTcHiNg Me!", Color.magenta);
+                else if (n == 8)
+                    S.Console.AddMessage("Rika: Seriously...", Color.magenta);
+                else if (n == 9)
+                    S.Console.AddMessage("Rika: What?", Color.magenta);
+            }
         }
     }
 

@@ -78,6 +78,7 @@ public class Dust : MonoBehaviour
             
         if (S.PS._currentSceneName.Contains("BR") ||
             S.PS._currentSceneName == "MR 1" ||
+            S.PS._currentSceneName == "MR 3" ||
             S.PS._currentSceneName == "TL 0" ||
             S.PS._currentSceneName == "Corridor")
         {

@@ -11,7 +11,7 @@ public class FirstZombella : MonoBehaviour
     {
         if (!(S.SM.LoadBool("greenKeyTaken") ?? false))
             Destroy(this.gameObject);
-        else if ((S.SM.LoadBool("gunWasBuyed") ?? false) && (S.SM.LoadBool("ammoWasBuyed") ?? false))
+        else if ((S.SM.LoadBool("gunWasBought") ?? false) && (S.SM.LoadBool("ammoWasBought") ?? false))
             Destroy(this.gameObject);
         else
         {

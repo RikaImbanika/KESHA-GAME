@@ -35,6 +35,7 @@ public class SnakeBrain : MonoBehaviour
     private bool _dead;
     private string _sceneName;
     private SceneRoot _sceneRoot;
+    private bool _ready = false;
 
     void Start()
     {
@@ -47,25 +48,45 @@ public class SnakeBrain : MonoBehaviour
 
         StartCoroutine(LateStart());
 
-        IEnumerator LateStart()
+    IEnumerator LateStart()
+    {
+        while (S.Loader == null)
+            yield return new WaitForSeconds(0.33f);
+
+        while (S.Loader.SceneRoots == null)
+            yield return new WaitForSeconds(0.33f);
+
+        while (!S.Loader.SceneRoots.ContainsKey(_sceneName))
+            yield return new WaitForSeconds(0.33f);
+
+        while (S.Loader.SceneRoots[_sceneName] == null)
+            yield return new WaitForSeconds(0.33f);
+
+        _sceneRoot = S.Loader.SceneRoots[_sceneName];
+
+        yield return StartCoroutine(WaitForOwnNavMesh());
+
+        InvokeRepeating("SavingMethod", 0f, 5f);
+        _ready = true;
+    }
+
+    IEnumerator WaitForOwnNavMesh()
+    {
+        while (true)
         {
-            while (S.Loader == null)
-                yield return new WaitForSeconds(0.33f);
-
-            while (S.Loader.SceneRoots == null)
-                yield return new WaitForSeconds(0.33f);
-
-            while (!S.Loader.SceneRoots.ContainsKey(_sceneName))
-                yield return new WaitForSeconds(0.33f);
-
-            while (S.Loader.SceneRoots[_sceneName] == null)
-                yield return new WaitForSeconds(0.33f);
-
-            _sceneRoot = S.Loader.SceneRoots[_sceneName];
-
-            InvokeRepeating("SavingMethod", 0f, 5f);
+            if (_agent.isOnNavMesh)
+            {
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(transform.position, out hit, 0.5f, -1) &&
+                    (hit.position - transform.position).sqrMagnitude < 0.01f)
+                {
+                    break;
+                }
+            }
+            yield return null;
         }
     }
+}
 
     void GetId()
     {
@@ -159,6 +180,9 @@ public class SnakeBrain : MonoBehaviour
 
     void Update()
     {
+        if (!_ready)
+            return;
+
         Debug.DrawRay(transform.position - transform.up * 50f, transform.up * 100f, Color.red, 0.1f);
 
         if (_head._aims.Count == 0)

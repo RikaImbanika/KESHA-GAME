@@ -172,6 +172,25 @@ public class Trader : MonoBehaviour
 			}
 
 			S.AM.Play("Inventory", 1);
+
+			if (!(S.SM.LoadBool("SaidGunMessage") ?? false))
+			{
+				S.SM.Save("SaidGunMessage", true);
+
+				bool first = !(S.SM.LoadBool("gunWasBuyed") ?? false);
+				bool second = !(S.SM.LoadBool("ammoWasBuyed") ?? false);
+				if (first || second)
+				{
+					StartCoroutine(SayNeedGun());
+				}
+			}
 		}
+	}
+	
+	IEnumerator SayNeedGun()
+	{
+		yield return new WaitForSeconds(3);
+
+		S.Console.AddMessage("Rika: I need to buy a gun and ammo!!!!!!", Color.magenta);
 	}
 }

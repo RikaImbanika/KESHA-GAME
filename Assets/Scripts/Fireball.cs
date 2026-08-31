@@ -2,6 +2,7 @@
 // Copyright (c) 2026 RIKA IMBANIKA
 
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -43,7 +44,7 @@ public class Fireball : MonoBehaviour
         shot.transform.position = transform.position;
         shot.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
         float distance = (transform.position - S.Camera.transform.position).magnitude;
-        shot.volume = MathF.Min(0.2f, 50 / (distance * distance));
+        shot.volume = MathF.Min(0.15f, 36 / (distance * distance));
         shot.Play();
         Destroy(shot.gameObject, 5);
     }
@@ -72,6 +73,21 @@ public class Fireball : MonoBehaviour
                     {
                         PlayerStorage ps = go.transform.parent.gameObject.GetComponent<PlayerStorage>();
                         ps.Damage(_damage);
+
+                        bool damaged = S.SM.LoadBool("DamagedByFireball") ?? false;
+
+                        if (!damaged)
+                        {
+                            S.SM.Save("DamagedByFireball", true);
+
+                            S.AllFather.StartCoroutine(Ough());
+
+                            IEnumerator Ough()
+                            {
+                                yield return new WaitForSeconds(0.8f);
+                                S.Console.AddMessage("Rika: Ough!", Color.magenta);
+                            }
+                        }
                     }
 
                     AudioSource caboom = Instantiate(S.Caboom);

@@ -98,6 +98,16 @@ public class PaintingPlacer : MonoBehaviour
                 {
                     _paintingId = S.RND.Next(S.Paintings._names.Count());
                     _mirrored = S.RND.Next(2) == 1 ? 1 : 0;
+
+                    //for rare paintings
+                    float number2 = Random.Range(0, 100);
+                    if (number2 > S.Paintings._probabilities[_paintingId])
+                    {
+                        _paintingId = -2;
+                        S.SM.Save(_pidid, -2);
+                        Destroy(gameObject);
+                    }
+
                     S.SM.Save(_pidid, _paintingId);
                     S.SM.Save(_mirid, _mirrored);
                     yield return Place();
@@ -200,9 +210,14 @@ public class PaintingPlacer : MonoBehaviour
 
                     tmp.fontSize = 4f;
 
-                    Bounds bounds = child.GetComponent<MeshRenderer>().bounds;
-                    float width = Mathf.Max(bounds.size.x * 2.7f, 3f);
-                    float height = Mathf.Max(bounds.size.y * 2.7f, 3f);
+                    Bounds localBounds = child.GetComponent<MeshRenderer>().localBounds;
+                    Vector3 localSize = localBounds.size;
+
+                    Vector3 worldScale = child.transform.lossyScale;
+
+                    float width = Mathf.Max(localSize.x * worldScale.x * 0.9f, 1f);
+                    float height = Mathf.Max(localSize.y * worldScale.y * 0.9f, 1f);
+
                     tmp.rectTransform.sizeDelta = new Vector2(width, height);
 
                     Shader tmpFogShader = Shader.Find("Custom/TMPUnlitF");

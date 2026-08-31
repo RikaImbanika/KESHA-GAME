@@ -314,8 +314,8 @@ public class II : MonoBehaviour
             ));
 
             _base.Add("Cucumber", new ItemInfo(
-                inventoryNameColor: Color.white,
-                lookNameColor: Color.white,
+                inventoryNameColor: new Color(0.066f, 1f, 0.12f),
+                lookNameColor: new Color(0.099f, 1f, 0.18f),
                 spriteName: "Cucumber",
                 prefabName: "Cucumber",
                 visibleName: "Cucumber",
@@ -508,6 +508,15 @@ public class II : MonoBehaviour
                 spriteName: "Baka",
                 prefabName: "BakasHat",
                 visibleName: "Hat",
+                throwable: true
+            ));
+
+            _base.Add("LaserCube", new ItemInfo(
+                inventoryNameColor: new Color(0.4f, 0.16f, 1f),
+                lookNameColor: new Color(0.4f, 0.16f, 1f),
+                spriteName: "LaserCube",
+                prefabName: "LaserCube",
+                visibleName: "Laser cube",
                 throwable: true
             ));
 

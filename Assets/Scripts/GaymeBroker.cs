@@ -34,7 +34,14 @@ public class GaymeBroker : MonoBehaviour
         float pitch = 1.25f + (float)S.RND.NextDouble() * 0.1f;
 
         S.AudioManager.Play(GetAudio(), pitch);
-        S.SceneSelector.OkayBroIAmStartingDoingThisFuckingShitBro();
+
+        S.Ph.transform.position = new Vector3(78.0599976f, -169.330002f, -84.0100021f);
+        S.PlayerCamScript.xRotation = 180;
+        S.PlayerCamScript.yRotation = 0;
+
+        S.Loader.ImportantStaticShitToDo("Start");
+
+        S.SceneSelector.PlaceButtons();
 
         StartCoroutine(HideAfterDelay(label, 3f));
     }

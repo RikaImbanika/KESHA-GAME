@@ -17,7 +17,8 @@ public class ItemShower : MonoBehaviour
     public TextMeshProUGUI _showingText;
     public float _showingStartTime;
     public Vector3 _showingStartScale;
-    MaterialPropertyBlock _noFogMPB; 
+    MaterialPropertyBlock _noFogMPB;
+    private string _showingItemName;
     
     void Start()
     {
@@ -43,13 +44,21 @@ public class ItemShower : MonoBehaviour
             if (S.Inventory._marketOpened)
                 S.Inventory._trader.CloseMarket(); //TO DO fix when we have more traders
 
+            HideShowingItem();
+
             StartCoroutine(LateShow());
 
             IEnumerator LateShow()
             {
+                string showingItemNameBuf = itemName;
+
+                _showingItemName = itemName;
                 _showingCamera.enabled = true;
 
                 yield return new WaitForSeconds(delay);
+
+                if (showingItemNameBuf != _showingItemName)
+                    yield break;
 
                 S.Inventory.smallInventoryPanel.SetActive(false);
 
@@ -93,7 +102,7 @@ public class ItemShower : MonoBehaviour
 
     public void HideShowingItem()
     {
-        if (_showingItem != null)
+        if (_showingCamera.enabled)
         {
             Destroy(_showingItem);
             _showingItem = null;
@@ -103,11 +112,24 @@ public class ItemShower : MonoBehaviour
             _showingOverlay.SetActive(false);
             S.Inventory.smallInventoryPanel.SetActive(true);
             S.AM.Play("Pick Up", 1.3f);
+
+            if (_showingItemName == "GreenKey")
+                StartCoroutine(GreenKeySay());
+            else if (_showingItemName == "Cucumber")
+                StartCoroutine(CucumberYay());
         }
     }
 
     public void TryShow(string itemName)
     {
+        if (!(S.SM.LoadBool("Green key showed") ?? false))
+            if (itemName == "GreenKey")
+            {
+                S.SM.Save("Green key showed", true);
+                ShowItem(itemName, "You obtain green key!!!", 1f, 0.35f, new Vector3(0, 36, 0), new Vector3(0, 0, 8));
+                return;
+            };
+
         if (!(S.SM.LoadBool("Cucumber showed") ?? false))
             if (itemName == "Cucumber")
             {
@@ -147,6 +169,18 @@ public class ItemShower : MonoBehaviour
                 ShowItem(itemName, "You obtain The Mars!!!", -4.5f, 0.35f, new Vector3(180, 0, 0), new Vector3(0, 0, 4));
                 return;
             };
+    }
+
+    IEnumerator CucumberYay()
+    {
+        yield return new WaitForSeconds(1.7f);
+        S.Console.AddMessage("Rika: Yay!", Color.magenta);
+    }
+
+    IEnumerator GreenKeySay()
+    {
+        yield return new WaitForSeconds(1.7f);
+        S.Console.AddMessage("Rika: Maybe green key opens something green? 0.0", Color.magenta);
     }
 
     void Update()

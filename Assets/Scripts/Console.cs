@@ -32,6 +32,8 @@ public class Console : MonoBehaviour
     private float _backspaceRepeatRate = 0.05f; // Interval before backspaces
     private float _nextBackspaceActionTime;
     private bool _openedOnce;
+    private int _messageSoundNumber;
+    private int _prevMessageSoundNumber;
 
     void Start()
     {
@@ -151,9 +153,9 @@ public class Console : MonoBehaviour
 
         if (!_openedOnce && _opened)
         {
-            AddMessage("Hello!", Color.yellow);
-            AddMessage("Welcome to KeshaGame console!", Color.yellow);
-            AddMessage("To toggle console press: /", Color.yellow);
+            AddMessage("Hello!", Color.yellow, true);
+            AddMessage("Welcome to KeshaGame console!", Color.yellow, true);
+            AddMessage("To toggle console press: /", Color.yellow, true);
             _openedOnce = true;
         }
 
@@ -167,7 +169,7 @@ public class Console : MonoBehaviour
         else if (reason == "Success")
         {
             S.AM.Play("Kill", 1.1f);
-            AddMessage(_input, Color.green);
+            AddMessage(_input, Color.green, true);
         }
         else if (reason == "Error")
         {
@@ -177,11 +179,10 @@ public class Console : MonoBehaviour
 
             Cursor.visible = _opened;
 
-            AddMessage($"Error executing: \"{_input}\"", Color.red);
+            AddMessage($"Error executing: \"{_input}\"", Color.red, true);
         }
         else if (reason == "Message")
         {
-            S.AM.Play("Kill", 1f);
             _opened = true;
             _consoleTmp.gameObject.SetActive(_opened);
 
@@ -569,7 +570,7 @@ public class Console : MonoBehaviour
         {
             ToggleConsole("Success", true);
             string message = $"Current fog: r = {fog[0]}, g = {fog[1]}, b = {fog[2]}, density = {fog[3]}.";
-            AddMessage(message, Color.yellow);
+            AddMessage(message, Color.yellow, true);
         }
 
         void SetFog0(float r, float g, float b, float d)
@@ -678,7 +679,7 @@ public class Console : MonoBehaviour
         for (int i = 0; i < sceneNames.Length; i++)
             sceneNames[i] = $"\"{SceneManager.GetSceneAt(i).name}\"";
 
-        AddMessage($"Current scene names: {string.Join(", ", sceneNames)}.", Color.yellow);
+        AddMessage($"Current scene names: {string.Join(", ", sceneNames)}.", Color.yellow, true);
     }
 
     void Spawn()
@@ -710,7 +711,7 @@ public class Console : MonoBehaviour
         if (_words.Length == 1)
         {
             ToggleConsole("Success", true);
-            AddMessage($"Current shooting power is {S.Cheats._cheatPower}.", Color.yellow);
+            AddMessage($"Current shooting power is {S.Cheats._cheatPower}.", Color.yellow, true);
         }
         else
         {
@@ -722,10 +723,10 @@ public class Console : MonoBehaviour
                 ToggleConsole("Success", true);
                    
                 S.Cheats._cheatPower = number;
-                AddMessage($"Shooting power set to {S.Cheats._cheatPower}.", Color.yellow);
+                AddMessage($"Shooting power set to {S.Cheats._cheatPower}.", Color.yellow, true);
 
                 if (number < 0)
-                    AddMessage($"(You set negative power, it will heal.)", Color.yellow);
+                    AddMessage($"(You set negative power, it will heal.)", Color.yellow, true);
             }
             else
                 ToggleConsole("Error");
@@ -735,37 +736,28 @@ public class Console : MonoBehaviour
     void Items()
     {
         ToggleConsole("Success", true);
+        AddMessage(ItemsText(), Color.yellow, true, true);
+    }
 
+    public string ItemsText()
+    {
         string[] items = S.II.Names;
         for (int i = 0; i < items.Length; i++)
             items[i] = $"\"{items[i]}\"";
 
         string full = string.Join(", ", items);
-        int maxLen = 90;
-        int start = 0;
 
-        while (start < full.Length)
-        {
-            if (full.Length - start <= maxLen)
-            {
-                AddMessage(full.Substring(start) + ".", Color.yellow);
-                break;
-            }
-
-            int end = start + maxLen;
-            int splitPos = full.LastIndexOf(", ", end, end - start);
-            if (splitPos == -1 || splitPos <= start)
-                splitPos = end;
-
-            AddMessage(full.Substring(start, splitPos - start), Color.yellow);
-            start = splitPos + 2;
-        }
+        return $"Items:\r\n{full}.";
     }
 
     void Scenes()
     {
         ToggleConsole("Success", true);
+        AddMessage(ScenesText(), Color.yellow, true, true);
+    }
 
+    public string ScenesText()
+    {
         int count = SceneManager.sceneCountInBuildSettings;
         string[] names = new string[count];
         for (int i = 0; i < count; i++)
@@ -773,14 +765,15 @@ public class Console : MonoBehaviour
             string path = SceneUtility.GetScenePathByBuildIndex(i);
             names[i] = $"\"{Path.GetFileNameWithoutExtension(path)}\"";
         }
-        AddMessage(string.Join(", ", names) + ".", Color.yellow);
+        return $"Scenes:\r\n{string.Join(", ", names)}.";
     }
 
     void SceneName()
     {
         ToggleConsole("Success", true);
         string sceneNameFromLoader = S.SM.LoadString("sceneName") ?? "no";
-        AddMessage($"{S.Ps._currentSceneName} (from loader: {sceneNameFromLoader})", Color.yellow);
+        string sceneName3 = S.Loader._loaderTargetScene;
+        AddMessage($"Scene: {S.Ps._currentSceneName}, from loader: {sceneNameFromLoader}, loader target scene: {sceneName3}.", Color.yellow, true);
     }
 
     void Coordinates()
@@ -788,7 +781,7 @@ public class Console : MonoBehaviour
         ToggleConsole("Success", true);
                 
         Vector3 pos = S.Ph.transform.position;
-        AddMessage($"{pos.x} {pos.y} {pos.z}", Color.yellow);
+        AddMessage($"{pos.x} {pos.y} {pos.z}", Color.yellow, true);
     }
 
     void Combinations()
@@ -813,7 +806,7 @@ public class Console : MonoBehaviour
         TextAsset help = Resources.Load<TextAsset>($"Texts/{path}");
         string[] lines = help.text.Split('\n');
         foreach (string line in lines)
-            AddMessage(line.Trim('\r'), Color.yellow);
+            AddMessage(line.Trim('\r'), Color.yellow, true);
     }
 
     void Snakes()
@@ -824,7 +817,7 @@ public class Console : MonoBehaviour
 
         if (S.Backrooms == null || S.Backrooms._snakes == null)
         {
-            AddMessage("Not initialised yet.", Color.yellow);
+            AddMessage("Not initialised yet.", Color.yellow, true);
             return;
         }
 
@@ -847,7 +840,7 @@ public class Console : MonoBehaviour
 
         str = $"{str.Remove(str.Length - 2)}.";
 
-        AddMessage(str, Color.yellow);
+        AddMessage(str, Color.yellow, true);
     }
 
     void Summon()
@@ -946,8 +939,18 @@ public class Console : MonoBehaviour
                     string id = S.ID("ZM");
                     zombie._id = id;
                     zombie._forLoader = true;
+                    zombie._clothes = new Vector3(GenValue(), GenValue(), GenValue());
                     S.SM.AddToList(S.IDM(S.PS._currentSceneName, "ids"), id);
                     S.SM.Save(S.IDM(id, "name"), prefabName);
+                    S.SM.Save(S.IDM(id, "clth"), zombie._clothes);
+
+                    float GenValue()
+                    {
+                        if (S.RND.Next(3) != 0)
+                            return Random.Range(-1f, 1f);
+                        else
+                            return 0;
+                    }
                 }
             }
             ToggleConsole("Success");
@@ -1351,16 +1354,19 @@ public class Console : MonoBehaviour
         _consoleTmp.text = _input;
     }
 
-    public void AddMessage(string message)
+    public void AddMessage(string message, bool quiet = false)
     {
-        AddMessage(message, Color.green);
+        AddMessage(message, Color.green, quiet);
     }
 
-    public void AddMessage(string message, Color clr)
+    public void AddMessage(string message, Color clr, bool quiet = false, bool noLimit = false)
     {
         const int limit = 90;
-        const int countLimit = 5;
         const int minLineLength = limit - 15;
+
+        int countLimit = 5;
+        if (noLimit)
+            countLimit = 1000;
 
         string remaining = message;
 
@@ -1394,6 +1400,15 @@ public class Console : MonoBehaviour
                 AddMessage0(line, clr);
                 remaining = remaining.Substring(limit).TrimStart();
             }
+        }
+
+        if (!quiet)
+        {
+            _prevMessageSoundNumber = _messageSoundNumber;
+            while (_prevMessageSoundNumber == _messageSoundNumber)
+                _messageSoundNumber = S.RND.Next(4) + 1;
+
+            S.AM.Play($"Message Sound {_messageSoundNumber}");
         }
     }
 

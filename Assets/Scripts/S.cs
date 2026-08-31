@@ -28,8 +28,9 @@ public static class S : object
 	private static SaveManager _saveManager;
 	private static PlayerCamScript _playerCamScript;
 	private static Camera _camera;
+	private static Camera _centralCamera; //Only in Rika's head
 	private static GameObject fpsObj;
-	private static TextMeshProUGUI fpsTMP;
+	private static TextMeshPro fpsTMP;
 	private static GameObject _spot;
 	private static GameObject _blueSparkle;
 	private static GameObject _redSparkle;
@@ -116,6 +117,19 @@ public static class S : object
 	public static GameObject _inventoryPlane;
 	public static Material _daySky;
 	public static Material _nightSky;
+	public static GameObject _moon;
+
+	public static GameObject Moon
+	{
+		get
+		{
+			return _moon;
+		}
+		set
+		{
+			_moon = value;
+		}
+	}
 
 	public static Material DaySky
 	{
@@ -1427,6 +1441,18 @@ public static class S : object
 		}
 	}
 
+	public static Camera CentralCamera
+	{
+		get
+		{
+			return _centralCamera;
+		}
+		set
+		{
+			_centralCamera = value;
+		}
+	}
+
 	public static SaveManager SaveManager
 	{
 		get
@@ -1451,7 +1477,7 @@ public static class S : object
 		}
 	}
 
-	public static TextMeshProUGUI FpsTMP
+	public static TextMeshPro FpsTMP
 	{
 		get
 		{

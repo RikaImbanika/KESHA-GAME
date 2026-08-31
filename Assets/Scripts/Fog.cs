@@ -46,6 +46,9 @@ public class Fog : MonoBehaviour
             _mpbs["Final"].SetColor("_FogColor", new Color(0.09f, 0f, 0.3f));
             _mpbs["Final"].SetFloat("_FogDensity", 0.04f);
 
+            _mpbs["PreFinal"].SetColor("_FogColor", new Color(0f, 0f, 0f));
+            _mpbs["PreFinal"].SetFloat("_FogDensity", 0.1f);
+
             _mpbs["TL 0"].SetColor("_FogColor", new Color(0.12f, 0.08f, 0f));
             _mpbs["TL 0"].SetFloat("_FogDensity", 0.022f);
 
@@ -86,53 +89,30 @@ public class Fog : MonoBehaviour
             _mpbs["MR 3"].SetColor("_FogColor", new Color(0f, 0f, 0f));
             _mpbs["MR 3"].SetFloat("_FogDensity", 0.03f);
 
-            _mpbs["BR 2"].SetColor("_FogColor", new Color(0f, 0f, 0f));
+            _mpbs["BR 2"].SetColor("_FogColor", new Color(1f, 0.63f, 0.09f));
             _mpbs["BR 2"].SetFloat("_FogDensity", 0.015f);
 
-            _mpbs["BR 2R"].SetColor("_FogColor", new Color(0f, 0f, 0f));
+            _mpbs["BR 2R"].SetColor("_FogColor", new Color(1f, 0.63f, 0.09f));
             _mpbs["BR 2R"].SetFloat("_FogDensity", 0.015f);
 
-            Color[] fogPalette = {
-                new Color(0f, 0f, 0f),
-                new Color(1f, 1f, 1f),
-                new Color(1f, 0f, 0f),
-                new Color(0f, 0f, 1f),
-                new Color(0.5f, 0.5f, 0.5f),
-                new Color(0.5f, 0.6f, 0.7f),
-                new Color(0.8f, 0.7f, 0.5f),
-                new Color(0.4f, 0.3f, 0.2f),
-                new Color(0.3f, 0.2f, 0.5f),
-                new Color(0.4f, 0.5f, 0.4f),
-                new Color(0.2f, 0.2f, 0.3f),
-                new Color(0.7f, 0.6f, 0.6f),
-                new Color(0.2f, 0.3f, 0.4f),
-                new Color(0.6f, 0.6f, 0.6f),
-                new Color(0.9f, 0.9f, 0.85f),
-                new Color(0.3f, 0.25f, 0.2f),
-                new Color(0.1f, 0.15f, 0.2f),
-                new Color(0.8f, 0.85f, 0.9f),
-                new Color(0.55f, 0.45f, 0.35f),
-                new Color(0.35f, 0.4f, 0.45f),
-                new Color(0.9f, 0.5f, 0.2f),
-                new Color(0f, 0.5f, 0.5f),
-                new Color(0.7f, 0.7f, 0.5f),
-                new Color(0.45f, 0.5f, 0.6f),
-                new Color(0.25f, 0.3f, 0.35f),
-                new Color(0.75f, 0.8f, 0.85f),
-                new Color(0.6f, 0.5f, 0.6f),
-                new Color(0.15f, 0.1f, 0.15f),
-                new Color(0.85f, 0.75f, 0.65f),
-                new Color(0.5f, 0.55f, 0.5f)
-            };
+            _mpbs["BR 3"].SetColor("_FogColor", new Color(0.95f, 0.65f, 0.17f));
+            _mpbs["BR 3"].SetFloat("_FogDensity", 0.02f);
 
-            string[] scenes = { "BR 3", "BR 3R", "BR 4", "BR 4R", "TL 1", "TL 2" };
+            _mpbs["BR 3R"].SetColor("_FogColor", new Color(0.95f, 0.65f, 0.17f));
+            _mpbs["BR 3R"].SetFloat("_FogDensity", 0.02f);
 
-            foreach (string scene in scenes)
-            {
-                _mpbs[scene].SetColor("_FogColor", fogPalette[Random.Range(0, fogPalette.Length)]);
-                _mpbs[scene].SetFloat("_FogDensity", Random.Range(0.005f, 0.04f));
-            }
-            
+            _mpbs["BR 4"].SetColor("_FogColor", new Color(0.9f, 0.57f, 0f));
+            _mpbs["BR 4"].SetFloat("_FogDensity", 0.035f);
+
+            _mpbs["BR 4R"].SetColor("_FogColor", new Color(0.9f, 0.57f, 0f));
+            _mpbs["BR 4R"].SetFloat("_FogDensity", 0.035f);
+
+            _mpbs["TL 1"].SetColor("_FogColor", new Color(0f, 0.32f, 0.6f));
+            _mpbs["TL 1"].SetFloat("_FogDensity", 0.015f);
+
+            _mpbs["TL 2"].SetColor("_FogColor", new Color(0f, 0.32f, 0.6f));
+            _mpbs["TL 2"].SetFloat("_FogDensity", 0.013f);
+
             S.Fog = this;
 
             yield return new WaitForSeconds(3f);

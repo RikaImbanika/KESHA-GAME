@@ -58,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
 	public bool grounded;
 
 	[Header("Sounds")]
+	public bool _muteSteps;
 	private string _stepType;
 	private float _distBeforeStep;
 	private float _timeBeforeStep;
@@ -101,6 +102,7 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Start()
 	{
+		_muteSteps = true;
 		_jumpBoost = 1f;
 		
 		_dirtStepsSoundsCount = 3;
@@ -187,6 +189,9 @@ public class PlayerMovement : MonoBehaviour
 
 	private void StepsSounds()
 	{
+		if (_muteSteps)
+			return;
+		
 		_stepType = "planks";
 
 		string sn = S.PS._currentSceneName;

@@ -233,24 +233,34 @@ public class SaveManager : MonoBehaviour
 
             if (scene0.name != "Start")
                 SceneManager.UnloadSceneAsync(scene0);
+
+            //Maybe start also should be reloaded?
         }
 
         LoadInventory();
 
         S.PS._health = LoadFloat("health") ?? 50;
         S.PS.VisualiseHealth();
-        S.PS._currentSceneName = LoadString("sceneName");
+        string targetSceneName = LoadString("sceneName");
 
         S.IDs.Load();
 
-        PutPlayer();
-        S.Loader.GoTo(S.PS._currentSceneName, -1, Vector3.forward);
-        StartCoroutine(PutPlayerAgain());
+        PutPlayerAway();
+        S.Loader._loaderTargetScene = "Empty";
+        S.PS._currentSceneName = "Empty";
 
-        IEnumerator PutPlayerAgain()
+        StartCoroutine(PutPlayerNormally());
+
+        IEnumerator PutPlayerNormally()
         {
-            while (!S.Loader.LoadedScene(S.PS._currentSceneName))
-                yield return new WaitForSeconds(0.2f); //Okay okay
+            while (SceneManager.sceneCount > 1)
+                yield return new WaitForSeconds(0.25f);
+
+            S.Loader.GoTo(targetSceneName, -1, Vector3.forward);
+
+            while (!S.AllFather.SceneCurrentlyLoaded(targetSceneName) ||
+                   !S.Loader.Roots.ContainsKey(targetSceneName))
+                yield return new WaitForSeconds(0.25f);
 
             PutPlayer();
             Debug.Log("SAVE LOADED!!!");
@@ -258,10 +268,15 @@ public class SaveManager : MonoBehaviour
 
         void PutPlayer()
         {
-            S.Ph.transform.position = S.SaveManager.CurrentSave.LoadVector3("playerPosition") ?? Vector3.zero; /////////////
+            S.Ph.transform.position = S.SaveManager.CurrentSave.LoadVector3("playerPosition") ?? new Vector3(0, 1000, 0); ///
             float playerXRot = S.SaveManager.CurrentSave.LoadFloat("playerXRot") ?? 0f;
             float playerYRot = S.SaveManager.CurrentSave.LoadFloat("playerYRot") ?? 0f;
             S.PlayerCamScript.StaticRotate(playerXRot, playerYRot);
+        }
+
+        void PutPlayerAway()
+        {
+            S.Ph.transform.position = new Vector3(0, 1000000, 0);
         }
     }
 

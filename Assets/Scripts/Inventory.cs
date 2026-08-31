@@ -319,6 +319,14 @@ public class Inventory : MonoBehaviour
 				Door door = hit.collider.gameObject.GetComponent<Door>();
 				if (door != null)
 				{
+					if (door._locked)
+					{
+						_objectNameShowen = "Blue flames";
+						_objectBeforeTakenTMP.text = _objectNameShowen;
+						_objectBeforeTakenTMP.color = Color.cyan;
+						showAnyName = true;
+					}
+					
 					clickable = true;
 					goto render;
 				}
@@ -352,7 +360,20 @@ public class Inventory : MonoBehaviour
 					_objectNameShowen = "Button";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					_objectBeforeTakenTMP.color = Color.white;
-				showAnyName = true;
+					showAnyName = true;
+
+					goto render;
+				}
+
+				ButtonToSpawn buttonToSpawn = hit.collider.gameObject.GetComponent<ButtonToSpawn>();
+				if (buttonToSpawn != null)
+				{
+					clickable = true;
+
+					_objectNameShowen = "Teleport to spawn";
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					_objectBeforeTakenTMP.color = Color.white;
+					showAnyName = true;
 
 					goto render;
 				}
@@ -424,6 +445,12 @@ public class Inventory : MonoBehaviour
 				if (sceneName != null)
 				{
 					clickable = true;
+
+					_objectNameShowen = $"Teleport to {sceneName._sceneName}";
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					_objectBeforeTakenTMP.color = Color.white;
+					showAnyName = true;
+
 					goto render;
 				}
 			}
@@ -866,6 +893,13 @@ public class Inventory : MonoBehaviour
 				if (button1 != null)
 				{
 					button1.Go(_camera);
+					return;
+				}
+
+				ButtonToSpawn buttonToSpawn = hit.collider.gameObject.GetComponent<ButtonToSpawn>();
+				if (buttonToSpawn != null)
+				{
+					buttonToSpawn.Activate();
 					return;
 				}
 

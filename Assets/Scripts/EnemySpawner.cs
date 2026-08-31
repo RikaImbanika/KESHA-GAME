@@ -11,7 +11,9 @@ public class EnemySpawner : MonoBehaviour
     private string _sceneName;
     private string _id;
     private string _idType;
+    private string _idClothes;
     private string _type;
+    private Vector3 _clothes;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
     private Transform _root;
@@ -35,7 +37,10 @@ public class EnemySpawner : MonoBehaviour
         else if (typeN == 255)
             _type = "none";
         else
+        {
             _type = S.Enemies.Types[typeN];
+            _clothes = S.SM.LoadVector3(_idClothes) ?? Vector3.zero;
+        }
     }
 
     void GetId()
@@ -43,6 +48,7 @@ public class EnemySpawner : MonoBehaviour
         _sceneName = gameObject.scene.name;
         _id = S.ID("En", gameObject);
         _idType = S.IDM(_id, "typ");
+        _idClothes = S.IDM(_id, "clth");
     }
 
     IEnumerator Birn()
@@ -88,7 +94,22 @@ public class EnemySpawner : MonoBehaviour
         else
         {
             DefineType();
+            DefineClothes();
             Summon();
+        }
+
+        void DefineClothes()
+        {
+            _clothes = new Vector3(GenValue(), GenValue(), GenValue());
+            S.SM.Save(_idClothes, _clothes);
+
+            float GenValue()
+            {
+                if (S.RND.Next(3) != 0)
+                    return Random.Range(-1f, 1f);
+                else
+                    return 0;
+            }
         }
 
         void DefineType()
@@ -154,8 +175,15 @@ public class EnemySpawner : MonoBehaviour
         }
 
         MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+        mpb.SetFloat("_HueShift1", _clothes.x);
+        mpb.SetFloat("_HueShift2", _clothes.y);
+        mpb.SetFloat("_HueShift3", _clothes.z);
         S.Fog.ApplyToGameObject(obj, mpb);
         //Duplication but lets it be so
+
+        Zombie zombie = obj.GetComponent<Zombie>();
+        if (zombie != null)
+            zombie._clothes = _clothes; //set
 
         Destroy(gameObject);
     }

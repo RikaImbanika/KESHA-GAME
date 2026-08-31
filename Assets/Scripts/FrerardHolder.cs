@@ -73,7 +73,7 @@ public class FrerardHolder : MonoBehaviour
             }
             else if (_placedItem != null)
                 Interact();
-           
+
             if (_placedItem != null)
             {
                 bool ok = _name == _waitItem && _realRotation == 0;
@@ -81,7 +81,22 @@ public class FrerardHolder : MonoBehaviour
                 //S.Console.AddMessage($"okay = {ok}, waitItem = {_waitItem} name = {_name} rot = {_realRotation}");
             }
         }
-	}
+    }
+
+    void TrySay()
+    {
+        if (!(S.SM.LoadBool("FirstFrerardPicPlaced") ?? false))
+        {
+            S.SM.Save("FirstFrerardPicPlaced", true);
+            StartCoroutine(Say());
+        }
+
+        IEnumerator Say()
+        {
+            yield return new WaitForSeconds(1.8f);
+            S.Console.AddMessage("Rika: I need to collect all of that picture parts!", Color.magenta);
+        }
+    }
 
     void Swap(Item item)
     {
@@ -98,6 +113,8 @@ public class FrerardHolder : MonoBehaviour
 
     void Put(Item item)
     {
+        TrySay();
+
         _realRotation = 0; //ok
         _fakeRotation = 0; //ok
         
