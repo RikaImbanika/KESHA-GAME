@@ -1296,6 +1296,7 @@ public class Console : MonoBehaviour
         {
             S.PS.Heal(100f);
             ToggleConsole("Success");
+            return;
         }
 
         float amount = 10f;
@@ -1361,6 +1362,13 @@ public class Console : MonoBehaviour
 
     public void AddMessage(string message, Color clr, bool quiet = false, bool noLimit = false)
     {
+        var lines = message.Split('\n');
+        foreach (string line in lines)
+            AddMessage1(line.Trim('\r'), clr, quiet, noLimit);
+    }
+
+    public void AddMessage1(string message, Color clr, bool quiet = false, bool noLimit = false)
+    {
         const int limit = 90;
         const int minLineLength = limit - 15;
 
@@ -1374,14 +1382,14 @@ public class Console : MonoBehaviour
         {
             if (remaining.Length <= limit)
             {
-                AddMessage0(remaining, clr);
+                AddMessage2(remaining, clr);
                 break;
             }
 
             if (i == countLimit - 1)
             {
                 string truncated = remaining.Substring(0, limit - 3);
-                AddMessage0(truncated + "...", clr);
+                AddMessage2(truncated + "...", clr);
                 break;
             }
 
@@ -1391,13 +1399,13 @@ public class Console : MonoBehaviour
             if (lastSpace >= 0 && lastSpace >= minLineLength)
             {
                 string part = remaining.Substring(0, lastSpace);
-                AddMessage0(part, clr);
+                AddMessage2(part, clr);
 
                 remaining = remaining.Substring(lastSpace + 1).TrimStart();
             }
             else
             {
-                AddMessage0(line, clr);
+                AddMessage2(line, clr);
                 remaining = remaining.Substring(limit).TrimStart();
             }
         }
@@ -1412,7 +1420,7 @@ public class Console : MonoBehaviour
         }
     }
 
-    void AddMessage0(string message, Color clr)
+    void AddMessage2(string message, Color clr)
     {
         _history[_headIndex].text = message;
         _history[_headIndex].color = clr;

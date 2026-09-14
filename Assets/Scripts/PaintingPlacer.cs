@@ -176,6 +176,8 @@ public class PaintingPlacer : MonoBehaviour
 
                 frameMat.mainTexture = Resources.Load<Texture2D>($"Textures/WoodenFrameTexture");
 
+                MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+
                 if (_phraseNumber != -1)
                 {
                     Material blackMat = new Material(mat.shader);
@@ -227,9 +229,11 @@ public class PaintingPlacer : MonoBehaviour
 
                         Material tmpMaterial = new Material(tmpFogShader);
                         tmpMaterial.mainTexture = fontAtlas;
-                        tmpMaterial.SetColor("_FaceColor", Color.white);
+                        tmpMaterial.SetColor("_FaceColor", Color.Lerp(_tint, Color.white, 0.35f));
 
                         tmp.fontMaterial = tmpMaterial;
+
+                        S.Fog.ApplyToGameObject(phraseObject, mpb);
                     }
                 }
                 else
@@ -251,7 +255,6 @@ public class PaintingPlacer : MonoBehaviour
                 GameObject frameChild = frame.transform.Find("Child/Frame").gameObject;
                 frameChild.GetComponent<MeshRenderer>().material = frameMat;
 
-                MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
                 S.Fog.ApplyToGameObject(painting, mpb);
                 S.Fog.ApplyToGameObject(frame, mpb);
             }

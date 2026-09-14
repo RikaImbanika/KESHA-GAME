@@ -26,7 +26,8 @@ public class Paintings : MonoBehaviour
             "BeDifferent",
             "GetEarth",
             "Kuplinov",
-            "BrokenVase"
+            "BrokenVase",
+            "DeepReader"
         };
 
         _canMirror = new bool[]
@@ -40,6 +41,7 @@ public class Paintings : MonoBehaviour
             false,
             false,
             false,
+            true,
             true
         };
 
@@ -53,7 +55,8 @@ public class Paintings : MonoBehaviour
             100,
             100,
             100,
-            36,
+            34,
+            100,
             100
         };
 
@@ -83,6 +86,8 @@ public class Paintings : MonoBehaviour
             ("Ready, set, fish.", true),
             ("What?", true),
             ("Revolutionise gaming again!", true),
+            ("I'm real!", true),
+            ("Art.", true)
         };
 
         _scenesTakePlainTextPainting = new List<string>();

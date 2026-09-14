@@ -90,11 +90,15 @@ public class Zombie : MonoBehaviour
 
             void Load()
             {
-                MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
+                MaterialPropertyBlock fogMpb = S.Fog.GetMPB(_sceneName);
+
+                MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+                mpb.SetColor("_FogColor", fogMpb.GetColor("_FogColor"));
+                mpb.SetFloat("_FogDensity", fogMpb.GetFloat("_FogDensity"));
 
                 var loadPos = S.SM.LoadVector3(_idPos);
 
-                if (_health <= 0) //It's just corpse
+                if (_health <= 0) //It's just a corpse
                     Die();
                 else if (loadPos.HasValue)
                 {
@@ -114,17 +118,19 @@ public class Zombie : MonoBehaviour
                 mpb.SetFloat("_HueShift1", _clothes.x);
                 mpb.SetFloat("_HueShift2", _clothes.y);
                 mpb.SetFloat("_HueShift3", _clothes.z);
+
                 S.Fog.ApplyToGameObject(gameObject, mpb);
             }
         }
     }
 
-
-
     void GetId()
     {
-        if (string.IsNullOrEmpty(_id))
-            _id = S.ID("ZM", gameObject);
+        //Id must be set by spawner.
+        //If not, this is enemy in scene.
+
+        if (string.IsNullOrWhiteSpace(_id))
+            _id = S.ID("Zm", gameObject);
 
         _idPos = S.IDM(_id, "pos");
         _idRot = S.IDM(_id, "rot");
@@ -133,6 +139,11 @@ public class Zombie : MonoBehaviour
     }
 
     void SavingMethod()
+    {
+        Save();
+    }
+
+    void Save()
     {
         S.SM.Save(_idPos, transform.position);
         S.SM.Save(_idRot, transform.rotation);
@@ -184,6 +195,7 @@ public class Zombie : MonoBehaviour
         _followPlayer = false;
         _health = 0;
         _dead = true;
+        Save();
         Destroy(_collider);
         Destroy(_agent);
     }

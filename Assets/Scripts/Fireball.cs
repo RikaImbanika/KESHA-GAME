@@ -28,7 +28,11 @@ public class Fireball : MonoBehaviour
 
         _sceneRoot = S.Loader.Roots[_sceneName];
 
-        _mpb = S.Fog.GetMPB(_sceneName);
+        MaterialPropertyBlock srcMpb = S.Fog.GetMPB(_sceneName);
+        _mpb = new MaterialPropertyBlock();
+        _mpb.SetColor("_FogColor", srcMpb.GetColor("_FogColor"));
+        _mpb.SetFloat("_FogDensity", srcMpb.GetFloat("_FogDensity") * 0.75f);
+
         S.Fog.ApplyToGameObject(gameObject, _mpb);
 
         if (_damage == 0)

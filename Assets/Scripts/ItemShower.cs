@@ -19,6 +19,9 @@ public class ItemShower : MonoBehaviour
     public Vector3 _showingStartScale;
     MaterialPropertyBlock _noFogMPB;
     private string _showingItemName;
+    private List<Transform> _particles;
+    private Vector3 _particlesCenter;
+    private float _timer;
     
     void Start()
     {
@@ -31,6 +34,9 @@ public class ItemShower : MonoBehaviour
         _noFogMPB = new MaterialPropertyBlock();
         _noFogMPB.SetColor("_FogColor", new Color(0f, 0f, 1f));
         _noFogMPB.SetFloat("_FogDensity", 0f);
+
+        _particles = new List<Transform>();
+        _particlesCenter = _showingCamera.transform.position + _showingCamera.transform.forward * 30f;
 
         S.ItemShower = this;
     }
@@ -60,7 +66,8 @@ public class ItemShower : MonoBehaviour
                 if (showingItemNameBuf != _showingItemName)
                     yield break;
 
-                S.Inventory.smallInventoryPanel.SetActive(false);
+                S.Inventory._smallInventoryPanel.SetActive(false);
+                S.Inventory._selectorPanel.SetActive(false);
 
                 _showingStartTime = Time.time;
 
@@ -87,6 +94,9 @@ public class ItemShower : MonoBehaviour
 
                 _showingItem.transform.eulerAngles = startRotation;
 
+                for (int i = 0; i < 90; i++)
+                    InstantiateParticle();
+
                 S.AM.Play("Gong");
                 S.AM.Play("Crowd Is Happy"); //TO DO more sounds in future
 
@@ -110,7 +120,8 @@ public class ItemShower : MonoBehaviour
             _showingCamera.gameObject.SetActive(false);
             _showingPanel.gameObject.SetActive(false);
             _showingOverlay.SetActive(false);
-            S.Inventory.smallInventoryPanel.SetActive(true);
+            S.Inventory._smallInventoryPanel.SetActive(true);
+            S.Inventory._selectorPanel.SetActive(true);
             S.AM.Play("Pick Up", 1.3f);
 
             if (_showingItemName == "GreenKey")
@@ -188,10 +199,26 @@ public class ItemShower : MonoBehaviour
         if (_showingItem != null)
         {
             float k = Time.deltaTime * 60f;
-            
+
             _showingItem.transform.Rotate(_showingRotation.x * k, _showingRotation.y * k, _showingRotation.z * k, Space.World);
             float scaleCoef = 1 - (1 / ((Time.time - _showingStartTime) * 8f + 1f));
             _showingItem.transform.localScale = _showingStartScale * scaleCoef;
+
+            _timer += Time.deltaTime;
+
+            if (_timer > 0.1f)
+            {
+                _timer = 0;
+                InstantiateParticle();
+                InstantiateParticle();
+                InstantiateParticle();
+            }
         }
+    }
+
+    public void InstantiateParticle()
+    {
+        Quaternion rotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
+        Instantiate(S.ItemShowerParticlePrefab, _particlesCenter, rotation);
     }
 }

@@ -25,6 +25,10 @@ public class LocalLaser : MonoBehaviour
     public Vector3 _laserDirection;
     public float _laserLimit = 50f;
 
+    [Header("Motion Blur")]
+    [Tooltip("Stretch per unit of speed (world units/sec).")]
+    public float _motionStretchFactor = 0.027f;
+
     [Header("Privates")]
     private Vector3 _forwardPosition;
     private Vector3 _backwardPosition;
@@ -36,6 +40,7 @@ public class LocalLaser : MonoBehaviour
     private GameObject _rightBotObj;
     private Vector3 _leftDelta;
     private Vector3 _rightDelta;
+    private Vector3 _laserBaseScale;      // cached to avoid accumulating stretch
     private float _period;
     private float _frequency;
     private int _layerMask;
@@ -44,6 +49,10 @@ public class LocalLaser : MonoBehaviour
     private bool _hitSomethingBeforeRight;
     private bool _hitSomethingBeforeLeft;
     private string _sceneName;
+
+    // Motion blur state — recomputed every frame from the analytic motion.
+    private float _currentSpeed;
+    private Vector3 _currentVelocityDir;
 
     private Optimiser _opti;
 
@@ -54,7 +63,7 @@ public class LocalLaser : MonoBehaviour
         IEnumerator Start0()
         {
             _sceneName = gameObject.scene.name;
-                        
+
             while (S.Loader.Roots == null ||
                 !S.Loader.Roots.ContainsKey(_sceneName) ||
                 S.Loader.Roots[_sceneName] == null)
@@ -75,6 +84,9 @@ public class LocalLaser : MonoBehaviour
             _leftPointObj.SetActive(false);
             _rightPointObj.SetActive(false);
 
+            // Remember the pristine scale so we don't accumulate stretch.
+            _laserBaseScale = _leftLaserObj.transform.localScale;
+
             _layerMask = 1 << LayerMask.NameToLayer("Player") |
                              1 << LayerMask.NameToLayer("Static") |
                              1 << LayerMask.NameToLayer("Enemies") |
@@ -91,9 +103,15 @@ public class LocalLaser : MonoBehaviour
 
     void SetFog()
     {
-        MaterialPropertyBlock mpb = S.Fog.GetMPB(_sceneName);
-        S.Fog.ApplyToGameObject(gameObject, mpb);
-        //Should automaticly include points, lasers, bots
+        MaterialPropertyBlock srcMpb = S.Fog.GetMPB(_sceneName);
+
+        MaterialPropertyBlock laserMpb = new MaterialPropertyBlock();
+        laserMpb.SetColor("_FogColor", srcMpb.GetColor("_FogColor"));
+        laserMpb.SetFloat("_FogDensity", srcMpb.GetFloat("_FogDensity") * 0.75f);
+        S.Fog.ApplyToGameObject(gameObject, laserMpb);
+
+        S.Fog.ApplyToGameObject(_leftBotObj, srcMpb);
+        S.Fog.ApplyToGameObject(_rightBotObj, srcMpb);
     }
 
     void Update()
@@ -110,8 +128,22 @@ public class LocalLaser : MonoBehaviour
     void UpdateMovement()
     {
         _currentTime += _opti.DeltaTime;
-        float smoothed = (MathF.Sin(_currentTime * _frequency) + 1) / 2f;
+
+        float angle = _currentTime * _frequency;
+        float smoothed = (MathF.Sin(angle) + 1) / 2f;
         transform.position = Vector3.Lerp(_forwardPosition, _backwardPosition, smoothed);
+
+        // Analytic derivative of the position above:
+        //   pos(t) = Lerp(fwd, bwd, s(t)),  s(t) = (sin(t*w) + 1) / 2
+        //   s'(t)  = cos(t*w) * w / 2
+        //   v(t)   = (bwd - fwd) * s'(t)
+        // This is FPS-independent: no per-frame division by deltaTime needed,
+        // and the result is the true world-space velocity.
+        float dSmoothed = MathF.Cos(angle) * _frequency * 0.5f;
+        Vector3 velocity = (_backwardPosition - _forwardPosition) * dSmoothed;
+
+        _currentSpeed = velocity.magnitude;
+        _currentVelocityDir = _currentSpeed > 1e-4f ? velocity / _currentSpeed : Vector3.zero;
     }
 
     void InitLaserBots()
@@ -227,13 +259,30 @@ public class LocalLaser : MonoBehaviour
 
         laserObj.transform.rotation = Quaternion.LookRotation(direction);
 
-        // Scale laser by length
         float distance = Vector3.Distance(startPoint, endPoint);
-        laserObj.transform.localScale = new Vector3(
-            laserObj.transform.localScale.x,
-            laserObj.transform.localScale.y,
-            distance
-        );
+
+        // ---- Motion blur: stretch thickness along movement direction ----
+        // Stretch factor is derived from the world-space speed, which is
+        // computed from the analytic motion — so it is FPS-independent.
+        float stretch = _currentSpeed * _motionStretchFactor;
+
+        float scaleX = _laserBaseScale.x;
+        float scaleY = _laserBaseScale.y;
+
+        if (stretch > 0.001f && _currentVelocityDir != Vector3.zero)
+        {
+            // Express movement direction in the laser's local space.
+            // The laser's local Z is its length, so the motion direction
+            // lives in the local XY plane. We stretch the dominant axis.
+            Vector3 localVel = laserObj.transform.InverseTransformDirection(_currentVelocityDir);
+
+            if (Mathf.Abs(localVel.x) >= Mathf.Abs(localVel.y))
+                scaleX *= 1f + stretch;
+            else
+                scaleY *= 1f + stretch;
+        }
+
+        laserObj.transform.localScale = new Vector3(scaleX, scaleY, distance);
 
         if (_hitSomething)
         {

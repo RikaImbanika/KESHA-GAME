@@ -84,8 +84,13 @@ public class Initialiser : MonoBehaviour
 
         S.InventoryPlane = Prefabs.Get("InventoryPlane");
 
+        S.NumberLabelExample = Prefabs.Get("NumberLabelExample");
+
         S.DaySky = Materials.Get("HDRI/DaySkyMat");
         S.NightSky = Materials.Get("HDRI/NightSkyMat");
+
+        S.ItemShowerParticlePrefab = Prefabs.Get("Sparkles/ItemShowerParticle");
+        S.WrongWayParticlePrefab = Prefabs.Get("Sparkles/WrongWayParticle");
 
         yield return WaitForCondition(() => Camera.main != null, "Waiting for camera");
         S.Camera = Camera.main;

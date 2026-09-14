@@ -49,5 +49,6 @@ public class Subwoofer : MonoBehaviour
         direction *= 100f;
         direction += new Vector3(0, 3, 0);
         pm.Push(direction, false, 0.25f);
+        S.AM.Play("Subwoofer Jump");
     }
 }

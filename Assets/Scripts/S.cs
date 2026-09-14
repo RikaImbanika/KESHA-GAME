@@ -118,6 +118,97 @@ public static class S : object
 	public static Material _daySky;
 	public static Material _nightSky;
 	public static GameObject _moon;
+	public static TrainingParams _trainingParams;
+	public static TrainingSystem _trainingSystem;
+	public static GameVersionPlacer _gameVersionPlacer;
+	public static GameObject _itemShowerParticlePrefab;
+	public static GameObject _wrongWayParticlePrefab;
+	public static GameObject _numberLabelExample;
+
+	public static GameObject NumberLabelExample
+	{
+		get
+		{
+			return _numberLabelExample;
+		}
+		set
+		{
+			_numberLabelExample = value;
+		}
+	}
+
+
+	public static GameObject ItemShowerParticlePrefab
+	{
+		get
+		{
+			return _itemShowerParticlePrefab;
+		}
+		set
+		{
+			_itemShowerParticlePrefab = value;
+		}
+	}
+
+	public static GameObject WrongWayParticlePrefab
+	{
+		get
+		{
+			return _wrongWayParticlePrefab;
+		}
+		set
+		{
+			_wrongWayParticlePrefab = value;
+		}
+	}
+
+	public static GameVersionPlacer GameVersionPlacer
+	{
+		get
+		{
+			return _gameVersionPlacer;
+		}
+		set
+		{
+			_gameVersionPlacer = value;
+		}
+	}
+
+	public static TrainingSystem TrainingSystem
+	{
+		get
+		{
+			return _trainingSystem;
+		}
+		set
+		{
+			_trainingSystem = value;
+		}
+	}
+
+	public static TrainingParams TrainingParams
+	{
+		get
+		{
+			return _trainingParams;
+		}
+		set
+		{
+			_trainingParams = value;
+		}
+	}
+
+	public static TrainingParams TRP
+	{
+		get
+		{
+			return _trainingParams;
+		}
+		set
+		{
+			_trainingParams = value;
+		}
+	}
 
 	public static GameObject Moon
 	{

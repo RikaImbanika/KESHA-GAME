@@ -25,6 +25,7 @@ public class Spider : MonoBehaviour
 
     public float _health;
     public float _maxHealth;
+    public string _id;
 
     private Vector3[] _directions;
     private GameObject[] _lasers;
@@ -35,7 +36,6 @@ public class Spider : MonoBehaviour
 
     //Privates
     private Vector3 _startPosition;
-    private string _id;
     private string _idPos;
     private string _idRot;
     private string _idHp;
@@ -157,7 +157,13 @@ public class Spider : MonoBehaviour
     void GetId()
     {
         _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
-        _id = S.ID("SP", gameObject);
+
+        //Id must be set by spawner.
+        //If not, this is enemy in scene.
+
+        if (string.IsNullOrWhiteSpace(_id))
+            _id = S.ID("Sp", gameObject);
+
         _idPos = S.IDM(_id, "pos");
         _idRot = S.IDM(_id, "rot");
         _idHp = S.IDM(_id, "hp");
@@ -174,7 +180,7 @@ public class Spider : MonoBehaviour
     {
         if (!_dead)
         {
-            _followPlayer = true;
+            Activate();
 
             _health -= amount;
 
@@ -297,25 +303,13 @@ public class Spider : MonoBehaviour
                     float angle = Vector3.Angle(toPlayer, transform.forward);
                     if (angle > -90f && angle < 90f)
                     {
-                        if (!_followPlayer)
-                        {
-                            _followPlayer = true;
-                            for (int i = 0; i < 4; i++)
-                            {
-                                _lasers[i].SetActive(true);
-                                _points[i].SetActive(true);
-                            }
-
-                            //
-
-                            _laserDown.SetActive(true);
-                            var scale = new Vector3(1.5f, 1.5f, 3f);
-                            _laserDown.transform.localScale = scale;
-                        }
+                        Activate();
                     }
                 }
             }
         }
+
+
 
         void Laser()
         {
@@ -378,8 +372,6 @@ public class Spider : MonoBehaviour
                 S.PS.Damage(_damagePlayer * _opti.DeltaTime);
         }
 
-
-
         void Fire()
         {
             _nextFireTime -= _opti.DeltaTime;
@@ -396,6 +388,20 @@ public class Spider : MonoBehaviour
                 Destroy(fireball, 15);
             }
         }
+    }
+
+    void Activate()
+    {
+        _followPlayer = true;
+        for (int i = 0; i < 4; i++)
+        {
+            _lasers[i].SetActive(true);
+            _points[i].SetActive(true);
+        }
+
+        _laserDown.SetActive(true);
+        var scale = new Vector3(1.5f, 1.5f, 3f);
+        _laserDown.transform.localScale = scale;
     }
 
     Vector3 GetLasDir()

@@ -183,7 +183,18 @@ public class EnemySpawner : MonoBehaviour
 
         Zombie zombie = obj.GetComponent<Zombie>();
         if (zombie != null)
+        {
             zombie._clothes = _clothes; //set
+            zombie._id = _id;
+        }
+        else
+        {
+            Spider spider = obj.GetComponent<Spider>();
+            if (spider != null)
+            {
+                spider._id = _id;
+            }
+        }
 
         Destroy(gameObject);
     }

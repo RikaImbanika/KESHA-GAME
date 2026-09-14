@@ -10,11 +10,13 @@ public class GameVersionPlacer : MonoBehaviour
 {
     public string _version;
     public TextMeshProUGUI _tmpOnStartPanel;
-    public TextMeshProUGUI _tmpInInventory;
+    public TextMeshPro _tmpInInventory;
 
     void Start()
     {
         _tmpOnStartPanel.text = $"v {_version}";
         _tmpInInventory.text = $"Kesha Game, v{_version}, Made by Rika Imbanika";
+
+        S.GameVersionPlacer = this;
     }
 }

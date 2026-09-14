@@ -94,7 +94,7 @@ public class FrerardHolder : MonoBehaviour
         IEnumerator Say()
         {
             yield return new WaitForSeconds(1.8f);
-            S.Console.AddMessage("Rika: I need to collect all of that picture parts!", Color.magenta);
+            S.Console.AddMessage("Rika: I need to collect all of thoose picture parts!", Color.magenta);
         }
     }
 

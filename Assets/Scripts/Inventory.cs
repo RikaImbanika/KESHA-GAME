@@ -18,8 +18,6 @@ public class Inventory : MonoBehaviour
 
 	[Header("Keybinds")]
 
-	public GameObject inventoryPanel;
-	public GameObject smallInventoryPanel;
 	public bool opened;
 
 	public int selectedId;
@@ -29,22 +27,24 @@ public class Inventory : MonoBehaviour
 	public Item[] items;
 	public Item _buffer;
 
-	public GameObject[] panels;
-	public GameObject[] smallPanels;
-
-	public TextMeshProUGUI[] numberLabels;
-	public TextMeshProUGUI[] smallNumberLabels;
-
-	public GameObject selectorPanel;
-	public GameObject selectorPanelPlus;
 	public GameObject cursorPanel;
-	public GameObject inventoryPanelParentBig;
-	public GameObject inventoryPanelParentSmall;
+
+	public GameObject _bigInventoryPanel;
+	public GameObject _smallInventoryPanel;
+	public GameObject _selectorPanel;
+	public GameObject _ultraSelectorPanel;
+	private float _ultraSelectorPanelZ;
+	public GameObject[] _panels;
+	public GameObject[] _smallPanels;
+	public TextMeshPro[] _numberLabels;
+	public TextMeshPro[] _smallNumberLabels;
+	public GameObject _numberLabelExample;
+	public Color _selectedColor;
+	public Color _deselectedColor;
+	private Material _selectorMaterial;
 
 	public Camera _camera;
 	public Rigidbody prb;
-
-	public GameObject numberLabelExample;
 
 	public float throwTime;
 	public float throwSize;
@@ -56,7 +56,7 @@ public class Inventory : MonoBehaviour
 	public long lastKeyTime;
 	public string scrollState;
 
-	public float fps;
+	public float _fps;
 
 	public GameObject allFather;
 
@@ -70,7 +70,7 @@ public class Inventory : MonoBehaviour
 
 	public GameObject _playerObject;
 
-	Sprite _empty;
+	Texture _emptyTex;
 
 	public bool _marketOpened;
 
@@ -89,6 +89,11 @@ public class Inventory : MonoBehaviour
 	public TextMeshPro _objectBeforeTakenTMP;
 	private Color _transparentColor;
 	private string _objectNameShowen;
+	[Header("Selection zone")]
+	public float _y1offset;
+	public float _y1scale;
+	public float _y2offset;
+	public float _y2scale;
 
 	public int CountOfItem(string name)
 	{
@@ -119,7 +124,8 @@ public class Inventory : MonoBehaviour
 					{
 						items[i]._name = "";
 						ultraSelectedId = -1;
-						selectorPanelPlus.SetActive(false);
+						_selectorMaterial.color = _deselectedColor;
+						_ultraSelectorPanel.SetActive(false);
 						Visualise(i);
                         SaveOneItem(i);
                         return;
@@ -129,7 +135,8 @@ public class Inventory : MonoBehaviour
 						count -= items[i]._count; //CORRECT
 						items[i]._name = "";
 						ultraSelectedId = -1;
-						selectorPanelPlus.SetActive(false);
+						_selectorMaterial.color = _deselectedColor;
+						_ultraSelectorPanel.SetActive(false);
 						Visualise(i);
                         SaveOneItem(i);
                         continue;
@@ -139,6 +146,10 @@ public class Inventory : MonoBehaviour
 
 	public void Start()
 	{
+		_selectedColor = new Color(0, 1f, 1f);
+		_deselectedColor = new Color(174f / 255f, 48f / 255f, 1f);
+		_selectorMaterial = _selectorPanel.GetComponent<MeshRenderer>().sharedMaterial;
+
 		_transparentColor = Color.white;
 		_transparentColor.a = 0;
 
@@ -154,7 +165,7 @@ public class Inventory : MonoBehaviour
 			1 << LayerMask.NameToLayer("Particles") |
 			1 << LayerMask.NameToLayer("Invisible Walls"));
 
-		_empty = Resources.Load<Sprite>("Sprites/Items/Empty");
+		_emptyTex = Resources.Load<Texture>("Textures/Items/Empty");
 
 		StartCoroutine(LateStart(0.3f));
 
@@ -169,10 +180,12 @@ public class Inventory : MonoBehaviour
             S.AudioManager._muted = true;
 
             items = new Item[36]; //Kinda hardcode
-            numberLabels = new TextMeshProUGUI[36];
-            smallNumberLabels = new TextMeshProUGUI[9];
+			_numberLabels = new TextMeshPro[36];
+			_smallNumberLabels = new TextMeshPro[9];
             opened = true;
             scrollState = "not started";
+
+			_ultraSelectorPanelZ = _ultraSelectorPanel.transform.position.z;
 
             yield return new WaitForSeconds(waitTime);
 
@@ -184,15 +197,20 @@ public class Inventory : MonoBehaviour
 
 			Vector2 canvasScale = new Vector2(canvas.transform.lossyScale.x, canvas.transform.lossyScale.y);
 
-			for (int i = 0; i < numberLabels.Length; i++)
+			Shader shader = Shader.Find("Custom/AlphaUnlitSingleSideWithAlphaMultiplier");
+			for (int i = 0; i < _numberLabels.Length; i++)
 			{
-				Transform t = panels[i].transform;
-				var obj = Instantiate(numberLabelExample);
-				obj.transform.parent = t;
-				obj.transform.position = t.position + new Vector3(8 * canvasScale.x, 140 * canvasScale.y, 0);
-				obj.transform.localScale = new Vector3(0.22f, 0.65f);
+				Transform t2 = _panels[i].transform;
+				var obj2 = Instantiate(_numberLabelExample);
+				obj2.transform.parent = t2;
+				obj2.transform.position = t2.position + new Vector3(0.2f, -0.9f, -3f);
+				obj2.transform.localScale = new Vector3(1.7f, 1.7f, 0);
+				obj2.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
 
-				numberLabels[i] = obj.GetComponent<TextMeshProUGUI>();
+				_panels[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(shader);
+
+				_numberLabels[i] = obj2.GetComponent<TextMeshPro>();
+
 				items[i] = S.AllFather.gameObject.AddComponent<Item>();
 				items[i]._name = "";
 				items[i]._count = 0;
@@ -202,26 +220,30 @@ public class Inventory : MonoBehaviour
 			_buffer._name = "";
 			_buffer._count = 0;
 
-			for (int i = 0; i < smallNumberLabels.Length; i++)
+			for (int i = 0; i < _smallNumberLabels.Length; i++)
 			{
-				Transform t = smallPanels[i].transform;
-				var obj = Instantiate(numberLabelExample);
-				obj.transform.parent = t;
-				obj.transform.position = t.position + new Vector3(7 * canvasScale.x, 103 * canvasScale.y, 0);
-				obj.transform.localScale = new Vector3(0.22f, 0.65f);
+				Transform t2 = _smallPanels[i].transform;
+				var obj2 = Instantiate(_numberLabelExample);
+				obj2.transform.parent = t2;
+				obj2.transform.position = t2.position + new Vector3(0.2f, -0.55f, -3f);
+				obj2.transform.localScale = new Vector3(1.7f, 1.7f, 0); //ChangeMeToo
+				obj2.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, -1));
 
-				smallNumberLabels[i] = obj.GetComponent<TextMeshProUGUI>();
+				_smallPanels[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(shader);
+
+				_smallNumberLabels[i] = obj2.GetComponent<TextMeshPro>();
 			}
 
 			ultraSelectedId = -1;
+			_selectorMaterial.color = _deselectedColor;
 
 			SwitchInventory();
 			SwitchInventory();
 			SwitchInventory();
 
-			selectorPanelPlus.SetActive(false);
-
-			numberLabelExample.SetActive(false);
+			_ultraSelectorPanel.SetActive(false);
+			//_numberLabelExample.SetActive(false); //Destroy?
+			Destroy(_numberLabelExample);
 
 			FillFirstInventory();
 
@@ -259,8 +281,8 @@ public class Inventory : MonoBehaviour
 			return;
 		}
 
-		fps = MathF.Round(fps * 0.5f + 0.5f / Time.deltaTime);
-		S.FpsTMP.text = fps.ToString();
+		_fps = MathF.Round(_fps * 0.5f + 0.5f / Time.deltaTime);
+		S.FpsTMP.text = _fps.ToString();
 
 		if (!_marketOpened && !opened)
 		{
@@ -479,7 +501,7 @@ public class Inventory : MonoBehaviour
 
 	public void Visualize()
 	{
-		for (int i = 0; i < panels.Length; i++)
+		for (int i = 0; i < _panels.Length; i++)
 			Visualise(i);
 	}
 
@@ -487,44 +509,44 @@ public class Inventory : MonoBehaviour
 	{
 		if (!IsEmpty(items[id]))
 		{
-			Debug.Log($"Setting sprite on {id}");
+			Debug.Log($"Setting tex on {id}");
 
-			string spriteName = S.II.Get(items[id]._name)._spriteName;
-			Sprite sprite = Resources.Load<Sprite>($"Sprites/Items/{spriteName}");
-			panels[id].GetComponent<Image>().sprite = sprite;
+			string texName = S.II.Get(items[id]._name)._spriteName;
 
-			Debug.Log($"Sprite name on {id} is {spriteName}");
+			Texture texture = Resources.Load<Texture>($"Textures/Items/{texName}");
+			_panels[id].GetComponent<MeshRenderer>().sharedMaterial.mainTexture = texture;
 
 			if (items[id]._count > 1)
-				numberLabels[id].text = Align(items[id]._count.ToString());
+				_numberLabels[id].text = Align(items[id]._count.ToString());
 			else
-				numberLabels[id].text = "";
+				_numberLabels[id].text = "";
 
 			if (id < 9)
 			{
-				smallPanels[id].GetComponent<Image>().sprite = sprite;
+				_smallPanels[id].GetComponent<MeshRenderer>().sharedMaterial.mainTexture = texture;
 
 				if (items[id]._count > 1)
-					smallNumberLabels[id].text = Align(items[id]._count.ToString());
+					_smallNumberLabels[id].text = Align(items[id]._count.ToString());
 				else
-					smallNumberLabels[id].text = "";
+					_smallNumberLabels[id].text = "";
 			}
 
-			Debug.Log($"Set sprite on {id}");
+			Debug.Log($"Set tex on {id}");
 		}
 		else
 		{
-			Debug.Log($"Clearing sprite on {id}");
+			Debug.Log($"Clearing tex on {id}");
 
-			panels[id].GetComponent<Image>().sprite = _empty;
-			numberLabels[id].text = "";
+			_panels[id].GetComponent<MeshRenderer>().sharedMaterial.mainTexture = _emptyTex;
+
+			_numberLabels[id].text = "";
 			if (id < 9)
 			{
-				smallPanels[id].GetComponent<Image>().sprite = _empty;
-				smallNumberLabels[id].text = "";
+				_smallPanels[id].GetComponent<MeshRenderer>().sharedMaterial.mainTexture = _emptyTex;
+				_smallNumberLabels[id].text = "";
 			}
 
-			Debug.Log($"Cleared sprite on {id}");
+			Debug.Log($"Cleared tex on {id}");
 		}
 
 		string Align(string s)
@@ -563,6 +585,37 @@ public class Inventory : MonoBehaviour
 					SelectItem(selectedId + 1, false);
 				else if (Input.GetAxis("Mouse ScrollWheel") > 0f)
 					SelectItem(selectedId - 1, false);
+
+				if (Input.GetMouseButtonDown(0))
+				{
+					Vector3 p = Input.mousePosition;
+					float x = p.x / Screen.width;
+					float y1 = 1 - p.y / Screen.height;
+					float y2 = y1;
+
+					x -= 0.255f;
+					x *= 2.05f;
+
+					y1 -= _y1offset;
+					y1 *= _y1scale;
+					y2 -= _y2offset;
+					y2 *= _y2scale;
+
+					if (x > 0 && x < 1)
+					{
+						if (y1 > 0 && y1 < 1)
+						{
+							int id = (int)(x * 9);
+							SelectItem(id, selectedId == id || ultraSelectedId > -1);
+						}
+						else if (y2 > 0 && y2 < 1)
+						{
+							int id0 = (int)(y2 * 3) + 1;
+							int id = (int)(x * 9) + id0 * 9;
+							SelectItem(id, selectedId == id || ultraSelectedId > -1);
+						}
+					}
+				}
 
 				if (Input.GetKeyDown(KeyCode.Return))
 				{
@@ -1074,7 +1127,8 @@ public class Inventory : MonoBehaviour
 			{
 				items[id]._name = "";
 				ultraSelectedId = -1;
-				selectorPanelPlus.SetActive(false);
+				_selectorMaterial.color = _deselectedColor;
+				_ultraSelectorPanel.SetActive(false);
 			}
 
 			Visualise(id);
@@ -1100,15 +1154,17 @@ public class Inventory : MonoBehaviour
 				Cursor.lockState = CursorLockMode.Locked;
 				SelectItem(selId, false);
 				ultraSelectedId = -1;
-				selectorPanelPlus.SetActive(false); //
+				_selectorMaterial.color = _deselectedColor;
+				_ultraSelectorPanel.SetActive(false);
 			}
 
 			Cursor.visible = opened;
 
-			inventoryPanel.gameObject.SetActive(opened);
-			smallInventoryPanel.gameObject.SetActive(!opened);
 			cursorPanel.gameObject.SetActive(!opened);
 			_circleCursor.SetActive(!opened);
+
+			_bigInventoryPanel.SetActive(opened);
+			_smallInventoryPanel.SetActive(!opened);
 		}
 		else
 			_trader.CloseMarket();
@@ -1146,27 +1202,20 @@ public class Inventory : MonoBehaviour
 
 		void SelectSmall()
 		{
-			float s = 1.3f;
+			float s = 0.165f;
 
-			selectorPanel.transform.SetParent(inventoryPanelParentSmall.transform);
-			selectorPanel.transform.SetSiblingIndex(0); //?
-
-			selectorPanel.transform.position = smallPanels[id].transform.position;// + new Vector3(0, 1, 0);
-			selectorPanel.transform.localScale = new Vector3(s, s, 0);
+			_selectorPanel.transform.position = _smallPanels[id].transform.position + new Vector3(0, 0, -2);
+			_selectorPanel.transform.localScale = new Vector3(s, 0, s);
 
 			selId = id;
 		}
 
 		void SelectBig()
 		{
-			float s = 2.6f;
+			float s = 0.24f;
 
-			selectorPanel.transform.SetParent(inventoryPanelParentBig.transform);
-
-			selectorPanel.transform.SetSiblingIndex(1); //?
-
-			selectorPanel.transform.position = panels[id].transform.position;
-			selectorPanel.transform.localScale = new Vector3(s, s, 0);
+			_selectorPanel.transform.position = _panels[id].transform.position + new Vector3(0, 0, -2);
+			_selectorPanel.transform.localScale = new Vector3(s, 0, s);
 
 			selectedId = id;
 
@@ -1225,7 +1274,8 @@ public class Inventory : MonoBehaviour
 					}
 
 					ultraSelectedId = -1;
-					selectorPanelPlus.SetActive(false);
+					_selectorMaterial.color = _deselectedColor;
+					_ultraSelectorPanel.SetActive(false);
 
 					SaveOneItem(id);
 
@@ -1233,16 +1283,15 @@ public class Inventory : MonoBehaviour
 				}
 				else if (!string.IsNullOrEmpty(items[id]._name))
 				{
-					float f = 1.8f;
+					float f = 0.185f;
 
 					ultraSelectedId = id;
+					_selectorMaterial.color = _selectedColor;
+					_ultraSelectorPanel.SetActive(true);
 
-					selectorPanelPlus.SetActive(true);
-					selectorPanelPlus.transform.SetParent(inventoryPanelParentBig.transform);
-					selectorPanel.transform.SetSiblingIndex(0);
-					selectorPanelPlus.transform.SetSiblingIndex(0);
-					selectorPanelPlus.transform.position = panels[id].transform.position;
-					selectorPanelPlus.transform.localScale = new Vector3(f, f, 0);
+					Vector3 panelPos = _panels[id].transform.position;
+					_ultraSelectorPanel.transform.position = new Vector3(panelPos.x, panelPos.y, _ultraSelectorPanelZ);
+					_ultraSelectorPanel.transform.localScale = new Vector3(f, 0, f);
 
 					Debug.Log($"SO, ULTRA-SELECTED ON {id}!");
 				}

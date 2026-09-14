@@ -15,6 +15,8 @@ public class WrongWay : MonoBehaviour
     string[] _wrongWays;
     int[] _order;
     string _sceneName;
+    Transform _ict;
+    int _num = 0;
 
     void Start()
     {
@@ -39,6 +41,23 @@ public class WrongWay : MonoBehaviour
         for (int i = 0; i < signsCount; i++)
             _signsOrder[i] = i + 1;
 
+        StartCoroutine(AsyncStart());
+    }
+
+    private IEnumerator AsyncStart()
+    {
+        while (S.AllFather == null || S.Loader == null)
+            yield return new WaitForSeconds(0.2f);
+
+        while (S.Loader.Roots == null)
+            yield return new WaitForSeconds(0.2f);
+
+        while (!S.Loader.Roots.ContainsKey(_sceneName))
+            yield return new WaitForSeconds(0.2f);
+
+        while (S.Loader.Roots[_sceneName] == null)
+            yield return new WaitForSeconds(0.2f);
+
         S.AllFather.Shuffle(_signsOrder);
 
         _signsHolder = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -46,9 +65,12 @@ public class WrongWay : MonoBehaviour
         _signsHolder.transform.position += new Vector3(0, -20, 0);
         Transform root = S.Loader.Roots[_sceneName];
         _signsHolder.transform.SetParent(root, true);
-    }
 
-    int _num = 0;
+        while (S.Intercam == null)
+            yield return new WaitForSeconds(0.2f);
+
+        _ict = S.Intercam.transform;
+    }
 
     private string GetAudio()
     {
@@ -84,21 +106,18 @@ public class WrongWay : MonoBehaviour
 
         label.SetActive(true);
 
-        yield return new WaitForSeconds(0.1f);
-
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.15f);
 
         GameObject sign = Instantiate(S.InventoryPlane, _signsHolder.transform);
 
-        Transform ict = S.Intercam.transform;
-        sign.transform.position = ict.position + ict.forward * (30f - 0.001f * _globalSignCounter);
-        sign.transform.rotation = Quaternion.LookRotation(-ict.forward);
+        sign.transform.position = _ict.position + _ict.forward * (30f - 0.001f * _globalSignCounter);
+        sign.transform.rotation = Quaternion.LookRotation(-_ict.forward);
 
         Vector3 targetScale = sign.transform.localScale * (0.20f + (float)S.RND.NextDouble() * 0.6f);
         sign.transform.localScale = targetScale;
 
-        sign.transform.position += 29 * ict.right * ((float)S.RND.NextDouble() - 0.5f);
-        sign.transform.position += 14 * ict.up * ((float)S.RND.NextDouble() - 0.5f);
+        sign.transform.position += 29 * _ict.right * ((float)S.RND.NextDouble() - 0.5f);
+        sign.transform.position += 14 * _ict.up * ((float)S.RND.NextDouble() - 0.5f);
 
         sign.transform.Rotate(0, 0, ((float)S.RND.NextDouble() - 0.5f) * 80f);
 
@@ -106,7 +125,7 @@ public class WrongWay : MonoBehaviour
         mat.mainTexture = Resources.Load<Texture2D>($"Textures/Wrong Way/Wrong Way {_signsOrder[_signCounter]}");
         sign.GetComponent<MeshRenderer>().material = mat;
 
-        Vector3 startScale = targetScale * 2.0f;
+        Vector3 startScale = targetScale * 4.0f;
         sign.transform.localScale = startScale;
 
         float animDuration = 0.1f;
@@ -133,6 +152,9 @@ public class WrongWay : MonoBehaviour
         }
         sign.transform.localScale = targetScale;
 
+        for (int i = 0; i < 35; i++)
+            InstantiateParticle(sign.transform.position - _ict.forward * 0.0005f);
+
         _signs.Add(sign);
 
         _signCounter++;
@@ -151,5 +173,12 @@ public class WrongWay : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         _signsHolder.SetActive(false);
+    }
+
+    public void InstantiateParticle(Vector3 position)
+    {
+        Quaternion rot = Quaternion.LookRotation(-_ict.forward);
+        rot = Quaternion.Euler(rot.x, rot.y, Random.Range(0f, 360f));
+        Instantiate(S.WrongWayParticlePrefab, position, rot);
     }
 }
