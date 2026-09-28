@@ -105,7 +105,7 @@ public class EnemySpawner : MonoBehaviour
 
             float GenValue()
             {
-                if (S.RND.Next(3) != 0)
+                if (S.RND.Next(4) != 0)
                     return Random.Range(-1f, 1f);
                 else
                     return 0;

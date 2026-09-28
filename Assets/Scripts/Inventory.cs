@@ -309,7 +309,7 @@ public class Inventory : MonoBehaviour
 					_objectNameShowen = "Something strange";
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					_objectBeforeTakenTMP.color = Color.white;
-				showAnyName = true;
+					showAnyName = true;
 
 					goto render;
 				}
@@ -333,7 +333,7 @@ public class Inventory : MonoBehaviour
 
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					_objectBeforeTakenTMP.color = Color.white;
-				showAnyName = true;
+					showAnyName = true;
 
 					goto render;
 				}
@@ -346,6 +346,13 @@ public class Inventory : MonoBehaviour
 						_objectNameShowen = "Blue flames";
 						_objectBeforeTakenTMP.text = _objectNameShowen;
 						_objectBeforeTakenTMP.color = Color.cyan;
+						showAnyName = true;
+					}
+					else
+					{
+						_objectNameShowen = "Door";
+						_objectBeforeTakenTMP.text = _objectNameShowen;
+						_objectBeforeTakenTMP.color = Color.white;
 						showAnyName = true;
 					}
 					
@@ -372,7 +379,20 @@ public class Inventory : MonoBehaviour
 					showAnyName = true;
 
 					goto render;
-				}			
+				}
+
+				Caption caption = hit.collider.gameObject.GetComponent<Caption>();
+				if (caption != null)
+				{
+					clickable = false;
+
+					_objectNameShowen = caption._caption;
+					_objectBeforeTakenTMP.text = _objectNameShowen;
+					_objectBeforeTakenTMP.color = caption._color;
+					showAnyName = true;
+
+					goto render;
+				}
 
 				Button1 button1 = hit.collider.gameObject.GetComponent<Button1>();
 				if (button1 != null)
@@ -406,7 +426,7 @@ public class Inventory : MonoBehaviour
 					_objectNameShowen = zombie._visibleName;
 					_objectBeforeTakenTMP.text = _objectNameShowen;
 					_objectBeforeTakenTMP.color = Color.white;
-				showAnyName = true;
+					showAnyName = true;
 
 					goto render;
 				}
@@ -434,7 +454,6 @@ public class Inventory : MonoBehaviour
 
 					goto render;
 				}
-
 
 				SnakeBall ball = hit.collider.gameObject.GetComponent<SnakeBall>();
 				if (ball != null)

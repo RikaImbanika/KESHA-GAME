@@ -18,15 +18,21 @@ public class WrongWay : MonoBehaviour
     Transform _ict;
     int _num = 0;
 
+    // Сторожевой корутин, который прячет подпись и холдер.
+    // Каждый новый триггер его останавливает и запускает заново —
+    // таким образом "таймер" прятания сбрасывается.
+    Coroutine _hideCoroutine;
+
     void Start()
     {
         _sceneName = gameObject.scene.name;
         _signs = new List<GameObject>();
 
         _wrongWays = new string[]
-        {"Oh No",
-        "Wrong",
-        "Wrong 2"
+        {
+            "Oh No",
+            "Wrong",
+            "Wrong 2"
         };
 
         _order = new int[]
@@ -35,9 +41,7 @@ public class WrongWay : MonoBehaviour
         };
 
         int signsCount = 27;
-
         _signsOrder = new int[signsCount];
-
         for (int i = 0; i < signsCount; i++)
             _signsOrder[i] = i + 1;
 
@@ -81,36 +85,57 @@ public class WrongWay : MonoBehaviour
         return res;
     }
 
-    private void OnTriggerEnter(Collider collider)
+    // Бронируем индекс знака прямо сейчас, чтобы параллельные
+    // корутины не взяли один и тот же индекс.
+    private int ReserveSignIndex()
     {
-        if (collider.gameObject.tag == "Player")
+        int idx = _signsOrder[_signCounter];
+        _signCounter++;
+        if (_signCounter >= _signsOrder.Length)
         {
-            Transform canvasTransform = S.CanvasObj.transform;
-            Transform goTransform = canvasTransform.Find("WrongWayLabel");
-            GameObject label = goTransform.gameObject;
-
-            _signsHolder.SetActive(true);
-
-            string audioName = GetAudio();
-
-            float pitch = 1.25f + (float)S.RND.NextDouble() * 0.1f;
-            S.AM.Play(audioName, pitch);
-
-            StartCoroutine(AsyncPart(label));
+            _signCounter = 0;
+            S.AllFather.Shuffle(_signsOrder);
         }
+        return idx;
     }
 
-    private IEnumerator AsyncPart(GameObject label)
+    private void OnTriggerEnter(Collider collider)
     {
-        yield return new WaitForSeconds(0.1f);
+        if (collider.gameObject.tag != "Player") return;
+        if (_signsHolder == null || _ict == null) return;
 
+        int signIndex = ReserveSignIndex();
+        int globalIndex = _globalSignCounter++;
+
+        Transform goTransform = S.CanvasObj.transform.Find("WrongWayLabel");
+        GameObject label = goTransform.gameObject;
+
+        _signsHolder.SetActive(true);
         label.SetActive(true);
 
-        yield return new WaitForSeconds(0.15f);
+        string audioName = GetAudio();
+        float pitch = 1.25f + (float)S.RND.NextDouble() * 0.1f;
+        S.AM.Play(audioName, pitch);
+
+        // Создание знака — независимый корутин, может их висеть сколько угодно.
+        StartCoroutine(CreateSign(signIndex, globalIndex));
+
+        // Сбрасываем таймер прятания: старый сторожевой корутин убиваем,
+        // новый начнёт отсчёт с нуля. Значит, уже появившиеся знаки
+        // не будут спрятаны "в середине" следующего вызова.
+        if (_hideCoroutine != null)
+            StopCoroutine(_hideCoroutine);
+        _hideCoroutine = StartCoroutine(HideDelayed(label));
+    }
+
+    private IEnumerator CreateSign(int signIndex, int globalIndex)
+    {
+        // 0.1 + 0.15 из старой версии — сохраняем тот же визуальный тайминг.
+        yield return new WaitForSeconds(0.25f);
 
         GameObject sign = Instantiate(S.InventoryPlane, _signsHolder.transform);
 
-        sign.transform.position = _ict.position + _ict.forward * (30f - 0.001f * _globalSignCounter);
+        sign.transform.position = _ict.position + _ict.forward * (30f - 0.001f * globalIndex);
         sign.transform.rotation = Quaternion.LookRotation(-_ict.forward);
 
         Vector3 targetScale = sign.transform.localScale * (0.20f + (float)S.RND.NextDouble() * 0.6f);
@@ -122,7 +147,7 @@ public class WrongWay : MonoBehaviour
         sign.transform.Rotate(0, 0, ((float)S.RND.NextDouble() - 0.5f) * 80f);
 
         Material mat = new Material(Shader.Find("Custom/AlphaUnlitSingleSideWithAlphaMultiplier"));
-        mat.mainTexture = Resources.Load<Texture2D>($"Textures/Wrong Way/Wrong Way {_signsOrder[_signCounter]}");
+        mat.mainTexture = Resources.Load<Texture2D>($"Textures/Wrong Way/Wrong Way {signIndex}");
         sign.GetComponent<MeshRenderer>().material = mat;
 
         Vector3 startScale = targetScale * 4.0f;
@@ -156,23 +181,20 @@ public class WrongWay : MonoBehaviour
             InstantiateParticle(sign.transform.position - _ict.forward * 0.0005f);
 
         _signs.Add(sign);
+    }
 
-        _signCounter++;
-        _globalSignCounter++;
-
-        if (_signCounter >= _signsOrder.Length)
-        {
-            _signCounter = 0;
-            S.AllFather.Shuffle(_signsOrder);
-        }
-
-        yield return new WaitForSeconds(1f);
+    private IEnumerator HideDelayed(GameObject label)
+    {
+        // 1.0 c (как раньше) + 0.35 c запаса, чтобы последний знак
+        // точно успел появиться и доиграть анимацию.
+        yield return new WaitForSeconds(1.35f);
 
         label.SetActive(false);
 
         yield return new WaitForSeconds(0.5f);
 
         _signsHolder.SetActive(false);
+        _hideCoroutine = null;
     }
 
     public void InstantiateParticle(Vector3 position)

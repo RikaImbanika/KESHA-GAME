@@ -3448,7 +3448,11 @@ MonoBehaviour:
   - {fileID: 980184053}
   - {fileID: 2121532126}
   - {fileID: 776072559}
-  _tradeTexture: {fileID: 2800000, guid: 53fc35da31a66df42ba41fbea00c0b03, type: 3}
+  _tradeBackMaterial: {fileID: 2100000, guid: f500222b18f51244bb4869a3ec12d64d, type: 2}
+  _tradeFrontMaterial: {fileID: 2100000, guid: 57329b949390f7f46a6168813832a512, type: 2}
+  _tradeOverlayMaterial: {fileID: 2100000, guid: ebedf2716fa66c847b59806f3946b48c, type: 2}
+  _distance: 10
+  _frontOffset: 0.02
 --- !u!114 &1196928840
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -55,6 +55,9 @@ public class Firefly : MonoBehaviour
 
         _opti = new Optimiser(_sceneName);
 
+        if (_wingLeft != null)
+            _opti.MaxPeriodForDistance = 1 / 60f;
+
         _prevPos = transform.position;
 
         InvokeRepeating("SavingMethod", 0f, 6.5f);

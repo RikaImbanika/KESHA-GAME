@@ -106,8 +106,8 @@ public class MusicManager : MonoBehaviour
                 yield return new WaitForSeconds(_waitDelaySeconds);
             }
 
-            int count = 6;
-            int count2 = 13;
+            int count = 7;
+            int count2 = 14;
 
             _backroomsVolumes = new float[count];
             _backroomsVolumes[0] = 1;
@@ -133,6 +133,9 @@ public class MusicManager : MonoBehaviour
             _backroomsSources[5] = S.AM.A["White Fog"];
             _backroomsLengthes[5] = 317;
 
+            _backroomsSources[6] = S.AM.A["Second Replicator"];
+            _backroomsLengthes[6] = 167;
+
             bool[] remember = new bool[count2];
             _backroomsOrder = new int[count2];
 
@@ -147,8 +150,9 @@ public class MusicManager : MonoBehaviour
             _backroomsOrder[0] = 0;
             _backroomsOrder[1] = 1;
             _backroomsOrder[2] = 5;
+            _backroomsOrder[3] = 6;
 
-            for (int i = 2; i > 0; i--)
+            for (int i = 3; i > 0; i--)
             {
                 int j = S.RND.Next(0, i + 1);
                 int temp = _backroomsOrder[i];
@@ -156,7 +160,7 @@ public class MusicManager : MonoBehaviour
                 _backroomsOrder[j] = temp;
             }
 
-            _backroomsOrder[3] = _backroomsOrder[0];
+            _backroomsOrder[4] = _backroomsOrder[0];
 
             int[] localOrder = new int[3];
             localOrder[0] = 2;
@@ -165,20 +169,22 @@ public class MusicManager : MonoBehaviour
 
             S.AllFather.Shuffle(localOrder);
 
-            _backroomsOrder[4] = localOrder[0];
+            //Part 2
 
-            _backroomsOrder[5] = _backroomsOrder[0];
+            _backroomsOrder[5] = localOrder[0];
+
             _backroomsOrder[6] = _backroomsOrder[1];
+            _backroomsOrder[7] = _backroomsOrder[2];
 
-            _backroomsOrder[7] = localOrder[1];
+            _backroomsOrder[8] = localOrder[1];
 
-            _backroomsOrder[8] = _backroomsOrder[2];
-            _backroomsOrder[9] = _backroomsOrder[0];
+            _backroomsOrder[9] = _backroomsOrder[3];
+            _backroomsOrder[10] = _backroomsOrder[0];
 
-            _backroomsOrder[10] = localOrder[2];
+            _backroomsOrder[11] = localOrder[2];
 
-            _backroomsOrder[11] = _backroomsOrder[1];
-            _backroomsOrder[12] = _backroomsOrder[2];
+            _backroomsOrder[12] = _backroomsOrder[1];
+            _backroomsOrder[13] = _backroomsOrder[2];
 
             _backroomsTrackId = 0;
             _backroomsPrevTrackId = 1; //Track here should not be equals first one

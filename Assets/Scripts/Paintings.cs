@@ -62,19 +62,19 @@ public class Paintings : MonoBehaviour
 
         _phrases = new (string, bool)[]
         {
+            ("Memes.", true),
+            ("Why are you not a pony?", true),
+            ("Deep fried.", true),
             ("Nonsense.", true),
             ("I hate entropy.", true),
             ("Oh no!", true),
             ("This is picture.", true),
             ("Triangles... Triangles everywhere!", true),
-            ("Memes.", true),
             ("Second replicator.", true),
             ("Guys, stop dying!", true),
-            ("Deep fried.", true),
             ("Everything.", true),
             ("More.", true),
-            ("Why are you not a pony?", true),
-            ("New content.", true),
+            ("New content!", true),
             ("Pathetic.", true),
             ("Holy cow!", true),
             ("Welcome to hell!", true),
@@ -87,7 +87,17 @@ public class Paintings : MonoBehaviour
             ("What?", true),
             ("Revolutionise gaming again!", true),
             ("I'm real!", true),
-            ("Art.", true)
+            ("Art.", true),
+            ("Remember?", true),
+            ("Saga about zombela.", true),
+            ("Ah, yes, quality content!", true),
+            ("Perfection.", true),
+            ("Ideal.", true),
+            ("Art of trash.", true),
+            ("In begining was nothing. But then...", true),
+            ("Again.", true),
+            ("Order.", true),
+            ("Entropy should die.", true),
         };
 
         _scenesTakePlainTextPainting = new List<string>();

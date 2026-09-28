@@ -9,7 +9,15 @@ using TMPro;
 public class Trader : MonoBehaviour
 {
 	public List<Trade> _trades;
-	public Texture2D _tradeTexture;
+
+	[Header("Trade panel materials (back -> front order)")]
+	public Material _tradeBackMaterial;
+	public Material _tradeFrontMaterial;
+	public Material _tradeOverlayMaterial;
+
+	[Tooltip("Visual scale of the panel quads (hitbox is unaffected)")]
+	public float _panelScale = 1.18f;
+
 	private List<GameObject> _panels;
 
 	[Header("World-space trade UI")]
@@ -39,7 +47,7 @@ public class Trader : MonoBehaviour
 
 	static Shader TradeShader => Shader.Find("Custom/AlphaUnlitSingleSideWithAlphaMultiplier");
 
-	GameObject CreateQuad(string name, Texture2D tex, Transform parent,
+	GameObject CreateQuad(string name, Material mat, Transform parent,
 						  Vector3 localPos, float width, float height)
 	{
 		GameObject go = GameObject.CreatePrimitive(PrimitiveType.Quad);
@@ -52,13 +60,18 @@ public class Trader : MonoBehaviour
 		go.transform.localScale = new Vector3(width, height, 1f);
 
 		var mr = go.GetComponent<MeshRenderer>();
-		var mat = new Material(TradeShader);
-		mat.mainTexture = tex;
 		mr.sharedMaterial = mat;
 		mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		mr.receiveShadows = false;
 
 		return go;
+	}
+
+	static Material CreateItemMaterial(Texture2D tex)
+	{
+		var mat = new Material(TradeShader);
+		mat.mainTexture = tex;
+		return mat;
 	}
 
 	TextMeshPro CreateNumberLabel(string text, Transform parent, Vector3 localPos)
@@ -112,6 +125,10 @@ public class Trader : MonoBehaviour
 			float panelW = visibleWidth * 0.32f;
 			float panelH = visibleHeight * 0.24f;
 
+			// Visual size of the panel quads (glow may overlap between rows).
+			float panelVisW = panelW * _panelScale;
+			float panelVisH = panelH * _panelScale;
+
 			float itemW = visibleWidth * 0.10f * 0.8f;
 			float itemH = visibleHeight * 0.18f * 0.8f;
 			float itemXOff = visibleWidth * 0.12f * 0.8f;
@@ -124,10 +141,18 @@ public class Trader : MonoBehaviour
 			float halfPanelH = panelH * 0.5f;
 			float panelLeft = -halfPanelW;
 
-			Vector3 sellOffset = new Vector3(-itemXOff, 0f, -_frontOffset);
-			Vector3 buyOffset = new Vector3(itemXOff, 0f, -_frontOffset);
-			Vector3 sellTextOffset = new Vector3(0.4f, -0.8f, -_frontOffset);
-			Vector3 buyTextOffset = new Vector3(0.6f, -0.8f, -_frontOffset);
+			// Depth layers (camera-local Z; +Z is away from the camera).
+			float zStep = _frontOffset;
+			float zBack = 0f;
+			float zFront = -zStep;
+			float zItems = -2f * zStep;
+			float zOverlay = -3f * zStep;
+			float zText = -4f * zStep;
+
+			Vector3 sellOffset = new Vector3(-itemXOff, 0f, zItems);
+			Vector3 buyOffset = new Vector3(itemXOff, 0f, zItems);
+			Vector3 sellTextOffset = new Vector3(0.4f, -0.8f, zText - zItems);
+			Vector3 buyTextOffset = new Vector3(0.6f, -0.8f, zText - zItems);
 
 			_root = new GameObject("TradeRoot");
 			_root.layer = 13;
@@ -145,21 +170,27 @@ public class Trader : MonoBehaviour
 
 				float localCenterY = rootY + y;
 
+				// Hitbox uses the un-scaled panel size, so clicks stay inside
+				// the visible core of the panel and don't reach into the glow.
 				_panelBounds.Add(new Rect(
 					panelLeft,
 					localCenterY - halfPanelH,
 					panelW,
 					panelH));
 
-				GameObject panelObject = CreateQuad("Panel", _tradeTexture, _root.transform,
-													panelPos, panelW, panelH);
-				_panels.Add(panelObject);
+				GameObject panelBack = CreateQuad("PanelBack", _tradeBackMaterial, _root.transform,
+												  new Vector3(0f, y, zBack), panelVisW, panelVisH);
+				_panels.Add(panelBack);
+
+				GameObject panelFront = CreateQuad("PanelFront", _tradeFrontMaterial, _root.transform,
+												   new Vector3(0f, y, zFront), panelVisW, panelVisH);
+				_panels.Add(panelFront);
 
 				string sellSpriteName = S.II.Get(_trades[i]._selledItemName)._spriteName;
 				Texture2D sellTex = Resources.Load<Texture2D>($"Textures/Items/{sellSpriteName}");
 
 				Vector3 sellPos = panelPos + sellOffset;
-				GameObject sellObject = CreateQuad("Sell", sellTex, _root.transform,
+				GameObject sellObject = CreateQuad("Sell", CreateItemMaterial(sellTex), _root.transform,
 												   sellPos, itemW, itemH);
 				_panels.Add(sellObject);
 
@@ -167,9 +198,13 @@ public class Trader : MonoBehaviour
 				Texture2D buyTex = Resources.Load<Texture2D>($"Textures/Items/{buySpriteName}");
 
 				Vector3 buyPos = panelPos + buyOffset;
-				GameObject buyObject = CreateQuad("Buy", buyTex, _root.transform,
+				GameObject buyObject = CreateQuad("Buy", CreateItemMaterial(buyTex), _root.transform,
 												  buyPos, itemW, itemH);
 				_panels.Add(buyObject);
+
+				GameObject panelOverlay = CreateQuad("PanelOverlay", _tradeOverlayMaterial, _root.transform,
+													 new Vector3(0f, y, zOverlay), panelVisW, panelVisH);
+				_panels.Add(panelOverlay);
 
 				string sellText = GetCountText(_trades[i]._selledCount);
 				if (sellText.Length > 0)
@@ -199,8 +234,6 @@ public class Trader : MonoBehaviour
 
 	void HandleTradeClick(Trade trade)
 	{
-		S.Console.AddMessage($"{trade._selledItemName} -> {trade._buyedItemName}");
-
 		if (S.Inventory.CountOfItem(trade._selledItemName) >= trade._selledCount)
 		{
 			S.Inventory.Remove(trade._selledItemName, trade._selledCount);

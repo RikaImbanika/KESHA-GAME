@@ -72,6 +72,8 @@ public class Fireball : MonoBehaviour
 
                 if (Physics.Raycast(ray, out hit, 60 * _opti.DeltaTime, _layerMask))
                 {
+                    PushRigidbody(hit);
+
                     GameObject go = hit.collider.gameObject;
                     if (go.CompareTag("Player"))
                     {
@@ -189,5 +191,24 @@ public class Fireball : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void PushRigidbody(RaycastHit hit)
+    {
+        Rigidbody rb = hit.collider.attachedRigidbody;
+
+        if (rb == null)
+            rb = hit.collider.GetComponentInParent<Rigidbody>();
+
+        if (rb == null || rb.isKinematic)
+            return;
+
+        Vector3 pushDirection = -hit.normal;
+
+        rb.AddForceAtPosition(
+            pushDirection * 45f,
+            hit.point,
+            ForceMode.Impulse
+        );
     }
 }

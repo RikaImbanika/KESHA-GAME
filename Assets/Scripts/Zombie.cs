@@ -43,6 +43,7 @@ public class Zombie : MonoBehaviour
     private Collider _collider;
     private EnemyParams _ep;    
     private Optimiser _opti;
+    private LayerMask _sightMask;
 
     void Start()
     {
@@ -69,6 +70,7 @@ public class Zombie : MonoBehaviour
             _heigh = 4f;
             _stopSpeed = 350;
             _animationSpeed = 0.005f;
+            _sightMask = ~(1 << 7);
 
             _ep = S.Enemies.GetEnemyParams(_type);
 
@@ -224,7 +226,7 @@ public class Zombie : MonoBehaviour
                         Ray ray = new Ray(from, toPlayer);
                         RaycastHit hit;
 
-                        if (Physics.Raycast(ray, out hit))
+                        if (Physics.Raycast(ray, out hit, Mathf.Infinity, _sightMask))
                         {
                             _nextFireTime -= _opti.DeltaTime;
 

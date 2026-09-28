@@ -176,6 +176,7 @@ public class Initialiser : MonoBehaviour
         S.Wings.Add("rainbow2", Prefabs.Get("Wings/RainbowWing2"));
         S.Wings.Add("ice1", Prefabs.Get("Wings/IceWing1"));
         S.Wings.Add("ice2", Prefabs.Get("Wings/IceWing2"));
+        S.Wings.Add("fire", Prefabs.Get("Wings/FireWing"));
 
         S.Shot = Prefabs.GetAudioSource("Shot");
         S.Caboom = Prefabs.GetAudioSource("Caboom");

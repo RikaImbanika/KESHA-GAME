@@ -50,6 +50,8 @@ public class Gun : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, 1001f, _layerMask))
             {
+                PushRigidbody(hit);
+
                 float damage = 15f * S.Cheats._cheatPower;
 
                 S.Inventory.Remove("Ammo", 1);
@@ -208,6 +210,25 @@ public class Gun : MonoBehaviour
         }
         else
             S.AudioManager.Play("No Ammo", 1);
+    }
+
+    private void PushRigidbody(RaycastHit hit)
+    {
+        Rigidbody rb = hit.collider.attachedRigidbody;
+
+        if (rb == null)
+            rb = hit.collider.GetComponentInParent<Rigidbody>();
+
+        if (rb == null || rb.isKinematic)
+            return;
+
+        Vector3 pushDirection = -hit.normal;
+
+        rb.AddForceAtPosition(
+            pushDirection * 35f, //force here
+            hit.point,
+            ForceMode.Impulse
+        );
     }
 
     public float Length(Vector3 v)

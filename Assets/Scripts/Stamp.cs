@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Stamp : MonoBehaviour
 {
-	public Door _door;
+    public Door _door;
     string _id;
     string _idDestroyed;
     string _sceneName;
@@ -17,7 +17,13 @@ public class Stamp : MonoBehaviour
     bool _alreadyUnlocked;
     float _stampAnimationTimeLeft;
     Vector3 _startScale;
+    Vector3 _startPosition;
     MaterialPropertyBlock _mpb;
+
+    [Header("Unlock Animation")]
+    [Tooltip("How high the object rises during the animation.")]
+    public float _riseHeight = 4f;
+    public float _animationDuration = 2.3f;
 
     public void Start()
     {
@@ -28,6 +34,7 @@ public class Stamp : MonoBehaviour
         GetId();
 
         _startScale = transform.localScale;
+        _startPosition = transform.position;
 
         bool destroyed = S.SM.LoadBool(_idDestroyed) ?? false;
         _door._locked = !destroyed;
@@ -78,7 +85,7 @@ public class Stamp : MonoBehaviour
         if (!_alreadyUnlocked)
         {
             _alreadyUnlocked = true;
-            _stampAnimationTimeLeft = 1.75f;
+            _stampAnimationTimeLeft = _animationDuration;
             S.AM.Play("Stamp Sound", 1);
             S.SM.Save(_idDestroyed, true);
             Debug.Log($"STAMP UNLOCKED AND SAVED!!! id = {_id}");
@@ -101,19 +108,26 @@ public class Stamp : MonoBehaviour
         {
             _stampAnimationTimeLeft -= Time.deltaTime;
 
-            float totalTime = 1.75f;
-            float progress = _stampAnimationTimeLeft / totalTime;
+            // progress: 0 at start, 1 at end
+            float progress = 1f - (_stampAnimationTimeLeft / _animationDuration);
+            progress = Mathf.Clamp01(progress);
 
-            float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
+            // --- Rotation: only around local Y, starts slow then accelerates ---
+            // Angular speed grows quadratically, giving a smooth start and constant angular acceleration.
+            float angularSpeed = 12000f * progress * progress; // degrees per second (adjust if desired)
+            transform.Rotate(0f, angularSpeed * Time.deltaTime, 0f, Space.Self);
 
-            float currentScale = Mathf.Lerp(0f, 1f, smoothProgress);
+            // --- Scale: noticeable shrink before rotation becomes apparent ---
+            // Power curve drops quickly at the beginning.
+            float scaleFactor = Mathf.Pow(1f - progress, 2.5f);
+            transform.localScale = _startScale * scaleFactor;
 
-            transform.localScale = _startScale * currentScale;
-
-            float randomX = UnityEngine.Random.Range(0f, 360f);
-            float randomY = UnityEngine.Random.Range(0f, 360f);
-            float randomZ = UnityEngine.Random.Range(0f, 360f);
-            transform.rotation = Quaternion.Euler(randomX, randomY, randomZ);
+            // --- Vertical movement: upward with acceleration (parabolic speed) ---
+            // Displacement = 0.5 * a * t^2, so y offset grows with progress^2.
+            float yOffset = _riseHeight * progress * progress;
+            Vector3 pos = _startPosition;
+            pos.y += yOffset;
+            transform.position = pos;
 
             if (_stampAnimationTimeLeft <= 0)
                 Destroy(gameObject);

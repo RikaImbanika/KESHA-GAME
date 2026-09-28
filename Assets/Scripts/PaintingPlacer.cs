@@ -15,15 +15,18 @@ public class PaintingPlacer : MonoBehaviour
     private string _pidid;
     private string _mirid;
     private string _prsid;
+    private string _invid;
     private int _paintingId;
-    private int _mirrored;
+    private bool _mirrored;
     private int _phraseNumber;
+    private bool _inverted;
     private int _layerMask;
     private Color _tint;
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
     private float _wallHueShiftSpeed;
     private Transform _root;
+    private float _phraseInvertProbability = 0.25f;
 
     void Start()
     {
@@ -70,7 +73,8 @@ public class PaintingPlacer : MonoBehaviour
                 Destroy(gameObject);
             else
             {
-                _mirrored = S.SM.LoadInt(_mirid) ?? 0;
+                _mirrored = S.SM.LoadBool(_mirid) ?? false;
+                _inverted = S.SM.LoadBool(_invid) ?? false;
 
                 yield return Place();
             }
@@ -84,6 +88,10 @@ public class PaintingPlacer : MonoBehaviour
             if (_phraseNumber != -1)
             {
                 S.SM.Save(_prsid, _phraseNumber);
+
+                _inverted = Random.value < _phraseInvertProbability;
+                S.SM.Save(_invid, _inverted);
+
                 yield return Place();
             }
             else
@@ -97,7 +105,7 @@ public class PaintingPlacer : MonoBehaviour
                 else
                 {
                     _paintingId = S.RND.Next(S.Paintings._names.Count());
-                    _mirrored = S.RND.Next(2) == 1 ? 1 : 0;
+                    _mirrored = S.RND.Next(2) == 1;
 
                     //for rare paintings
                     float number2 = Random.Range(0, 100);
@@ -180,13 +188,21 @@ public class PaintingPlacer : MonoBehaviour
 
                 if (_phraseNumber != -1)
                 {
-                    Material blackMat = new Material(mat.shader);
-                    blackMat.color = Color.black;
+                    Material bgMat = new Material(mat.shader);
+                    if (!_inverted)
+                    {
+                        bgMat.color = Color.black;
+                    }
+                    else
+                    {
+                        // White background gets tint
+                        bgMat.color = Color.Lerp(_tint, Color.white, 0.35f);
+                    }
 
                     if (_wallHueShiftSpeed > 0f)
-                        blackMat.SetFloat("_Speed", _wallHueShiftSpeed);
+                        bgMat.SetFloat("_Speed", _wallHueShiftSpeed);
 
-                    child.GetComponent<MeshRenderer>().material = blackMat;
+                    child.GetComponent<MeshRenderer>().material = bgMat;
 
                     GameObject phraseObject = new GameObject("Phrase", typeof(RectTransform));
                     phraseObject.transform.SetParent(_root, false);
@@ -229,7 +245,15 @@ public class PaintingPlacer : MonoBehaviour
 
                         Material tmpMaterial = new Material(tmpFogShader);
                         tmpMaterial.mainTexture = fontAtlas;
-                        tmpMaterial.SetColor("_FaceColor", Color.Lerp(_tint, Color.white, 0.35f));
+
+                        if (!_inverted)
+                        {
+                            tmpMaterial.SetColor("_FaceColor", Color.Lerp(_tint, Color.white, 0.35f));
+                        }
+                        else
+                        {
+                            tmpMaterial.SetColor("_FaceColor", Color.black);
+                        }
 
                         tmp.fontMaterial = tmpMaterial;
 
@@ -243,7 +267,7 @@ public class PaintingPlacer : MonoBehaviour
 
                     bool canMirror = S.Paintings._canMirror[_paintingId];
 
-                    if (canMirror && _mirrored == 1)
+                    if (canMirror && _mirrored)
                     {
                         mat.mainTextureScale = new Vector2(-1, 1);
                         mat.mainTextureOffset = new Vector2(1, 0);
@@ -328,6 +352,7 @@ public class PaintingPlacer : MonoBehaviour
         _pidid = S.IDM(_id, "pid");
         _mirid = S.IDM(_id, "mir");
         _prsid = S.IDM(_id, "prn");
+        _invid = S.IDM(_id, "inv");
     }
 
 #if UNITY_EDITOR
