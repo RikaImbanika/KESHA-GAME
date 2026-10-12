@@ -22,6 +22,7 @@ public class Spider : MonoBehaviour
     public bool _followPlayer;
 
     public bool _dead;
+    public bool _onCeiling;
 
     public float _health;
     public float _maxHealth;
@@ -39,6 +40,7 @@ public class Spider : MonoBehaviour
     private string _idPos;
     private string _idRot;
     private string _idHp;
+    private string _idOnCeiling;
     private Collider _collider;
     private NavMeshAgent _agent;
     private float _laserCooldown;
@@ -71,7 +73,7 @@ public class Spider : MonoBehaviour
         _laserCooldown = 0.3f;
         _fireCooldown = 0.7f;
         _stopSpeed = 350;
-        _animationSpeed = 0.005f; //Still need check
+        _animationSpeed = 0.005f;
 
         _layerMask = 1 << LayerMask.NameToLayer("Player") |
                         1 << LayerMask.NameToLayer("Static") |
@@ -156,7 +158,7 @@ public class Spider : MonoBehaviour
 
     void GetId()
     {
-        _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
+        _sceneName = gameObject.scene.name;
 
         //Id must be set by spawner.
         //If not, this is enemy in scene.
@@ -167,6 +169,7 @@ public class Spider : MonoBehaviour
         _idPos = S.IDM(_id, "pos");
         _idRot = S.IDM(_id, "rot");
         _idHp = S.IDM(_id, "hp");
+        _idOnCeiling = S.IDM(_id, "clg");
     }
 
     void SavingMethod()
@@ -350,7 +353,7 @@ public class Spider : MonoBehaviour
                         scale.z = _laserLength[i] * _lasersScaleFactor;
                         _lasers[i].transform.localScale = scale;
                         _points[i].transform.position = hit.point;
-                        _points[i].transform.rotation = S.RandRot.Get();
+                        _points[i].transform.rotation = S.OptiRandom.Rotation;
 
                         int speed = (int)(3 * 60f * _opti.DeltaTime);
                         if (S.RND.Next(0, speed) == 0)

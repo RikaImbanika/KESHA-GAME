@@ -92,11 +92,11 @@ public class RikaParticle : MonoBehaviour
 
             for (int i = 0; i < 3; i++)
             {
-                float power = Random.Range(1.35f, 2.1f);
+                float power = UnityEngine.Random.Range(1.35f, 2.1f);
 
                 _flatSparklesDirs[i] = RandomPerpendicular(toCamera) * power;
 
-                float randomAngle = Random.Range(0f, 360f);
+                float randomAngle = UnityEngine.Random.Range(0f, 360f);
                 _flatSparkles[i].transform.GetChild(0).localRotation = Quaternion.Euler(0, randomAngle, 0);
 
                 S.Fog.ApplyToGameObject(_flatSparkles[i], _mpb);
@@ -208,7 +208,7 @@ public class RikaParticle : MonoBehaviour
 
                     for (int i = 0; i < 3; i++)
                     {
-                        float power = Random.Range(0.1f, 6f);
+                        float power = UnityEngine.Random.Range(0.1f, 6f);
 
                         _flatSparklesDownDirs[i] = RandomPerpendicular(_toCamera) * power + new Vector3(0, 0.4f, 0);
                     }
@@ -259,7 +259,7 @@ public class RikaParticle : MonoBehaviour
 
         Vector3 perp = Vector3.Cross(direction, arbitrary).normalized;
 
-        float randomAngle = Random.Range(0f, 360f);
+        float randomAngle = UnityEngine.Random.Range(0f, 360f);
         return Quaternion.AngleAxis(randomAngle, direction) * perp;
     }
 }

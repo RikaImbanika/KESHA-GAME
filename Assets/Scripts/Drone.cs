@@ -308,7 +308,7 @@ public class Drone : MonoBehaviour
             scale.z = len;
             _lasers[i].transform.localScale = scale;
             _points[i].transform.position = hit.point;
-            _points[i].transform.rotation = S.RandRot.Get();
+            _points[i].transform.rotation = S.OptiRandom.Rotation;
 
             GameObject go = hit.collider.gameObject;
             if (go.CompareTag("Player"))

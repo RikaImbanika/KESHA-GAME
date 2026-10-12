@@ -89,7 +89,7 @@ public class Paintings : MonoBehaviour
             ("I'm real!", true),
             ("Art.", true),
             ("Remember?", true),
-            ("Saga about zombela.", true),
+            ("Saga about zombella.", true),
             ("Ah, yes, quality content!", true),
             ("Perfection.", true),
             ("Ideal.", true),
@@ -98,6 +98,7 @@ public class Paintings : MonoBehaviour
             ("Again.", true),
             ("Order.", true),
             ("Entropy should die.", true),
+            ("Big.", true)
         };
 
         _scenesTakePlainTextPainting = new List<string>();

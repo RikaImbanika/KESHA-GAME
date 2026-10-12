@@ -875,9 +875,9 @@ public class Console : MonoBehaviour
 
             for (int i = 0; i < count; i++)
             {
-                float dx = Random.Range(-0.2f, 0.2f);
-                float dy = Random.Range(-0.2f, 0.2f);
-                float dz = Random.Range(-0.2f, 0.2f);
+                float dx = UnityEngine.Random.Range(-0.2f, 0.2f);
+                float dy = UnityEngine.Random.Range(-0.2f, 0.2f);
+                float dz = UnityEngine.Random.Range(-0.2f, 0.2f);
                 Vector3 position = S.Camera.transform.position + new Vector3(dx, dy, dz);
 
                 if (who == "zombella")
@@ -947,7 +947,7 @@ public class Console : MonoBehaviour
                     float GenValue()
                     {
                         if (S.RND.Next(3) != 0)
-                            return Random.Range(-1f, 1f);
+                            return UnityEngine.Random.Range(-1f, 1f);
                         else
                             return 0;
                     }

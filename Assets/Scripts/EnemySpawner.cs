@@ -9,11 +9,15 @@ using UnityEngine.SceneManagement;
 public class EnemySpawner : MonoBehaviour
 {
     private string _sceneName;
+    private string _type;
+    private Vector3 _clothes;
+    private bool _onCeiling;
+
     private string _id;
     private string _idType;
     private string _idClothes;
-    private string _type;
-    private Vector3 _clothes;
+    private string _idOnCeiling;
+
     private MeshRenderer _unityEditorMeshRenderer;
     private MeshFilter _unityEditorMeshFilter;
     private Transform _root;
@@ -40,6 +44,7 @@ public class EnemySpawner : MonoBehaviour
         {
             _type = S.Enemies.Types[typeN];
             _clothes = S.SM.LoadVector3(_idClothes) ?? Vector3.zero;
+            _onCeiling = S.SM.LoadBool(_idOnCeiling) ?? false;
         }
     }
 
@@ -49,6 +54,7 @@ public class EnemySpawner : MonoBehaviour
         _id = S.ID("En", gameObject);
         _idType = S.IDM(_id, "typ");
         _idClothes = S.IDM(_id, "clth");
+        _idOnCeiling = S.IDM(_id, "clg");
     }
 
     IEnumerator Birn()
@@ -95,7 +101,16 @@ public class EnemySpawner : MonoBehaviour
         {
             DefineType();
             DefineClothes();
+            DefineOnCeiling();
             Summon();
+        }
+
+        void DefineOnCeiling()
+        {
+            if (S.Enemies.FlatCeiling(_sceneName))
+                _onCeiling = S.RND.Next(3) == 0; //////Change later
+
+            S.SM.Save(_idOnCeiling, _onCeiling);
         }
 
         void DefineClothes()
@@ -106,7 +121,7 @@ public class EnemySpawner : MonoBehaviour
             float GenValue()
             {
                 if (S.RND.Next(4) != 0)
-                    return Random.Range(-1f, 1f);
+                    return UnityEngine.Random.Range(-1f, 1f);
                 else
                     return 0;
             }
@@ -184,8 +199,9 @@ public class EnemySpawner : MonoBehaviour
         Zombie zombie = obj.GetComponent<Zombie>();
         if (zombie != null)
         {
-            zombie._clothes = _clothes; //set
             zombie._id = _id;
+            zombie._clothes = _clothes;
+            zombie._onCeiling = _onCeiling;
         }
         else
         {
@@ -193,6 +209,7 @@ public class EnemySpawner : MonoBehaviour
             if (spider != null)
             {
                 spider._id = _id;
+                spider._onCeiling = _onCeiling;
             }
         }
 

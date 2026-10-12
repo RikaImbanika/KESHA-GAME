@@ -72,7 +72,7 @@ public static class S : object
 	private static List<GameObject> _snakes;
 	private static Mushrooms _mushrooms;
 	private static Fireflies _fireflies;
-	private static RandomRotation _randomRotations;
+	private static OptiRandom _optiRandom;
 	private static GameObject _blueHitPoint;
 	private static GameObject _redHitPoint;
 	private static GameObject _greenHitPoint;
@@ -124,6 +124,19 @@ public static class S : object
 	public static GameObject _itemShowerParticlePrefab;
 	public static GameObject _wrongWayParticlePrefab;
 	public static GameObject _numberLabelExample;
+	public static Dictionary<string, GameObject> _trailParticles;
+
+	public static Dictionary<string, GameObject> TrailParticles
+	{
+		get
+		{
+			return _trailParticles;
+		}
+		set
+		{
+			_trailParticles = value;
+		}
+	}
 
 	public static GameObject NumberLabelExample
 	{
@@ -799,15 +812,15 @@ public static class S : object
 		}
 	}
 
-	public static RandomRotation RandRot
+	public static OptiRandom OptiRandom
 	{
 		get
 		{
-			return _randomRotations;
+			return _optiRandom;
 		}
 		set
 		{
-			_randomRotations = value;
+			_optiRandom = value;
 		}
 	}
 

@@ -42,31 +42,31 @@ public class RandomParticleSpawner : MonoBehaviour
 
             if (_timer > _delay)
             {
-                _delay = Random.Range(0.5f, 3.5f);
+                _delay = UnityEngine.Random.Range(0.5f, 3.5f);
 
                 _timer = 0f;
 
                 int count = S.RND.Next(1, 45);
 
-                Quaternion rotation = S.RandRot.Get();
+                Quaternion rotation = S.OptiRandom.Rotation;
 
-                float decay2 = Random.Range(0.05f, 0.7f);
+                float decay2 = UnityEngine.Random.Range(0.05f, 0.7f);
 
                 int segmentsCount = S.RND.Next(1, 5);
 
-                float friction = Random.Range(0.3f, 1f);
+                float friction = UnityEngine.Random.Range(0.3f, 1f);
 
-                float pushNormal = Random.Range(0.2f, 3f);
+                float pushNormal = UnityEngine.Random.Range(0.2f, 3f);
 
-                float pushRandom = Random.Range(0.2f, 3f);
+                float pushRandom = UnityEngine.Random.Range(0.2f, 3f);
 
-                float period = Random.Range(0.008f, 0.03f);
+                float period = UnityEngine.Random.Range(0.008f, 0.03f);
 
-                float gravity = Random.Range(-6, 6);
+                float gravity = UnityEngine.Random.Range(-6, 6);
 
-                float width = Random.Range(0.1f, 1.2f);
+                float width = UnityEngine.Random.Range(0.1f, 1.2f);
 
-                float sizeRandom = Random.Range(3, 14);
+                float sizeRandom = UnityEngine.Random.Range(3, 14);
 
                 int a = S.RND.Next(5);
 

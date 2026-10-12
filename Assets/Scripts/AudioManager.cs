@@ -52,7 +52,7 @@ public class AudioManager : MonoBehaviour
 		if (!CanPlay(name))
 			return;
 
-		SetPitch(name, Random.Range(minPitch, maxPitch));
+        SetPitch(name, UnityEngine.Random.Range(minPitch, maxPitch));
 		_audioSources[name].Play();
 	}
 	
@@ -80,41 +80,41 @@ public class AudioManager : MonoBehaviour
 		switch (name)
 		{
 			case "Door":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Pick Up":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Throw":
-				return Random.Range(0.2f, 0.4f);
+				return UnityEngine.Random.Range(0.2f, 0.4f);
 			case "Plasma":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Money":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Not Enough Cash":
 				return 0.9f;
 			case "No Ammo":
 				return 0.9f;
 			case "Toilet Door":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Reload": //This is literally take ammo.
 				return 1f;
 			case "Toilet":
 				return 1f;
 			case "damage":
-				return Random.Range(1.1f, 1.175f); //TO DO: Optimise
+				return UnityEngine.Random.Range(1.1f, 1.175f); //TO DO: Optimise
 			case "Screamer 1":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Screamer 2":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Screamer 3":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Screamer 4":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Screamer 5":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Screamer 6":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 			case "Screamer 7":
-				return Random.Range(0.9f, 1.1f);
+				return UnityEngine.Random.Range(0.9f, 1.1f);
 
 			case "First Zombella Theme 1":
 				return 1f;

@@ -218,7 +218,7 @@ public class ItemShower : MonoBehaviour
 
     public void InstantiateParticle()
     {
-        Quaternion rotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
+        Quaternion rotation = Quaternion.Euler(0, UnityEngine.Random.Range(0f, 360f), 0);
         Instantiate(S.ItemShowerParticlePrefab, _particlesCenter, rotation);
     }
 }

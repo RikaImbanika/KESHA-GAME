@@ -177,6 +177,14 @@ public class Initialiser : MonoBehaviour
         S.Wings.Add("ice1", Prefabs.Get("Wings/IceWing1"));
         S.Wings.Add("ice2", Prefabs.Get("Wings/IceWing2"));
         S.Wings.Add("fire", Prefabs.Get("Wings/FireWing"));
+        S.Wings.Add("nature", Prefabs.Get("Wings/NatureWing"));
+
+        S.TrailParticles = new Dictionary<string, GameObject>();
+
+        S.TrailParticles.Add("red", Prefabs.Get("Sparkles/Trail/RedTrailParticle"));
+        S.TrailParticles.Add("blue", Prefabs.Get("Sparkles/Trail/BlueTrailParticle"));
+        S.TrailParticles.Add("green", Prefabs.Get("Sparkles/Trail/GreenTrailParticle"));
+        S.TrailParticles.Add("purple", Prefabs.Get("Sparkles/Trail/PurpleTrailParticle"));
 
         S.Shot = Prefabs.GetAudioSource("Shot");
         S.Caboom = Prefabs.GetAudioSource("Caboom");

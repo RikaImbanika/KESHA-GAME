@@ -61,7 +61,7 @@ public class SnakeSpawner : MonoBehaviour
         if (_instant)
         {
             if (_type == 0)
-                _type = (byte)Random.Range(1, 4 + 1);
+                _type = (byte)UnityEngine.Random.Range(1, 4 + 1);
 
             S.SM.Save(_idType, _type);
             Summon();

@@ -287,7 +287,7 @@ public class LocalLaser : MonoBehaviour
         if (_hitSomething)
         {
             point.transform.position = endPoint;
-            point.transform.rotation = S.RandRot.Get();
+            point.transform.rotation = S.OptiRandom.Rotation;
         }
 
         botObj.transform.position = startPoint;

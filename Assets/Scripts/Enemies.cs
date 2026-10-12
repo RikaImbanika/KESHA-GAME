@@ -15,7 +15,9 @@ public class Enemies : MonoBehaviour
     private int _killsCounter;
 
     private List<string> _types;
-    
+
+    private List<string> _flatCeilingScenes;
+
     public List<string> Types
     {
         get
@@ -26,6 +28,11 @@ public class Enemies : MonoBehaviour
         {
             _types = value;
         }
+    }
+
+    public bool FlatCeiling(string sceneName)
+    {
+        return _flatCeilingScenes.Contains(sceneName);
     }
 
     public byte TypeN(string name)
@@ -47,6 +54,28 @@ public class Enemies : MonoBehaviour
             _types.Add("Spider");
 
             _playerFollowers = new List<Zombie>();
+
+            _flatCeilingScenes = new List<string>();
+            _flatCeilingScenes.Add("Corridor");
+            _flatCeilingScenes.Add("TL 0");
+            _flatCeilingScenes.Add("BR 1");
+            _flatCeilingScenes.Add("BR 1R");
+            _flatCeilingScenes.Add("BR 2");
+            _flatCeilingScenes.Add("BR 2R");
+            _flatCeilingScenes.Add("BR 3");
+            _flatCeilingScenes.Add("BR 3R");
+            _flatCeilingScenes.Add("BR 4");
+            _flatCeilingScenes.Add("BR 4R");
+            _flatCeilingScenes.Add("BR 5");
+            _flatCeilingScenes.Add("BR 6");
+            _flatCeilingScenes.Add("BR 6R");
+            _flatCeilingScenes.Add("BR 7");
+            _flatCeilingScenes.Add("BR 7R");
+            _flatCeilingScenes.Add("BR 8");
+            _flatCeilingScenes.Add("MR 1");
+            _flatCeilingScenes.Add("MR 2");
+            _flatCeilingScenes.Add("MR 3");
+            _flatCeilingScenes.Add("MR 4");
 
             S.Enemies = this;
 

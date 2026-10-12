@@ -14,7 +14,6 @@ public class ToiletZombie : MonoBehaviour
     public float _nextFireTime;
     public bool _active;
 
-    // Start is called before the first frame update
     void Start()
     {
         _active = true;
@@ -23,7 +22,6 @@ public class ToiletZombie : MonoBehaviour
         _sceneName = SceneManager.GetSceneByBuildIndex(gameObject.scene.buildIndex).name;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (_active)

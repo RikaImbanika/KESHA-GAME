@@ -25,36 +25,39 @@ public class Zombie : MonoBehaviour
     public bool _dead;
     public Animator _ani; //public for FirstZombie.cs
     public bool _forLoader;
+    public bool _onCeiling;
+    public string _id;
 
+    //Privates
     private float _heigh;
     private float _stopSpeed;
     private float _animationSpeed;
     private string _sceneName;
     private Vector3 _startPosition;
-    public string _id;
     private string _idPos;
     private string _idHp;
     private string _idRot;
     private string _idClothes;
+    private string _idOnCeiling;
     private NavMeshAgent _agent;
     private Vector3 _pos;
     private bool _run;
     private bool _screamerStarted;
     private Collider _collider;
-    private EnemyParams _ep;    
+    private EnemyParams _ep;
     private Optimiser _opti;
     private LayerMask _sightMask;
+    private float _ceilingHeight;
 
     void Start()
     {
-        _opti = new Optimiser(gameObject.scene.name);
-        
+        _sceneName = gameObject.scene.name;
+        _opti = new Optimiser(_sceneName);
+
         StartCoroutine(Start0());
 
         IEnumerator Start0()
         {
-            _sceneName = gameObject.scene.name;
-                        
             while (S.AllFather == null ||
                 S.Loader.Roots == null ||
                 !S.Loader.Roots.ContainsKey(_sceneName) ||
@@ -66,7 +69,7 @@ public class Zombie : MonoBehaviour
                 _fireCooldown = 1.3f;
             if (_speed == 0)
                 _speed = 19f;
-                
+
             _heigh = 4f;
             _stopSpeed = 350;
             _animationSpeed = 0.005f;
@@ -108,6 +111,7 @@ public class Zombie : MonoBehaviour
                     transform.rotation = S.SM.LoadQuaternion(_idRot) ?? transform.rotation;
                     _health = S.SM.LoadFloat(_idHp) ?? _health;
                     _clothes = S.SM.LoadVector3(_idClothes) ?? _clothes;
+                    _onCeiling = S.SM.LoadBool(_idOnCeiling) ?? _onCeiling;
 
                     if (_health <= 0)
                         Die();
@@ -138,6 +142,7 @@ public class Zombie : MonoBehaviour
         _idRot = S.IDM(_id, "rot");
         _idHp = S.IDM(_id, "hp");
         _idClothes = S.IDM(_id, "clth");
+        _idOnCeiling = S.IDM(_id, "clg");
     }
 
     void SavingMethod()

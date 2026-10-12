@@ -42,6 +42,6 @@ public class Screamers : MonoBehaviour
 
     public float GetDelay()
     {
-        return 5f + Random.Range(0, 55f);
+        return 5f + UnityEngine.Random.Range(0, 55f);
     }
 }

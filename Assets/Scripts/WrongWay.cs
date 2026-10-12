@@ -18,9 +18,6 @@ public class WrongWay : MonoBehaviour
     Transform _ict;
     int _num = 0;
 
-    // Сторожевой корутин, который прячет подпись и холдер.
-    // Каждый новый триггер его останавливает и запускает заново —
-    // таким образом "таймер" прятания сбрасывается.
     Coroutine _hideCoroutine;
 
     void Start()
@@ -85,8 +82,6 @@ public class WrongWay : MonoBehaviour
         return res;
     }
 
-    // Бронируем индекс знака прямо сейчас, чтобы параллельные
-    // корутины не взяли один и тот же индекс.
     private int ReserveSignIndex()
     {
         int idx = _signsOrder[_signCounter];
@@ -117,12 +112,8 @@ public class WrongWay : MonoBehaviour
         float pitch = 1.25f + (float)S.RND.NextDouble() * 0.1f;
         S.AM.Play(audioName, pitch);
 
-        // Создание знака — независимый корутин, может их висеть сколько угодно.
         StartCoroutine(CreateSign(signIndex, globalIndex));
 
-        // Сбрасываем таймер прятания: старый сторожевой корутин убиваем,
-        // новый начнёт отсчёт с нуля. Значит, уже появившиеся знаки
-        // не будут спрятаны "в середине" следующего вызова.
         if (_hideCoroutine != null)
             StopCoroutine(_hideCoroutine);
         _hideCoroutine = StartCoroutine(HideDelayed(label));
@@ -130,7 +121,7 @@ public class WrongWay : MonoBehaviour
 
     private IEnumerator CreateSign(int signIndex, int globalIndex)
     {
-        // 0.1 + 0.15 из старой версии — сохраняем тот же визуальный тайминг.
+        // 0.1 + 0.15, check.
         yield return new WaitForSeconds(0.25f);
 
         GameObject sign = Instantiate(S.InventoryPlane, _signsHolder.transform);
@@ -168,7 +159,7 @@ public class WrongWay : MonoBehaviour
 
             if (!soundPlayed && animElapsed >= (animDuration - 0.05f))
             {
-                float pitch = Random.Range(0.95f, 1.05f);
+                float pitch = UnityEngine.Random.Range(0.95f, 1.05f);
                 S.AudioManager.Play("Kick Metal 1", pitch);
                 soundPlayed = true;
             }
@@ -185,8 +176,7 @@ public class WrongWay : MonoBehaviour
 
     private IEnumerator HideDelayed(GameObject label)
     {
-        // 1.0 c (как раньше) + 0.35 c запаса, чтобы последний знак
-        // точно успел появиться и доиграть анимацию.
+        // 1.0 + 0.35...
         yield return new WaitForSeconds(1.35f);
 
         label.SetActive(false);
@@ -200,7 +190,7 @@ public class WrongWay : MonoBehaviour
     public void InstantiateParticle(Vector3 position)
     {
         Quaternion rot = Quaternion.LookRotation(-_ict.forward);
-        rot = Quaternion.Euler(rot.x, rot.y, Random.Range(0f, 360f));
+        rot = Quaternion.Euler(rot.x, rot.y, UnityEngine.Random.Range(0f, 360f));
         Instantiate(S.WrongWayParticlePrefab, position, rot);
     }
 }

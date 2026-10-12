@@ -25,25 +25,25 @@ public class HeavySparkle : MonoBehaviour
     {
         _opti = new Optimiser(gameObject.scene.name);
 
-        _decreaser = _minimisingSpeed * (Random.Range(0f, 0.4f) +
-        Random.Range(0f, 0.4f) +
-        Random.Range(0f, 0.4f) +
-        Random.Range(0f, 0.4f) +
-        Random.Range(0f, 0.4f));
+        _decreaser = _minimisingSpeed * (UnityEngine.Random.Range(0f, 0.4f) +
+        UnityEngine.Random.Range(0f, 0.4f) +
+        UnityEngine.Random.Range(0f, 0.4f) +
+        UnityEngine.Random.Range(0f, 0.4f) +
+        UnityEngine.Random.Range(0f, 0.4f));
 
         _rb = gameObject.GetComponent<Rigidbody>();
-        _rb.AddForce(transform.forward * Random.Range(0, _speed));
+        _rb.AddForce(transform.forward * UnityEngine.Random.Range(0, _speed));
 
-        _rb.AddForce(transform.right * _speed * Random.Range(-1f, 1f));
-        _rb.AddForce(transform.up * _speed * Random.Range(-1f, 1f));
-        _rb.AddForce(transform.forward * _speed * Random.Range(0f, 1f));
+        _rb.AddForce(transform.right * _speed * UnityEngine.Random.Range(-1f, 1f));
+        _rb.AddForce(transform.up * _speed * UnityEngine.Random.Range(-1f, 1f));
+        _rb.AddForce(transform.forward * _speed * UnityEngine.Random.Range(0f, 1f));
 
         Vector3 forward = transform.forward.normalized * _moveNormal;
-        Vector3 randomDirection = Random.insideUnitSphere * _moveRandom;
+        Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * _moveRandom;
 
         transform.position += forward + transform.right * randomDirection.x + transform.up * randomDirection.y;
 
-        float scale = Random.Range(0.1f, 1f);
+        float scale = UnityEngine.Random.Range(0.1f, 1f);
         transform.localScale = new Vector3(transform.localScale.x * scale, transform.localScale.y * scale, transform.localScale.z * scale);
     }
 

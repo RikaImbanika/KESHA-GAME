@@ -19,7 +19,7 @@ public class HitPoint2 : MonoBehaviour
     {
         _timeLeft = _duration;
         _scale = transform.localScale;
-        transform.rotation = S.RandRot.Get();
+        transform.rotation = S.OptiRandom.Rotation;
 
         Shader shader = Shader.Find("Custom/FadeOverTimeF");
 

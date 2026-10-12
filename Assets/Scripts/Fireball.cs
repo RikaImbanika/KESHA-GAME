@@ -19,12 +19,39 @@ public class Fireball : MonoBehaviour
     public float _damage;
     private MaterialPropertyBlock _mpb;
     private Transform _sceneRoot;
-    
+    private Transform[] _trailParticles;
+    private Vector3[] _trailVelocities;
+    private Vector3[] _trailAccelerations;
+    private bool[] _trailDead;
+    private float[] _trailAges;
+    private Vector3 _trailInitialScale;
+    private float _distance;
+    private const ushort _trailParticlesCount = 12;
+    private const float _trailStep = 4.5f;
+    private const float _trailSpeedCoef = 0.00008f;
+    private const float _trailAccelerationCoef = 0.00016f;
+    private int _trailSpawnedCount;
+    private int _trailCreatedCount;
+    private float _trailLifetime;
+    private Vector3 _forwardBuf;
+    private float _deltaDistance;
+    private bool _dying;
+    byte _trailParticleOptimiser;
+
     void Start()
     {
         _sceneName = gameObject.scene.name;
         _opti = new Optimiser(_sceneName);
         _opti.MaxPeriodForDistance = 1 / 12f;
+
+        _trailParticles = new Transform[_trailParticlesCount];
+        _trailVelocities = new Vector3[_trailParticlesCount];
+        _trailAccelerations = new Vector3[_trailParticlesCount];
+        _trailAges = new float[_trailParticlesCount];
+        _trailDead = new bool[_trailParticlesCount];
+
+        float safeSpeed = MathF.Max(0.0001f, MathF.Abs(_speed));
+        _trailLifetime = _trailStep * _trailParticlesCount / safeSpeed;
 
         _sceneRoot = S.Loader.Roots[_sceneName];
 
@@ -35,14 +62,16 @@ public class Fireball : MonoBehaviour
 
         S.Fog.ApplyToGameObject(gameObject, _mpb);
 
+        _forwardBuf = gameObject.transform.forward.normalized;
+
         if (_damage == 0)
             _damage = 5f;
 
         _layerMask = 1 << LayerMask.NameToLayer("Player") |
-                 1 << LayerMask.NameToLayer("Static") |
-                 1 << LayerMask.NameToLayer("Enemies") |
-                 1 << LayerMask.NameToLayer("Items") |
-                 1 << LayerMask.NameToLayer("Default");
+                     1 << LayerMask.NameToLayer("Static") |
+                     1 << LayerMask.NameToLayer("Enemies") |
+                     1 << LayerMask.NameToLayer("Items") |
+                     1 << LayerMask.NameToLayer("Default");
 
         AudioSource shot = Instantiate(S.Shot);
         shot.transform.position = transform.position;
@@ -55,17 +84,27 @@ public class Fireball : MonoBehaviour
 
     void Update()
     {
-        if (_active)
-        {
-            if (_opti.Optimise(transform.position))
-            {
-                Do();
-                _opti.Reset();
-            }
+        if (_opti == null)
+            return;
 
-            void Do()
+        if (!_active && !_dying)
+            return;
+
+        if (_opti.Optimise(transform.position))
+        {
+            Do();
+            _opti.Reset();
+        }
+
+        void Do()
+        {
+            if (_active)
             {
-                gameObject.transform.position += gameObject.transform.forward.normalized * _opti.DeltaTime * _speed;
+                _deltaDistance = _opti.DeltaTime * _speed;
+                gameObject.transform.position += _forwardBuf * _deltaDistance;
+
+                SpawnTrailParticles();
+                UpdateTrailParticles();
 
                 Ray ray = new Ray(transform.position, transform.forward);
                 RaycastHit hit;
@@ -170,7 +209,9 @@ public class Fireball : MonoBehaviour
                     else if (_color == "purple")
                         Inst(S.PurpleHitPoint, S.PurpleHeavySparkle);
 
-                    Destroy(gameObject);
+                    _active = false;
+                    _dying = true;
+                    DisableFireball();
 
                     void Inst(GameObject hitPointPrefab, GameObject heavySparklePrefab)
                     {
@@ -187,10 +228,149 @@ public class Fireball : MonoBehaviour
                 foreach (Transform child in _children)
                 {
                     child.LookAt(S.PlayerTarget(_sceneName));
-                    child.Rotate(0f, 0f, S.RandRot.GetFloat());
+                    child.Rotate(0f, 0f, S.OptiRandom.Float);
                 }
             }
+            else if (_dying)
+            {
+                UpdateTrailParticles();
+            }
+
+            if (_dying && !HasActiveTrailParticles())
+            {
+                Destroy(gameObject);
+            }
         }
+    }
+
+    private void SpawnTrailParticles()
+    {
+        _distance += _deltaDistance;
+
+        while (_distance > _trailStep)
+        {
+            _distance -= _trailStep;
+
+            int slot = _trailSpawnedCount % _trailParticlesCount;
+            _trailSpawnedCount++;
+
+            Transform t = _trailParticles[slot];
+
+            if (t == null)
+            {
+                GameObject obj = Instantiate(S.TrailParticles[_color], transform.position, Quaternion.identity, _sceneRoot);
+                S.Fog.ApplyToGameObject(obj, _mpb);
+                t = obj.transform;
+                _trailParticles[slot] = t;
+                _trailInitialScale = t.localScale;
+                _trailCreatedCount++;
+            }
+            else
+            {
+                t.gameObject.SetActive(true);
+                t.position = transform.position;
+                t.rotation = Quaternion.identity;
+                t.localScale = _trailInitialScale;
+            }
+
+            _trailAges[slot] = 0f;
+            _trailVelocities[slot] = S.OptiRandom.Vector * S.OptiRandom.Float * _trailSpeedCoef;
+            _trailAccelerations[slot] = S.OptiRandom.Vector * S.OptiRandom.Float * _trailAccelerationCoef;
+        }
+    }
+
+    private void UpdateTrailParticles()
+    {
+        float dt = _opti.DeltaTime;
+
+        _trailParticleOptimiser++;
+        if (_trailParticleOptimiser >= 4)
+        {
+            _trailParticleOptimiser = 0;
+            Slow();
+        }
+        else
+            Fast();
+
+        void Fast()
+        {
+            for (int i = 0; i < _trailCreatedCount; i++)
+            {
+                if (_trailDead[i])
+                    continue;
+
+                _trailAges[i] += dt;
+
+                float life01 = _trailLifetime > 0f ? _trailAges[i] / _trailLifetime : 1f;
+
+                if (life01 >= 1f)
+                {
+                    if (_dying)
+                    {
+                        Destroy(_trailParticles[i].gameObject);
+                        _trailParticles[i] = null;
+                        _trailDead[i] = true;
+                    }
+                    continue;
+                }
+
+                _trailParticles[i].position += _trailVelocities[i] * dt;
+                _trailParticles[i].localScale = _trailInitialScale * Mathf.Pow(1f - life01, 2);
+            }
+        }
+
+        void Slow()
+        {
+            for (int i = 0; i < _trailCreatedCount; i++)
+            {
+                if (_trailDead[i])
+                    continue;
+
+                _trailAges[i] += dt;
+
+                float life01 = _trailLifetime > 0f ? _trailAges[i] / _trailLifetime : 1f;
+
+                if (life01 >= 1f)
+                {
+                    if (_dying)
+                    {
+                        Destroy(_trailParticles[i].gameObject);
+                        _trailParticles[i] = null;
+                        _trailDead[i] = true;
+                    }
+                    continue;
+                }
+
+                _trailVelocities[i] += _trailAccelerations[i] * dt * 4; //optimised
+                _trailParticles[i].position += _trailVelocities[i] * dt;
+
+                Vector3 toCamera = _trailParticles[i].position - S.Camera.transform.position; //optimised
+                _trailParticles[i].rotation = Quaternion.LookRotation(toCamera); //optimised
+
+                _trailParticles[i].localScale = _trailInitialScale * Mathf.Pow(1f - life01, 3);
+            }
+        }
+    }
+
+    private bool HasActiveTrailParticles()
+    {
+        for (int i = 0; i < _trailParticlesCount; i++)
+        {
+            if (_trailParticles[i] != null)
+                return true;
+        }
+        return false;
+    }
+
+    private void DisableFireball()
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        for (int i = 0; i < colliders.Length; i++)
+            colliders[i].enabled = false;
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < renderers.Length; i++)
+            renderers[i].enabled = false;
     }
 
     private void PushRigidbody(RaycastHit hit)

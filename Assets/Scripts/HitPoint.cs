@@ -26,7 +26,7 @@ public class HitPoint : MonoBehaviour
         if (_timeLeft < 0)
             Destroy(gameObject);
 
-        transform.rotation = S.RandRot.Get();
+        transform.rotation = S.OptiRandom.Rotation;
 
         float c = MathF.Pow(_timeLeft / 0.3f, 4);
         transform.localScale = new Vector3(_scale.x * c, _scale.y * c, _scale.z * c);

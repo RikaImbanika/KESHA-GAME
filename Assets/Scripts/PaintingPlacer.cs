@@ -82,14 +82,14 @@ public class PaintingPlacer : MonoBehaviour
 
         IEnumerator DefineAndPlace()
         {
-            yield return new WaitForSeconds(Random.Range(0f, 0.5f));
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0f, 0.5f));
 
             _phraseNumber = S.Paintings.TryTakePhrase(_sceneName);
             if (_phraseNumber != -1)
             {
                 S.SM.Save(_prsid, _phraseNumber);
 
-                _inverted = Random.value < _phraseInvertProbability;
+                _inverted = UnityEngine.Random.value < _phraseInvertProbability;
                 S.SM.Save(_invid, _inverted);
 
                 yield return Place();
@@ -108,7 +108,7 @@ public class PaintingPlacer : MonoBehaviour
                     _mirrored = S.RND.Next(2) == 1;
 
                     //for rare paintings
-                    float number2 = Random.Range(0, 100);
+                    float number2 = UnityEngine.Random.Range(0, 100);
                     if (number2 > S.Paintings._probabilities[_paintingId])
                     {
                         _paintingId = -2;

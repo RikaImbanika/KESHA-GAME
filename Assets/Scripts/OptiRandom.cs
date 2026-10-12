@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RandomRotation : MonoBehaviour
+public class OptiRandom : MonoBehaviour
 {
     private Quaternion[] _rotations;
     private Vector3[] _rotationsEuler;
@@ -34,34 +34,43 @@ public class RandomRotation : MonoBehaviour
                 _rotationsFloat[i] = S.RND.Next(-180, 180);
             }
 
-            S.RandRot = this;
+            S.OptiRandom = this;
         }
     }
 
-    public Quaternion Get()
+    public Quaternion Rotation
     {
-        _index1++;
-        if (_index1 >= 150)
-            _index1 = 0;
+        get
+        {
+            _index1++;
+            if (_index1 >= 150)
+                _index1 = 0;
 
-        return _rotations[_index1];
+            return _rotations[_index1];
+        }
     }
 
-    public Vector3 GetEuler()
+    public Vector3 Vector
     {
-        _index2++;
-        if (_index2 >= 150)
-            _index2 = 0;
+        get
+        {
+            _index2++;
+            if (_index2 >= 150)
+                _index2 = 0;
 
-        return _rotationsEuler[_index2];
+            return _rotationsEuler[_index2];
+        }
     }
 
-    public float GetFloat()
+    public float Float
     {
-        _index3++;
-        if (_index3 >= 150)
-            _index3 = 0;
+        get
+        {
+            _index3++;
+            if (_index3 >= 150)
+                _index3 = 0;
 
-        return _rotationsFloat[_index3];
+            return _rotationsFloat[_index3];
+        }
     }
 }

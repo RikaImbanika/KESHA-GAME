@@ -18,7 +18,7 @@ public class LightRayRotating : MonoBehaviour
         _opti.MaxPeriodForDistance = 1f / 24f;
         _opti.MaxPeriodForRotation = 1f / 24f;
 
-        transform.Rotate(Random.Range(0, 360), 0f, 0f, Space.Self);
+        transform.Rotate(UnityEngine.Random.Range(0, 360), 0f, 0f, Space.Self);
     }
 
     void Update()

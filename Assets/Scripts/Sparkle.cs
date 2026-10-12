@@ -53,17 +53,17 @@ public class Sparkle : MonoBehaviour
 
         _visual = new GameObject[_count];
 
-        _decreaser = (_minimisingSpeed * (Random.Range(0f, 0.4f) +
-        Random.Range(0f, 0.4f) +
-        Random.Range(0f, 0.4f) +
-        Random.Range(0f, 0.4f) +
-        Random.Range(0f, 0.4f))) * _minimisingSpeedCoef;
+        _decreaser = (_minimisingSpeed * (UnityEngine.Random.Range(0f, 0.4f) +
+        UnityEngine.Random.Range(0f, 0.4f) +
+        UnityEngine.Random.Range(0f, 0.4f) +
+        UnityEngine.Random.Range(0f, 0.4f) +
+        UnityEngine.Random.Range(0f, 0.4f))) * _minimisingSpeedCoef;
 
         _rb = gameObject.GetComponent<Rigidbody>();
 
-        _direction = transform.right * _pushRandom * Random.Range(-1f, 1f);
-        _direction += transform.up * _pushRandom * Random.Range(-1f, 1f);
-        _direction += transform.forward * _pushNormal * Random.Range(0f, 1f);
+        _direction = transform.right * _pushRandom * UnityEngine.Random.Range(-1f, 1f);
+        _direction += transform.up * _pushRandom * UnityEngine.Random.Range(-1f, 1f);
+        _direction += transform.forward * _pushNormal * UnityEngine.Random.Range(0f, 1f);
 
         _velocity = _direction.magnitude;
         Insta();
@@ -71,7 +71,7 @@ public class Sparkle : MonoBehaviour
         _visual[0].transform.position = transform.position + _direction;
         _visual[0].transform.rotation = Quaternion.LookRotation(-_direction);
 
-        _p = _width * Random.Range(1f, _sizeRandom);
+        _p = _width * UnityEngine.Random.Range(1f, _sizeRandom);
         _visual[0].transform.localScale = new Vector3(_p, _p, _velocity);
     }
 

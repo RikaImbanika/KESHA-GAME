@@ -60,12 +60,12 @@ public class Dust : MonoBehaviour
 
             // Random position inside the cube
             _transforms[i].position = cubeCenter + new Vector3(
-                Random.Range(-half, half),
-                Random.Range(-half, half),
-                Random.Range(-half, half)
+                UnityEngine.Random.Range(-half, half),
+                UnityEngine.Random.Range(-half, half),
+                UnityEngine.Random.Range(-half, half)
             );
 
-            _speeds[i] = Random.insideUnitSphere * Random.Range(_minSpeed, _maxSpeed);
+            _speeds[i] = UnityEngine.Random.insideUnitSphere * UnityEngine.Random.Range(_minSpeed, _maxSpeed);
         }
 
         _uniformScale = _transforms[0].localScale.x;

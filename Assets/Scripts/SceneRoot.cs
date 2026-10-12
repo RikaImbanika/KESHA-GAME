@@ -54,9 +54,9 @@ public class SceneRoot : MonoBehaviour
         for (int i = 0; i < maxAttempts; i++)
         {
             Vector3 randomPoint = new Vector3(
-                Random.Range(sceneBounds.min.x, sceneBounds.max.x),
-                Random.Range(sceneBounds.min.y, sceneBounds.max.y),
-                Random.Range(sceneBounds.min.z, sceneBounds.max.z)
+                UnityEngine.Random.Range(sceneBounds.min.x, sceneBounds.max.x),
+                UnityEngine.Random.Range(sceneBounds.min.y, sceneBounds.max.y),
+                UnityEngine.Random.Range(sceneBounds.min.z, sceneBounds.max.z)
             );
 
             if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, sampleDistance, NavMesh.AllAreas))

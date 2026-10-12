@@ -135,7 +135,7 @@ public class FireflySpawner : MonoBehaviour
 
             if (S.Fireflies.IsZombieFirefly(_color))
             {
-                int n = S.RND.Next(8);
+                int n = S.RND.Next(9);
 
                 if (n == 0)
                     _wingsType = "crow";
@@ -153,6 +153,8 @@ public class FireflySpawner : MonoBehaviour
                     _wingsType = "ice2";
                 else if (n == 7)
                     _wingsType = "fire";
+                else if (n == 8)
+                    _wingsType = "nature";
 
                 S.SM.Save(_idWingsType, _wingsType);
 

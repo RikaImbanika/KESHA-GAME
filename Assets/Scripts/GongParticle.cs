@@ -22,8 +22,8 @@ public class GongParticle : MonoBehaviour
     void Start()
     {
         _startPoint = transform.position;
-        _velocity = transform.right * Random.Range(_minSpeed, _maxSpeed);
-        float randomAngle = Random.Range(0f, 360f);
+        _velocity = transform.right * UnityEngine.Random.Range(_minSpeed, _maxSpeed);
+        float randomAngle = UnityEngine.Random.Range(0f, 360f);
         _child = transform.GetChild(0);
         Vector3 r = _child.localRotation.eulerAngles;
         _child.localRotation = Quaternion.Euler(r.x, r.y, randomAngle);
